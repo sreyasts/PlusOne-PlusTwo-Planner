@@ -972,6 +972,74 @@
         </div>
     </div>
 
+    <!-- Socratic AI Study Companion Modal (Pedagogical ChatGPT/Gemini Prompt Engine) -->
+    <div id="ai-tutor-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4 overflow-y-auto" onclick="if(event.target === this) closeAiTutorModal()">
+        <div class="bg-white dark:bg-[#0e1422] rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-800 text-left space-y-4">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-10 h-10 rounded-2xl bg-indigo-600/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-lg font-black shrink-0">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-extrabold text-slate-900 dark:text-white" id="ai-tutor-title">Socratic AI Study Tutor</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400" id="ai-tutor-subtitle">Pedagogical Active Recall Prompt for ChatGPT & Gemini</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeAiTutorModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 flex items-center justify-center transition" aria-label="Close Modal">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
+
+            <!-- Subject & Chapter Meta -->
+            <div class="p-3 bg-slate-50 dark:bg-slate-900/70 rounded-2xl border border-slate-200/80 dark:border-slate-800 flex items-center justify-between gap-2">
+                <div class="space-y-0.5 min-w-0">
+                    <span id="ai-tutor-badge" class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300">Physics • Class 12</span>
+                    <h4 id="ai-tutor-chapter" class="text-sm font-bold text-slate-800 dark:text-slate-100 truncate">Chapter Title</h4>
+                </div>
+                <span class="text-[11px] font-semibold text-indigo-600 dark:text-indigo-400 flex items-center gap-1 shrink-0">
+                    <i class="fa-solid fa-graduation-cap"></i> SCERT Pattern
+                </span>
+            </div>
+
+            <!-- Examiner Tip -->
+            <div id="ai-tutor-tip-container" class="p-3 bg-amber-50 dark:bg-amber-950/30 border border-amber-200/70 dark:border-amber-800/50 rounded-2xl flex items-start gap-2.5">
+                <i class="fa-solid fa-lightbulb text-amber-500 text-sm mt-0.5 shrink-0"></i>
+                <div class="text-xs text-amber-900 dark:text-amber-200 font-medium" id="ai-tutor-tip">
+                    Examiner tip...
+                </div>
+            </div>
+
+            <!-- Prompt Preview Box -->
+            <div>
+                <div class="flex items-center justify-between text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5">
+                    <span>Generated Socratic Prompt:</span>
+                    <button type="button" onclick="copyAiTutorPrompt()" class="text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1">
+                        <i class="fa-regular fa-copy"></i> Copy Prompt
+                    </button>
+                </div>
+                <div class="p-3 bg-slate-900 text-slate-200 font-mono text-[11px] leading-relaxed rounded-2xl max-h-44 overflow-y-auto border border-slate-800 whitespace-pre-wrap select-all" id="ai-tutor-prompt-preview">
+                    Loading prompt...
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="pt-2 border-t border-slate-100 dark:border-slate-800 flex flex-wrap sm:flex-nowrap items-center gap-2">
+                <button type="button" onclick="copyAiTutorPrompt()" class="flex-1 py-2.5 px-3 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 transition active:scale-95">
+                    <i class="fa-regular fa-copy"></i>
+                    <span>Copy Prompt</span>
+                </button>
+                <a id="ai-tutor-chatgpt-link" href="#" target="_blank" rel="noopener noreferrer" class="flex-1 py-2.5 px-3 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs rounded-xl flex items-center justify-center gap-1.5 transition active:scale-95 shadow-md shadow-emerald-600/20">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                    <span>Launch in ChatGPT</span>
+                </a>
+                <a id="ai-tutor-gemini-link" href="https://gemini.google.com/app" target="_blank" rel="noopener noreferrer" class="py-2.5 px-3 bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs rounded-xl flex items-center justify-center gap-1.5 transition active:scale-95 shadow-md shadow-blue-600/20" title="Open in Gemini">
+                    <i class="fa-brands fa-google"></i>
+                    <span class="hidden sm:inline">Gemini</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
     <!-- Dedicated Plan Generation & Optimization Overlay -->
     <div id="plan-generation-overlay" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/80 backdrop-blur-md p-4 transition-all duration-300">
         <div class="w-full max-w-md bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl text-center space-y-6 animate-fade-in-up">

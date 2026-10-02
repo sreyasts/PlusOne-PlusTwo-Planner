@@ -87,7 +87,7 @@ describe('Authentication & Cross-Domain Unification Invariants', () => {
     expect(swCacheMatch).not.toBeNull();
     expect(publicSwCacheMatch).not.toBeNull();
     expect(swCacheMatch[1]).toBe(publicSwCacheMatch[1]);
-    expect(swCacheMatch[1]).toBe('plustwo-mission-v6.3');
+    expect(swCacheMatch[1]).toBe('plustwo-mission-v6.4');
   });
 
   it('ensures service worker deletes obsolete caches on activation', () => {

@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [6.4.0] - 2026-10-02
+
+### Added
+- **Socratic AI Study Companion & Pedagogical Prompt Adapter (`src/utils/ai_tutor.js`)**:
+  - Open-source curriculum-grounded Socratic tutor prompt generator tailored for OpenAI ChatGPT and Google Gemini.
+  - Multi-phase structured interactive revision flow:
+    1. Direct diagnostic question probing key formulas and mechanisms (e.g. Optics, Organic Reactions, Calculus).
+    2. Student pause checkpoint awaiting self-formulated answers before solutions are revealed.
+    3. Rigorous 5-point DHSE rubric feedback and common misconception analysis.
+    4. Board exam Past-Year Question (PYQ) challenge calibrated to SCERT marking schemes.
+  - Deep-link integration allowing one-click launch into OpenAI ChatGPT (`https://chatgpt.com/?q=...`) and clipboard export.
+  - Comprehensive bilingual prompt localization in English and Malayalam (`ml`).
+- **RFC 5545 iCalendar Exporter (`src/utils/calendar.js`)**:
+  - Generates cross-platform standard `.ics` calendar files containing daily scheduled revision sessions.
+  - Features automated 15-minute advance notifications (`VALARM`) to keep students disciplined.
+  - Deep links directly back to the active chapter task within Mission PlusTwo.
+  - Seamless import into Google Calendar, Apple Calendar, and Microsoft Outlook.
+- **Desktop Focus Experience & PiP Refinement**:
+  - Compacted desktop Picture-in-Picture controls with streamlined Play/Pause and Done dopamine feedback loops.
+  - Clean separation of desktop PiP from mobile browser capabilities with battery-conscious Screen Wake Lock on Android/iOS.
+- **Automated Test Suites**:
+  - Added unit test suites for iCalendar generation (`tests/calendar.test.js`) and Socratic AI prompt generator (`tests/ai_tutor.test.js`).
+  - Total automated test suite expanded to 95 Vitest tests and 553 engine invariant tests, passing with 0 errors and 0 lint warnings.
+
+---
+
 ## [1.2.0] - 2026-09-26
 
 ### Added

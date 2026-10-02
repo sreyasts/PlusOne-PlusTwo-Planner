@@ -1,5 +1,5 @@
-// Mission PlusTwo Service Worker v6.3 (Intelligent Bilingual Malayalam Support)
-const CACHE_NAME = 'plustwo-mission-v6.3';
+// Mission PlusTwo Service Worker v6.4 (Socratic AI Tutor & iCal Sync)
+const CACHE_NAME = 'plustwo-mission-v6.4';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',

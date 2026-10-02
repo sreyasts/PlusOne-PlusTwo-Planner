@@ -58,6 +58,12 @@ import {
 import {
   generateQrSvg,
 } from './utils/qr.js';
+import {
+  downloadIcsCalendar,
+} from './utils/calendar.js';
+import {
+  generateAiTutorPrompt,
+} from './utils/ai_tutor.js';
 
 
 function getTaskResourceBadge(task) {
@@ -2062,6 +2068,77 @@ function showToastMessage(text, icon = 'checkCircle') {
             showAppToast("CSV timetable downloaded!", "fa-circle-check text-emerald-400");
         }
 
+        function exportTimetableIcs() {
+            if (!appState?.plan || appState.plan.length === 0) {
+                showAppToast("No active plan to export", "fa-circle-exclamation text-amber-500");
+                return;
+            }
+            trackEvent('plan_exported', { format: 'ics' });
+            downloadIcsCalendar(appState.plan, appState.stream || 'science');
+            const isML = (typeof getAppLanguage === 'function') ? (getAppLanguage() === 'ml') : false;
+            showAppToast(
+                isML ? "കലണ്ടർ (.ics) ഫയൽ ഡൗൺലോഡ് ചെയ്തു! Google/Apple കലണ്ടറിൽ ചേർക്കാം" : "Calendar (.ics) downloaded! Ready to import to Google/Apple Calendar",
+                "fa-calendar-check text-emerald-400"
+            );
+        }
+
+        let currentAiTutorPromptText = '';
+
+        function openAiTutorModal(taskId) {
+            const task = getCurrentFocusTask(taskId);
+            if (!task) {
+                showAppToast("Task details not found", "fa-circle-exclamation text-amber-500");
+                return;
+            }
+
+            const isML = (typeof getAppLanguage === 'function') ? (getAppLanguage() === 'ml') : false;
+            const tutorData = generateAiTutorPrompt(task, { language: isML ? 'ml' : 'en' });
+            currentAiTutorPromptText = tutorData.promptText;
+
+            const modal = document.getElementById('ai-tutor-modal');
+            const titleEl = document.getElementById('ai-tutor-title');
+            const subtitleEl = document.getElementById('ai-tutor-subtitle');
+            const badgeEl = document.getElementById('ai-tutor-badge');
+            const chapterEl = document.getElementById('ai-tutor-chapter');
+            const tipEl = document.getElementById('ai-tutor-tip');
+            const previewEl = document.getElementById('ai-tutor-prompt-preview');
+            const chatGptLink = document.getElementById('ai-tutor-chatgpt-link');
+
+            if (titleEl) titleEl.innerText = isML ? "സോക്രട്ടിക് AI സ്റ്റഡി ട്യൂട്ടർ" : "Socratic AI Study Tutor";
+            if (subtitleEl) subtitleEl.innerText = isML ? "ChatGPT, Gemini എന്നിവയ്ക്കുള്ള ബോർഡ് പരീക്ഷ റിവിഷൻ പ്രോംപ്റ്റ്" : "Active Recall & PYQ Revision Prompt for ChatGPT & Gemini";
+            if (badgeEl) badgeEl.innerText = `${tutorData.subject} • ${tutorData.grade || '+2'}`;
+            if (chapterEl) chapterEl.innerText = `${tutorData.chapterTitle} (${tutorData.part})`;
+            if (tipEl) tipEl.innerText = tutorData.examTip;
+            if (previewEl) previewEl.innerText = tutorData.promptText;
+            if (chatGptLink) chatGptLink.href = tutorData.chatGptUrl;
+
+            if (modal) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            }
+            trackEvent('ai_tutor_opened', { subject: tutorData.subject, chapter: tutorData.chapterTitle });
+        }
+
+        function closeAiTutorModal() {
+            const modal = document.getElementById('ai-tutor-modal');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
+        function copyAiTutorPrompt() {
+            if (!currentAiTutorPromptText) return;
+            if (typeof navigator !== 'undefined' && navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(currentAiTutorPromptText).then(() => {
+                    const isML = (typeof getAppLanguage === 'function') ? (getAppLanguage() === 'ml') : false;
+                    showAppToast(isML ? "പ്രോംപ്റ്റ് കോപ്പി ചെയ്തു! ChatGPT-ൽ പേസ്റ്റ് ചെയ്യാം" : "Socratic prompt copied! Paste into ChatGPT or Gemini", "fa-clipboard-check text-emerald-400");
+                }).catch(() => {
+                    showAppToast("Copied to clipboard", "fa-clipboard-check text-emerald-400");
+                });
+            }
+        }
+
         // Safe aliases in case any caller references them
         function openShareModal() { shareApp(); }
         function closeShareModal() {}
@@ -3894,8 +3971,12 @@ function showToastMessage(text, icon = 'checkCircle') {
                                     <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1 font-medium">
                                         ${formatTaskTopicTitle(focusTask)}
                                     </p>
-                                    <div class="mt-2.5">
+                                    <div class="mt-2.5 flex flex-wrap items-center gap-2">
                                         ${getTaskDeepLinksHtml(focusTask)}
+                                        <button type="button" onclick="openAiTutorModal('${focusTask.id}')" class="py-1 px-2.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 text-indigo-700 dark:text-indigo-300 text-xs font-bold flex items-center gap-1.5 border border-indigo-200 dark:border-indigo-800 transition active:scale-95 shadow-sm" title="Get Socratic AI Tutoring for this topic">
+                                            <i class="fa-solid fa-wand-magic-sparkles text-indigo-600 dark:text-indigo-400"></i>
+                                            <span>${isML ? 'AI ട്യൂട്ടർ' : 'AI Study Tutor'}</span>
+                                        </button>
                                     </div>
                                 </div>
 
@@ -3977,7 +4058,13 @@ function showToastMessage(text, icon = 'checkCircle') {
                                                 <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                                                     ${formatTaskTopicTitle(task)}
                                                 </p>
-                                                ${getTaskDeepLinksHtml(task)}
+                                                <div class="mt-1 flex flex-wrap items-center gap-1.5">
+                                                    ${getTaskDeepLinksHtml(task)}
+                                                    <button type="button" onclick="event.stopPropagation(); openAiTutorModal('${task.id}')" class="py-0.5 px-2 rounded-md bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 text-indigo-700 dark:text-indigo-300 text-[10px] font-bold flex items-center gap-1 border border-indigo-200 dark:border-indigo-800 transition active:scale-95" title="Socratic AI Tutor">
+                                                        <i class="fa-solid fa-wand-magic-sparkles text-[9px] text-indigo-600 dark:text-indigo-400"></i>
+                                                        <span>AI Tutor</span>
+                                                    </button>
+                                                </div>
                                             </div>
                                             <button onclick="toggleTaskDirect('${task.id}')" class="text-slate-300 hover:text-blue-600 transition p-1">
                                                 <i class="fa-solid fa-chevron-right text-xs"></i>
@@ -4266,6 +4353,10 @@ function showToastMessage(text, icon = 'checkCircle') {
                             <p class="text-xs text-slate-500">${isML ? ML_I18N.plan.subtitle : 'Every single day planned out until your deadline.'}</p>
                         </div>
                         <div class="flex items-center flex-wrap gap-2">
+                            <button onclick="exportTimetableIcs()" class="text-xs font-bold bg-white border border-slate-200 hover:bg-slate-50 px-3 py-2 rounded-xl text-slate-700 transition flex items-center gap-1.5 shadow-sm active:scale-95" title="Export to Google Calendar, Apple Calendar, or Outlook (.ics)">
+                                <i class="fa-regular fa-calendar-plus text-amber-500"></i>
+                                <span class="hidden sm:inline">${isML ? 'കലണ്ടർ (.ics)' : 'Add to Calendar'}</span>
+                            </button>
                             <button onclick="exportTimetableCsv()" class="text-xs font-bold bg-white border border-slate-200 hover:bg-slate-50 px-3 py-2 rounded-xl text-slate-700 transition flex items-center gap-1.5 shadow-sm active:scale-95" title="Export as CSV spreadsheet">
                                 <i class="fa-solid fa-file-csv text-emerald-600"></i>
                                 <span class="hidden sm:inline">Export CSV</span>
@@ -5174,6 +5265,10 @@ if (typeof window !== 'undefined') {
         copyShareLink,
         printTimetable,
         exportTimetableCsv,
+        exportTimetableIcs,
+        openAiTutorModal,
+        closeAiTutorModal,
+        copyAiTutorPrompt,
         openShareModal,
         closeShareModal,
         executeShare,
