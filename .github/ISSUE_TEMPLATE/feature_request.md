@@ -17,7 +17,6 @@ A clear and concise description of what you want to happen. How would this help 
 - [ ] Biology Science Stream
 - [ ] Commerce Stream
 - [ ] Humanities Stream
-- [ ] Plus One Improvement Students
 - [ ] Teachers / School Educators
 - [ ] General / Cross-Stream
 

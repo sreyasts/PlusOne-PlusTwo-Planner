@@ -7,7 +7,7 @@ assignees: ''
 ---
 
 **Subject & Grade:**
-- Grade: [+2 Regular / +1 Improvement]
+- Grade: [+2 Regular]
 - Subject: [Physics / Chemistry / Mathematics / CS / Botany / Zoology]
 
 **Chapter or Portion to Update:**

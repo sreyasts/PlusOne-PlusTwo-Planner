@@ -2,7 +2,7 @@
   "name": "mission-plustwo",
   "version": "6.4.1",
   "private": true,
-  "description": "Intelligent Study Planner for Kerala DHSE Plus Two (+2) and +1 Improvement Students",
+  "description": "Intelligent Study Planner for Kerala DHSE Plus Two (Class 12) Students",
   "type": "module",
   "scripts": {
     "dev": "vite",
