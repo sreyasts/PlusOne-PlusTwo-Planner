@@ -1,5 +1,31 @@
 @import "tailwindcss";
 
+/* Keep setup focused; study navigation becomes useful once a plan exists. */
+body.is-setting-up #nav-desktop-tabs,
+body.is-setting-up #mobile-nav { display: none; }
+.study-overview { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 24px; }
+.study-overview h2 { font-size: 24px; font-weight: 750; color: #0f172a; }
+.study-overview p { font-size: 14px; color: #64748b; margin-top: 6px; }
+.study-adjust, .study-back { padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 13px; font-weight: 650; cursor: pointer; white-space: nowrap; }
+.study-capacity { padding: 16px; border: 1px solid #cbd5e1; border-radius: 14px; }
+.study-tools { border-top: 1px solid #cbd5e1; padding-top: 16px; }
+.study-tools > summary { cursor: pointer; font-size: 14px; font-weight: 650; padding: 8px 0 16px; }
+.stream-options [role="button"]:focus-visible,
+.study-adjust:focus-visible, .study-back:focus-visible,
+.study-tools > summary:focus-visible { outline: 3px solid #2563eb; outline-offset: 3px; }
+html.dark .study-overview h2 { color: #f1f5f9; }
+html.dark .study-overview p { color: #94a3b8; }
+html.dark .study-adjust, html.dark .study-back,
+html.dark .study-capacity, html.dark .study-tools { border-color: #334155; }
+@media (max-width: 480px) {
+    .study-overview { align-items: flex-start; }
+    .study-overview h2 { font-size: 21px; }
+    .study-adjust { padding: 9px 10px; font-size: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+}
+
         * { -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif; background-color: #f8fafc; }
         

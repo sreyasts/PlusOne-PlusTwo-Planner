@@ -14,11 +14,10 @@ describe('Authentication & Cross-Domain Unification Invariants', () => {
     expect(appJsContent).toContain('clearTimeout(authModalTimer)');
   });
 
-  it('schedules simple sign-in modal 8 seconds after plan generation for non-signed-in users', () => {
+  it('keeps sign-in explicit rather than scheduling a guest interruption', () => {
     const appJsContent = fs.readFileSync(appJsPath, 'utf8');
-    expect(appJsContent).toContain('authModalTimer = setTimeout');
-    expect(appJsContent).toContain('8000');
-    expect(appJsContent).toContain('openAuthModal()');
+    expect(appJsContent.includes('authModalTimer = setTimeout')).toBe(false);
+    expect(appJsContent.includes('function openAuthModal()')).toBe(true);
   });
 
   it('renders a simple and uncluttered sign-in screen in index.html', () => {
@@ -87,7 +86,8 @@ describe('Authentication & Cross-Domain Unification Invariants', () => {
     expect(swCacheMatch).not.toBeNull();
     expect(publicSwCacheMatch).not.toBeNull();
     expect(swCacheMatch[1]).toBe(publicSwCacheMatch[1]);
-    expect(swCacheMatch[1]).toBe('plustwo-mission-v6.4');
+    const { version } = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../package.json'), 'utf8'));
+    expect(swCacheMatch[1]).toBe(`plustwo-mission-v${version}`);
   });
 
   it('ensures service worker deletes obsolete caches on activation', () => {

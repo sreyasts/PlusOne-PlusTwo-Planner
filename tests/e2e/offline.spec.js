@@ -2,6 +2,11 @@ import { test, expect } from '@playwright/test';
 
 test.describe('PWA Cold Offline Start & Language Switcher', () => {
   test('cold offline start works and language switcher toggles seamlessly', async ({ page, context }) => {
+    const failures = [];
+    page.on('pageerror', error => failures.push(error.message));
+    page.on('requestfailed', request => {
+      if (request.url().startsWith('http://localhost:4173/')) failures.push(request.url());
+    });
     // 1. Visit the app online first so service worker registers & precaches assets
     await page.goto('/');
     await expect(page.locator('h1')).toContainText('Mission');
@@ -9,8 +14,8 @@ test.describe('PWA Cold Offline Start & Language Switcher', () => {
     // 2. Wait for Service Worker registration to complete
     await page.waitForFunction(async () => {
       if (!('serviceWorker' in navigator)) return false;
-      const reg = await navigator.serviceWorker.getRegistration();
-      return reg !== undefined && (reg.active !== null || reg.installing !== null);
+      await navigator.serviceWorker.ready;
+      return navigator.serviceWorker.controller !== null;
     });
 
     // 3. Verify Language Switcher is removed from header and moved to Settings Modal
@@ -38,6 +43,12 @@ test.describe('PWA Cold Offline Start & Language Switcher', () => {
     await expect(page.locator('#settings-modal')).not.toBeVisible();
 
     // 4. Emulate Going Completely Offline
+    const cachedAssets = await page.evaluate(async () => {
+      const cache = await caches.open('plustwo-mission-v6.4.1');
+      return (await cache.keys()).map(request => request.url);
+    });
+    expect(cachedAssets.some(url => /\/assets\/index-.*\.js$/.test(url))).toBe(true);
+    expect(cachedAssets.some(url => /\/assets\/index-.*\.css$/.test(url))).toBe(true);
     await context.setOffline(true);
 
     // 5. Reload the page while completely offline
@@ -46,6 +57,7 @@ test.describe('PWA Cold Offline Start & Language Switcher', () => {
     // 6. Verify Cold Offline Experience loads correctly
     await expect(page.locator('h1')).toContainText('Mission');
     await expect(page.locator('#lang-switch-btn')).toHaveCount(0);
+    await expect(page.locator('#setup-step-1'), JSON.stringify(failures)).toBeVisible();
 
     // Open settings while offline and ensure language toggle still works
     await page.evaluate(() => openSettingsModal());

@@ -1,5 +1,5 @@
 // Mission PlusTwo Service Worker v6.4 (Socratic AI Tutor & iCal Sync)
-const CACHE_NAME = 'plustwo-mission-v6.4';
+const CACHE_NAME = 'plustwo-mission-v6.4.1';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -54,8 +54,13 @@ self.addEventListener('fetch', (event) => {
   }
 
   // Static assets: cache first, update in background
+  const assetUrl = new URL(event.request.url);
+  const isAppBundle = assetUrl.origin === self.location.origin &&
+    /\/assets\/[^/]+\.(?:js|css)$/.test(assetUrl.pathname);
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
+    // Built bundles are invariant bytes; preview servers can add Vary: Origin,
+    // while install-time requests and module requests carry different origins.
+    caches.match(event.request, { ignoreVary: isAppBundle }).then((cachedResponse) => {
       const fetchPromise = fetch(event.request).then((networkResponse) => {
         if (networkResponse && networkResponse.status === 200) {
           caches.open(CACHE_NAME).then((cache) => cache.put(event.request, networkResponse));

@@ -1512,7 +1512,7 @@ function showToastMessage(text, icon = 'checkCircle') {
                             <span class="text-[11px] text-slate-400 font-medium">${isML ? 'പഠനം കഴിഞ്ഞുവോ?' : 'Done studying this part?'}</span>
                             <button type="button" onclick="completeTaskFromOverlay('${task.id}')" class="py-1.5 px-3 bg-emerald-600/85 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-xs transition active:scale-95 flex items-center gap-1.5">
                                 <i class="fa-solid fa-circle-check text-xs"></i>
-                                <span>${isML ? 'പൂർത്തിയായി (+100 XP)' : 'Mark Done (+100 XP)'}</span>
+                                <span>${isML ? 'പൂർത്തിയായി (+100 XP)' : 'Mark done'}</span>
                             </button>
                         </div>
                     </div>
@@ -2360,6 +2360,7 @@ function showToastMessage(text, icon = 'checkCircle') {
             }
             renderApp();
             goToSetupStep(1);
+            document.getElementById(`stream-card-${stream === 'imp_only' ? 'imp' : stream}`)?.focus();
         }
 
         function updateTermCardsDescriptions() {
@@ -3056,15 +3057,6 @@ function showToastMessage(text, icon = 'checkCircle') {
                             "fa-rocket text-blue-400");
                     }
 
-                    // Prompt simple sign-in screen after 8 seconds if not already signed in
-                    if (!currentUser) {
-                        if (authModalTimer) clearTimeout(authModalTimer);
-                        authModalTimer = setTimeout(() => {
-                            if (!currentUser) {
-                                openAuthModal();
-                            }
-                        }, 8000);
-                    }
                 }
             });
         }
@@ -3254,15 +3246,6 @@ function showToastMessage(text, icon = 'checkCircle') {
                     }
                     renderApp();
 
-                    // Prompt simple sign-in screen after 8 seconds if not already signed in
-                    if (!currentUser) {
-                        if (authModalTimer) clearTimeout(authModalTimer);
-                        authModalTimer = setTimeout(() => {
-                            if (!currentUser) {
-                                openAuthModal();
-                            }
-                        }, 8000);
-                    }
                 }
             });
         }
@@ -3362,6 +3345,7 @@ function showToastMessage(text, icon = 'checkCircle') {
         function renderApp() {
             const container = document.getElementById('app-container');
             if (!container) return;
+            document.body.classList.toggle('is-setting-up', !appState);
             const isML = getAppLanguage() === 'ml';
             const dateDisplay = document.getElementById('date-display');
             if (dateDisplay) {
@@ -3408,13 +3392,13 @@ function showToastMessage(text, icon = 'checkCircle') {
                                     ${isML ? 'സ്ട്രീം തിരഞ്ഞെടുക്കുക' : 'Select Your Stream'}
                                 </h3>
                                 <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-300 mt-1">
-                                    ${isML ? 'നിങ്ങൾ പഠിക്കുന്ന വിഷയം തിരഞ്ഞെടുക്കുക. സിലബസ് ഉടൻ തയ്യാറാകും.' : 'Choose your stream to load the official DHSE syllabus.'}
+                                    ${isML ? 'നിങ്ങൾ പഠിക്കുന്ന വിഷയം തിരഞ്ഞെടുക്കുക. സിലബസ് ഉടൻ തയ്യാറാകും.' : 'Choose your stream to load the bundled DHSE chapter list.'}
                                 </p>
                             </div>
 
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                            <div class="stream-options grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                                 <!-- Option 1: Computer Science -->
-                                <div id="stream-card-cs" onclick="setStreamSelection('cs')" class="cursor-pointer p-3.5 rounded-2xl border-2 ${selectedStream === 'cs' ? 'border-blue-600 dark:border-blue-500 bg-blue-50/70 dark:bg-blue-950/40 ring-2 ring-blue-500/20 shadow-sm' : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600'} transition text-left flex flex-col justify-between">
+                                <div id="stream-card-cs" aria-pressed="${selectedStream === 'cs'}" role="button" tabindex="0" onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.click(); }" onclick="setStreamSelection('cs')" class="cursor-pointer p-3.5 rounded-2xl border-2 ${selectedStream === 'cs' ? 'border-blue-600 dark:border-blue-500 bg-blue-50/70 dark:bg-blue-950/40 ring-2 ring-blue-500/20 shadow-sm' : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600'} transition text-left flex flex-col justify-between">
                                     <div class="flex items-center justify-between">
                                         <div class="flex items-center gap-2.5">
                                             <div class="w-9 h-9 rounded-xl bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 flex items-center justify-center text-base font-bold shrink-0">
@@ -3432,7 +3416,7 @@ function showToastMessage(text, icon = 'checkCircle') {
                                 </div>
 
                                 <!-- Option 2: Biology Science -->
-                                <div id="stream-card-bio" onclick="setStreamSelection('bio')" class="cursor-pointer p-3.5 rounded-2xl border-2 ${selectedStream === 'bio' ? 'border-emerald-600 dark:border-emerald-500 bg-emerald-50/70 dark:bg-emerald-950/40 ring-2 ring-emerald-500/20 shadow-sm' : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600'} transition text-left flex flex-col justify-between">
+                                <div id="stream-card-bio" aria-pressed="${selectedStream === 'bio'}" role="button" tabindex="0" onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.click(); }" onclick="setStreamSelection('bio')" class="cursor-pointer p-3.5 rounded-2xl border-2 ${selectedStream === 'bio' ? 'border-emerald-600 dark:border-emerald-500 bg-emerald-50/70 dark:bg-emerald-950/40 ring-2 ring-emerald-500/20 shadow-sm' : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600'} transition text-left flex flex-col justify-between">
                                     <div class="flex items-center justify-between">
                                         <div class="flex items-center gap-2.5">
                                             <div class="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 flex items-center justify-center text-base font-bold shrink-0">
@@ -3450,7 +3434,7 @@ function showToastMessage(text, icon = 'checkCircle') {
                                 </div>
 
                                 <!-- Option 3: Commerce -->
-                                <div id="stream-card-commerce" onclick="setStreamSelection('commerce')" class="cursor-pointer p-3.5 rounded-2xl border-2 ${selectedStream === 'commerce' ? 'border-purple-600 dark:border-purple-500 bg-purple-50/70 dark:bg-purple-950/40 ring-2 ring-purple-500/20 shadow-sm' : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600'} transition text-left flex flex-col justify-between">
+                                <div id="stream-card-commerce" aria-pressed="${selectedStream === 'commerce'}" role="button" tabindex="0" onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.click(); }" onclick="setStreamSelection('commerce')" class="cursor-pointer p-3.5 rounded-2xl border-2 ${selectedStream === 'commerce' ? 'border-purple-600 dark:border-purple-500 bg-purple-50/70 dark:bg-purple-950/40 ring-2 ring-purple-500/20 shadow-sm' : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600'} transition text-left flex flex-col justify-between">
                                     <div class="flex items-center justify-between">
                                         <div class="flex items-center gap-2.5">
                                             <div class="w-9 h-9 rounded-xl bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 flex items-center justify-center text-base font-bold shrink-0">
@@ -3468,7 +3452,7 @@ function showToastMessage(text, icon = 'checkCircle') {
                                 </div>
 
                                 <!-- Option 4: Humanities -->
-                                <div id="stream-card-humanities" onclick="setStreamSelection('humanities')" class="cursor-pointer p-3.5 rounded-2xl border-2 ${selectedStream === 'humanities' ? 'border-rose-600 dark:border-rose-500 bg-rose-50/70 dark:bg-rose-950/40 ring-2 ring-rose-500/20 shadow-sm' : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600'} transition text-left flex flex-col justify-between">
+                                <div id="stream-card-humanities" aria-pressed="${selectedStream === 'humanities'}" role="button" tabindex="0" onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.click(); }" onclick="setStreamSelection('humanities')" class="cursor-pointer p-3.5 rounded-2xl border-2 ${selectedStream === 'humanities' ? 'border-rose-600 dark:border-rose-500 bg-rose-50/70 dark:bg-rose-950/40 ring-2 ring-rose-500/20 shadow-sm' : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600'} transition text-left flex flex-col justify-between">
                                     <div class="flex items-center justify-between">
                                         <div class="flex items-center gap-2.5">
                                             <div class="w-9 h-9 rounded-xl bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 flex items-center justify-center text-base font-bold shrink-0">
@@ -3486,7 +3470,7 @@ function showToastMessage(text, icon = 'checkCircle') {
                                 </div>
 
                                 <!-- Option 5: Plus One (+1) Improvement Only -->
-                                <div id="stream-card-imp" onclick="setStreamSelection('imp_only')" class="cursor-pointer p-3.5 rounded-2xl border-2 ${selectedStream === 'imp_only' ? 'border-amber-500 dark:border-amber-400 bg-amber-50/80 dark:bg-amber-950/40 ring-2 ring-amber-400/25 shadow-sm' : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600'} transition text-left flex flex-col justify-between sm:col-span-2">
+                                <div id="stream-card-imp" aria-pressed="${selectedStream === 'imp_only'}" role="button" tabindex="0" onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.click(); }" onclick="setStreamSelection('imp_only')" class="cursor-pointer p-3.5 rounded-2xl border-2 ${selectedStream === 'imp_only' ? 'border-amber-500 dark:border-amber-400 bg-amber-50/80 dark:bg-amber-950/40 ring-2 ring-amber-400/25 shadow-sm' : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600'} transition text-left flex flex-col justify-between sm:col-span-2">
                                     <div class="flex items-center justify-between">
                                         <div class="flex items-center gap-2.5">
                                             <div class="w-9 h-9 rounded-xl bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 flex items-center justify-center text-base font-bold shrink-0">
@@ -3643,6 +3627,23 @@ function showToastMessage(text, icon = 'checkCircle') {
                                 </p>
                             </div>
 
+                            <div class="study-capacity">
+                                        <!-- Daily Hours -->
+                                        <div>
+                                            <span class="text-xs font-extrabold text-slate-700 dark:text-slate-200 block mb-1.5">
+                    ${isML ? ML_I18N.setup.hoursTitle : 'Daily Self-Study Hours'}
+                                            </span>
+                                            <div class="flex gap-2">
+                                                <button type="button" id="hours-chip-2" onclick="setDailyHoursSelection(2)" class="flex-1 py-1.5 px-2 text-xs font-semibold rounded-xl bg-slate-100 dark:bg-[#141d30] text-slate-600 dark:text-slate-300 transition">2 Hours</button>
+                                                <button type="button" id="hours-chip-3_5" onclick="setDailyHoursSelection(3.5)" class="flex-1 py-1.5 px-2 text-xs font-black rounded-xl bg-blue-600 text-white shadow-sm transition">3–4 Hours</button>
+                                                <button type="button" id="hours-chip-5" onclick="setDailyHoursSelection(5)" class="flex-1 py-1.5 px-2 text-xs font-semibold rounded-xl bg-slate-100 dark:bg-[#141d30] text-slate-600 dark:text-slate-300 transition">5+ Hours</button>
+                                            </div>
+                                        </div>
+
+
+                                <p class="text-xs text-slate-500 mt-2">${isML ? 'സ്കൂൾ, യാത്ര, വിശ്രമം എന്നിവയ്ക്ക് ശേഷം ലഭിക്കുന്ന സമയം തിരഞ്ഞെടുക്കുക.' : 'Choose time you can actually spare after school, travel and rest.'}</p>
+                            </div>
+
                             <!-- Quick Summary Card -->
                             <div class="p-3.5 bg-slate-50 dark:bg-[#101726] rounded-2xl border border-slate-200 dark:border-slate-800 space-y-2">
                                 <div class="flex items-center justify-between text-xs">
@@ -3677,10 +3678,10 @@ function showToastMessage(text, icon = 'checkCircle') {
                                         </div>
                                         <div>
                                             <span class="block font-black text-slate-900 dark:text-white text-xs sm:text-sm">
-                                                ${isML ? 'പഠന സമയവും രീതിയും ക്രമീകരിക്കുക' : 'Customize Study Hours & Routine'}
+                                                ${isML ? 'പഠന സമയവും രീതിയും ക്രമീകരിക്കുക' : 'More plan options'}
                                             </span>
                                             <span class="text-[11px] font-medium text-slate-500 dark:text-slate-400">
-                                                ${isML ? 'ദിവസേനയുള്ള പഠന സമയം, വിശ്രമ ദിനം, സിലബസ് വ്യാപ്തി' : 'Daily study hours, weekly rest day & exam portions'}
+                                                ${isML ? 'ദിവസേനയുള്ള പഠന സമയം, വിശ്രമ ദിനം, സിലബസ് വ്യാപ്തി' : 'Weekly rhythm, rest day and syllabus scope'}
                                             </span>
                                         </div>
                                     </div>
@@ -3789,18 +3790,6 @@ function showToastMessage(text, icon = 'checkCircle') {
                                             </div>
                                         </div>
 
-                                        <!-- Daily Hours -->
-                                        <div>
-                                            <span class="text-xs font-extrabold text-slate-700 dark:text-slate-200 block mb-1.5">
-                                                ${isML ? ML_I18N.setup.hoursTitle : 'Daily Self-Study Hours'}
-                                            </span>
-                                            <div class="flex gap-2">
-                                                <button type="button" id="hours-chip-2" onclick="setDailyHoursSelection(2)" class="flex-1 py-1.5 px-2 text-xs font-semibold rounded-xl bg-slate-100 dark:bg-[#141d30] text-slate-600 dark:text-slate-300 transition">2 Hours</button>
-                                                <button type="button" id="hours-chip-3_5" onclick="setDailyHoursSelection(3.5)" class="flex-1 py-1.5 px-2 text-xs font-black rounded-xl bg-blue-600 text-white shadow-sm transition">3–4 Hours</button>
-                                                <button type="button" id="hours-chip-5" onclick="setDailyHoursSelection(5)" class="flex-1 py-1.5 px-2 text-xs font-semibold rounded-xl bg-slate-100 dark:bg-[#141d30] text-slate-600 dark:text-slate-300 transition">5+ Hours</button>
-                                            </div>
-                                        </div>
-
                                         <!-- Intensity -->
                                         <div class="flex items-center justify-between gap-2 pt-1">
                                             <label for="study-intensity" class="text-xs font-bold text-slate-700 dark:text-slate-200">${isML ? ML_I18N.setup.intensityLabel : 'Daily Study Pacing'}</label>
@@ -3814,16 +3803,7 @@ function showToastMessage(text, icon = 'checkCircle') {
                                 </div>
                             </details>
 
-                            <!-- Step 4 Navigation -->
-                            <div class="pt-5 flex items-center justify-between gap-3">
-                                <button type="button" onclick="prevSetupStep()" class="py-2.5 px-5 rounded-2xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold text-xs hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-1.5 active:scale-95">
-                                    <i class="fa-solid fa-arrow-left text-xs"></i>
-                                    <span>${isML ? 'പിന്നോട്ട്' : 'Back'}</span>
-                                </button>
-                                <button type="button" onclick="handleInitialSetup()" class="bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-sm py-2.5 px-8 rounded-2xl shadow-md shadow-blue-500/20 transition flex items-center gap-2 active:scale-95">
-                                    <span>${isML ? '🚀 ആരംഭിക്കാം' : '🚀 Start Day 1'}</span>
-                                </button>
-                            </div>
+                            <button type="button" onclick="prevSetupStep()" class="study-back">${isML ? 'പിന്നോട്ട്' : 'Back'}</button>
                         </div>
                     </div>
                 `;
@@ -3853,8 +3833,6 @@ function showToastMessage(text, icon = 'checkCircle') {
                     }
                 }
                 const overallStats = getOverallStats();
-                const totalXP = getTotalXP();
-                const userLevel = getUserLevel(totalXP);
 
                 let todayTasksHTML;
                 if (!todayPlan) {
@@ -3944,17 +3922,8 @@ function showToastMessage(text, icon = 'checkCircle') {
                         const subjectBadgeClass = getSubjectColorBadge(focusTask.subject);
                         heroCardHTML = `
                             <!-- Single Focus Hero Card (Duolingo-style Action-First UX for Short Attention Spans) -->
-                            <div class="mb-6 bg-gradient-to-br from-blue-600/10 via-indigo-600/10 to-purple-600/10 dark:from-blue-950/40 dark:via-indigo-950/40 dark:to-purple-950/30 rounded-3xl p-5 sm:p-6 border-2 border-blue-500/80 dark:border-blue-500/60 ring-4 ring-blue-500/15 shadow-xl relative overflow-hidden animate-fade-in-up">
-                                <div class="flex items-center justify-between gap-2 mb-3">
-                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black bg-blue-600 text-white shadow-sm shadow-blue-500/30 uppercase tracking-wider">
-                                        <span class="w-2 h-2 rounded-full bg-white animate-ping"></span>
-                                        <span>⚡ ${isML ? 'ഇപ്പോൾ പഠിക്കേണ്ടത് (Active Focus)' : 'Next Focus Task (Do This Now)'}</span>
-                                    </span>
-                                    <span class="text-xs font-black text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/60 px-2.5 py-0.5 rounded-full border border-amber-200 dark:border-amber-800/60 flex items-center gap-1">
-                                        <i class="fa-solid fa-trophy text-[11px]"></i>
-                                        <span>+100 XP</span>
-                                    </span>
-                                </div>
+                            <div class="study-next mb-6 rounded-2xl p-4 sm:p-6 border border-blue-300 dark:border-blue-800 bg-white dark:bg-[#101726]">
+                                <p class="text-sm font-semibold text-blue-700 dark:text-blue-300 mb-3">${isML ? 'അടുത്ത പഠന ഭാഗം' : 'Next task'}</p>
 
                                 <div class="mb-3">
                                     <div class="flex flex-wrap items-center gap-1.5 mb-1.5">
@@ -4017,7 +3986,7 @@ function showToastMessage(text, icon = 'checkCircle') {
                                     </span>
                                     <button type="button" onclick="toggleTaskDirect('${focusTask.id}')" class="py-1.5 px-3 rounded-xl border border-emerald-500/40 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 font-bold text-xs flex items-center gap-1.5 transition active:scale-95">
                                         <i class="fa-solid fa-circle-check text-xs text-emerald-600 dark:text-emerald-400"></i>
-                                        <span>${isML ? 'പൂർത്തിയായി (+100 XP)' : 'Mark Done (+100 XP)'}</span>
+                                        <span>${isML ? 'പൂർത്തിയായി (+100 XP)' : 'Mark done'}</span>
                                     </button>
                                 </div>
                             </div>
@@ -4113,34 +4082,9 @@ function showToastMessage(text, icon = 'checkCircle') {
                         </details>
                     ` : '';
 
-                    const dailyScheduleRunwayHTML = `
-                        <div class="flex items-center gap-2 mb-4 text-xs font-medium overflow-x-auto pb-1 scrollbar-none no-print">
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border border-amber-200/60 dark:border-amber-800/60 text-[11px] font-bold shrink-0">
-                                <i class="fa-solid fa-sun text-amber-500"></i>
-                                <span>${isML ? 'പ്രഭാതം 5:30 – 7:00 AM' : 'Morning 5:30 – 7:00 AM'}</span>
-                            </span>
-                            <span class="text-slate-300 dark:text-slate-700 font-bold shrink-0">•</span>
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 border border-slate-200/50 dark:border-slate-700/50 text-[11px] font-medium shrink-0">
-                                <i class="fa-solid fa-school text-slate-400"></i>
-                                <span>${isML ? 'സ്കൂൾ 9:00 AM – 4:00 PM' : 'School 9:00 AM – 4:00 PM'}</span>
-                            </span>
-                            <span class="text-slate-300 dark:text-slate-700 font-bold shrink-0">•</span>
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-800 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-800/60 text-[11px] font-bold shrink-0">
-                                <i class="fa-solid fa-cloud-sun text-indigo-500"></i>
-                                <span>${isML ? 'സായാഹ്നം 6:30 – 8:30 PM' : 'Evening 6:30 – 8:30 PM'}</span>
-                            </span>
-                            <span class="text-slate-300 dark:text-slate-700 font-bold shrink-0">•</span>
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-purple-50 dark:bg-purple-950/40 text-purple-800 dark:text-purple-300 border border-purple-200/60 dark:border-purple-800/60 text-[11px] font-bold shrink-0">
-                                <i class="fa-solid fa-moon text-purple-500"></i>
-                                <span>${isML ? 'രാത്രി 9:00 – 10:00 PM' : 'Night 9:00 – 10:00 PM'}</span>
-                            </span>
-                        </div>
-                    `;
-
                     todayTasksHTML = `
                         ${examEveBannerHTML}
                         ${warningBannerHTML}
-                        ${dailyScheduleRunwayHTML}
                         ${heroCardHTML}
                         ${queueSectionHTML}
                         ${completedSectionHTML}
@@ -4148,82 +4092,28 @@ function showToastMessage(text, icon = 'checkCircle') {
                 }
 
                 container.innerHTML = `
-                    <!-- Unified Gamification & Progress Card -->
-                    <div class="bg-white dark:bg-[#0e1422] rounded-3xl p-5 sm:p-6 border border-slate-200/90 dark:border-slate-800/80 shadow-sm mb-5">
-                        <!-- Top Row: XP, Level, Streak -->
-                        <div class="flex flex-wrap items-center justify-between gap-3 mb-3.5">
-                            <div class="flex items-center gap-2">
-                                <span class="inline-flex items-center gap-1.5 text-xs sm:text-sm font-black text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800/60 px-3 py-1 rounded-2xl shadow-xs">
-                                    <i class="fa-solid fa-fire text-amber-500 text-sm"></i>
-                                    <span>${getActiveStreak()} ${isML ? ML_I18N.dashboard.streakSuffix : 'Day Streak'}</span>
-                                </span>
-                                <span class="inline-flex items-center gap-1 text-xs font-black text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800/60 px-2.5 py-1 rounded-2xl">
-                                    <i class="fa-solid fa-bolt text-blue-500"></i>
-                                    <span>${totalXP} XP</span>
-                                </span>
-                            </div>
-
-                            <span class="text-xs font-extrabold text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950/60 border border-purple-200 dark:border-purple-800/60 px-3 py-1 rounded-2xl">
-                                ${userLevel.badge} • ${userLevel.title}
-                            </span>
+                    <section id="today-overview" class="study-overview" aria-labelledby="today-heading">
+                        <div>
+                            <h2 id="today-heading">${todayPlan && todayPlan.date !== TODAY_STR ? (isML ? `പഠന ദിവസം ${todayPlan.dayNumber}` : `Study day ${todayPlan.dayNumber}`) : (isML ? 'ഇന്നത്തെ പഠനം' : "Today's study")}</h2>
+                            <p>${todayPlan ? todayPlan.tasks.filter(t => t.completed).length : 0} / ${todayPlan ? todayPlan.tasks.length : 0} ${isML ? 'പൂർത്തിയായി' : 'tasks complete'} · ${overallStats.percentage}% ${isML ? 'ആകെ പുരോഗതി' : 'of your plan complete'}</p>
                         </div>
-
-                        <!-- Progress Bar & Stats -->
-                        <div class="flex items-baseline justify-between mb-2">
-                            <div class="flex items-baseline gap-2">
-                                <span class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">${overallStats.percentage}%</span>
-                                <span class="text-xs text-slate-400 font-medium">${overallStats.completedCount}/${overallStats.totalCount} ${isML ? ML_I18N.dashboard.tasksFinished : 'tasks finished'}</span>
-                            </div>
-                            ${todayPlan && todayPlan.tasks ? `
-                                <span class="text-xs font-bold text-slate-500 dark:text-slate-400">
-                                    ${todayPlan.tasks.filter(t => t.completed).length}/${todayPlan.tasks.length} ${isML ? 'ഇന്ന്' : 'today'}
-                                </span>
-                            ` : ''}
-                        </div>
-
-                        <div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2.5 overflow-hidden mb-3.5">
-                            <div class="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 h-2.5 rounded-full transition-all duration-500" style="width: ${overallStats.percentage}%"></div>
-                        </div>
-
-                        <!-- Milestone Badges -->
-                        <div class="flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500 dark:text-slate-400 pt-3 border-t border-slate-100 dark:border-slate-800">
-                            <div class="flex items-center gap-4">
-                                <span class="flex items-center gap-1.5">
-                                    <i class="fa-regular fa-calendar-check text-blue-600 dark:text-blue-400"></i>
-                                    <span>${isML ? ML_I18N.dashboard.target : 'Target'}: <strong class="text-slate-700 dark:text-slate-200">${new Date(appState.deadlineDate).toLocaleDateString(isML ? 'ml-IN' : 'en-US', {month: 'short', day: 'numeric'})}</strong></span>
-                                </span>
-                                <span class="flex items-center gap-1.5">
-                                    <i class="fa-solid fa-shield-halved text-purple-600 dark:text-purple-400"></i>
-                                    <span>${isML ? ML_I18N.dashboard.revisionBuffer : 'Revision Buffer'}: <strong class="text-slate-700 dark:text-slate-200">${appState.revisionDaysCount || 0}${isML ? 'ദി' : 'd'}</strong></span>
-                                </span>
-                            </div>
-                            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                                ${(function() {
-                                    const userStream = appState?.stream || (appState?.plan?.some(d => d.tasks.some(t => t.subject === 'Botany' || t.subject === 'Zoology')) ? 'bio' : 'cs');
-                                    if (userStream === 'bio') return isML ? '🌿 ബയോളജി സയൻസ്' : '🌿 Biology Science';
-                                    if (userStream === 'commerce') return isML ? '📊 കൊമേഴ്സ്' : '📊 Commerce';
-                                    if (userStream === 'humanities') return isML ? '🏛️ ഹ്യൂമാനിറ്റീസ്' : '🏛️ Humanities';
-                                    if (userStream === 'imp_only') return isML ? '⚡ ഇംപ്രൂവ്മെന്റ് ഒൺലി' : '⚡ +1 Improvement';
-                                    return isML ? '💻 കമ്പ്യൂട്ടർ സയൻസ്' : '💻 Computer Science';
-                                })()}
-                            </span>
-                        </div>
-                    </div>
+                        <button type="button" onclick="openRegenerateModal()" class="study-adjust">${isML ? 'പ്ലാൻ ക്രമീകരിക്കുക' : 'Adjust plan'}</button>
+                    </section>
 
                     <!-- Day Navigation Bar -->
                     ${todayPlan ? `
                         <div class="flex items-center justify-between gap-2 mb-4 no-print flex-wrap">
                             <div class="flex items-center gap-1.5">
-                                <button type="button" onclick="changeMissionDay(${Math.max(1, todayPlan.dayNumber - 1)})" ${todayPlan.dayNumber === 1 ? 'disabled' : ''} class="py-1.5 px-3 rounded-xl border border-slate-200 dark:border-slate-700 font-bold text-xs text-slate-600 dark:text-slate-300 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-50 dark:hover:bg-slate-800 transition flex items-center gap-1">
-                                    <i class="fa-solid fa-chevron-left text-[10px]"></i>
+                                <button type="button" aria-label="Previous day" onclick="changeMissionDay(${Math.max(1, todayPlan.dayNumber - 1)})" ${todayPlan.dayNumber === 1 ? 'disabled' : ''} class="py-1.5 px-3 rounded-xl border border-slate-200 dark:border-slate-700 font-bold text-xs text-slate-600 dark:text-slate-300 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-50 dark:hover:bg-slate-800 transition flex items-center gap-1">
+                                    <span aria-hidden="true">‹</span>
                                     <span class="hidden sm:inline">Prev Day</span>
                                 </button>
                                 <span class="px-3 py-1.5 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-black text-xs border border-blue-200/60 dark:border-blue-800/60">
                                     ${isML ? `ദിവസം ${todayPlan.dayNumber} / ${appState.plan.length}` : `Day ${todayPlan.dayNumber} of ${appState.plan.length}`}
                                 </span>
-                                <button type="button" onclick="changeMissionDay(${Math.min(appState.plan.length, todayPlan.dayNumber + 1)})" ${todayPlan.dayNumber === appState.plan.length ? 'disabled' : ''} class="py-1.5 px-3 rounded-xl border border-slate-200 dark:border-slate-700 font-bold text-xs text-slate-600 dark:text-slate-300 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-50 dark:hover:bg-slate-800 transition flex items-center gap-1">
+                                <button type="button" aria-label="Next day" onclick="changeMissionDay(${Math.min(appState.plan.length, todayPlan.dayNumber + 1)})" ${todayPlan.dayNumber === appState.plan.length ? 'disabled' : ''} class="py-1.5 px-3 rounded-xl border border-slate-200 dark:border-slate-700 font-bold text-xs text-slate-600 dark:text-slate-300 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-50 dark:hover:bg-slate-800 transition flex items-center gap-1">
                                     <span class="hidden sm:inline">Next Day</span>
-                                    <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                                    <span aria-hidden="true">›</span>
                                 </button>
                             </div>
 
@@ -4241,7 +4131,14 @@ function showToastMessage(text, icon = 'checkCircle') {
                         </div>
                     ` : ''}
 
-                    <!-- Quick Action Bar -->
+                    <!-- Main Section: Today's Targets -->
+                    <div class="bg-white dark:bg-[#0e1422] rounded-3xl p-5 sm:p-7 border border-slate-200 dark:border-slate-800 shadow-sm mb-6">
+                        ${todayTasksHTML}
+                    </div>
+
+                    <details class="study-tools no-print">
+                        <summary>${isML ? 'പ്ലാൻ ഉപകരണങ്ങൾ' : 'Plan tools: print, share or reset'}</summary>
+                        <!-- Quick Action Bar -->
                     <div class="flex items-center justify-between gap-2 mb-4 no-print">
                         <div class="flex items-center gap-2">
                             <button onclick="printSchedule()" class="flex items-center gap-1.5 bg-white dark:bg-[#101726] hover:bg-slate-50 dark:hover:bg-[#141d30] text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 font-bold text-xs py-2 px-3 sm:px-3.5 rounded-xl shadow-sm transition active:scale-95" title="Print full schedule or save as PDF">
@@ -4258,13 +4155,7 @@ function showToastMessage(text, icon = 'checkCircle') {
                             <span>${isML ? ML_I18N.dashboard.share : 'Share'}</span>
                         </button>
                     </div>
-
-                    <!-- Main Section: Today's Targets -->
-                    <div class="bg-white dark:bg-[#0e1422] rounded-3xl p-5 sm:p-7 border border-slate-200 dark:border-slate-800 shadow-sm mb-6">
-                        ${todayTasksHTML}
-                    </div>
-
-                    <!-- Clean Bottom Controls -->
+                        <!-- Clean Bottom Controls -->
                     <div class="flex items-center justify-between pt-4 border-t border-slate-200 dark:border-slate-800 text-xs text-slate-400 no-print">
                         <button onclick="openRegenerateModal()" class="text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white font-medium transition flex items-center gap-1.5">
                             <i class="fa-solid fa-rotate text-xs"></i>
@@ -4274,6 +4165,7 @@ function showToastMessage(text, icon = 'checkCircle') {
                             ${isML ? ML_I18N.dashboard.resetPlan : 'Reset Plan'}
                         </button>
                     </div>
+                    </details>
                 `;
 
                 highlightNextUnfinishedTask();
@@ -4688,34 +4580,7 @@ function showToastMessage(text, icon = 'checkCircle') {
 
         function renderTaskDailySlotBadge(slotIndex, totalTasks, isML) {
             if (!totalTasks || totalTasks <= 0) return '';
-            let icon = 'fa-sun';
-            let timeLabel = '';
-            let name = '';
-            let colorClass = '';
-
-            if (totalTasks === 1) {
-                icon = 'fa-cloud-sun';
-                name = isML ? 'സായാഹ്ന സമയം' : 'Evening Slot';
-                timeLabel = '6:30 – 8:30 PM';
-                colorClass = 'bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 border-indigo-200/60 dark:border-indigo-800/60';
-            } else if (slotIndex === 0) {
-                icon = 'fa-sun';
-                name = isML ? 'പ്രഭാത സമയം' : 'Morning Slot';
-                timeLabel = '5:30 – 7:00 AM';
-                colorClass = 'bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border-amber-200/60 dark:border-amber-800/60';
-            } else if (slotIndex === 1) {
-                icon = 'fa-cloud-sun';
-                name = isML ? 'സായാഹ്ന സമയം' : 'Evening Slot';
-                timeLabel = '6:30 – 8:30 PM';
-                colorClass = 'bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 border-indigo-200/60 dark:border-indigo-800/60';
-            } else {
-                icon = 'fa-moon';
-                name = isML ? 'രാത്രി സമയം' : 'Night Slot';
-                timeLabel = '9:00 – 10:00 PM';
-                colorClass = 'bg-purple-50 dark:bg-purple-950/50 text-purple-700 dark:text-purple-300 border-purple-200/60 dark:border-purple-800/60';
-            }
-
-            return `<span class="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-md border ${colorClass}" title="${name} (${timeLabel})"><i class="fa-solid ${icon} text-[10px]"></i><span>${timeLabel}</span></span>`;
+            return `<span class="text-xs text-slate-500 dark:text-slate-400">${isML ? 'പഠന ഭാഗം' : 'Study block'} ${slotIndex + 1} / ${totalTasks}</span>`;
         }
 
         function getOverallStats() {

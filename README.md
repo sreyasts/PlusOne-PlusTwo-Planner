@@ -10,12 +10,12 @@
 [![PWA Ready](https://img.shields.io/badge/PWA-Offline%20Ready-8b5cf6?style=for-the-badge&logo=pwa&logoColor=white)](https://mission-plustwo.web.app/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-brightgreen?style=for-the-badge&logo=github)](CONTRIBUTING.md)
 [![Board Support](https://img.shields.io/badge/Board-Kerala%20DHSE%20%7C%20SCERT-orange?style=for-the-badge&logo=read-the-docs&logoColor=white)](data/kerala-dhse/)
-[![Tests](https://img.shields.io/badge/Vitest-88%20Passed%20•%20553%20Invariants-10b981?style=for-the-badge&logo=vitest&logoColor=white)](https://github.com/sreyasts/intelligent-study-planner-for-plus-two-)
+[![Tests](https://img.shields.io/badge/Vitest-Automated%20Tests-10b981?style=for-the-badge&logo=vitest&logoColor=white)](https://github.com/sreyasts/intelligent-study-planner-for-plus-two-)
 
 <br/>
 
 ## 🌐 👉 [**LAUNCH MISSION PLUSTWO (WEB APP)**](https://mission-plustwo.web.app/) 👈
-*100% Free, Zero-Cost Civic Software • Works Offline in any browser on Phone, Tablet, or PC • No Ads, Zero PII Tracking*
+*100% Free, Zero-Cost Civic Software • Works Offline in any browser on Phone, Tablet, or PC • Guest Planning & Optional Cloud Sync*
 
 <br/>
 
@@ -29,11 +29,11 @@
 
 ## 🏛️ Mission & Civic Impact Statement
 
-Over **350,000 students** appear annually for the Kerala Directorate of Higher Secondary Education (DHSE) Class 12 board examinations. The vast majority study in government and aided higher secondary schools across rural and semi-urban panchayats in Kerala. Commercial coaching packages and proprietary test-prep apps cost thousands of rupees per year—creating an acute digital and economic divide for candidates from low-income families.
+Mission PlusTwo is intended for Kerala DHSE students who want a free daily revision plan. Independent usage, school adoption, and improvements in exam results have not been verified.
 
 **Mission PlusTwo** was created as an uncompromising public good:
 - **100% Free and Open-Source**: Zero subscription walls, zero microtransactions, zero sponsored content.
-- **Privacy-First & DPDP Act 2023 Compliant**: Operates by default in 100% client-side Guest Mode using browser `localStorage`. No student names, phone numbers, or academic records are collected or sold.
+- **Guest planning and optional cloud sync**: Operates by default in 100% client-side Guest Mode using browser `localStorage`. Google sign-in and Firebase sync are optional. The app also contains event analytics; see the privacy policy. These implementation choices are not a legal compliance certification.
 - **Low-Bandwidth Rural Resilience**: Designed as an **Offline-First Progressive Web App (PWA)** with service worker asset caching. Once loaded, students can generate schedules, track completed chapters, review formulas, and print timetables with zero active internet connection during power outages or limited 2G/3G rural cellular coverage.
 - **Pedagogical Empathy**: Rather than static, demoralizing PDF timetables downloaded from Telegram channels, Mission PlusTwo provides an adaptive constraint-satisfaction scheduler that spaces cognitive load evenly, weaves active recall, and recovers smoothly when a student falls sick or misses a day.
 
@@ -189,10 +189,10 @@ npm run build
 - **[Project Governance](GOVERNANCE.md)**: Decision-making model, RFC process, and release policies.
 - **[Public Audit & Usage Statistics](https://mission-plustwo.web.app/pages/stats.html)**: Public telemetry, 0-fake commitment, and test scorecards.
 - **[Contributor Outreach & Good First Issues](docs/contributor-outreach.md)**: Ready-to-claim beginner issues and Malayalam tech community outreach.
-- **[Codex Readiness Scorecard (Draft)](docs/CODEX-READINESS-SCORECARD.md)**: 60/90-day review thresholds and draft application.
+- **[Application evidence and draft](docs/CODEX-READINESS-SCORECARD.md)**: Current evidence, limits, and a truthful application draft. See [project mission](docs/MISSION.md).
 - **[Contributing Guidelines](CONTRIBUTING.md)**: Local setup, Conventional Commits, branch workflows, and curriculum updates.
 - **[Code of Conduct](CODE_OF_CONDUCT.md)**: Contributor Covenant v2.1.
-- **[Security & Privacy Policy](SECURITY.md)**: Responsible disclosure instructions and DPDP Act 2023 compliance.
+- **[Security & Privacy Policy](SECURITY.md)**: Responsible disclosure instructions and privacy practices.
 - **[Changelog](CHANGELOG.md)**: Keep a Changelog releases and history.
 - **[Algorithm Specification](docs/ALGORITHM.md)**: Formal mathematical pacing specification.
 - **[Empirical Benchmarks](docs/BENCHMARKS.md)**: Comparative benchmarks against sequential and round-robin baselines.

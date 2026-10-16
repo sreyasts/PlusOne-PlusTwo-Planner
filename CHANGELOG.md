@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [6.4.1] - 2026-10-16
+
+### Changed
+- Put today's study progress and next task ahead of badges and secondary tools. Print, sharing and reset remain under Plan tools.
+- Show daily capacity before plan creation, keep one start button, and support keyboard stream selection. Replace fixed clock suggestions with numbered study blocks.
+- Remove automatic sign-in interruptions after guest plan creation and recovery. Refresh the offline cache version.
+- Precache built JavaScript and CSS and match invariant bundles across Origin variations so a first-visit offline reload restores the interactive app. Label future study days accurately after automatic advancement.
+- Correct the application mission, unsupported adoption/compliance claims and stale public metrics. The stats page reads the current plan storage key and renders the stream as text.
+- Exercise guest setup, task completion and persistence at mobile and desktop widths. Use Node 24 and strict lockfile installation in CI.
+
 ## [6.4.0] - 2026-10-02
 
 ### Added

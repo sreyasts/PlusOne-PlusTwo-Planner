@@ -17,11 +17,11 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: 'npm'
 
       - name: Install Dependencies
-        run: npm ci || npm install
+        run: npm ci
 
       - name: Run ESLint
         run: npm run lint
@@ -40,3 +40,9 @@ jobs:
 
       - name: Build Production Web App (Vite)
         run: npm run build
+
+      - name: Install browser for UI and offline checks
+        run: npx playwright install --with-deps chromium
+
+      - name: Verify guest study flow and offline reload
+        run: npm run test:e2e -- --workers=1

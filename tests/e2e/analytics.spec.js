@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('Firebase Analytics Event Tracking & Privacy Verification', () => {
-  test('dispatches anonymous lifecycle events with zero PII and sends to Firebase Analytics', async ({ page }) => {
+test.describe('Local analytics event properties', () => {
+  test('records lifecycle events and omits known personal-data keys', async ({ page }) => {
     const eventsDispatched = [];
 
     // Listen to custom analytics events dispatched by the tracker
@@ -26,13 +26,9 @@ test.describe('Firebase Analytics Event Tracking & Privacy Verification', () => 
     });
 
     // 2. Generate a plan: 'plan_created' should fire
-    const generateBtn = page.locator('button:has-text("Generate My Study Plan")');
-    if (await generateBtn.isVisible()) {
-      await generateBtn.click();
-    }
-
-    // Wait for dashboard view to appear
-    await expect(page.locator('#today-goal-title, .today-task-card, #plan-summary-card').first()).toBeVisible();
+    await page.locator('#setup-step-pill-4').click();
+    await page.getByRole('button', { name: '🚀 Start Day 1', exact: true }).click();
+    await expect(page.locator('#today-overview')).toBeVisible({ timeout: 20000 });
 
     // Verify 'plan_created' was logged
     const funnelAfterPlan = await page.evaluate(() => {
@@ -41,16 +37,10 @@ test.describe('Firebase Analytics Event Tracking & Privacy Verification', () => 
     expect(funnelAfterPlan.plan_created).toBeGreaterThanOrEqual(1);
 
     // 3. Check first task: 'first_task_checked' should fire
-    const firstCheckbox = page.locator('.task-checkbox').first();
-    if (await firstCheckbox.isVisible()) {
-      await firstCheckbox.click();
-
-      // Verify 'first_task_checked' recorded
-      await page.waitForFunction(() => {
-        const counts = JSON.parse(localStorage.getItem('mpt_funnel_counts_v1') || '{}');
-        return counts.first_task_checked >= 1;
-      });
-    }
+    await page.getByRole('button', { name: 'Mark done', exact: true }).click();
+    await expect.poll(() => page.evaluate(() =>
+      JSON.parse(localStorage.getItem('mpt_funnel_counts_v1') || '{}')
+    )).toMatchObject({ first_task_checked: 1 });
 
     // 4. Inspect events to strictly verify ZERO Personally Identifiable Information (PII)
     const finalFunnel = await page.evaluate(() => {
@@ -73,6 +63,6 @@ test.describe('Firebase Analytics Event Tracking & Privacy Verification', () => 
     }
 
     // Take screenshot as proof of verified event delivery
-    await page.screenshot({ path: 'docs/test-results/analytics-events-verified.png', fullPage: true });
+    await page.screenshot({ path: test.info().outputPath('analytics-events.png'), fullPage: true });
   });
 });

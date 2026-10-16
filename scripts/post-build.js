@@ -94,4 +94,19 @@ if (fs.existsSync(distIndexHtml)) {
   console.log('[post-build] Normalized favicon paths in dist/index.html to stable root URLs');
 }
 
+// The first module requests can finish before the worker controls the page.
+// Precache the generated bundles so a first-visit offline reload can hydrate.
+const workerPath = path.join(distDir, 'sw.js');
+const bundles = fs.readdirSync(distAssetsDir)
+  .filter(file => /\.(?:js|css)$/.test(file))
+  .sort()
+  .map(file => `./assets/${file}`);
+const worker = fs.readFileSync(workerPath, 'utf8');
+const precacheAnchor = 'const ASSETS_TO_CACHE = [';
+if (!worker.includes(precacheAnchor) || !bundles.length) {
+  throw new Error('Missing service worker precache anchor or built bundles.');
+}
+fs.writeFileSync(workerPath, worker.replace(precacheAnchor,
+  `${precacheAnchor}\n${bundles.map(file => `  ${JSON.stringify(file)},`).join('\n')}`));
+console.log(`[post-build] Added ${bundles.length} built bundles to offline precache.`);
 console.log('[post-build] All static assets successfully verified in dist/.');
