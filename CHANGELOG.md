@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [6.4.2] - 2026-10-16
+
+### Changed
+- Remove the focus timer, floating overlay, picture-in-picture windows and completion popups entirely.
+- Replace oversized focus cards and badges with compact daily task rows, clear completion/undo controls and expandable study resources.
+- Keep calendar-based Today, previous pending work and tomorrow's preview separate. Preserve saved plans and AI study tutor links.
+
 ## [6.4.1] - 2026-10-16
 
 ### Changed

@@ -1045,18 +1045,6 @@
         </div>
     </div>
 
-    <!-- Focus Sprint Timer Overlay (Compact Floating & Maximized Fullscreen) -->
-    <div id="focus-overlay-container" class="hidden">
-        <!-- Overlay backdrop: ONLY active for full-screen maximized mode, hidden in compact floating mode -->
-        <div id="focus-overlay-backdrop" onclick="minimizeFocusOverlay()" class="fixed inset-0 bg-slate-950/80 dark:bg-black/90 backdrop-blur-md z-40 transition-opacity duration-300 hidden"></div>
-
-        <!-- 1. Compact Floating Overlay Card: Docked over the app at bottom-right/bottom -->
-        <div id="focus-overlay-compact" class="fixed z-50 transition-all duration-300 bottom-4 left-3 right-3 sm:bottom-6 sm:right-6 sm:left-auto sm:w-[420px] max-w-lg mx-auto sm:mx-0 shadow-2xl"></div>
-
-        <!-- 2. Maximized Deep Focus Theater (Full-screen) -->
-        <div id="focus-overlay-maximized" class="fixed inset-0 z-50 hidden bg-slate-950/98 backdrop-blur-2xl text-white flex-col justify-between p-4 sm:p-8 md:p-10 overflow-y-auto animate-fade-in"></div>
-    </div>
-
     <!-- Application JavaScript Logic -->
     <script type="module" src="/src/main.js"></script>
 </body>

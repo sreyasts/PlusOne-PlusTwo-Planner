@@ -40,7 +40,20 @@ for (const width of [390, 1280]) {
     await page.clock.setSystemTime(new Date(`${firstStudyDay.date}T12:00:00+05:30`));
     await page.reload();
     await expect(page.locator('#today-tasks')).toBeVisible();
-    await page.getByRole('button', { name: 'Mark done', exact: true }).click();
+    await expect(page.locator('#focus-overlay')).toHaveCount(0);
+    await expect(page.getByRole('button', { name: /Start Focus|Float \(PC\)|Overlay/i })).toHaveCount(0);
+    const firstTask = page.locator('.daily-task').first();
+    await firstTask.locator('.daily-resources > summary').click();
+    const chapterTitle = (await firstTask.locator('h3').innerText()).replace(/^Chapter\s+\d+:\s*/, '');
+    await firstTask.getByRole('button', { name: 'AI study tutor', exact: true }).click();
+    await expect(page.locator('#ai-tutor-modal')).toBeVisible();
+    await expect(page.locator('#ai-tutor-chapter')).toContainText(chapterTitle);
+    await page.locator('#ai-tutor-modal').getByRole('button', { name: 'Close Modal', exact: true }).click();
+    await page.locator('#today-tasks [data-study-task][aria-pressed="false"]').first().click();
+    await expect(page.locator('#today-tasks [data-study-task][aria-pressed="true"]')).toHaveCount(1);
+    await page.getByRole('button', { name: 'Undo', exact: true }).click();
+    await expect(page.locator('#today-tasks [data-study-task][aria-pressed="true"]')).toHaveCount(0);
+    await page.locator('#today-tasks [data-study-task][aria-pressed="false"]').first().click();
     await expect.poll(() => page.evaluate(() => {
       const state = JSON.parse(localStorage.getItem('plusTwoMissionState_v2'));
       return state.plan.flatMap(day => day.tasks).filter(task => task.completed).length;

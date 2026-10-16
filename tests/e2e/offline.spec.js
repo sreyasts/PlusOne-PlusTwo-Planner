@@ -44,7 +44,12 @@ test.describe('PWA Cold Offline Start & Language Switcher', () => {
 
     // 4. Emulate Going Completely Offline
     const cachedAssets = await page.evaluate(async () => {
-      const cache = await caches.open('plustwo-mission-v6.4.1');
+      const registration = await navigator.serviceWorker.ready;
+      const cacheNames = await caches.keys();
+      const workerVersion = await fetch(registration.active.scriptURL).then(response => response.text());
+      const cacheName = workerVersion.match(/const CACHE_NAME = '([^']+)'/)[1];
+      if (!cacheNames.includes(cacheName)) throw new Error('Active worker cache missing');
+      const cache = await caches.open(cacheName);
       return (await cache.keys()).map(request => request.url);
     });
     expect(cachedAssets.some(url => /\/assets\/index-.*\.js$/.test(url))).toBe(true);

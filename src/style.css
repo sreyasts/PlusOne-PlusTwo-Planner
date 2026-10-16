@@ -6,10 +6,60 @@ body.is-setting-up #mobile-nav { display: none; }
 .study-overview { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 24px; }
 .study-overview h2 { font-size: 24px; font-weight: 750; color: #0f172a; }
 .study-overview p { font-size: 14px; color: #64748b; margin-top: 6px; }
+.daily-board { border: 1px solid #dbe3ed; border-radius: 16px; background: #fff; margin-bottom: 20px; overflow: hidden; }
+.daily-tasks { list-style: none; padding: 0; margin: 0; }
+.daily-task { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; padding: 24px; border-top: 1px solid #e2e8f0; }
+.daily-task:first-child { border-top: 0; }
+.daily-task-content { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.daily-task-meta { display: flex; flex-wrap: wrap; gap: 12px; color: #64748b; font-size: 12px; margin-bottom: 8px; }
+.daily-task-meta > span:first-child { color: #2563eb; font-weight: 700; }
+.daily-task h3 { font-size: 17px; line-height: 1.45; font-weight: 650; color: #0f172a; }
+.daily-topic { color: #475569; font-size: 14px; line-height: 1.65; margin-top: 4px; max-width: 65ch; }
+.daily-toggle { flex-shrink: 0; cursor: pointer; border: 1px solid #2563eb; background: #2563eb; color: #fff; padding: 10px 16px; min-height: 44px; border-radius: 10px; font-size: 13px; font-weight: 650; }
+.daily-toggle:hover { background: #1d4ed8; }
+.daily-toggle[aria-pressed="true"] { background: transparent; border-color: #cbd5e1; color: #475569; }
+.daily-done-label { color: #047857; font-weight: 650; }
+.daily-resources { margin-top: 14px; font-size: 13px; }
+.daily-resources summary { cursor: pointer; color: #64748b; width: fit-content; }
+.daily-resources > div { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 10px; }
+.daily-resources button, .daily-empty button { cursor: pointer; color: #2563eb; text-decoration: underline; text-underline-offset: 3px; }
+.daily-resources a, .daily-resources button { padding: 6px 0; }
+.daily-finished, .daily-advisory, .daily-empty { padding: 20px 24px; font-size: 14px; line-height: 1.6; }
+.daily-finished { background: #ecfdf5; color: #065f46; border-bottom: 1px solid #a7f3d0; }
+.daily-finished p, .daily-empty p { margin-top: 4px; }
+.daily-advisory { background: #fffbeb; color: #854d0e; border-bottom: 1px solid #fde68a; }
+.daily-empty h3 { font-size: 17px; font-weight: 650; }
+.daily-empty button { margin-top: 14px; }
+.daily-toggle:focus-visible, .daily-resources summary:focus-visible, .daily-resources button:focus-visible { outline: 3px solid #60a5fa; outline-offset: 3px; }
+html.dark .daily-board { background: #0e1422; border-color: #263247; }
+html.dark .daily-task { border-color: #263247; }
+html.dark .daily-task h3 { color: #f1f5f9; }
+html.dark .daily-topic { color: #b5c0d0; }
+html.dark .daily-task-meta, html.dark .daily-resources summary { color: #94a3b8; }
+html.dark .daily-task-meta > span:first-child, html.dark .daily-resources button { color: #93c5fd; }
+html.dark .daily-toggle[aria-pressed="true"] { border-color: #475569; color: #cbd5e1; }
+html.dark .daily-done-label { color: #6ee7b7; }
+html.dark .daily-finished { background: #102b25; color: #a7f3d0; border-color: #235447; }
+html.dark .daily-advisory { background: #292213; color: #fde68a; border-color: #785820; }
+@media (max-width: 600px) {
+    .daily-task { flex-direction: column; gap: 16px; padding: 20px; }
+    .daily-toggle { align-self: flex-start; }
+    .daily-task h3 { font-size: 16px; }
+}
 .study-adjust, .study-back { padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 13px; font-weight: 650; cursor: pointer; white-space: nowrap; }
 .study-capacity { padding: 16px; border: 1px solid #cbd5e1; border-radius: 14px; }
-.study-tools { border-top: 1px solid #cbd5e1; padding-top: 16px; }
-.study-tools > summary { cursor: pointer; font-size: 14px; font-weight: 650; padding: 8px 0 16px; }
+.study-tools { border: 1px solid #cbd5e1; border-radius: 14px; padding: 20px; }
+.study-tools > summary { cursor: pointer; font-size: 14px; font-weight: 650; line-height: 1.5; overflow-wrap: anywhere; }
+.study-tools[open] > summary { margin-bottom: 20px; }
+.study-tool-actions, .study-tool-actions > div { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.study-tool-actions { justify-content: space-between; margin-bottom: 16px; }
+.study-tool-actions > div { min-width: 0; max-width: 100%; }
+.study-tool-recovery { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding-top: 16px; }
+.study-tools button { min-height: 44px; min-width: 0; }
+.study-tools button span { min-width: 0; overflow-wrap: anywhere; }
+.study-tool-recovery > button:first-child { flex: 1 1 240px; text-align: left; }
+.study-tool-recovery > button:first-child span { overflow-wrap: anywhere; }
+.study-tool-recovery > button:last-child { flex-shrink: 0; }
 .study-date, .study-history { font-size: 13px; color: #64748b; margin: 0 0 12px; }
 .pending-notice { font-size: 14px; padding: 12px 16px; margin-bottom: 12px; border: 1px solid #fcd34d; background: #fffbeb; color: #854d0e; border-radius: 12px; }
 .pending-notice a { text-decoration: underline; font-weight: 650; margin-left: 6px; }
@@ -767,63 +817,6 @@ html.dark .study-capacity, html.dark .study-tools { border-color: #334155; }
         html.dark ::-webkit-scrollbar-thumb:hover {
             background: #334464;
         }
-
-/* ==========================================================================
-   Focus Sprint Mode & App Minimization Styling
-   ========================================================================== */
-/* On desktop, minimize background app when focus mode is active */
-@media (min-width: 641px) {
-    body.app-minimized-focus-mode header,
-    body.app-minimized-focus-mode #app-container,
-    body.app-minimized-focus-mode footer,
-    body.app-minimized-focus-mode section {
-        opacity: 0.22 !important;
-        filter: blur(5px) grayscale(25%) !important;
-        pointer-events: none !important;
-        transform: scale(0.99);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-}
-
-/* On mobile, seamlessly hide bottom navigation to let the focus overlay dock cleanly */
-@media (max-width: 640px) {
-    body.app-minimized-focus-mode #mobile-nav {
-        display: none !important;
-    }
-    body.app-minimized-focus-mode:not(.maximized-mode) #app-container {
-        padding-bottom: 11rem;
-    }
-}
-
-body.app-minimized-focus-mode.maximized-mode header,
-body.app-minimized-focus-mode.maximized-mode #app-container,
-body.app-minimized-focus-mode.maximized-mode footer,
-body.app-minimized-focus-mode.maximized-mode section,
-body.app-minimized-focus-mode.maximized-mode #toast-banner {
-    opacity: 0.12 !important;
-    filter: blur(10px) grayscale(35%) !important;
-    pointer-events: none !important;
-    transform: scale(0.985);
-    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-body.app-minimized-focus-mode:not(.maximized-mode) #app-container {
-    padding-bottom: 9rem;
-    transition: all 0.3s ease;
-}
-
-@keyframes focusPulseGlow {
-    0%, 100% {
-        box-shadow: 0 0 25px rgba(245, 158, 11, 0.35), 0 0 50px rgba(239, 68, 68, 0.2);
-    }
-    50% {
-        box-shadow: 0 0 45px rgba(245, 158, 11, 0.7), 0 0 90px rgba(239, 68, 68, 0.45);
-    }
-}
-
-.focus-overlay-active-glow {
-    animation: focusPulseGlow 2.5s infinite;
-}
 
 /* ==========================================================================
    Print Stylesheet (@media print)

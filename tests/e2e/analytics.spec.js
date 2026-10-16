@@ -37,7 +37,7 @@ test.describe('Local analytics event properties', () => {
     expect(funnelAfterPlan.plan_created).toBeGreaterThanOrEqual(1);
 
     // 3. Check first task: 'first_task_checked' should fire
-    await page.getByRole('button', { name: 'Mark done', exact: true }).click();
+    await page.locator('#today-tasks [data-study-task][aria-pressed="false"]').first().click();
     await expect.poll(() => page.evaluate(() =>
       JSON.parse(localStorage.getItem('mpt_funnel_counts_v1') || '{}')
     )).toMatchObject({ first_task_checked: 1 });
