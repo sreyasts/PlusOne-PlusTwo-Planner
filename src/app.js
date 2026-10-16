@@ -4621,10 +4621,10 @@ function showToastMessage(text, icon = 'checkCircle') {
 
         function renderTaskDailySlotBadge(slotIndex, totalTasks, isML) {
             if (!totalTasks || totalTasks <= 0) return '';
-            let icon = 'fa-sun';
-            let timeLabel = '';
-            let name = '';
-            let colorClass = '';
+            let icon;
+            let timeLabel;
+            let name;
+            let colorClass;
 
             if (totalTasks === 1) {
                 icon = 'fa-cloud-sun';
