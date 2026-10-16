@@ -3961,6 +3961,7 @@ function showToastMessage(text, icon = 'checkCircle') {
                                         <span class="text-xs font-bold px-2.5 py-0.5 rounded-lg ${subjectBadgeClass}">
                                             ${focusTask.subject}
                                         </span>
+                                        ${renderTaskDailySlotBadge(0, totalToday, isML)}
                                         ${renderTaskGradeBadge(focusTask)}
                                         ${renderTaskPartBadge(focusTask)}
                                         ${focusTask.isFocusSubject ? '<span class="text-xs font-black px-2 py-0.5 rounded-md bg-rose-100 text-rose-800 border border-rose-200"><i class="fa-solid fa-bullseye mr-1"></i>Focus Priority</span>' : ''}
@@ -4034,8 +4035,9 @@ function showToastMessage(text, icon = 'checkCircle') {
                                 </h4>
                             </div>
                             <div class="space-y-2.5">
-                                ${queueTasks.map((task) => {
+                                ${queueTasks.map((task, idx) => {
                                     const subjectBadgeClass = getSubjectColorBadge(task.subject);
+                                    const slotIndex = (focusTask ? 1 : 0) + idx;
                                     return `
                                         <div class="task-item-container today-task-card bg-white dark:bg-[#101726] border border-slate-200/90 dark:border-slate-800 rounded-2xl p-3.5 transition flex items-start gap-3 hover:shadow-md">
                                             <div class="task-checkbox mt-0.5" data-task-id="${task.id}" onclick="toggleTaskDirect('${task.id}')">
@@ -4048,6 +4050,7 @@ function showToastMessage(text, icon = 'checkCircle') {
                                                     <span class="text-xs font-bold px-2 py-0.5 rounded-md ${subjectBadgeClass}">
                                                         ${task.subject}
                                                     </span>
+                                                    ${renderTaskDailySlotBadge(slotIndex, totalToday, isML)}
                                                     ${renderTaskGradeBadge(task)}
                                                     ${renderTaskPartBadge(task)}
                                                     ${getTaskResourceBadge(task)}
@@ -4110,9 +4113,34 @@ function showToastMessage(text, icon = 'checkCircle') {
                         </details>
                     ` : '';
 
+                    const dailyScheduleRunwayHTML = `
+                        <div class="flex items-center gap-2 mb-4 text-xs font-medium overflow-x-auto pb-1 scrollbar-none no-print">
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border border-amber-200/60 dark:border-amber-800/60 text-[11px] font-bold shrink-0">
+                                <i class="fa-solid fa-sun text-amber-500"></i>
+                                <span>${isML ? 'പ്രഭാതം 5:30 – 7:00 AM' : 'Morning 5:30 – 7:00 AM'}</span>
+                            </span>
+                            <span class="text-slate-300 dark:text-slate-700 font-bold shrink-0">•</span>
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 border border-slate-200/50 dark:border-slate-700/50 text-[11px] font-medium shrink-0">
+                                <i class="fa-solid fa-school text-slate-400"></i>
+                                <span>${isML ? 'സ്കൂൾ 9:00 AM – 4:00 PM' : 'School 9:00 AM – 4:00 PM'}</span>
+                            </span>
+                            <span class="text-slate-300 dark:text-slate-700 font-bold shrink-0">•</span>
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-800 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-800/60 text-[11px] font-bold shrink-0">
+                                <i class="fa-solid fa-cloud-sun text-indigo-500"></i>
+                                <span>${isML ? 'സായാഹ്നം 6:30 – 8:30 PM' : 'Evening 6:30 – 8:30 PM'}</span>
+                            </span>
+                            <span class="text-slate-300 dark:text-slate-700 font-bold shrink-0">•</span>
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-purple-50 dark:bg-purple-950/40 text-purple-800 dark:text-purple-300 border border-purple-200/60 dark:border-purple-800/60 text-[11px] font-bold shrink-0">
+                                <i class="fa-solid fa-moon text-purple-500"></i>
+                                <span>${isML ? 'രാത്രി 9:00 – 10:00 PM' : 'Night 9:00 – 10:00 PM'}</span>
+                            </span>
+                        </div>
+                    `;
+
                     todayTasksHTML = `
                         ${examEveBannerHTML}
                         ${warningBannerHTML}
+                        ${dailyScheduleRunwayHTML}
                         ${heroCardHTML}
                         ${queueSectionHTML}
                         ${completedSectionHTML}
@@ -4290,7 +4318,7 @@ function showToastMessage(text, icon = 'checkCircle') {
 
                             <div class="p-3 sm:p-4 divide-y divide-slate-100">
                                 ${displayedTasks.length === 0 ? (day.isRestDay ? `<p class="text-xs text-emerald-700 font-semibold py-1.5 flex items-center gap-2"><i class="fa-solid fa-mug-hot text-emerald-600"></i><span>${isML ? ML_I18N.plan.restDayNotice : 'Personalized Rest & Recharge Day (0 new chapters)'}</span></p>` : `<p class="text-xs text-slate-400 italic py-1">${isML ? 'ഫ്രീ / ബഫർ ദിനം' : 'Free / Buffer Day'}</p>`) : ''}
-                                ${displayedTasks.map(task => {
+                                ${displayedTasks.map((task, taskIdx) => {
                                     const badgeColor = getSubjectColorBadge(task.subject);
                                     return `
                                         <div class="task-item-container py-2.5 first:pt-0 last:pb-0 flex items-start gap-3">
@@ -4303,6 +4331,7 @@ function showToastMessage(text, icon = 'checkCircle') {
                                             <div class="flex-1 cursor-pointer" onclick="toggleTaskDirect('${task.id}')">
                                                 <div class="flex flex-wrap items-center gap-1.5 mb-1">
                                                     <span class="text-xs font-bold px-1.5 py-0.5 rounded ${badgeColor}">${task.subject}</span>
+                                                    ${renderTaskDailySlotBadge(taskIdx, displayedTasks.length, isML)}
                                                     ${task.isFocusSubject ? '<span class="text-xs font-black px-1.5 py-0.5 rounded bg-rose-100 text-rose-800 border border-rose-200">🎯 FOCUS</span>' : ''}
                                                     ${renderTaskGradeBadge(task)}
                                                     ${renderTaskPartBadge(task)}
@@ -4655,6 +4684,38 @@ function showToastMessage(text, icon = 'checkCircle') {
                 return `<span class="text-xs font-black px-1.5 py-0.5 rounded-md bg-emerald-100 text-emerald-800 border border-emerald-300/80 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-700/60 flex items-center gap-1 shadow-xs"><i class="fa-solid fa-circle-check text-xs text-emerald-600"></i> Full Chapter (${p}/${total})</span>`;
             }
             return `<span class="text-xs font-bold px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border border-slate-200/60 dark:border-slate-700/60">Part ${p}/${total}</span>`;
+        }
+
+        function renderTaskDailySlotBadge(slotIndex, totalTasks, isML) {
+            if (!totalTasks || totalTasks <= 0) return '';
+            let icon = 'fa-sun';
+            let timeLabel = '';
+            let name = '';
+            let colorClass = '';
+
+            if (totalTasks === 1) {
+                icon = 'fa-cloud-sun';
+                name = isML ? 'സായാഹ്ന സമയം' : 'Evening Slot';
+                timeLabel = '6:30 – 8:30 PM';
+                colorClass = 'bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 border-indigo-200/60 dark:border-indigo-800/60';
+            } else if (slotIndex === 0) {
+                icon = 'fa-sun';
+                name = isML ? 'പ്രഭാത സമയം' : 'Morning Slot';
+                timeLabel = '5:30 – 7:00 AM';
+                colorClass = 'bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border-amber-200/60 dark:border-amber-800/60';
+            } else if (slotIndex === 1) {
+                icon = 'fa-cloud-sun';
+                name = isML ? 'സായാഹ്ന സമയം' : 'Evening Slot';
+                timeLabel = '6:30 – 8:30 PM';
+                colorClass = 'bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 border-indigo-200/60 dark:border-indigo-800/60';
+            } else {
+                icon = 'fa-moon';
+                name = isML ? 'രാത്രി സമയം' : 'Night Slot';
+                timeLabel = '9:00 – 10:00 PM';
+                colorClass = 'bg-purple-50 dark:bg-purple-950/50 text-purple-700 dark:text-purple-300 border-purple-200/60 dark:border-purple-800/60';
+            }
+
+            return `<span class="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-md border ${colorClass}" title="${name} (${timeLabel})"><i class="fa-solid ${icon} text-[10px]"></i><span>${timeLabel}</span></span>`;
         }
 
         function getOverallStats() {
