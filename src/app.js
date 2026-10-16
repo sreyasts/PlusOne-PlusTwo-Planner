@@ -3485,43 +3485,7 @@ function showToastMessage(text, icon = 'checkCircle') {
                                     </div>
                                 </div>
 
-                                <!-- Option 5: Plus One (+1) Improvement Only -->
-                                <div id="stream-card-imp" onclick="setStreamSelection('imp_only')" class="cursor-pointer p-3.5 rounded-2xl border-2 ${selectedStream === 'imp_only' ? 'border-amber-500 dark:border-amber-400 bg-amber-50/80 dark:bg-amber-950/40 ring-2 ring-amber-400/25 shadow-sm' : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600'} transition text-left flex flex-col justify-between sm:col-span-2">
-                                    <div class="flex items-center justify-between">
-                                        <div class="flex items-center gap-2.5">
-                                            <div class="w-9 h-9 rounded-xl bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 flex items-center justify-center text-base font-bold shrink-0">
-                                                <i class="fa-solid fa-graduation-cap"></i>
-                                            </div>
-                                            <div>
-                                                <div class="flex items-center gap-2">
-                                                    <h4 class="font-black text-slate-900 dark:text-white text-sm">${isML ? ML_I18N.setup.impOnlyTitle : 'Plus One (+1) Improvement Only'}</h4>
-                                                    <span class="text-[10px] font-black bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-200 px-2 py-0.5 rounded-full uppercase">Improvement</span>
-                                                </div>
-                                                <span class="text-[11px] font-semibold text-amber-700 dark:text-amber-300">${isML ? ML_I18N.setup.impOnlySub : 'Dedicated +1 Timetable • Zero +2 Content'}</span>
-                                            </div>
-                                        </div>
-                                        <span class="w-5 h-5 rounded-full ${selectedStream === 'imp_only' ? 'bg-amber-600 text-white' : 'border border-slate-300 dark:border-slate-600'} flex items-center justify-center text-xs">
-                                            ${selectedStream === 'imp_only' ? '<i class="fa-solid fa-check text-[10px]"></i>' : ''}
-                                        </span>
-                                    </div>
-                                </div>
                             </div>
-
-                            <!-- If Improvement Only is picked, show papers directly -->
-                            ${selectedStream === 'imp_only' ? `
-                                <div class="p-4 bg-amber-50/60 dark:bg-amber-950/30 rounded-2xl border border-amber-300 dark:border-amber-600/50 space-y-3 animate-fade-in-up">
-                                    <div class="text-left">
-                                        <h4 class="font-black text-slate-900 dark:text-white text-sm flex items-center gap-1.5">
-                                            <i class="fa-solid fa-fire text-amber-600 dark:text-amber-400"></i>
-                                            <span>${isML ? '+1 ഇംപ്രൂവ്മെന്റ് വിഷയങ്ങളും പരീക്ഷാ തീയതിയും' : 'Select +1 Improvement Subjects & Exam Dates'}</span>
-                                        </h4>
-                                        <p class="text-xs text-amber-800 dark:text-amber-300 font-semibold mt-0.5">${isML ? 'ഇംപ്രൂവ്മെന്റ് പരീക്ഷകൾ അടുത്തതിനാൽ ഉയർന്ന മുൻഗണനയോടെ തയ്യാറാക്കിയ ക്രാഷ് ഷെഡ്യൂൾ ലഭിക്കും:' : 'Improvement exams are near! Prioritized crash scheduling with active recall is activated:'}</p>
-                                    </div>
-                                    <div id="improvement-subject-items-container" class="space-y-2">
-                                        ${renderImprovementSubjectItems()}
-                                    </div>
-                                </div>
-                            ` : ''}
 
                             <!-- Step 1 Navigation (Strictly "Next", No extra clutter) -->
                             <div class="pt-5 flex justify-end">
@@ -3600,14 +3564,6 @@ function showToastMessage(text, icon = 'checkCircle') {
                                 </div>
                                 <span id="completed-chaps-badge" class="text-xs font-bold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-[#162137] text-slate-500 dark:text-slate-300 shrink-0">0 completed</span>
                             </div>
-
-                            <!-- Grade Switcher (+2 vs +1) -->
-                            ${selectedStream !== 'imp_only' ? `
-                                <div class="flex bg-slate-100 dark:bg-[#162137] p-1 rounded-xl gap-1">
-                                    <button type="button" id="grade-tab-p2" onclick="switchSetupGrade('+2')" class="flex-1 py-1.5 px-3 text-xs font-bold rounded-lg bg-blue-600 text-white shadow-sm transition">📘 Plus Two (+2)</button>
-                                    <button type="button" id="grade-tab-p1" onclick="switchSetupGrade('+1')" class="flex-1 py-1.5 px-3 text-xs font-bold rounded-lg bg-slate-100 dark:bg-[#121a2c] text-slate-600 dark:text-slate-300 transition">📙 +1 Improvement</button>
-                                </div>
-                            ` : ''}
 
                             <!-- Subject Tabs Switcher -->
                             <div id="setup-subject-tabs-container" class="flex flex-wrap gap-1.5 pt-1">
@@ -3740,33 +3696,7 @@ function showToastMessage(text, icon = 'checkCircle') {
                                             </div>
                                         </div>
 
-                                        <!-- B. +1 Improvement Toggle for +2 students -->
-                                        <div class="pt-3 border-t border-slate-200/80 dark:border-slate-700/80">
-                                            <span class="text-xs font-extrabold text-slate-700 dark:text-slate-200 block mb-2">
-                                                ${isML ? 'പ്ലസ് വൺ (+1) ഇംപ്രൂവ്മെന്റ് പേപ്പറുകൾ കൂടി ഉണ്ടോ?' : 'Also appearing for Plus One (+1) Improvement papers?'}
-                                            </span>
-                                            <div class="grid grid-cols-2 gap-2.5">
-                                                <div id="imp-choice-no" onclick="setImprovementToggle(false)" class="cursor-pointer p-3 rounded-2xl border-2 border-slate-700 dark:border-slate-500 bg-slate-50 dark:bg-[#141d30] ring-2 ring-slate-400/20 transition text-left flex items-center justify-between shadow-xs">
-                                                    <h4 class="font-black text-slate-900 dark:text-white text-xs">${isML ? ML_I18N.setup.impNo : 'No, +2 Only'}</h4>
-                                                    <span class="w-4 h-4 rounded-full bg-slate-700 dark:bg-slate-500 flex items-center justify-center text-xs choice-check shrink-0">
-                                                        <i class="fa-solid fa-check text-white text-[9px]"></i>
-                                                    </span>
-                                                </div>
-                                                <div id="imp-choice-yes" onclick="setImprovementToggle(true)" class="cursor-pointer p-3 rounded-2xl border-2 border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-amber-400 transition text-left flex items-center justify-between">
-                                                    <h4 class="font-black text-slate-900 dark:text-white text-xs">${isML ? ML_I18N.setup.impYes : 'Yes, I Have +1!'}</h4>
-                                                    <span class="w-4 h-4 rounded-full border border-slate-300 dark:border-slate-600 flex items-center justify-center text-xs choice-check shrink-0"></span>
-                                                </div>
-                                            </div>
-                                            <div id="improvement-options" class="hidden mt-3 p-3 bg-white dark:bg-[#101726] rounded-2xl border border-amber-300 dark:border-amber-500/40 shadow-xs space-y-2">
-                                                <div class="p-2.5 rounded-xl bg-amber-50/90 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-800/60 flex items-start gap-2 text-xs text-amber-900 dark:text-amber-200 leading-relaxed">
-                                                    <i class="fa-solid fa-fire text-amber-600 dark:text-amber-400 mt-0.5 shrink-0"></i>
-                                                    <span>${isML ? '<b>ഇംപ്രൂവ്മെന്റ് പരീക്ഷകൾ അടുത്തു!</b> ഈ പേപ്പറുകൾക്ക് ഷെഡ്യൂളിൽ ഉയർന്ന മുൻഗണന നൽകുകയും, ആ ദിവസങ്ങളിൽ +2 ഭാരം കുറയ്ക്കുകയും, ഡെയ്‌ലി ടാസ്കുകളിൽ ഏറ്റവും മുകളിൽ ഉൾപ്പെടുത്തുകയും ചെയ്യും.' : '<b>Improvement Exams are Near!</b> Selected papers receive elevated priority, reduced +2 workload on exam prep days, and appear at the very top of daily tasks.'}</span>
-                                                </div>
-                                                <div id="improvement-subject-items-container" class="space-y-2">
-                                                    ${renderImprovementSubjectItems()}
-                                                </div>
-                                            </div>
-                                        </div>
+
                                     ` : ''}
 
                                     <!-- C. Weekly Rhythm & Hours -->
@@ -4429,6 +4359,7 @@ function showToastMessage(text, icon = 'checkCircle') {
                                 ? Array.from(new Set((appState?.plan || []).flatMap(d => (d.tasks || []).map(t => t.subject))))
                                 : streamSubs;
 
+                            const hasImprovementTasks = appState?.improvementConfig && appState.improvementConfig.length > 0;
                             const filters = [
                                 { id: 'All', label: isML ? ML_I18N.plan.allSubjects : 'All Subjects', icon: 'fa-layer-group' },
                                 ...activeSubs.map(s => ({
@@ -4436,8 +4367,10 @@ function showToastMessage(text, icon = 'checkCircle') {
                                     label: s === 'Mathematics' ? 'Maths' : s === 'Computer Science' ? 'CS' : s === 'Business Studies' ? 'Business' : s === 'Computer Applications' ? 'CA' : s === 'Political Science' ? 'Pol Science' : s,
                                     icon: subjectIcons[s] || 'fa-book'
                                 })),
-                                { id: '+2 Regular', label: '+2 Regular', icon: 'fa-graduation-cap' },
-                                { id: '+1 Improvement', label: '+1 Improvement', icon: 'fa-arrow-up-right-dots' }
+                                ...(hasImprovementTasks ? [
+                                    { id: '+2 Regular', label: '+2 Regular', icon: 'fa-graduation-cap' },
+                                    { id: '+1 Improvement', label: '+1 Improvement', icon: 'fa-arrow-up-right-dots' }
+                                ] : [])
                             ];
 
                             return filters.map(f => {

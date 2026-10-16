@@ -84,7 +84,7 @@ The scheduling engine solves an academic constraint satisfaction problem in dete
    - High-yield Previous Year Questions (PYQs)
    - Timed 3-hour Model Exam simulations under board conditions
    - Formula sheet and circuit diagram retrieval sessions
-5. **Class 11 (+1) Improvement Weaving**: Prioritizes pending Class 11 improvement papers before their specific milestone exam dates while keeping Class 12 studies on track.
+5. **Adaptive Catch-Up & Rebalancing**: Prioritizes pending high-weightage chapters and redistributes backlog evenly without falling behind on board exam deadlines.
 
 ### 2. Standalone Core Engine Usage (For External Developers & Other Boards)
 The core scheduling engine under `src/core/` is 100% decoupled from the DOM and web framework. External developers, researchers, or regional education boards (e.g., CBSE, ICSE, Tamil Nadu, Karnataka State Board) can import and use it in Node.js, React Native, or backend APIs:
