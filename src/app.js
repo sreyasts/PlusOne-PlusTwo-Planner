@@ -64,6 +64,10 @@ import {
 import {
   generateAiTutorPrompt,
 } from './utils/ai_tutor.js';
+import { getDailyPlan } from './ui/daily-plan.js';
+
+const escapeStudyText = value => String(value ?? '').replace(/[&<>"']/g,
+  character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character]);
 
 
 function getTaskResourceBadge(task) {
@@ -174,7 +178,7 @@ function loadInitialState() {
 
         let appState = loadInitialState();
         let currentView = 'today'; // 'today', 'plan', 'syllabus', 'setup'
-        let selectedMissionDayNumber = null;
+
 
         /* ==========================================================================
            2.5 FIREBASE AUTHENTICATION & REAL-TIME CLOUD SYNC
@@ -1780,17 +1784,9 @@ function showToastMessage(text, icon = 'checkCircle') {
         }
 
         function getActiveMissionDayNumber() {
-            if (selectedMissionDayNumber) return selectedMissionDayNumber;
             if (!appState || !appState.plan || appState.plan.length === 0) return 1;
-            
-            // Auto-detect earliest day with pending incomplete tasks so Day 1 is never skipped!
-            const firstUnfinished = appState.plan.find(d => d.tasks && d.tasks.some(t => !t.completed));
-            if (firstUnfinished) {
-                return firstUnfinished.dayNumber;
-            }
-            const calendarToday = appState.plan.find(d => d.date === TODAY_STR);
-            if (calendarToday) return calendarToday.dayNumber;
-            return 1;
+            const calendarToday = appState.plan.find(day => day.date === getLocalDateStr());
+            return calendarToday?.dayNumber ?? 0;
         }
 
         /* ==========================================================================
@@ -1802,11 +1798,13 @@ function showToastMessage(text, icon = 'checkCircle') {
             if (!appState || !appState.plan) return;
 
             let targetTask = null;
+            let targetDay = null;
 
             for (const d of appState.plan) {
                 const found = d.tasks.find(t => t.id === taskId);
                 if (found) {
                     targetTask = found;
+                    targetDay = d;
                     break;
                 }
             }
@@ -1866,7 +1864,7 @@ function showToastMessage(text, icon = 'checkCircle') {
                 // Calculate today's status
                 const activeDayNum = typeof getActiveMissionDayNumber === 'function' ? getActiveMissionDayNumber() : 1;
                 const todayPlan = appState.plan.find(d => d.dayNumber === activeDayNum) || appState.plan.find(d => d.date === TODAY_STR);
-                if (todayPlan) {
+                if (todayPlan && targetDay?.date === getLocalDateStr()) {
                     const completedToday = todayPlan.tasks.filter(t => t.completed).length;
                     const totalToday = todayPlan.tasks.length;
                     if (completedToday === totalToday && totalToday > 0) {
@@ -1884,7 +1882,7 @@ function showToastMessage(text, icon = 'checkCircle') {
                     }
                 } else {
                     playTaskTickSound();
-                    showAppToast("Target checked off! +100 XP! Keep the streak alive!");
+                    showAppToast(getAppLanguage() === 'ml' ? 'ബാക്കി പഠന ഭാഗം പൂർത്തിയായി.' : 'Pending task completed. Today’s timetable is unchanged.');
                 }
 
                 // If in today view, re-render to advance the hero focus card smoothly
@@ -1937,6 +1935,7 @@ function showToastMessage(text, icon = 'checkCircle') {
 
         function goToDashboard() {
             currentView = 'today';
+
             updateActiveNavButtons();
             renderApp();
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -3069,7 +3068,7 @@ function showToastMessage(text, icon = 'checkCircle') {
             if (!appState || !appState.plan) return;
             const target = appState.plan.find(d => d.dayNumber === dayNum);
             if (target) {
-                selectedMissionDayNumber = dayNum;
+
                 renderApp();
             }
         }
@@ -3093,7 +3092,7 @@ function showToastMessage(text, icon = 'checkCircle') {
             if (lastDay && lastDay.date > appState.deadlineDate) {
                 appState.deadlineDate = lastDay.date;
             }
-            selectedMissionDayNumber = 1;
+
             appState.lastModified = new Date().toISOString();
             saveAppState();
             renderApp();
@@ -3225,7 +3224,7 @@ function showToastMessage(text, icon = 'checkCircle') {
                     if (completedUpTo === 0) {
                         appState.startDate = rebuildStartDate;
                     }
-                    selectedMissionDayNumber = completedUpTo + 1;
+
                     appState.revisionDaysCount = result.revisionDaysCount;
                     appState.diagnostics = result.diagnostics;
                     appState.engineVersion = PLANNER_ENGINE_VERSION;
@@ -3345,6 +3344,7 @@ function showToastMessage(text, icon = 'checkCircle') {
         function renderApp() {
             const container = document.getElementById('app-container');
             if (!container) return;
+            const openSections = new Set([...container.querySelectorAll('details[id][open]')].map(section => section.id));
             document.body.classList.toggle('is-setting-up', !appState);
             const isML = getAppLanguage() === 'ml';
             const dateDisplay = document.getElementById('date-display');
@@ -3746,22 +3746,9 @@ function showToastMessage(text, icon = 'checkCircle') {
 
             // View 1: Today's Target View (Optimized for Short Attention Spans & Habit-Forming Daily Flow)
             if (currentView === 'today') {
-                const calendarToday = appState.plan.find(d => d.date === TODAY_STR);
-                const firstDay = appState.plan[0];
-                const activeDayNum = getActiveMissionDayNumber();
-
-                let todayPlan = (selectedMissionDayNumber && appState.plan.find(d => d.dayNumber === selectedMissionDayNumber))
-                    || appState.plan.find(d => d.dayNumber === activeDayNum)
-                    || calendarToday
-                    || firstDay;
-
-                if (!todayPlan) {
-                    if (firstDay && new Date(TODAY_STR) < new Date(firstDay.date)) {
-                        todayPlan = firstDay;
-                    } else {
-                        todayPlan = null;
-                    }
-                }
+                const localToday = getLocalDateStr();
+                const daily = getDailyPlan(appState.plan, localToday);
+                const { todayPlan, tomorrowPlan, yesterdayPlan } = daily;
                 const overallStats = getOverallStats();
 
                 let todayTasksHTML;
@@ -3838,7 +3825,7 @@ function showToastMessage(text, icon = 'checkCircle') {
                                     ${isML ? `ദിവസം ${todayPlan.dayNumber} പൂർത്തിയായി!` : `Day ${todayPlan.dayNumber} Cleared! 100% Crushed!`}
                                 </h3>
                                 <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1 max-w-md mx-auto font-medium">
-                                    ${isML ? ML_I18N.dashboard.missionDoneDesc : 'You finished all scheduled portions for today! Your streak is burning bright. Rest up and recharge!'}
+                                    ${isML ? ML_I18N.dashboard.missionDoneDesc : 'Today is complete. Tomorrow’s timetable and any earlier pending work are listed below.'}
                                 </p>
                                 <div class="mt-4 flex flex-wrap justify-center gap-3">
                                     <button onclick="shareTodayCompletion(${todayPlan.dayNumber})" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-extrabold text-xs sm:text-sm py-3 px-6 rounded-2xl shadow-md shadow-emerald-500/25 transition flex items-center gap-2 active:scale-95">
@@ -4024,49 +4011,45 @@ function showToastMessage(text, icon = 'checkCircle') {
                 container.innerHTML = `
                     <section id="today-overview" class="study-overview" aria-labelledby="today-heading">
                         <div>
-                            <h2 id="today-heading">${todayPlan && todayPlan.date !== TODAY_STR ? (isML ? `പഠന ദിവസം ${todayPlan.dayNumber}` : `Study day ${todayPlan.dayNumber}`) : (isML ? 'ഇന്നത്തെ പഠനം' : "Today's study")}</h2>
+                            <h2 id="today-heading">${isML ? 'ഇന്നത്തെ പഠനം' : "Today's study"}</h2>
                             <p>${todayPlan ? todayPlan.tasks.filter(t => t.completed).length : 0} / ${todayPlan ? todayPlan.tasks.length : 0} ${isML ? 'പൂർത്തിയായി' : 'tasks complete'} · ${overallStats.percentage}% ${isML ? 'ആകെ പുരോഗതി' : 'of your plan complete'}</p>
                         </div>
                         <button type="button" onclick="openRegenerateModal()" class="study-adjust">${isML ? 'പ്ലാൻ ക്രമീകരിക്കുക' : 'Adjust plan'}</button>
                     </section>
 
-                    <!-- Day Navigation Bar -->
-                    ${todayPlan ? `
-                        <div class="flex items-center justify-between gap-2 mb-4 no-print flex-wrap">
-                            <div class="flex items-center gap-1.5">
-                                <button type="button" aria-label="Previous day" onclick="changeMissionDay(${Math.max(1, todayPlan.dayNumber - 1)})" ${todayPlan.dayNumber === 1 ? 'disabled' : ''} class="py-1.5 px-3 rounded-xl border border-slate-200 dark:border-slate-700 font-bold text-xs text-slate-600 dark:text-slate-300 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-50 dark:hover:bg-slate-800 transition flex items-center gap-1">
-                                    <span aria-hidden="true">‹</span>
-                                    <span class="hidden sm:inline">Prev Day</span>
-                                </button>
-                                <span class="px-3 py-1.5 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-black text-xs border border-blue-200/60 dark:border-blue-800/60">
-                                    ${isML ? `ദിവസം ${todayPlan.dayNumber} / ${appState.plan.length}` : `Day ${todayPlan.dayNumber} of ${appState.plan.length}`}
-                                </span>
-                                <button type="button" aria-label="Next day" onclick="changeMissionDay(${Math.min(appState.plan.length, todayPlan.dayNumber + 1)})" ${todayPlan.dayNumber === appState.plan.length ? 'disabled' : ''} class="py-1.5 px-3 rounded-xl border border-slate-200 dark:border-slate-700 font-bold text-xs text-slate-600 dark:text-slate-300 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-50 dark:hover:bg-slate-800 transition flex items-center gap-1">
-                                    <span class="hidden sm:inline">Next Day</span>
-                                    <span aria-hidden="true">›</span>
-                                </button>
-                            </div>
-
-                            <div class="flex items-center gap-2">
-                                ${(selectedMissionDayNumber && calendarToday && selectedMissionDayNumber !== calendarToday.dayNumber) ? `
-                                    <button type="button" onclick="changeMissionDay(${calendarToday.dayNumber})" class="py-1.5 px-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 font-bold text-xs border border-amber-200 dark:border-amber-700/60 flex items-center gap-1">
-                                        <i class="fa-solid fa-calendar-day text-[11px]"></i>
-                                        <span>Jump to Today</span>
-                                    </button>
-                                ` : ''}
-                                <span class="text-xs font-bold text-slate-500 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700/80">
-                                    ${todayPlan.date}
-                                </span>
-                            </div>
-                        </div>
-                    ` : ''}
+                    <p class="study-date">${localToday}</p>
+                    ${daily.overdueCount ? `<p class="pending-notice" role="status">${daily.overdueCount} ${isML ? 'മുൻ ദിവസങ്ങളിൽ ബാക്കിയുണ്ട്.' : 'unfinished from previous days.'} <a href="#pending-work">${isML ? 'കാണുക' : 'View pending'}</a></p>` : ''}
+                    ${yesterdayPlan?.tasks.length ? `<p class="study-history">${isML ? 'ഇന്നലെ' : 'Yesterday'}: ${yesterdayPlan.tasks.filter(task => task.completed).length} / ${yesterdayPlan.tasks.length} ${isML ? 'പൂർത്തിയായി' : 'completed'}</p>` : ''}
 
                     <!-- Main Section: Today's Targets -->
-                    <div class="bg-white dark:bg-[#0e1422] rounded-3xl p-5 sm:p-7 border border-slate-200 dark:border-slate-800 shadow-sm mb-6">
+                    <div id="today-tasks" class="bg-white dark:bg-[#0e1422] rounded-3xl p-5 sm:p-7 border border-slate-200 dark:border-slate-800 shadow-sm mb-6">
                         ${todayTasksHTML}
                     </div>
 
-                    <details class="study-tools no-print">
+                    ${daily.overdueCount ? `
+                        <details id="pending-work" class="study-pending" ${openSections.has('pending-work') ? 'open' : ''}>
+                            <summary>${isML ? 'മുൻ ദിവസങ്ങളിലെ ബാക്കി പഠനം' : 'Pending from previous days'} (${daily.overdueCount})</summary>
+                            ${daily.overdueDays.map(day => `
+                                <section class="pending-day">
+                                    <h3>${day.date === daily.yesterdayDate ? (isML ? 'ഇന്നലെ' : 'Yesterday') : escapeStudyText(day.date)} · ${day.tasks.length} ${isML ? 'ബാക്കി' : 'pending'}</h3>
+                                    ${day.tasks.map(task => `
+                                        <div class="pending-task">
+                                            <div><strong>${escapeStudyText(task.subject)}</strong><p>${escapeStudyText(getTaskChapterTitle(task))}</p><small>${escapeStudyText(formatTaskTopicTitle(task))}</small></div>
+                                            <button type="button" data-pending-task="${escapeStudyText(task.id)}">${isML ? 'പൂർത്തിയായി' : 'Mark done'}</button>
+                                        </div>
+                                    `).join('')}
+                                </section>
+                            `).join('')}
+                        </details>
+                    ` : ''}
+                    ${tomorrowPlan ? `
+                        <details id="tomorrow-preview" class="study-tomorrow" ${openSections.has('tomorrow-preview') ? 'open' : ''}>
+                            <summary>${isML ? 'നാളെ' : 'Tomorrow'} · ${tomorrowPlan.date} · ${tomorrowPlan.tasks.length} ${isML ? 'പഠന ഭാഗങ്ങൾ' : 'tasks'}</summary>
+                            ${tomorrowPlan.tasks.length ? `<ul>${tomorrowPlan.tasks.map(task => `<li><strong>${escapeStudyText(task.subject)}</strong> — ${escapeStudyText(getTaskChapterTitle(task))}<p>${escapeStudyText(formatTaskTopicTitle(task))}</p></li>`).join('')}</ul>` : `<p>${isML ? 'വിശ്രമ ദിവസം' : 'Rest day — no study tasks scheduled.'}</p>`}
+                        </details>
+                    ` : ''}
+
+                    <details id="plan-tools" class="study-tools no-print" ${openSections.has('plan-tools') ? 'open' : ''}>
                         <summary>${isML ? 'പ്ലാൻ ഉപകരണങ്ങൾ' : 'Plan tools: print, share or reset'}</summary>
                         <!-- Quick Action Bar -->
                     <div class="flex items-center justify-between gap-2 mb-4 no-print">
@@ -4098,6 +4081,9 @@ function showToastMessage(text, icon = 'checkCircle') {
                     </details>
                 `;
 
+                container.querySelectorAll('[data-pending-task]').forEach(button => {
+                    button.addEventListener('click', () => toggleTaskDirect(button.dataset.pendingTask));
+                });
                 highlightNextUnfinishedTask();
                 return;
             }

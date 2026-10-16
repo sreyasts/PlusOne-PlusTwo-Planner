@@ -27,4 +27,6 @@ The official materials publish no minimum age, star count, release count or fixe
 
 Application preparation is within scope. Submit only after the maintainer verifies their ChatGPT account email, reviews the exact payload, and authorizes acceptance of the program terms. No outreach, additional accounts, paid promotion or invented usage is needed.
 
+The owner has explicitly asked to hold submission. Keep the floating focus feature until after submission, then remove it. Today's calendar timetable, overdue work and tomorrow's preview must remain separate.
+
 Sources: [program](https://developers.openai.com/community/codex-for-oss), [terms](https://learn.chatgpt.com/docs/codex-for-oss-terms), [application](https://openai.com/form/codex-for-oss/).

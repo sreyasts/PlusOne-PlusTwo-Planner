@@ -5,11 +5,11 @@ Date: 16 October 2026. Scope: practical guest study flow, application evidence a
 ## Verified locally
 
 - `npm run lint`: passed.
-- `npm test -- --reporter=dot`: 95 tests passed in 10 files.
+- `npm test -- --reporter=dot`: 101 tests passed in 11 files.
 - `npm run test:legacy`: 553 checks passed, zero failures.
 - `npm run test:benchmark`: six synthetic scenarios completed. These are scheduler checks, not evidence of student outcomes.
 - `npm run build`: production app built; generated JavaScript and CSS are added to the service worker's install cache.
-- `npm run test:e2e -- --workers=1`: all four Chromium tests passed. Coverage includes local event properties, a cold offline reload with English/Malayalam switching, and guest setup/completion/persistence at 390px and 1280px.
+- `npm run test:e2e -- --workers=1`: all five Chromium tests passed together after the calendar change. This covers local event properties, offline reload and language switching, mobile/desktop guest flows, today/overdue/tomorrow separation, completion without auto-advancing, date rollover and overdue completion persistence.
 - `git diff --check`: passed.
 
 ## Defects caught during verification
@@ -23,4 +23,4 @@ Date: 16 October 2026. Scope: practical guest study flow, application evidence a
 
 These tests do not validate curriculum accuracy, educational outcomes, statutory compliance, independent usage or acceptance into OpenAI's program. Existing plans retain their storage key and migration behavior. Optional Google sign-in remains available from the profile menu; no authenticated cloud-sync review was performed in this change.
 
-The updated application discloses the previous submission and unverified independent adoption. This document does not claim that an application has been submitted or a subscription awarded. Public release and deployment status should be verified from GitHub and the live app.
+The updated application discloses the previous submission and unverified independent adoption. The owner explicitly asked to hold submission and to remove the floating focus feature only after submission. That feature remains available. This document does not claim that an application has been submitted or a subscription awarded. Public release and deployment status should be verified from GitHub and the live app.

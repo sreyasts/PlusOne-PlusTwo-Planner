@@ -1,7 +1,12 @@
 import { test, expect } from '@playwright/test';
 
+test.use({ timezoneId: 'Asia/Kolkata' });
+
 for (const width of [390, 1280]) {
   test(`guest plan, task completion and persistence at ${width}px`, async ({ page }) => {
+    const testTime = new Date();
+    testTime.setHours(12, 0, 0, 0);
+    await page.clock.install({ time: testTime });
     await page.setViewportSize({ width, height: 900 });
     await page.goto('/');
     await expect(page.locator('#setup-step-1')).toBeVisible();
@@ -28,6 +33,13 @@ for (const width of [390, 1280]) {
     const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('plusTwoMissionState_v2')));
     expect(saved.stream).toBe('bio');
     expect(saved.personalization.dailyHours).toBe(2);
+    // The generated calendar can begin with a rest day. Open an actual study
+    // date rather than relying on the old automatic jump to unfinished work.
+    const firstStudyDay = saved.plan.find(day => day.tasks.length);
+    expect(firstStudyDay).toBeTruthy();
+    await page.clock.setSystemTime(new Date(`${firstStudyDay.date}T12:00:00+05:30`));
+    await page.reload();
+    await expect(page.locator('#today-tasks')).toBeVisible();
     await page.getByRole('button', { name: 'Mark done', exact: true }).click();
     await expect.poll(() => page.evaluate(() => {
       const state = JSON.parse(localStorage.getItem('plusTwoMissionState_v2'));

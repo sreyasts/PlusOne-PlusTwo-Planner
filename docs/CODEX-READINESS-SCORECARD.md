@@ -14,7 +14,7 @@ Snapshot: 16 October 2026. These are observations, not eligibility thresholds.
 | Public source and license | Public, MIT | GitHub repository |
 | Repository created | 19 September 2026 | GitHub API; age alone does not qualify a project |
 | GitHub stars / forks | 5 / 1 | Stars were from the owner and a friend's accounts; no independent adoption claim. Fork usage unverified |
-| Automated tests | 95 passing before UI changes | Local Vitest run; see validation report for final results |
+| Automated tests | 101 passing after calendar changes | Local Vitest run; see validation report for final results |
 | Releases | Existing release history | Verify latest public release before submitting |
 | Independent active students / retention | Unverified | Local counters and GitHub traffic do not establish users |
 | School adoption / external contributions | Unverified | Do not claim without independent evidence |

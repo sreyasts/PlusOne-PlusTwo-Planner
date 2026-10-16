@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [6.4.1] - 2026-10-16
 
 ### Changed
+- Today follows the local calendar. Yesterday and older pending tasks stay in a separate completion list, with a read-only tomorrow preview. Finishing a day no longer opens a future day's timetable. Open sections survive background redraws.
 - Put today's study progress and next task ahead of badges and secondary tools. Print, sharing and reset remain under Plan tools.
 - Show daily capacity before plan creation, keep one start button, and support keyboard stream selection. Replace fixed clock suggestions with numbered study blocks.
 - Remove automatic sign-in interruptions after guest plan creation and recovery. Refresh the offline cache version.
