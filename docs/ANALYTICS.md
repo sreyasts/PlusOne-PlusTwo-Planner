@@ -1,13 +1,14 @@
 # Mission PlusTwo — Privacy-First Analytics Architecture
 
-## 1. Principles & Regulatory Compliance
+> Historical design notes. Event names below are not a verified current implementation contract; inspect `src/analytics/tracker.js`. See [current validation limits](VALIDATION-6.4.2.md).
+
+## 1. Implementation and Limits
 
 Mission PlusTwo is built for high school students preparing for the Kerala Higher Secondary Examinations (DHSE). Student data protection is an absolute ethical and legal mandate.
 
-- **India DPDP Act (Digital Personal Data Protection Act, 2023)** compliant.
-- **GDPR & ePrivacy Directive** compliant.
-- **Zero Personally Identifiable Information (PII)**: No student names, email addresses, phone numbers, school names, IP addresses, or permanent tracking cookies are ever transmitted to analytics backends.
-- **Client-Side Data Retention**: All schedule state, marks, and daily study checklists reside in browser `IndexedDB` / `LocalStorage`.
+- Statutory compliance has not been independently reviewed; no DPDP, GDPR or ePrivacy compliance claim is made.
+- The local tracker strips a limited set of known property keys. This does not prove that arbitrary properties, SDK metadata, cookies or transport data contain no personal information.
+- Guest schedules persist in localStorage. Optional Google sign-in and Firestore sync also process account email, display name and plan data.
 - **Ad & Signal Isolation**:
   - `allow_google_signals: false`
   - `allow_ad_personalization_signals: false`

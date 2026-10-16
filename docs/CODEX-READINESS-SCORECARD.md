@@ -14,8 +14,8 @@ Snapshot: 16 October 2026. These are observations, not eligibility thresholds.
 | Public source and license | Public, MIT | GitHub repository |
 | Repository created | 19 September 2026 | GitHub API; age alone does not qualify a project |
 | GitHub stars / forks | 5 / 1 | Stars were from the owner and a friend's accounts; no independent adoption claim. Fork usage unverified |
-| Automated tests | 101 passing after calendar changes | Local Vitest run; see validation report for final results |
-| Releases | Existing release history | Verify latest public release before submitting |
+| Automated tests | 93 unit tests, 553 planner checks, 5 browser scenarios pass | [v6.4.2 CI](https://github.com/sreyasts/intelligent-study-planner-for-plus-two-/actions/runs/38893378991); obsolete overlay assertions removed |
+| Releases | v6.4.2 published 16 October 2026 | [Release](https://github.com/sreyasts/intelligent-study-planner-for-plus-two-/releases/tag/v6.4.2) |
 | Independent active students / retention | Unverified | Local counters and GitHub traffic do not establish users |
 | School adoption / external contributions | Unverified | Do not claim without independent evidence |
 | Previous application | Reported by owner | Submission date and decision unavailable |
@@ -45,3 +45,11 @@ I previously applied for Mission PlusTwo when the repository was new. This appli
 ```
 
 Required fields: maintainer name, the email associated with their ChatGPT account, public GitHub username, public repository URL, maintainer role and the qualification statement. Verify the account email with the owner; a Git commit email is not proof of the ChatGPT account email. Leave optional API credits and Security unchecked unless specifically wanted. Review the program terms before submission.
+
+The owner confirmed their account name and email privately. Do not add account or organization identifiers to this public document. Submission remains on hold at the owner's request. Review the exact final payload and terms with the owner before submitting. OpenAI may request verification of identity or repository control; selection and benefit activation remain external requirements. No subscription has been awarded or claimed by this work.
+
+## 4. Release and readiness limits
+
+The floating timer, overlay and picture-in-picture feature were removed in v6.4.2 at the owner's updated instruction. Today follows the local calendar; unfinished earlier work and tomorrow's preview remain separate. Guest completion, undo, persistence, tutor links, mobile/desktop layout and cold offline loading are verified. See [validation](VALIDATION-6.4.2.md).
+
+The repository is public and MIT-licensed, and the maintainer can publish releases. That supports applying as a maintainer; it does not establish program acceptance. The strongest case is the working educational tool and active maintenance. The main evidence gap is independent usage or ecosystem importance. More forms, stars from personal accounts, and cosmetic releases do not fill that gap.

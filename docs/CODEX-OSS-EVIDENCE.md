@@ -1,5 +1,7 @@
 # OpenAI Codex for Open Source — Verified Evidence Portfolio
 
+> Historical snapshot from September 2026, superseded by [the current scorecard](CODEX-READINESS-SCORECARD.md) and [v6.4.2 validation](VALIDATION-6.4.2.md). Historical counts below are not current application evidence. Repository visitors/clones do not establish independent developers or students; star independence and student usage are unverified.
+
 **Repository**: [`sreyasts/intelligent-study-planner-for-plus-two-`](https://github.com/sreyasts/intelligent-study-planner-for-plus-two-)  
 **Production Endpoint**: [https://mission-plustwo.web.app/](https://mission-plustwo.web.app/)  
 **Maintainer**: Sreyas T S (`sreyasts52@gmail.com`)  
@@ -12,7 +14,7 @@
 
 Mission PlusTwo is a free, open-source intelligent study planning and timetable generation system purpose-built for students taking the Kerala Directorate of Higher Secondary Education (DHSE) Class 12 (+2) board examinations and Plus One Improvement examinations.
 
-Unlike commercial ed-tech apps that charge subscription fees or push advertisements, Mission PlusTwo is 100% free, runs entirely client-side, respects student privacy (zero PII collection), functions offline as a Progressive Web App (PWA), and implements an open-source, deterministic constraint-propagation scheduler tailored to Kerala's rationalized state board syllabus (SCERT Scheme of Work).
+Mission PlusTwo is free and MIT-licensed. Planning and guest progress work in the browser, with offline support after caching. Optional Google sign-in and Firestore sync process account information and study plans. Analytics integrations exist. Zero personal-data collection and statutory compliance are not established by this portfolio.
 
 ---
 
@@ -41,7 +43,7 @@ Unlike commercial ed-tech apps that charge subscription fees or push advertiseme
 | **Chronological Inversions** | 0 violations (Strict topological prerequisite sort) | `docs/BENCHMARKS.md` |
 | **Offline Vector QR Sharing** | Zero-dependency client-side SVG QR generation | `src/utils/qr.js`, `tests/qr.test.js` |
 | **Workload Variance** | 0.44 (40% lower variance than naive sequential baseline) | `scripts/benchmark-planner.js` |
-| **Security Auditing** | AES / SHA / zero plaintext secrets / strict CSP & DPDP compliance | `SECURITY.md`, `src/analytics/tracker.js` |
+| **Security Auditing** | No independent security or statutory compliance audit established | Implementation and tests do not prove compliance |
 | **Continuous Integration** | Automated test, lint, and benchmark execution on push/PR | `.github/workflows/ci.yml` |
 
 ---
@@ -67,9 +69,9 @@ Unlike commercial ed-tech apps that charge subscription fees or push advertiseme
 
 ## 5. Why OpenAI Codex Supports This Mission
 
-1. **Empowering Regional Education**: Over 400,000 students appear annually for Kerala Plus Two exams, many from rural government schools without access to expensive private tutoring. Mission PlusTwo democratizes personalized academic pacing.
+1. **Regional Education**: The intended audience is Kerala DHSE students who need daily study planning. Audience size, independent reach and educational impact have not been verified here.
 2. **Deterministic & AI-Assisted Syllabus Processing**: Maintaining up-to-date state board syllabus mappings, textbook chapter splits, and Malayalam translations requires continuous natural-language parsing of government notifications. OpenAI Codex tooling directly accelerates:
    - Automated DHSE examination circular scraping and timetable parsing.
    - Translation generation and validation for regional Malayalam educational terminology.
    - Curriculum adapter development for neighboring state boards (Tamil Nadu HSE, Karnataka PUC, CBSE).
-3. **Open Source & Ethical Principles**: The codebase is completely transparent under the MIT License, collects zero student PII, and operates with zero commercial monetization.
+3. **Open Source**: The codebase is available under the MIT License. Guest planning needs no account; optional sign-in and cloud sync process account information. Do not claim zero PII collection.

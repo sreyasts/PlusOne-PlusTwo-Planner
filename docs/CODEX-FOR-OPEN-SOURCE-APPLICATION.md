@@ -1,6 +1,6 @@
 # OpenAI Codex for Open Source — Application Preparation Draft
 
-This document contains a verified, evidence-backed application draft for OpenAI's **Codex for Open Source** program, based strictly on primary data from `sreyasts/intelligent-study-planner-for-plus-two-`.
+Updated 16 October 2026. This is a preparation draft, not a submitted application. The [current scorecard](CODEX-READINESS-SCORECARD.md) records evidence and limits. Request only the six-month ChatGPT Pro maintainer benefit; the owner has put submission on hold.
 
 ---
 
@@ -24,33 +24,35 @@ Primary Creator, Lead Architect & Maintainer
 
 ### Draft Submission Text:
 ```text
-Primary maintainer of Mission PlusTwo (DHSE Class 12 planner). 100% open-source, zero-PII PWA with 402 passing invariant tests & reproducible benchmarks proving zero deadline violations. Active maintenance history: modular ESM rewrite, deterministic constraint engine, Malayalam localization, dual-stream (CS/Bio) support, and automated CI/CD. Genuinely solves state-wide curriculum scheduling for 350k+ Kerala students.
+I maintain Mission PlusTwo, an MIT-licensed study planner for Kerala Plus Two and Plus One improvement students. Its public app supports guest planning, English/Malayalam guidance, task tracking and schedule recovery; the scheduling core is reusable. I maintain the code, tests and releases. ChatGPT Pro with Codex would support regression fixes, accessibility and curriculum maintenance. Independent adoption is not yet verified; I am applying on the project's educational utility.
 ```
 
 **Character Count Verification**:
-* Length: **444 characters** (under the 500-character maximum).
+* Length: **482 characters** (under the 500-character maximum).
 * Verified Claims:
-  - Repository role: Primary maintainer (`sreyasts` with 100% commit ownership).
-  - Invariant tests: 402 checks verified by `tests/engine_test.cjs`.
+  - Repository role: Primary maintainer (`sreyasts`); public repository and release history support this role.
+  - Validation: 93 unit tests, 553 planner checks and five browser scenarios pass for v6.4.2.
   - Benchmarks: Documented in [`docs/BENCHMARKS.md`](BENCHMARKS.md) and executed by [`scripts/benchmark-planner.js`](../scripts/benchmark-planner.js).
-  - Audience: 350,000+ annual Kerala Higher Secondary examination candidates.
+  - Audience: Intended for Kerala DHSE students; independent active users and educational outcomes are unverified.
 
 ---
 
-## 3. How API Credits Would Be Used for Core OSS Maintenance
+## 3. Benefit Requested and Prior Application
 
-OpenAI API credits will be deployed directly to automate and enhance maintainer operations for the Mission PlusTwo repository:
+No API credits are requested. ChatGPT Pro with Codex would support the following maintainer work; these are intended uses, not claims of deployed automation:
 
-1. **Automated Curriculum Invariant & PR Review**:
-   - Building a GitHub Actions PR-review bot that analyzes community syllabus updates (`src/data/syllabus-*.js`) against SCERT Scheme of Work standards to catch ordering and part-numbering discrepancies before human maintainer review.
+1. **Curriculum Invariant & PR Review**:
+   - Using Codex interactively to review syllabus updates against SCERT Scheme of Work references, then verifying changes with the regression suite and maintainer review. No API bot or API funding is part of this request.
 2. **Community Issue Triage & Malayalam Localization Assistant**:
    - Assisting in triaging inbound bug reports and validating student Malayalam translation suggestions (`src/i18n/ml.js`) for grammatical and contextual naturalness in Kerala educational contexts.
 3. **Automated Fuzzing & Regression Test Generation**:
-   - Expanding the 402-invariant fuzz testing suite by generating complex edge-case exam date constraints (e.g. leap years, overlapping national holidays, split exam schedules).
+   - Expanding regression coverage for complex exam date constraints (e.g. leap years, overlapping national holidays, split exam schedules).
 4. **Release Notes & Migration Verification**:
    - Analyzing git diffs between releases to verify state-migration idempotence (`src/engine/migration.js`) and draft precise changelog summaries.
 
 ---
+
+The owner reports an earlier application when this repository was new. Its date and outcome are unverified. Use the scorecard's optional disclosure; do not submit duplicates automatically or describe the previous application as rejected without evidence.
 
 ## 4. Additional Context & Project Links
 

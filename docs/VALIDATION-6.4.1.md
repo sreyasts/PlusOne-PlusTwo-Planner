@@ -1,5 +1,7 @@
 # v6.4.1 validation
 
+> Historical release report. The owner later requested immediate removal of the floating feature; v6.4.2 removes it. See [current validation](VALIDATION-6.4.2.md).
+
 Date: 16 October 2026. Scope: practical guest study flow, application evidence and offline reliability.
 
 ## Verified locally

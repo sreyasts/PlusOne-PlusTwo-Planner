@@ -1,27 +1,27 @@
 # Mission PlusTwo — Privacy-First Usage Telemetry & Metrics Specification
 
-This document details the telemetry architecture, metric definitions, and privacy compliance standards for **Mission PlusTwo**.
+This document describes telemetry design and metric definitions for **Mission PlusTwo**. It is not a legal compliance assessment.
 
-Mission PlusTwo adheres strictly to India's **Digital Personal Data Protection Act (DPDP Act) 2023** and **GDPR**. The application operates on an anonymous, cookieless telemetry model designed exclusively to evaluate product retention, onboarding friction, and algorithm efficacy.
+No independent DPDP/GDPR review has been established. The local tracker filters known property keys and may forward events through Firebase Analytics; provider metadata, cookie behavior and network delivery have not been audited. Local counters do not measure independent students or prove study habits.
 
 ---
 
-## 1. Privacy Guarantees & DPDP Act Compliance
+## 1. Data Handling and Verification Limits
 
-1. **Zero Personally Identifiable Information (PII)**:
-   - No names, physical addresses, phone numbers, or government IDs are ever requested or logged.
-   - User IP addresses are truncated/masked at the edge by Google Cloud/Firebase and are not accessible to maintainers.
-2. **Cookieless Operation**:
-   - Tracking does NOT use browser cookies or third-party advertising IDs.
-   - Signals and ad personalization are explicitly disabled globally:
+1. **Local Event Properties**:
+   - The tracker strips known keys such as email, name and userId; this limited filter does not establish zero personal-data collection.
+   - IP handling by hosting and analytics providers has not been independently verified.
+2. **Analytics Configuration**:
+   - Cookieless operation and absence of third-party identifiers have not been verified.
+   - The source attempts to configure analytics flags; these alone do not prove provider behavior:
      ```javascript
      window['gtag_enable_tcf_support'] = false;
      window['ga-disable-analytics'] = false;
      ```
-   - No cross-site or fingerprinting trackers are embedded.
+   - These flags do not establish consent behavior or legal compliance.
 3. **Optional Cloud Authentication**:
-   - Google Sign-In is completely optional and used solely to store an encrypted serialized study plan in Firebase Cloud Firestore for multi-device sync.
-   - Students can use 100% of Mission PlusTwo features offline or in anonymous local mode via browser `localStorage`.
+   - Google Sign-In is optional. The cloud-save code writes account email, display name and study-plan fields to Firestore; application-level end-to-end encryption is not established.
+   - Guest planning and progress tracking work locally and offline after caching. Authentication, cloud sync and external study links require a connection.
 
 ---
 
@@ -48,8 +48,8 @@ returned_day3
 | `opened` | Client loads the application in a browser window. | Measures initial top-of-funnel reach and web traffic. |
 | `setup_started` | Student clicks "Start Setup" or modifies onboarding stream/term controls. | Evaluates onboarding conversion rate from visitor to active student. |
 | `plan_created` | Planner generates a valid schedule and saves state. | Measures successful schedule generation across CS, Bio, and Improvement streams. |
-| `first_task_checked` | Student ticks off their first study task checkbox. | Captures Day 1 study activation (indicates the student is actually studying). |
-| `returned_day3` | Student opens the app 3 or more days after their initial recorded visit timestamp. | Measures true 72-hour study habit formation and early retention. |
+| `first_task_checked` | A task is marked complete in this browser. | Local interaction signal; does not prove studying or an independent student. |
+| `returned_day3` | This browser opens the app 3 or more days after its first recorded visit. | Return signal; does not prove study habit formation. |
 | `plan_rebalanced` | Student triggers intelligent regeneration to catch up on missed days. | Measures engagement with the adaptive replanning engine. |
 | `timetable_printed` | Student clicks "Print / Save PDF" to export physical schedule. | Measures real-world utility and offline study integration. |
 | `pwa_installed` | Student accepts native PWA / WebAPK installation prompt. | Tracks transition to desktop/mobile homescreen standalone utility. |
