@@ -1,12 +1,209 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Student Privacy Rule: Each authenticated user can strictly ONLY read and write their own study plan
-    match /users/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // This security rules file assumes the following data structures:
+    //
+    // Collection: users
+    // Document ID: {userId} (Must strictly match request.auth.uid)
+    // Fields:
+    //   - userEmail: string (optional, max 200 chars, valid email format)
+    //   - displayName: string (optional, max 150 chars)
+    //   - ownerUid: string (optional, max 128 chars, immutable, matches auth.uid)
+    //   - uid: string (optional, max 128 chars, immutable, matches auth.uid)
+    //   - stream: string (optional, max 50 chars, allowed stream values)
+    //   - engineVersion: number (optional, integer between 1 and 100)
+    //   - startDate: string (optional, max 50 chars)
+    //   - deadlineDate: string (optional, max 50 chars)
+    //   - targetTerm: number (optional, integer between 0 and 10)
+    //   - improvementOnly: bool (optional)
+    //   - isLateEveningGenerated: bool (optional)
+    //   - completedChaptersOnInit: list (optional, max 500 items)
+    //   - completedChapters: list (optional, max 500 items)
+    //   - improvementConfig: list (optional, max 100 items)
+    //   - plan: list (optional, max 500 items)
+    //   - planDays: list (optional, max 500 items)
+    //   - revisionDaysCount: number (optional, integer between 0 and 1000)
+    //   - syllabusDaysCount: number (optional, integer between 0 and 1000)
+    //   - totalConfiguredTasks: number (optional, integer between 0 and 5000)
+    //   - studyIntensity: string or number or map (optional, string max 50 chars)
+    //   - personalization: map (optional)
+    //   - diagnostics: map (optional)
+    //   - scorecard: map (optional)
+    //   - isValid: bool (optional)
+    //   - valid: bool (optional)
+    //   - issues: list (optional, max 100 items)
+    //   - validationIssues: list (optional, max 100 items)
+    //   - bonusXP: number (optional, number between 0 and 10000000)
+    //   - xp: number (optional, number between 0 and 10000000)
+    //   - streakCount: number (optional, integer between 0 and 100000)
+    //   - lastCompletedDate: string (optional, max 50 chars)
+    //   - lastSynced: string (optional, max 50 chars)
+    //   - createdAt: string (optional, max 50 chars, immutable)
+    //   - lastModified: string (optional, max 50 chars)
+    //   - updatedAt: string (optional, max 50 chars)
+    //   - _migratedFromV1: bool (optional)
+    //
+    // Collection: user_plans
+    // Document ID: {userId} (Must strictly match request.auth.uid)
+    // Fields: Same study plan schema as users collection with updatedAt timestamp.
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+
+    // Check if the user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
     }
-    
-    // Default deny for all other collections
+
+    // Check if user owns the resource (document ID strictly matches authenticated UID)
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Validate that document contains only allowed study planner fields
+    function hasOnlyAllowedStudyPlanFields(data) {
+      let allowedKeys = [
+        'plan', 'planDays', 'stream', 'engineVersion', 'startDate', 'deadlineDate',
+        'targetTerm', 'improvementOnly', 'completedChaptersOnInit', 'completedChapters',
+        'improvementConfig', 'revisionDaysCount', 'syllabusDaysCount', 'totalConfiguredTasks',
+        'studyIntensity', 'personalization', 'diagnostics', 'scorecard', 'isValid', 'valid',
+        'issues', 'validationIssues', 'isLateEveningGenerated', 'createdAt', 'lastModified',
+        'lastSynced', 'updatedAt', 'userEmail', 'displayName', 'ownerUid', 'uid',
+        'bonusXP', 'xp', 'streakCount', 'lastCompletedDate', '_migratedFromV1'
+      ];
+      return data.keys().hasOnly(allowedKeys);
+    }
+
+    // Validate user identity fields if present
+    function isValidUserIdentity(data) {
+      return (!('ownerUid' in data) || data.ownerUid == null || (data.ownerUid is string && data.ownerUid == request.auth.uid)) &&
+             (!('uid' in data) || data.uid == null || (data.uid is string && data.uid == request.auth.uid));
+    }
+
+    // Validate email format
+    function isValidEmail(email) {
+      return email is string &&
+             email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+    }
+
+    // Validate string fields and enforce realistic size limits against DoS/resource exhaustion
+    function isValidUserStrings(data) {
+      return (!('stream' in data) || (data.stream is string && data.stream.size() <= 50)) &&
+             (!('startDate' in data) || (data.startDate is string && data.startDate.size() <= 50)) &&
+             (!('deadlineDate' in data) || (data.deadlineDate is string && data.deadlineDate.size() <= 50)) &&
+             (!('lastCompletedDate' in data) || (data.lastCompletedDate is string && data.lastCompletedDate.size() <= 50)) &&
+             (!('lastSynced' in data) || (data.lastSynced is string && data.lastSynced.size() <= 50)) &&
+             (!('createdAt' in data) || (data.createdAt is string && data.createdAt.size() <= 50)) &&
+             (!('lastModified' in data) || (data.lastModified is string && data.lastModified.size() <= 50)) &&
+             (!('updatedAt' in data) || (data.updatedAt is string && data.updatedAt.size() <= 50)) &&
+             (!('displayName' in data) || data.displayName == null || (data.displayName is string && data.displayName.size() <= 150)) &&
+             (!('userEmail' in data) || data.userEmail == null || data.userEmail == "" || (data.userEmail is string && data.userEmail.size() <= 200 && isValidEmail(data.userEmail))) &&
+             (!('studyIntensity' in data) || (data.studyIntensity is string && data.studyIntensity.size() <= 50) || (data.studyIntensity is map) || (data.studyIntensity is number));
+    }
+
+    // Validate numeric fields and enforce sensible capacity boundaries
+    function isValidUserNumbers(data) {
+      return (!('engineVersion' in data) || (data.engineVersion is number && data.engineVersion >= 1 && data.engineVersion <= 100)) &&
+             (!('targetTerm' in data) || (data.targetTerm is number && data.targetTerm >= 0 && data.targetTerm <= 10)) &&
+             (!('revisionDaysCount' in data) || (data.revisionDaysCount is number && data.revisionDaysCount >= 0 && data.revisionDaysCount <= 1000)) &&
+             (!('syllabusDaysCount' in data) || (data.syllabusDaysCount is number && data.syllabusDaysCount >= 0 && data.syllabusDaysCount <= 1000)) &&
+             (!('totalConfiguredTasks' in data) || (data.totalConfiguredTasks is number && data.totalConfiguredTasks >= 0 && data.totalConfiguredTasks <= 5000)) &&
+             (!('bonusXP' in data) || (data.bonusXP is number && data.bonusXP >= 0 && data.bonusXP <= 10000000)) &&
+             (!('xp' in data) || (data.xp is number && data.xp >= 0 && data.xp <= 10000000)) &&
+             (!('streakCount' in data) || (data.streakCount is number && data.streakCount >= 0 && data.streakCount <= 100000));
+    }
+
+    // Validate boolean flags
+    function isValidUserBooleans(data) {
+      return (!('improvementOnly' in data) || (data.improvementOnly is bool)) &&
+             (!('isLateEveningGenerated' in data) || (data.isLateEveningGenerated is bool)) &&
+             (!('isValid' in data) || (data.isValid is bool)) &&
+             (!('valid' in data) || (data.valid is bool)) &&
+             (!('_migratedFromV1' in data) || (data._migratedFromV1 is bool));
+    }
+
+    // Validate array/list fields and enforce size bounds
+    function isValidUserLists(data) {
+      return (!('plan' in data) || (data.plan is list && data.plan.size() <= 500)) &&
+             (!('planDays' in data) || (data.planDays is list && data.planDays.size() <= 500)) &&
+             (!('completedChaptersOnInit' in data) || (data.completedChaptersOnInit is list && data.completedChaptersOnInit.size() <= 500)) &&
+             (!('completedChapters' in data) || (data.completedChapters is list && data.completedChapters.size() <= 500)) &&
+             (!('improvementConfig' in data) || (data.improvementConfig is list && data.improvementConfig.size() <= 100)) &&
+             (!('issues' in data) || (data.issues is list && data.issues.size() <= 100)) &&
+             (!('validationIssues' in data) || (data.validationIssues is list && data.validationIssues.size() <= 100));
+    }
+
+    // Validate map/object fields
+    function isValidUserMaps(data) {
+      return (!('diagnostics' in data) || (data.diagnostics is map)) &&
+             (!('personalization' in data) || (data.personalization is map)) &&
+             (!('scorecard' in data) || (data.scorecard is map));
+    }
+
+    // Comprehensive domain validator for study plan & user documents (used on create & update)
+    function isValidUserData(data) {
+      return hasOnlyAllowedStudyPlanFields(data) &&
+             isValidUserIdentity(data) &&
+             isValidUserStrings(data) &&
+             isValidUserNumbers(data) &&
+             isValidUserBooleans(data) &&
+             isValidUserLists(data) &&
+             isValidUserMaps(data);
+    }
+
+    // Ensure immutable identity and creation fields cannot be tampered with or overwritten on update
+    function areImmutableFieldsPreserved() {
+      return (!('ownerUid' in resource.data) || ('ownerUid' in request.resource.data && request.resource.data.ownerUid == resource.data.ownerUid)) &&
+             (!('uid' in resource.data) || ('uid' in request.resource.data && request.resource.data.uid == resource.data.uid)) &&
+             (!('createdAt' in resource.data) || ('createdAt' in request.resource.data && request.resource.data.createdAt == resource.data.createdAt));
+    }
+
+    // ===============================================================
+    // Collection Rules
+    // ===============================================================
+
+    // Primary User Document: stores user profile, progress, streaks, and adaptive study plan
+    match /users/{userId} {
+      // Owner-only read access protects student PII (email, displayName) and plan data
+      allow read: if isOwner(userId);
+
+      // Create strictly requires authenticated owner and schema validation
+      allow create: if isOwner(userId) && isValidUserData(request.resource.data);
+
+      // Update strictly requires owner, full schema validation, and immutable field protection
+      allow update: if isOwner(userId) && isValidUserData(request.resource.data) && areImmutableFieldsPreserved();
+
+      // Delete allowed only by authenticated owner (e.g. "Reset Everything" action)
+      allow delete: if isOwner(userId);
+    }
+
+    // Secondary User Plans Document: used for backup synchronization across client sessions
+    match /user_plans/{userId} {
+      // Owner-only read access protects student study plan data
+      allow read: if isOwner(userId);
+
+      // Create strictly requires authenticated owner and schema validation
+      allow create: if isOwner(userId) && isValidUserData(request.resource.data);
+
+      // Update strictly requires owner, full schema validation, and immutable field protection
+      allow update: if isOwner(userId) && isValidUserData(request.resource.data) && areImmutableFieldsPreserved();
+
+      // Delete allowed only by authenticated owner
+      allow delete: if isOwner(userId);
+    }
+
+    // ===============================================================
+    // Default Deny
+    // ===============================================================
+    // Deny read and write access to all other paths and subcollections
     match /{document=**} {
       allow read, write: if false;
     }
