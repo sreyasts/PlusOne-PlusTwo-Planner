@@ -189,7 +189,7 @@ npm run build
 - **[Project Governance](GOVERNANCE.md)**: Decision-making model, RFC process, and release policies.
 - **[Public Audit & Usage Statistics](https://mission-plustwo.web.app/pages/stats.html)**: Public telemetry, 0-fake commitment, and test scorecards.
 - **[Contributor Outreach & Good First Issues](docs/contributor-outreach.md)**: Ready-to-claim beginner issues and Malayalam tech community outreach.
-- **[Application evidence and draft](docs/CODEX-READINESS-SCORECARD.md)**: Current evidence, limits, and a truthful application draft. See [project mission](docs/MISSION.md).
+- **[Project mission](docs/MISSION.md)** and **[student testing](docs/STUDENT-TESTING.md)**: Product priorities, a short practical testing guide, and evidence limits.
 - **[Contributing Guidelines](CONTRIBUTING.md)**: Local setup, Conventional Commits, branch workflows, and curriculum updates.
 - **[Code of Conduct](CODE_OF_CONDUCT.md)**: Contributor Covenant v2.1.
 - **[Security & Privacy Policy](SECURITY.md)**: Responsible disclosure instructions and privacy practices.

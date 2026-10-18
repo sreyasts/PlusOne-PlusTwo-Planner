@@ -65,6 +65,9 @@ import {
   generateAiTutorPrompt,
 } from './utils/ai_tutor.js';
 import { getDailyPlan } from './ui/daily-plan.js';
+import { MAX_BACKUP_BYTES, parseStudyBackup, validateStudyBackup, createStudyBackup, persistStudyBackup } from './utils/study-backup.js';
+import appPackage from '../package.json' with { type: 'json' };
+const APP_VERSION = appPackage.version;
 
 const escapeStudyText = value => String(value ?? '').replace(/[&<>"']/g,
   character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character]);
@@ -759,30 +762,32 @@ function loadInitialState() {
 
         // getLocalDateStr & TODAY_STR imported from ./engine/planner.js
 
-        // Auto-refresh: if date changes (e.g. page left open past midnight) reload so plan updates
+        // Refresh at local midnight and immediately on return, including short screen locks.
         (function setupAutoRefresh() {
-            // Check every 30 minutes; reload if the date has rolled over
-            setInterval(() => {
-                if (getLocalDateStr() !== TODAY_STR) {
+            let refreshing = false;
+            let midnightTimer;
+            const checkDate = () => {
+                if (!refreshing && getLocalDateStr() !== TODAY_STR) {
+                    refreshing = true;
                     window.location.reload();
                 }
-            }, 30 * 60 * 1000); // 30 minutes
-
-            // Also reload when the tab becomes visible after being hidden
-            // (handles phone screen-off / next-day scenario)
-            let hiddenSince = null;
-            document.addEventListener('visibilitychange', () => {
-                if (document.hidden) {
-                    hiddenSince = Date.now();
-                } else if (hiddenSince !== null) {
-                    const awayMs = Date.now() - hiddenSince;
-                    // If hidden for >15 minutes AND date has changed, reload
-                    if (awayMs > 15 * 60 * 1000 && getLocalDateStr() !== TODAY_STR) {
-                        window.location.reload();
-                    }
-                    hiddenSince = null;
-                }
-            });
+            };
+            const scheduleMidnight = () => {
+                clearTimeout(midnightTimer);
+                const now = new Date();
+                const next = new Date(now);
+                next.setHours(24, 0, 0, 250);
+                midnightTimer = setTimeout(() => { checkDate(); if (!refreshing) scheduleMidnight(); }, next - now);
+            };
+            const checkOnReturn = () => {
+                if (document.hidden) return;
+                checkDate();
+                if (!refreshing) scheduleMidnight();
+            };
+            document.addEventListener('visibilitychange', checkOnReturn);
+            window.addEventListener('focus', checkOnReturn);
+            window.addEventListener('pageshow', checkOnReturn);
+            scheduleMidnight();
         })();
 
         const getYesterdayStr = () => {
@@ -3758,11 +3763,7 @@ function showToastMessage(text, icon = 'checkCircle') {
                 return;
             }
             try {
-                const exportData = {
-                    ...appState,
-                    exportedAt: new Date().toISOString(),
-                    appVersion: "6.3.0"
-                };
+                const exportData = createStudyBackup(appState, APP_VERSION);
                 const jsonStr = JSON.stringify(exportData, null, 2);
                 const blob = new Blob([jsonStr], { type: "application/json" });
                 const url = URL.createObjectURL(blob);
@@ -3781,45 +3782,47 @@ function showToastMessage(text, icon = 'checkCircle') {
             }
         }
 
-        function importStudyPlanJSON(event) {
-            const file = event.target?.files?.[0];
+        async function importStudyPlanJSON(event) {
+            const input = event.target;
+            const file = input?.files?.[0];
             if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = async (e) => {
-                try {
-                    const parsed = JSON.parse(e.target.result);
-                    if (!parsed || !Array.isArray(parsed.plan)) {
-                        showAppAlert({
-                            title: "Invalid File Format",
-                            message: "The selected file is not a recognized Mission PlusTwo JSON backup.",
-                            icon: "fa-file-circle-xmark text-rose-500"
-                        });
-                        return;
-                    }
-                    // Validate and migrate if needed
-                    let validPlan = parsed;
-                    if (!validPlan.engineVersion || validPlan.engineVersion < PLANNER_ENGINE_VERSION) {
-                        validPlan = migrateLegacyUserPlan(validPlan);
-                    }
-                    appState = validPlan;
-                    saveAppStateLocally();
-                    await saveAppState(); // syncs to cloud if logged in
-                    closeSettingsModal();
-                    renderApp();
-                    showAppToast("Study plan restored successfully!", "fa-circle-check text-emerald-400");
-                } catch(err) {
-                    console.error("Import error:", err);
-                    showAppAlert({
-                        title: "File Read Error",
-                        message: "Could not read or parse the backup file. Please make sure it is a valid JSON file.",
-                        icon: "fa-triangle-exclamation text-rose-500"
-                    });
-                } finally {
-                    event.target.value = '';
+            input.disabled = true;
+            let restored = false;
+            try {
+                if (file.size > MAX_BACKUP_BYTES) throw new TypeError('Backup exceeds 2 MB.');
+                let validPlan = parseStudyBackup(await file.text());
+                if (validPlan.engineVersion > PLANNER_ENGINE_VERSION) throw new TypeError('Newer backup version.');
+                if (!validPlan.engineVersion || validPlan.engineVersion < PLANNER_ENGINE_VERSION) {
+                    validPlan = migrateLegacyUserPlan(validPlan);
                 }
-            };
-            reader.readAsText(file);
+                validPlan = validateStudyBackup(validPlan);
+                const count = validPlan.plan.reduce((total, day) => total + day.tasks.length, 0);
+                const confirmed = await showAppConfirm({
+                    title: 'Restore study backup?',
+                    message: `Restore ${count} tasks? This replaces this device's plan and checkmarks. If signed in, the restored plan also syncs to your account. Export your current plan first if you want to keep it.`,
+                    confirmText: 'Restore backup',
+                    cancelText: 'Keep current plan'
+                });
+                if (!confirmed) return;
+                validPlan.lastModified = new Date().toISOString();
+                persistStudyBackup(validPlan, localStorage);
+                appState = validPlan;
+                restored = true;
+                await saveAppState();
+                closeSettingsModal();
+                renderApp();
+                showAppToast('Study plan restored successfully!', 'fa-circle-check text-emerald-400');
+            } catch(err) {
+                console.error('Import error:', err);
+                showAppAlert({
+                    title: restored ? 'Backup saved' : 'Backup not restored',
+                    message: restored ? 'The backup was saved, but the app could not refresh. Reload to reopen your saved plan.' : 'The backup could not be read, validated or saved. Use a valid Mission PlusTwo backup (up to 2 MB) from this app version or an older version. Check available device storage and try again.',
+                    icon: 'fa-triangle-exclamation text-rose-500'
+                });
+            } finally {
+                input.value = '';
+                input.disabled = false;
+            }
         }
 
         function openSettingsModal() {

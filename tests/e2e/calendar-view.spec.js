@@ -37,8 +37,10 @@ test('today, overdue work and tomorrow stay separate across a calendar-day chang
   await expect(page.locator('#today-tasks')).not.toContainText(subjects[2]);
   await expect(page.locator('.pending-notice')).toContainText('1 unfinished');
 
-  await page.clock.setSystemTime(new Date('2026-10-17T12:00:00+05:30'));
+  // Leave the page open across midnight: its timer must advance the timetable.
+  await page.clock.setSystemTime(new Date('2026-10-16T23:59:59.500+05:30'));
   await page.reload();
+  await page.clock.runFor(1500);
   await expect(page.locator('#today-tasks')).toContainText(subjects[2]);
   await expect(page.locator('.study-history')).toContainText('Yesterday: 1 / 1 completed');
   await page.locator('#pending-work > summary').click();
@@ -49,4 +51,12 @@ test('today, overdue work and tomorrow stay separate across a calendar-day chang
   await expect(page.locator('.pending-notice')).toHaveCount(0);
   await expect(page.locator('#today-tasks')).toContainText(subjects[2]);
   await page.screenshot({ path: test.info().outputPath('calendar-today.png'), fullPage: true });
+  // A one-second screen lock across midnight must also refresh immediately.
+  await page.clock.setSystemTime(new Date('2026-10-17T23:59:59.500+05:30'));
+  await page.reload();
+  await page.clock.setSystemTime(new Date('2026-10-18T00:00:00.500+05:30'));
+  await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')));
+  await expect(page.locator('.study-date')).toHaveText('2026-10-18');
+  await expect(page.locator('#today-tasks')).toContainText('No tasks scheduled today');
+  await expect(page.locator('.pending-notice')).toContainText('1 unfinished');
 });

@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [6.4.3] - 2026-10-18
+
+### Fixed
+- Refresh Today's timetable at local midnight and immediately on returning to the app, including brief screen locks across midnight.
+- Validate backup size, dates, tasks and identifiers before restoring; ask before replacing progress, retain the current plan on cancellation, and roll back local writes on storage failures.
+- Omit account identity fields from portable backups and record the current app version.
+
+### Changed
+- Keep public documentation focused on student workflows and maintenance. Add a voluntary study-session testing guide and feedback template.
+- Link the stats page to current CI results rather than a stale fixed test count.
+
 ## [6.4.2] - 2026-10-16
 
 ### Changed
@@ -22,7 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Show daily capacity before plan creation, keep one start button, and support keyboard stream selection. Replace fixed clock suggestions with numbered study blocks.
 - Remove automatic sign-in interruptions after guest plan creation and recovery. Refresh the offline cache version.
 - Precache built JavaScript and CSS and match invariant bundles across Origin variations so a first-visit offline reload restores the interactive app. Label future study days accurately after automatic advancement.
-- Correct the application mission, unsupported adoption/compliance claims and stale public metrics. The stats page reads the current plan storage key and renders the stream as text.
+- Correct unsupported adoption/compliance claims and stale public metrics. The stats page reads the current plan storage key and renders the stream as text.
 - Exercise guest setup, task completion and persistence at mobile and desktop widths. Use Node 24 and strict lockfile installation in CI.
 
 ## [6.4.0] - 2026-10-02
@@ -126,7 +137,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Resolved GitHub Issue #3: Added practical lab exam revision guidance and Schema.org FAQPage entry to `/pages/plus-two-timetable.html`.
 - Updated `docs/ARCHITECTURE.md` Section 6 to document the concrete `src/adapters/` package and usage patterns.
-- Updated `docs/CODEX-OSS-EVIDENCE.md` with latest test counts, release tag, and architectural deliverables.
+- Updated project documentation with test counts, release information, and architectural deliverables.
 
 ---
 
@@ -154,7 +165,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `docs/IMPACT.md`: Public-safe community impact dashboard.
   - `docs/GROWTH-EXPERIMENTS.md`: Structured growth hypotheses and results tracking.
   - `docs/monthly/2026-09.md`: Monthly maintainer report for September 2026.
-  - `docs/CODEX-OSS-EVIDENCE.md`: Verified evidence portfolio for OpenAI Codex for Open Source.
+  - Project evidence and maintenance documentation.
 
 ### Changed
 - Standardized canonical analytics events in `src/analytics/tracker.js` (`landing_view`, `onboarding_started`, `plan_generated`, `plan_shared`, `plan_exported`, `return_visit`).

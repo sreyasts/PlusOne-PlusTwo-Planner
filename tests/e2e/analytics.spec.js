@@ -1,7 +1,10 @@
 import { test, expect } from '@playwright/test';
 
+test.use({ timezoneId: 'Asia/Kolkata' });
+
 test.describe('Local analytics event properties', () => {
   test('records lifecycle events and omits known personal-data keys', async ({ page }) => {
+    await page.clock.install({ time: new Date('2026-10-19T12:00:00+05:30') });
     const eventsDispatched = [];
 
     // Listen to custom analytics events dispatched by the tracker

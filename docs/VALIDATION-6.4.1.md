@@ -2,7 +2,7 @@
 
 > Historical release report. The owner later requested immediate removal of the floating feature; v6.4.2 removes it. See [current validation](VALIDATION-6.4.2.md).
 
-Date: 16 October 2026. Scope: practical guest study flow, application evidence and offline reliability.
+Date: 16 October 2026. Scope: practical guest study flow and offline reliability.
 
 ## Verified locally
 
@@ -21,8 +21,8 @@ Date: 16 October 2026. Scope: practical guest study flow, application evidence a
 - The first visit could cache HTML without application bundles. The build now precaches bundles; matching ignores Origin variations only for invariant same-origin JavaScript/CSS assets.
 - The stats page read an obsolete plan key and called account/friend stars organic adoption. It now reads the app's current key, renders the stream as text and states the evidence limits.
 
-## Limits and application state
+## Limits
 
 These tests do not validate curriculum accuracy, educational outcomes, statutory compliance, independent usage or acceptance into OpenAI's program. Existing plans retain their storage key and migration behavior. Optional Google sign-in remains available from the profile menu; no authenticated cloud-sync review was performed in this change.
 
-The updated application discloses the previous submission and unverified independent adoption. The owner explicitly asked to hold submission and to remove the floating focus feature only after submission. That feature remains available. This document does not claim that an application has been submitted or a subscription awarded. Public release and deployment status should be verified from GitHub and the live app.
+The floating focus controls were present in v6.4.1 and removed in v6.4.2. Public release and deployment status should be verified from GitHub and the live app.

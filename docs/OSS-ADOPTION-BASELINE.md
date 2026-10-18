@@ -83,13 +83,13 @@
 
 ---
 
-## 5. Codex for Open Source Baseline Assessment
+## 5. Historical Project Baseline
 
-OpenAI's Codex for Open Source / Developer Access program evaluates projects on:
+The project's engineering and community priorities are:
 1. **Legitimate OSS Activity**: Real commits, real releases, real issue discussions, clean license (MIT).
 2. **Ecosystem Value & Adoption**: Tool usefulness, real users benefiting, active utility for a defined community.
 3. **Maintainer Diligence**: Regular release notes, thorough documentation, automated CI/CD, issue triage, zero fabrications.
 
 **Current Scorecard**:
-- **Strong**: High technical quality, deterministic engine, 100% test coverage, empirical benchmarks, zero fabricated claims, cleanly deployed on Firebase Hosting.
+- **Engineering evidence**: Automated tests and synthetic benchmarks exist. Passing tests do not establish complete test coverage, student outcomes or independent adoption.
 - **Immediate Gaps**: Zero external issues/PRs, lack of documented analytics model, limited landing page intent coverage, lack of student referral loops.

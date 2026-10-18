@@ -140,7 +140,7 @@
   - Maintain active `good first issue` backlogs for college students, teachers, and developers in Kerala.
   - Welcome syllabus revisions, Malayalam terminology improvements, and accessibility audits.
   - Maintain 100% test passing rates on all PRs through automated GitHub Actions CI.
-- **OpenAI Codex for Open Source Alignment**:
+- **Maintainer Practices**:
   - Transparent documentation of commit history, issue triage, and semantic releases.
   - Complete architectural decoupling between constraint solver and curriculum adapters.
   - Zero tolerance for fabricated metrics, fake stars, or synthetic user accounts.
