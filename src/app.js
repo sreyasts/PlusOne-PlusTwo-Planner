@@ -66,6 +66,7 @@ import {
 } from './utils/ai_tutor.js';
 import { getDailyPlan } from './ui/daily-plan.js';
 import { MAX_BACKUP_BYTES, parseStudyBackup, validateStudyBackup, createStudyBackup, persistStudyBackup } from './utils/study-backup.js';
+import { persistTaskCompletion } from './utils/study-progress.js';
 import appPackage from '../package.json' with { type: 'json' };
 const APP_VERSION = appPackage.version;
 
@@ -212,20 +213,22 @@ function loadInitialState() {
 
         function saveAppStateLocally() {
             if (!appState) return;
-            localStorage.setItem('plusTwoMissionState_v2', JSON.stringify(appState));
-            localStorage.setItem('plusTwoPlanState', JSON.stringify(appState));
+            persistStudyBackup(appState, localStorage);
         }
 
         // Save State helper - saves to local storage AND syncs to Firebase Cloud Firestore!
         async function saveAppState() {
             if (!appState) return;
             saveAppStateLocally();
+            await syncAppStateToCloud(appState);
+        }
 
+        async function syncAppStateToCloud(state) {
             if (currentUser && db) {
                 try {
                     const userDocRef = db.collection('users').doc(currentUser.uid);
                     const payload = getFirestoreCleanData({
-                        ...appState,
+                        ...state,
                         userEmail: currentUser.email,
                         displayName: currentUser.displayName || 'Student'
                     });
@@ -810,24 +813,6 @@ function loadInitialState() {
             return 0; // Streak reset due to 2+ days inactivity
         }
 
-        function updateStreakOnCompletion() {
-            if (!appState) return;
-            const today = TODAY_STR;
-            const yesterday = getYesterdayStr();
-            const last = appState.lastCompletedDate;
-
-            if (last === today) {
-                return; // Already progressed today
-            }
-
-            if (last === yesterday) {
-                appState.streakCount = (appState.streakCount || 0) + 1;
-            } else {
-                appState.streakCount = 1; // Start new streak
-            }
-            appState.lastCompletedDate = today;
-        }
-
         function shareTodayCompletion(dayNumber) {
             const shareTitle = `Mission PlusTwo — Day ${dayNumber} Cleared!`;
             const shareText = `🏆 Day ${dayNumber} study targets 100% completed on Mission PlusTwo! Free adaptive daily study planner for Kerala DHSE Plus Two & Plus One Improvement — with guaranteed mock revision buffer. Try it:`;
@@ -919,32 +904,25 @@ function showToastMessage(text, icon = 'checkCircle') {
 
         function toggleTaskDirect(taskId) {
             if (!appState || !appState.plan) return;
-
-            let targetTask = null;
-            let targetDay = null;
-
-            for (const d of appState.plan) {
-                const found = d.tasks.find(t => t.id === taskId);
-                if (found) {
-                    targetTask = found;
-                    targetDay = d;
-                    break;
-                }
+            try {
+                const next = persistTaskCompletion(appState, taskId, localStorage, {
+                    today: getLocalDateStr(), yesterday: getYesterdayStr(), modifiedAt: new Date().toISOString(),
+                });
+                if (!next) return;
+                appState = next;
+            } catch (error) {
+                console.warn('Study progress could not be saved:', error);
+                const isML = getAppLanguage() === 'ml';
+                showAppAlert({
+                    title: isML ? 'മാറ്റം സേവ് ചെയ്തില്ല' : 'Progress not saved',
+                    message: isML ? 'ഈ മാറ്റം സേവ് ചെയ്യാനായില്ല. പഴയ പഠന നില മാറ്റിയിട്ടില്ല. ഉപകരണത്തിൽ സ്ഥലം ലഭ്യമാക്കി വീണ്ടും ശ്രമിക്കുക. ക്രമീകരണങ്ങളിൽ നിന്ന് ബാക്കപ്പ് എടുക്കാം.' : 'This change could not be saved. Your previous progress is unchanged. Check available device storage and try again. You can export your current plan from Settings.',
+                    icon: 'fa-triangle-exclamation text-amber-500',
+                });
+                return;
             }
-
-            if (!targetTask) return;
-
-            // Toggle state
-            targetTask.completed = !targetTask.completed;
-            if (appState) {
-                appState.lastModified = new Date().toISOString();
-                if (targetTask.completed) {
-                    appState.xp = (appState.xp || 0) + 100;
-                } else {
-                    appState.xp = Math.max(0, (appState.xp || 0) - 100);
-                }
-            }
-            saveAppState();
+            const targetDay = appState.plan.find(day => day.tasks.some(task => task.id === taskId));
+            const targetTask = targetDay.tasks.find(task => task.id === taskId);
+            void syncAppStateToCloud(appState);
 
             // Update UI elements in DOM
             const checkboxElements = document.querySelectorAll(`[data-task-id="${taskId}"]`);
@@ -969,8 +947,6 @@ function showToastMessage(text, icon = 'checkCircle') {
                         trackAnalyticsEvent('first_task_checked', { taskId: String(targetTask.id || '') });
                     }
                 } catch(e) {}
-
-                updateStreakOnCompletion();
 
                 // Quick dopamine particle burst
                 try {
