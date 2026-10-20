@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [Unreleased]
+
+### Fixed
+- Save task completion, undo, XP and streak changes before showing success. Failed local writes retain previous progress, roll back both saved plan keys, and show a retry/backup message without uploading the unsaved change.
+
 ## [6.4.3] - 2026-10-18
 
 ### Fixed
