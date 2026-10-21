@@ -67,6 +67,7 @@ import {
 import { getDailyPlan } from './ui/daily-plan.js';
 import { MAX_BACKUP_BYTES, parseStudyBackup, validateStudyBackup, createStudyBackup, persistStudyBackup } from './utils/study-backup.js';
 import { persistTaskCompletion } from './utils/study-progress.js';
+import { getImprovementSubjects, getRemainingPlanTasks, validateImprovementSelection } from './utils/improvement.js';
 import appPackage from '../package.json' with { type: 'json' };
 const APP_VERSION = appPackage.version;
 
@@ -1435,12 +1436,18 @@ function showToastMessage(text, icon = 'checkCircle') {
         let activeSetupSubjectTab = 'Physics';
         let activeSetupGradeTab = '+2'; // '+2' or '+1'
         const selectedCompletedChapters = new Set();
+        let setupHasImprovement = false;
+        const setupImprovementSelection = new Map();
+        const setupImprovementDates = new Map();
 
         // getStreamSubjects imported from ./engine/planner.js
 
         function setStreamSelection(stream) {
             selectedStream = stream;
             selectedCompletedChapters.clear();
+            setupHasImprovement = stream === 'imp_only';
+            setupImprovementSelection.clear();
+            setupImprovementDates.clear();
             const subs = getStreamSubjects(stream);
             if (stream === 'imp_only') {
                 activeSetupGradeTab = '+1';
@@ -1489,11 +1496,7 @@ function showToastMessage(text, icon = 'checkCircle') {
         function renderSetupSubjectTabs() {
             let subs = getStreamSubjects(selectedStream);
             if (selectedStream === 'imp_only') {
-                const checkedSubs = subs.filter(sub => {
-                    const subId = sub.replace(/\s+/g, '-').toLowerCase();
-                    const cb = document.getElementById(`imp-${subId}`);
-                    return cb && cb.checked;
-                });
+                const checkedSubs = subs.filter(sub => setupImprovementSelection.get(sub));
                 if (checkedSubs.length > 0) {
                     subs = checkedSubs;
                 }
@@ -1509,88 +1512,40 @@ function showToastMessage(text, icon = 'checkCircle') {
         }
 
         function setImprovementToggle(enabled) {
-            const cb = document.getElementById('has-improvement');
-            if (cb) cb.checked = enabled;
+            setupHasImprovement = selectedStream === 'imp_only' || enabled;
+            const checkbox = document.getElementById('has-improvement');
+            if (checkbox) checkbox.checked = setupHasImprovement;
+            const panel = document.getElementById('improvement-options');
+            if (panel) panel.classList.toggle('hidden', !setupHasImprovement);
+        }
 
-            const noCard = document.getElementById('imp-choice-no');
-            const yesCard = document.getElementById('imp-choice-yes');
-            const optionsPanel = document.getElementById('improvement-options');
+        function setImprovementSubjectSelection(subject, checked) {
+            if (!getImprovementSubjects(selectedStream).includes(subject)) return;
+            setupImprovementSelection.set(subject, checked);
+        }
 
-            if (enabled) {
-                if (yesCard) {
-                    yesCard.className = 'cursor-pointer p-3 sm:p-3.5 rounded-2xl border-2 border-amber-500 dark:border-amber-400 bg-amber-50/80 dark:bg-amber-950/40 ring-2 ring-amber-400/25 transition text-left flex items-center justify-between shadow-xs';
-                    const check = yesCard.querySelector('.choice-check');
-                    if (check) {
-                        check.innerHTML = '<i class="fa-solid fa-check text-white"></i>';
-                        check.className = 'w-5 h-5 rounded-full bg-amber-600 dark:bg-amber-500 flex items-center justify-center text-xs choice-check';
-                    }
-                }
-                if (noCard) {
-                    noCard.className = 'cursor-pointer p-3 sm:p-3.5 rounded-2xl border-2 border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600 transition text-left flex items-center justify-between';
-                    const check = noCard.querySelector('.choice-check');
-                    if (check) {
-                        check.innerHTML = '';
-                        check.className = 'w-5 h-5 rounded-full border border-slate-300 dark:border-slate-600 flex items-center justify-center text-xs choice-check';
-                    }
-                }
-                if (optionsPanel) {
-                    optionsPanel.classList.remove('hidden');
-                }
-            } else {
-                if (noCard) {
-                    noCard.className = 'cursor-pointer p-3 sm:p-3.5 rounded-2xl border-2 border-slate-700 dark:border-slate-500 bg-slate-50 dark:bg-[#141d30] ring-2 ring-slate-400/20 transition text-left flex items-center justify-between shadow-xs';
-                    const check = noCard.querySelector('.choice-check');
-                    if (check) {
-                        check.innerHTML = '<i class="fa-solid fa-check text-white"></i>';
-                        check.className = 'w-5 h-5 rounded-full bg-slate-700 dark:bg-slate-500 flex items-center justify-center text-xs choice-check';
-                    }
-                }
-                if (yesCard) {
-                    yesCard.className = 'cursor-pointer p-3 sm:p-3.5 rounded-2xl border-2 border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-amber-400 hover:bg-amber-50/40 dark:hover:bg-amber-950/20 transition text-left flex items-center justify-between';
-                    const check = yesCard.querySelector('.choice-check');
-                    if (check) {
-                        check.innerHTML = '';
-                        check.className = 'w-5 h-5 rounded-full border border-slate-300 dark:border-slate-600 flex items-center justify-center text-xs choice-check';
-                    }
-                }
-                if (optionsPanel) {
-                    optionsPanel.classList.add('hidden');
-                }
-            }
+        function setImprovementExamDate(subject, value) {
+            if (!getImprovementSubjects(selectedStream).includes(subject)) return;
+            setupImprovementDates.set(subject, value);
         }
 
         function renderImprovementSubjectItems() {
-            const defaultDates = {
-                'Physics': '2026-10-12',
-                'Mathematics': '2026-10-14',
-                'Chemistry': '2026-10-16',
-                'Botany': '2026-10-19',
-                'Zoology': '2026-10-19',
-                'Computer Science': '2026-10-19',
-                'Accountancy': '2026-10-14',
-                'Business Studies': '2026-10-16',
-                'Economics': '2026-10-18',
-                'Computer Applications': '2026-10-20',
-                'History': '2026-10-14',
-                'Political Science': '2026-10-16',
-                'Sociology': '2026-10-18'
-            };
-            const subs = getStreamSubjects(selectedStream);
-            return subs.map(sub => {
-                const subId = sub.replace(/\s+/g, '-').toLowerCase();
-                const defaultDate = defaultDates[sub] || '2026-10-19';
+            const isML = getAppLanguage() === 'ml';
+            return getImprovementSubjects(selectedStream).map(subject => {
+                const subId = subject.replace(/\s+/g, '-').toLowerCase();
+                const checked = setupImprovementSelection.get(subject) || false;
+                const examDate = setupImprovementDates.get(subject) || '';
                 return `
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 bg-white dark:bg-[#141d30] rounded-xl border border-amber-200/80 dark:border-amber-500/30 shadow-xs hover:border-amber-300 dark:hover:border-amber-400/50 transition">
-                        <label class="flex items-center gap-2.5 cursor-pointer text-xs font-bold text-slate-800 dark:text-slate-100 select-none">
-                            <input type="checkbox" id="imp-${subId}" class="rounded border-slate-300 dark:border-slate-600 text-amber-600 focus:ring-amber-500 w-4 h-4">
-                            <span>${sub} (+1 Improvement)</span>
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 rounded-xl border border-amber-200 dark:border-amber-700">
+                        <label class="flex items-center gap-2.5 text-sm font-bold">
+                            <input type="checkbox" id="imp-${subId}" ${checked ? 'checked' : ''} onchange="setImprovementSubjectSelection('${subject}', this.checked)">
+                            <span>${escapeStudyText(subject)} (+1)</span>
                         </label>
-                        <div class="flex items-center gap-2 self-end sm:self-auto">
-                            <span class="text-xs text-slate-500 dark:text-slate-300 font-medium">Exam Date:</span>
-                            <input type="date" id="input-date-${subId}" value="${defaultDate}" class="border border-slate-300 dark:border-slate-700 rounded-lg px-2.5 py-1 text-xs font-semibold text-slate-700 dark:text-slate-200 bg-slate-50 dark:bg-[#0e1526] focus:bg-white dark:focus:bg-[#141d30] focus:border-amber-600 outline-none transition">
-                        </div>
-                    </div>
-                `;
+                        <label class="flex flex-wrap items-center gap-2 text-xs">
+                            <span>${isML ? 'പരീക്ഷാ തീയതി' : 'Exam date'} — ${escapeStudyText(subject)}</span>
+                            <input type="date" id="input-date-${subId}" value="${escapeStudyText(examDate)}" onchange="setImprovementExamDate('${subject}', this.value)" class="border rounded-lg px-2 py-1 bg-white dark:bg-[#141d30]">
+                        </label>
+                    </div>`;
             }).join('');
         }
 
@@ -1785,7 +1740,7 @@ function showToastMessage(text, icon = 'checkCircle') {
             const smartStart = typeof getSmartStartDate === 'function' ? getSmartStartDate() : { startDate: TODAY_STR, isLateEvening: false };
             const effectiveStart = smartStart.startDate;
             const days = calculateDaysBetween(effectiveStart, input.value);
-            if (days <= 0) {
+            if (!Number.isFinite(days) || days <= 0) {
                 label.innerHTML = isML
                     ? '<span class="text-rose-600 dark:text-rose-400 font-bold flex items-center gap-1.5"><i class="fa-solid fa-triangle-exclamation"></i> തിരഞ്ഞെടുത്ത തീയതി കഴിഞ്ഞുപോയി! ഭാവിയിലെ തീയതി നൽകുക.</span>'
                     : '<span class="text-rose-600 dark:text-rose-400 font-bold flex items-center gap-1.5"><i class="fa-solid fa-triangle-exclamation"></i> Selected date has passed! Please select a future target date.</span>';
@@ -2042,55 +1997,26 @@ function showToastMessage(text, icon = 'checkCircle') {
             const checkedCompletedBoxes = Array.from(selectedCompletedChapters);
 
             const isImpOnly = selectedStream === 'imp_only';
-            const allowedSubjects = getStreamSubjects(selectedStream);
-            let tasksToPlan = [];
-
-            if (!isImpOnly) {
-                // Filter Plus Two tasks: only include tasks of the chosen stream, up to targetTerm, and not marked completed
-                tasksToPlan = PLUS_TWO_SYLLABUS.filter(t => 
-                    allowedSubjects.includes(t.subject) && 
-                    t.term <= targetTerm && 
-                    !checkedCompletedBoxes.includes(t.chapId)
-                );
-            }
-
-            // Plus One Improvement Config (Strictly Stream Isolated)
             let improvementConfig = [];
             const hasImp = isImpOnly || document.getElementById('has-improvement')?.checked;
-
-            if (hasImp) {
-                let hasError = false;
-                allowedSubjects.forEach(sub => {
-                    const subId = sub.replace(/\s+/g, '-').toLowerCase();
-                    const cb = document.getElementById(`imp-${subId}`);
-                    if (cb && cb.checked) {
-                        const examDate = document.getElementById(`input-date-${subId}`)?.value;
-                        if (!examDate) {
-                            showAppAlert({
-                                title: "Exam Date Missing",
-                                message: `Please choose an exam date for ${sub} improvement.`,
-                                icon: "fa-calendar-day text-amber-500"
-                            });
-                            hasError = true;
-                            return;
-                        }
-                        improvementConfig.push({ subject: sub, examDate: examDate });
-                        // Exclude finished Plus One chapters!
-                        const incompletePlusOne = PLUS_ONE_SYLLABUS.filter(t => t.subject === sub && !checkedCompletedBoxes.includes(t.chapId));
-                        tasksToPlan.push(...incompletePlusOne);
-                    }
+            try {
+                const selected = hasImp ? getImprovementSubjects(selectedStream)
+                    .filter(subject => setupImprovementSelection.get(subject))
+                    .map(subject => ({ subject, examDate: setupImprovementDates.get(subject) || '' })) : [];
+                improvementConfig = validateImprovementSelection(selected, selectedStream, effectiveStartDate, deadlineInput);
+            } catch (error) {
+                goToSetupStep(2);
+                showAppAlert({
+                    title: isML ? 'ഇംപ്രൂവ്മെന്റ് വിവരങ്ങൾ പരിശോധിക്കുക' : 'Check improvement subjects and dates',
+                    message: isML ? 'ഒരു വിഷയമെങ്കിലും തിരഞ്ഞെടുത്ത് പ്ലാൻ ആരംഭിച്ചതിന് ശേഷവും ലക്ഷ്യ തീയതിക്ക് മുമ്പായോ അന്നോ ഉള്ള പരീക്ഷാ തീയതി നൽകുക.' : error.message,
+                    icon: 'fa-calendar-day text-amber-500',
                 });
-                if (hasError) return;
-
-                if (isImpOnly && improvementConfig.length === 0) {
-                    showAppAlert({
-                        title: "Subjects Required",
-                        message: "Please select at least one +1 Improvement subject to create your schedule.",
-                        icon: "fa-list-check text-amber-500"
-                    });
-                    return;
-                }
+                return;
             }
+            const tasksToPlan = getRemainingPlanTasks({
+                stream: selectedStream, targetTerm, improvementConfig,
+                completedChapterIds: new Set(checkedCompletedBoxes),
+            });
 
             if (tasksToPlan.length === 0) {
                 showAppAlert({
@@ -2278,27 +2204,10 @@ function showToastMessage(text, icon = 'checkCircle') {
 
             const userStream = appState.stream || (appState.plan.some(d => d.tasks.some(t => t.subject === 'Botany' || t.subject === 'Zoology')) ? 'bio' : 'cs');
             const targetTerm = appState.targetTerm || 3;
-            const allowedSubjects = getStreamSubjects(userStream);
-
-            // Reconstruct remaining Plus Two tasks in canonical prerequisite order
-            let uncompletedTasks = PLUS_TWO_SYLLABUS.filter(t =>
-                allowedSubjects.includes(t.subject) &&
-                t.term <= targetTerm &&
-                !completedChapterIds.has(t.chapId) &&
-                !completedTaskIds.has(t.id)
-            );
-
-            // Reconstruct remaining Plus One Improvement tasks in canonical prerequisite order
-            if (appState.improvementConfig && appState.improvementConfig.length > 0) {
-                appState.improvementConfig.forEach(cfg => {
-                    const incompleteP1 = PLUS_ONE_SYLLABUS.filter(t =>
-                        t.subject === cfg.subject &&
-                        !completedChapterIds.has(t.chapId) &&
-                        !completedTaskIds.has(t.id)
-                    );
-                    uncompletedTasks.push(...incompleteP1);
-                });
-            }
+            const uncompletedTasks = getRemainingPlanTasks({
+                stream: userStream, targetTerm, improvementConfig: appState.improvementConfig || [],
+                completedChapterIds, completedTaskIds,
+            });
 
             closeRegenerateModal();
 
@@ -2477,7 +2386,6 @@ function showToastMessage(text, icon = 'checkCircle') {
 
                         <!-- Form state inputs preserved for engine compatibility -->
                         <input type="hidden" id="target-term" value="2">
-                        <input type="checkbox" id="has-improvement" class="hidden" ${selectedStream === 'imp_only' ? 'checked' : ''}>
 
                         <!-- STEP 1: Stream Selection -->
                         <div id="setup-step-1" class="${setupCurrentStep === 1 ? '' : 'hidden'} space-y-5 animate-fade-in-up">
@@ -2565,6 +2473,11 @@ function showToastMessage(text, icon = 'checkCircle') {
 
                             </div>
 
+                            <button type="button" id="stream-card-imp" aria-pressed="${selectedStream === 'imp_only'}" onclick="setStreamSelection('imp_only')" class="w-full p-3.5 rounded-2xl border-2 text-left ${selectedStream === 'imp_only' ? 'border-amber-600 bg-amber-50 dark:bg-amber-950/40' : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0e1526]'}">
+                                <span class="block font-black text-sm">${isML ? '+1 ഇംപ്രൂവ്മെന്റ് മാത്രം' : '+1 Improvement Only'}</span>
+                                <span class="block text-xs mt-1">${isML ? '+2 പാഠങ്ങൾ ഇല്ലാതെ തിരഞ്ഞെടുത്ത +1 വിഷയങ്ങൾ പഠിക്കുക.' : 'Plan selected +1 subjects without adding +2 lessons.'}</span>
+                            </button>
+
                             <!-- Step 1 Navigation (Strictly "Next", No extra clutter) -->
                             <div class="pt-5 flex justify-end">
                                 <button type="button" onclick="nextSetupStep()" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-sm py-3 px-8 rounded-2xl shadow-md shadow-blue-500/20 transition flex items-center justify-center gap-2 active:scale-95">
@@ -2615,6 +2528,18 @@ function showToastMessage(text, icon = 'checkCircle') {
                             </div>
                             <!-- Live Calculation Feedback Box -->
                             <div id="deadline-calc-label" class="p-3 rounded-2xl bg-blue-50/70 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-800/40 text-xs text-slate-600 dark:text-slate-200"></div>
+
+                            <fieldset class="space-y-3 rounded-2xl border border-amber-200 dark:border-amber-700 p-3">
+                                <legend class="px-1 font-bold text-sm">${isML ? '+1 ഇംപ്രൂവ്മെന്റ് പരീക്ഷകൾ' : '+1 Improvement exams'}</legend>
+                                <label class="flex items-center gap-2 text-sm font-semibold">
+                                    <input type="checkbox" id="has-improvement" ${setupHasImprovement || selectedStream === 'imp_only' ? 'checked' : ''} ${selectedStream === 'imp_only' ? 'disabled' : ''} onchange="setImprovementToggle(this.checked)">
+                                    ${isML ? '+1 വിഷയങ്ങൾ പ്ലാനിൽ ഉൾപ്പെടുത്തുക' : 'Include +1 subjects in this plan'}
+                                </label>
+                                <div id="improvement-options" class="space-y-2 ${setupHasImprovement || selectedStream === 'imp_only' ? '' : 'hidden'}">
+                                    <p class="text-xs">${isML ? 'വിഷയങ്ങൾ തിരഞ്ഞെടുത്ത് നിങ്ങളുടെ പരീക്ഷാ തീയതികൾ നൽകുക. ലക്ഷ്യ തീയതി എല്ലാ പരീക്ഷാ തീയതികളും ഉൾക്കൊള്ളണം.' : 'Select your subjects and enter your exam dates. Dates must be after the plan start and on or before the target date above. These are your dates, not an official exam timetable.'}</p>
+                                    ${renderImprovementSubjectItems()}
+                                </div>
+                            </fieldset>
 
                             <!-- Step 2 Navigation -->
                             <div class="pt-5 flex items-center justify-between gap-3">
@@ -3970,6 +3895,8 @@ if (typeof window !== 'undefined') {
         updateTermCardsDescriptions,
         renderSetupSubjectTabs,
         setImprovementToggle,
+        setImprovementSubjectSelection,
+        setImprovementExamDate,
         renderImprovementSubjectItems,
         switchSetupGrade,
         switchSetupSubject,

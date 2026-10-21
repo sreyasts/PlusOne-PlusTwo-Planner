@@ -4,9 +4,8 @@
  * Guarantees 100% preservation of user checkmarks, progress, and historical completion.
  */
 
-import { PLANNER_ENGINE_VERSION, ENGINE_VERSION, formatLocalDateStr, buildIntelligentPlan, getStreamSubjects } from './planner.js';
-import { PLUS_TWO_SYLLABUS } from '../data/syllabus-plus-two.js';
-import { PLUS_ONE_SYLLABUS } from '../data/syllabus-plus-one.js';
+import { PLANNER_ENGINE_VERSION, ENGINE_VERSION, formatLocalDateStr, buildIntelligentPlan } from './planner.js';
+import { getRemainingPlanTasks } from '../utils/improvement.js';
 
 export const PLAN_MIGRATION_VERSION = 5;
 export const MIGRATION_VERSION = 6;
@@ -96,23 +95,7 @@ export function migrateLegacyUserPlan(existingState) {
   const improvementConfig = existingState.improvementConfig || [];
   const startDate = existingState.startDate || formatLocalDateStr();
 
-  const allowedSubjects = getStreamSubjects(userStream);
-
-  const allTasksToPlan = PLUS_TWO_SYLLABUS.filter(
-    (t) =>
-      allowedSubjects.includes(t.subject) &&
-      t.term <= targetTerm &&
-      !completedChapterIds.has(t.chapId)
-  );
-
-  if (improvementConfig.length > 0) {
-    improvementConfig.forEach((cfg) => {
-      const impTasks = PLUS_ONE_SYLLABUS.filter(
-        (t) => t.subject === cfg.subject && !completedChapterIds.has(t.chapId)
-      );
-      allTasksToPlan.push(...impTasks);
-    });
-  }
+  const allTasksToPlan = getRemainingPlanTasks({ stream: userStream, targetTerm, improvementConfig, completedChapterIds });
 
   const generated = buildIntelligentPlan(
     deadlineDate,
