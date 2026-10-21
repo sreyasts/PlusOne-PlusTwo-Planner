@@ -8,6 +8,8 @@ Use [Mission PlusTwo](https://mission-plustwo.web.app/) as a guest. Participatio
 4. After one online visit, turn off the network and reopen the app. Check today's plan and completion controls. External study links and cloud sync need a connection.
 5. Reopen on the next day. Today's timetable should advance with the calendar, earlier unfinished work should appear under Pending, and completed work should remain recorded.
 
+For +1 Improvement: select your subjects and enter your own exam dates under Target Exam & Date. The overall target must cover those dates. Check that only your selected +1 subjects appear in an improvement-only plan, then export and restore a backup and try Adjust plan. These dates are user inputs, not a verified official exam timetable.
+
 Report the device/browser, what you tried, expected result, actual result and whether the problem repeats. Use the **Study session feedback** GitHub issue template; redact personal information from screenshots. A keyboard or Malayalam-language attempt is useful when those match your normal workflow.
 
 If you do not use GitHub, describe the problem to the person who shared the app. They can record the issue with your permission, without identifying you.

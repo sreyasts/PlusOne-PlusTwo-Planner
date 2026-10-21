@@ -1,4 +1,5 @@
 /** Validate portable study plans before they can replace saved progress. */
+import { getImprovementSubjects, isCalendarDate } from './improvement.js';
 export const MAX_BACKUP_BYTES = 2 * 1024 * 1024;
 const STATE_KEYS = ['plusTwoMissionState_v2', 'plusTwoPlanState'];
 const ACCOUNT_FIELDS = ['uid', 'userId', 'userEmail', 'email', 'displayName', 'photoURL'];
@@ -6,13 +7,6 @@ const isRecord = value => value !== null && typeof value === 'object' && !Array.
 
 function requireValid(condition) {
   if (!condition) throw new TypeError('Invalid study plan backup.');
-}
-
-function isDate(value) {
-  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
-  const date = new Date(`${value}T12:00:00`);
-  return !Number.isNaN(date.getTime()) && date.getFullYear() === Number(value.slice(0, 4)) &&
-    date.getMonth() + 1 === Number(value.slice(5, 7)) && date.getDate() === Number(value.slice(8, 10));
 }
 
 function checkValues(value, depth = 0) {
@@ -37,14 +31,20 @@ export function validateStudyBackup(state) {
   requireValid(isRecord(state));
   checkValues(state);
   requireValid(Array.isArray(state.plan) && state.plan.length > 0 && state.plan.length <= 1500);
-  if (state.stream !== undefined) requireValid(['cs', 'bio', 'commerce', 'humanities'].includes(state.stream));
+  if (state.stream !== undefined) requireValid(['cs', 'bio', 'commerce', 'humanities', 'imp_only'].includes(state.stream));
   for (const key of ['startDate', 'deadlineDate']) {
-    if (state[key] !== undefined) requireValid(isDate(state[key]));
+    if (state[key] !== undefined) requireValid(isCalendarDate(state[key]));
   }
   if (state.engineVersion !== undefined) requireValid(Number.isInteger(state.engineVersion) && state.engineVersion > 0);
   if (state.personalization !== undefined) requireValid(isRecord(state.personalization));
   if (state.improvementConfig !== undefined) {
-    requireValid(Array.isArray(state.improvementConfig) && state.improvementConfig.every(item => isRecord(item) && typeof item.subject === 'string'));
+    const subjects = new Set();
+    const supported = getImprovementSubjects(state.stream || 'imp_only');
+    requireValid(Array.isArray(state.improvementConfig) && state.improvementConfig.every(item => {
+      if (!isRecord(item) || !supported.includes(item.subject) || !isCalendarDate(item.examDate) || subjects.has(item.subject)) return false;
+      subjects.add(item.subject);
+      return true;
+    }));
   }
   if (state.completedChaptersOnInit !== undefined) {
     requireValid(Array.isArray(state.completedChaptersOnInit) && state.completedChaptersOnInit.every(item => typeof item === 'string'));
@@ -56,7 +56,7 @@ export function validateStudyBackup(state) {
   const taskIds = new Set();
   let taskCount = 0;
   const plan = state.plan.map((day, index) => {
-    requireValid(isRecord(day) && isDate(day.date) && !dates.has(day.date) && Array.isArray(day.tasks));
+    requireValid(isRecord(day) && isCalendarDate(day.date) && !dates.has(day.date) && Array.isArray(day.tasks));
     dates.add(day.date);
     const dayNumber = day.dayNumber ?? index + 1;
     requireValid(Number.isInteger(dayNumber) && dayNumber > 0 && !dayNumbers.has(dayNumber));
