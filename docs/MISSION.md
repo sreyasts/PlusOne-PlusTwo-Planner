@@ -1,4 +1,4 @@
-# Mission PlusTwo mission
+# +1 & +2 Planner mission
 
 Updated 18 October 2026.
 

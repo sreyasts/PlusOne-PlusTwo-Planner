@@ -1,6 +1,6 @@
 /**
- * Mission PlusTwo - RFC 5545 iCalendar (.ics) Generator & Synchronizer
- * Enables students to export their complete Kerala Plus Two & Improvement
+ * +1 & +2 Planner - RFC 5545 iCalendar (.ics) Generator & Synchronizer
+ * Enables students to export their complete Kerala Plus One, Plus Two & Improvement
  * study schedule into Google Calendar, Apple Calendar, and Outlook.
  */
 
@@ -58,13 +58,13 @@ export function escapeIcsText(text) {
  */
 export function generateIcsCalendar(plan, options = {}) {
   const stream = options.stream || 'Plus Two';
-  const calName = options.title || `Mission PlusTwo Study Schedule (${stream})`;
+  const calName = options.title || `+1 & +2 Planner Study Schedule (${stream})`;
   const nowIcs = formatIcsDate(new Date(), '12:00') + 'Z';
 
   const lines = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//Mission PlusTwo//DHSE Kerala Study Engine//EN',
+    'PRODID:-//+1 & +2 Planner//DHSE Kerala Study Engine//EN',
     'CALSCALE:GREGORIAN',
     'METHOD:PUBLISH',
     `X-WR-CALNAME:${escapeIcsText(calName)}`,
@@ -82,7 +82,7 @@ export function generateIcsCalendar(plan, options = {}) {
 
     if (tasks.length === 0) {
       if (day.isRestDay) {
-        const uid = `rest-day-${day.dayNumber || dayIndex + 1}-${dayDate}@mission-plustwo.web.app`;
+        const uid = `rest-day-${day.dayNumber || dayIndex + 1}-${dayDate}@plusone-plustwo-planner.web.app`;
         const dtStart = formatIcsDate(dayDate, '09:00');
         const dtEnd = formatIcsDate(dayDate, '10:00');
         lines.push(
@@ -91,7 +91,7 @@ export function generateIcsCalendar(plan, options = {}) {
           `DTSTAMP:${nowIcs}`,
           `DTSTART:${dtStart}`,
           `DTEND:${dtEnd}`,
-          `SUMMARY:Mission PlusTwo: Day ${day.dayNumber || dayIndex + 1} - Rest & Recharging`,
+          `SUMMARY:+1 & +2 Planner: Day ${day.dayNumber || dayIndex + 1} - Rest & Recharging`,
           'DESCRIPTION:Dedicated rest buffer to avoid burnout and consolidate memory.',
           'STATUS:CONFIRMED',
           'END:VEVENT'
@@ -114,7 +114,7 @@ export function generateIcsCalendar(plan, options = {}) {
 
       const dtStart = formatIcsDate(dayDate, slotTime);
       const dtEnd = formatIcsDate(dayDate, endTimeStr);
-      const uid = `task-${task.id || `${dayIndex}-${taskIdx}`}-${dayDate}@mission-plustwo.web.app`;
+      const uid = `task-${task.id || `${dayIndex}-${taskIdx}`}-${dayDate}@plusone-plustwo-planner.web.app`;
 
       const subject = task.subject || 'DHSE Study';
       const chapter = task.chapterTitle || task.chapterName || task.title || 'Revision Session';
@@ -122,7 +122,7 @@ export function generateIcsCalendar(plan, options = {}) {
       const grade = task.grade ? ` [${task.grade}]` : '';
 
       const summary = `Study: ${subject} - ${chapter}${part}${grade}`;
-      const description = `Kerala Higher Secondary (${stream})\\nSubject: ${subject}\\nChapter: ${chapter}\\nEstimated Study: ${durationMins} mins\\n\\nOpen Study Timer & Resources: https://mission-plustwo.web.app/`;
+      const description = `Kerala Higher Secondary (${stream})\\nSubject: ${subject}\\nChapter: ${chapter}\\nEstimated Study: ${durationMins} mins\\n\\nOpen Study Timer & Resources: https://plusone-plustwo-planner.web.app/`;
 
       lines.push(
         'BEGIN:VEVENT',
@@ -136,7 +136,7 @@ export function generateIcsCalendar(plan, options = {}) {
         'BEGIN:VALARM',
         'TRIGGER:-PT15M',
         'ACTION:DISPLAY',
-        `DESCRIPTION:Reminder: Mission PlusTwo session for ${escapeIcsText(subject)} begins in 15 minutes!`,
+        `DESCRIPTION:Reminder: +1 & +2 Planner session for ${escapeIcsText(subject)} begins in 15 minutes!`,
         'END:VALARM',
         'END:VEVENT'
       );
@@ -160,7 +160,7 @@ export function downloadIcsCalendar(plan, stream = 'science') {
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.setAttribute('href', url);
-  link.setAttribute('download', `mission-plustwo-calendar-${stream.toLowerCase().replace(/\s+/g, '-')}.ics`);
+  link.setAttribute('download', `plus-one-plus-two-planner-calendar-${stream.toLowerCase().replace(/\s+/g, '-')}.ics`);
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);

@@ -1,10 +1,10 @@
-# Mission PlusTwo — Privacy-First Analytics Architecture
+# +1 & +2 Planner — Privacy-First Analytics Architecture
 
 > Historical design notes. Event names below are not a verified current implementation contract; inspect `src/analytics/tracker.js`. See [current validation limits](VALIDATION-6.4.2.md).
 
 ## 1. Implementation and Limits
 
-Mission PlusTwo is built for high school students preparing for the Kerala Higher Secondary Examinations (DHSE). Student data protection is an absolute ethical and legal mandate.
++1 & +2 Planner is built for high school students preparing for the Kerala Higher Secondary Examinations (DHSE). Student data protection is an absolute ethical and legal mandate.
 
 - Statutory compliance has not been independently reviewed; no DPDP, GDPR or ePrivacy compliance claim is made.
 - The local tracker strips a limited set of known property keys. This does not prove that arbitrary properties, SDK metadata, cookies or transport data contain no personal information.

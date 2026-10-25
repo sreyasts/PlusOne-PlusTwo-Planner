@@ -1,4 +1,4 @@
-# Mission PlusTwo: Overhaul & Growth Log
+# +1 & +2 Planner: Overhaul & Growth Log
 
 ## Baseline Audit (Version 5.6 - Baseline)
 

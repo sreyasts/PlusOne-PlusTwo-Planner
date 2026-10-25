@@ -1,5 +1,5 @@
 /**
- * Base Abstract Curriculum Adapter for Mission PlusTwo Ecosystem.
+ * Base Abstract Curriculum Adapter for +1 & +2 Planner Ecosystem.
  * Allows state boards, national boards (CBSE/ICSE), and international curricula
  * to interface seamlessly with the constraint-propagation scheduling engine.
  */

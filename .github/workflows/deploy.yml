@@ -1,4 +1,4 @@
-name: Deploy Mission PlusTwo to GitHub Pages
+name: Deploy +1 & +2 Planner to GitHub Pages
 
 on:
   push:

@@ -1,12 +1,12 @@
-# Mission PlusTwo Project Governance
+# +1 & +2 Planner Project Governance
 
-This document describes the decision-making model, contributor roles, and release policies for **Mission PlusTwo**.
+This document describes the decision-making model, contributor roles, and release policies for **+1 & +2 Planner**.
 
 ---
 
 ## 1. Governance Model
 
-Mission PlusTwo operates under a **Benevolent Dictator for Life (BDFL) / Principal Maintainer model**, led by **Sreyas T S** (`@sreyasts`).
++1 & +2 Planner operates under a **Benevolent Dictator for Life (BDFL) / Principal Maintainer model**, led by **Sreyas T S** (`@sreyasts`).
 
 The project values community consensus, respectful technical debate, empirical benchmarks, and student utility. While the Principal Maintainer holds final decision-making authority on architecture, licensing, and roadmap prioritization, design choices are deliberated openly in GitHub Discussions and Pull Requests.
 

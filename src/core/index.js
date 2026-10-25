@@ -1,5 +1,5 @@
 /**
- * Mission PlusTwo Core Engine Entry Point
+ * +1 & +2 Planner Core Engine Entry Point
  * Framework-agnostic civic study scheduler and curriculum processor.
  */
 

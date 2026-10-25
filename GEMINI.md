@@ -1,4 +1,4 @@
-# Mission PlusTwo Project Rules & Guidelines
+# +1 & +2 Planner Project Rules & Guidelines
 
 ## 🚨 MANDATORY DUAL-DOMAIN DEPLOYMENT POLICY
 
@@ -17,7 +17,7 @@ Build and synchronize the production distribution:
 npm run build
 ```
 
-### 3. Deploy to Firebase Hosting (Domain 1: mission-plustwo.web.app)
+### 3. Deploy to Firebase Hosting (Domain 1: plusone-plustwo-planner.web.app)
 Deploy the verified build to Firebase Hosting:
 ```powershell
 npx -y firebase-tools@latest deploy --only hosting

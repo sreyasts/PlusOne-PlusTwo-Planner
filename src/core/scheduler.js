@@ -1,5 +1,5 @@
 /**
- * Mission PlusTwo Core Scheduling Engine
+ * +1 & +2 Planner Core Scheduling Engine
  * Decoupled, framework-agnostic, deterministic study timetable & active recall generator.
  *
  * Implements:

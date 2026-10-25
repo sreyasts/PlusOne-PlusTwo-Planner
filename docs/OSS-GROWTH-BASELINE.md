@@ -1,6 +1,6 @@
-# Mission PlusTwo — OSS Growth Forensic Baseline Audit
+# +1 & +2 Planner — OSS Growth Forensic Baseline Audit
 
-This document records the exact baseline state of **Mission PlusTwo** (`sreyasts/intelligent-study-planner-for-plus-two-`) as of **September 23, 2026**.
+This document records the exact baseline state of **+1 & +2 Planner** (`sreyasts/PlusOne-PlusTwo-Planner`) as of **September 23, 2026**.
 
 In accordance with our strict anti-fabrication policy, every metric recorded here is derived from authoritative, auditable primary data sources (GitHub REST/GraphQL APIs, Git commit trees, local test harnesses, and live production endpoints).
 
@@ -24,14 +24,14 @@ In accordance with our strict anti-fabrication policy, every metric recorded her
 | **Repository Age** | 4 days (Created 2026-09-19T03:42:25Z) | GitHub API (`createdAt`) | 2026-09-23 |
 | **Total Commits on `main`** | `57` | Git (`git rev-list --count HEAD`) | 2026-09-23 |
 | **Commit Activity Span** | 2026-09-19 to 2026-09-23 | Git commit history | 2026-09-23 |
-| **Live Web App (Primary)** | [https://mission-plustwo.web.app/](https://mission-plustwo.web.app/) | Firebase Hosting (SSL Active, HTTP 200) | 2026-09-23 |
-| **Live Web App (Canonical Forwarder)** | [https://sreyasts.github.io/intelligent-study-planner-for-plus-two-/](https://sreyasts.github.io/intelligent-study-planner-for-plus-two-/) | GitHub Pages (Workflow deployment, HTTP 200) | 2026-09-23 |
+| **Live Web App (Primary)** | [https://plusone-plustwo-planner.web.app/](https://plusone-plustwo-planner.web.app/) | Firebase Hosting (SSL Active, HTTP 200) | 2026-09-23 |
+| **Live Web App (Canonical Forwarder)** | [https://sreyasts.github.io/PlusOne-PlusTwo-Planner/](https://sreyasts.github.io/PlusOne-PlusTwo-Planner/) | GitHub Pages (Workflow deployment, HTTP 200) | 2026-09-23 |
 | **GitHub Traffic (Past 14 Days)** | 162 views, 21 unique visitors | GitHub API (`traffic/views`) | 2026-09-23 |
 | **Vitest Unit Test Suite** | 3 test files, 25 tests passing | Local test run (`npm test`) | 2026-09-23 |
 | **Invariant Engine Test Runner** | 402 checks passing (0 failures) | Local test run (`npm run test:legacy`) | 2026-09-23 |
 | **ESLint Static Analysis** | 0 errors, 20 unused variable warnings | Local linter run (`npm run lint`) | 2026-09-23 |
 | **Production Bundle Size** | 73.17 kB HTML, 237.08 kB JS (gzip: ~59 kB), 95.19 kB CSS | Production build (`npm run build`) | 2026-09-23 |
-| **CI / CD Pipeline Status** | Passing (`CI & Build Verification`, `Deploy Mission PlusTwo`) | GitHub Actions Runs | 2026-09-23 |
+| **CI / CD Pipeline Status** | Passing (`CI & Build Verification`, `Deploy +1 & +2 Planner`) | GitHub Actions Runs | 2026-09-23 |
 | **Firebase Analytics ID** | `G-12KPP3ZZ80` (Cookieless, DPDP-compliant) | `src/analytics/tracker.js` | 2026-09-23 |
 
 ---

@@ -1,5 +1,5 @@
 /**
- * Mission PlusTwo Intelligent Planning Engine (v6.1.0)
+ * +1 & +2 Planner Intelligent Planning Engine (v6.1.0)
  * Deterministic, dependency-aware, capacity-bounded study scheduler for Kerala DHSE.
  * Verified against 402 invariant checks (scenarios A-Y, fuzz testing, SCERT Scheme of Work).
  */

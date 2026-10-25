@@ -1,6 +1,6 @@
 # Try a real study session
 
-Use [Mission PlusTwo](https://mission-plustwo.web.app/) as a guest. Participation is voluntary. Do not send names, school details, marks, account information or backup files in public reports.
+Use [+1 & +2 Planner](https://plusone-plustwo-planner.web.app/) as a guest. Participation is voluntary. Do not send names, school details, marks, account information or backup files in public reports.
 
 1. On your usual phone or computer, choose your stream, target date and realistic daily study hours. Record anything unclear during setup.
 2. Find today's assigned subject and topic. Open its resources and decide whether the suggested portion is realistic for your available time.

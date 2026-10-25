@@ -55,12 +55,12 @@ These issues are structured so that new contributors (e.g. computer science unde
 ```text
 Hey everyone! 👋
 
-I'm Sreyas, a student developer from Kerala. I've been building Mission PlusTwo (https://mission-plustwo.web.app/), a 100% free, open-source daily study planner tailored for Kerala Higher Secondary (+2) and +1 Improvement students.
+I'm Sreyas, a student developer from Kerala. I've been building +1 & +2 Planner (https://plusone-plustwo-planner.web.app/), a 100% free, open-source daily study planner tailored for Kerala Higher Secondary (+2) and +1 Improvement students.
 
 The app uses a deterministic constraint scheduler (written in modern vanilla JS + Vite) that automatically weaves daily study portions, allocates revision buffers before exams, and works completely offline as a PWA.
 
 We have active "Good First Issues" up on GitHub for anyone looking to contribute to open source:
-👉 https://github.com/sreyasts/intelligent-study-planner-for-plus-two-/issues
+👉 https://github.com/sreyasts/PlusOne-PlusTwo-Planner/issues
 
 Areas you can help with:
 • Completing Malayalam translations (i18n)
@@ -75,12 +75,12 @@ Feel free to check out the repo, star if you find it helpful, and pick up an iss
 ```text
 Namaskaram!
 
-Mission PlusTwo is an offline-first, privacy-respecting educational web application built under the MIT License for Kerala Higher Secondary students.
++1 & +2 Planner is an offline-first, privacy-respecting educational web application built under the MIT License for Kerala Higher Secondary students.
 
 Unlike commercial ed-tech platforms, it requires zero login, has zero ads, collects zero student PII, and complies with India's DPDP Act 2023. The codebase features 68 automated unit tests and 551 regression invariants.
 
-Repository: https://github.com/sreyasts/intelligent-study-planner-for-plus-two-
-Live App: https://mission-plustwo.web.app/
+Repository: https://github.com/sreyasts/PlusOne-PlusTwo-Planner
+Live App: https://plusone-plustwo-planner.web.app/
 
 We welcome code contributions, syllabus audits against SCERT circulars, and feedback from educators and developers alike.
 ```

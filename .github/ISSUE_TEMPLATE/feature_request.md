@@ -1,6 +1,6 @@
 ---
 name: Feature Request
-about: Suggest a new feature or improvement for Mission PlusTwo
+about: Suggest a new feature or improvement for +1 & +2 Planner
 title: '[FEAT]: '
 labels: ['enhancement']
 assignees: ''

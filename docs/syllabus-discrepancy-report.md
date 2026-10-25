@@ -1,6 +1,6 @@
 # Kerala DHSE Scheme of Work: Syllabus Audit & Discrepancy Report
 
-**Audited By**: Mission PlusTwo Core Engineering  
+**Audited By**: +1 & +2 Planner Core Engineering  
 **Primary Source Grounding**:
 - Directorate of General Education (Higher Secondary), Government of Kerala: [https://education.kerala.gov.in/](https://education.kerala.gov.in/)
 - HSSLive Scheme of Work & Chapter Weightages: [https://www.hsslive.in/2017/07/higher-secondary-plus-one-plus-two-scheme.html](https://www.hsslive.in/2017/07/higher-secondary-plus-one-plus-two-scheme.html)

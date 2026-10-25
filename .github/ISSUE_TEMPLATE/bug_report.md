@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Create a report to help us improve Mission PlusTwo
+about: Create a report to help us improve +1 & +2 Planner
 title: '[BUG] '
 labels: bug
 assignees: ''

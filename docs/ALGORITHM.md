@@ -1,8 +1,8 @@
-# Mission PlusTwo — Planning Algorithm Specification
+# +1 & +2 Planner — Planning Algorithm Specification
 
 ## 1. Algorithmic Overview
 
-Mission PlusTwo employs a **deterministic, constraint-aware scheduling algorithm** that solves the multi-subject academic timetable allocation problem under rigid board examination deadlines, subject dependencies, and varying daily capacities.
++1 & +2 Planner employs a **deterministic, constraint-aware scheduling algorithm** that solves the multi-subject academic timetable allocation problem under rigid board examination deadlines, subject dependencies, and varying daily capacities.
 
 Rather than relying on non-deterministic or compute-heavy stochastic heuristics (e.g. simulated annealing or unconstrained LLM text generation), the algorithm executes in guaranteed polynomial time (\(O(N \log N + D \cdot S)\) where \(N\) is syllabus parts, \(D\) is runway days, and \(S\) is stream subjects) and ensures **100% reproducible schedules** given identical inputs.
 

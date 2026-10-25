@@ -52,8 +52,8 @@ describe('RFC 5545 iCalendar (.ics) Generator', () => {
 
     expect(ics).toContain('BEGIN:VCALENDAR');
     expect(ics).toContain('VERSION:2.0');
-    expect(ics).toContain('PRODID:-//Mission PlusTwo//DHSE Kerala Study Engine//EN');
-    expect(ics).toContain('X-WR-CALNAME:Mission PlusTwo Study Schedule (Science)');
+    expect(ics).toContain('PRODID:-//+1 & +2 Planner//DHSE Kerala Study Engine//EN');
+    expect(ics).toContain('X-WR-CALNAME:+1 & +2 Planner Study Schedule (Science)');
     expect(ics).toContain('X-WR-TIMEZONE:Asia/Kolkata');
 
     // Task 1
@@ -68,7 +68,7 @@ describe('RFC 5545 iCalendar (.ics) Generator', () => {
     expect(ics).toContain('DTSTART:20261005T193000');
 
     // Rest Day
-    expect(ics).toContain('SUMMARY:Mission PlusTwo: Day 2 - Rest & Recharging');
+    expect(ics).toContain('SUMMARY:+1 & +2 Planner: Day 2 - Rest & Recharging');
 
     expect(ics).toContain('END:VCALENDAR');
   });

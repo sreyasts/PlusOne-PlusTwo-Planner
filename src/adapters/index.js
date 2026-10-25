@@ -1,5 +1,5 @@
 /**
- * Mission PlusTwo Curriculum Adapters
+ * +1 & +2 Planner Curriculum Adapters
  * Standardized interfaces for multi-board and multi-state curriculum scheduling.
  */
 

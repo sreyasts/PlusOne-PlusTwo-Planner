@@ -1,4 +1,4 @@
-# How to Update Syllabus Data in Mission PlusTwo
+# How to Update Syllabus Data in +1 & +2 Planner
 
 When the Kerala Directorate of General Education (DHSE) or SCERT releases a new circular, rationalization change, or revised Scheme of Work, follow these steps to update the planner:
 

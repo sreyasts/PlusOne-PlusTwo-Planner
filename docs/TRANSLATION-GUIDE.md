@@ -1,8 +1,8 @@
-# Mission PlusTwo — Malayalam Translation & Localization Guide
+# +1 & +2 Planner — Malayalam Translation & Localization Guide
 
 ## 1. Objective
 
-Mission PlusTwo is designed for students across Kerala. While textbooks for higher secondary Science streams are in English, many students understand scheduling instructions, revision reminders, and conceptual overviews far better in Malayalam.
++1 & +2 Planner is designed for students across Kerala. While textbooks for higher secondary Science streams are in English, many students understand scheduling instructions, revision reminders, and conceptual overviews far better in Malayalam.
 
 Our goal is **natural, conversational, and respectful Malayalam** that matches how students and teachers communicate in Kerala schools, avoiding stiff machine-translated jargon.
 
