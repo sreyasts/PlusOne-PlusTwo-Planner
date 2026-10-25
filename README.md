@@ -5,22 +5,22 @@
 # 🎓 +1 & +2 Planner (HSS)
 ### 🚀 The Intelligent Daily Study Revision Engine for Kerala Higher Secondary (Plus One & Plus Two) Students
 
-[![CI Build](https://img.shields.io/github/actions/workflow/status/sreyasts/intelligent-study-planner-for-plus-two-/ci.yml?branch=main&style=for-the-badge&logo=githubactions&logoColor=white&label=CI%20Build)](https://github.com/sreyasts/intelligent-study-planner-for-plus-two-/actions)
+[![CI Build](https://img.shields.io/github/actions/workflow/status/sreyasts/PlusOne-PlusTwo-Planner/ci.yml?branch=main&style=for-the-badge&logo=githubactions&logoColor=white&label=CI%20Build)](https://github.com/sreyasts/PlusOne-PlusTwo-Planner/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](LICENSE)
-[![PWA Ready](https://img.shields.io/badge/PWA-Offline%20Ready-8b5cf6?style=for-the-badge&logo=pwa&logoColor=white)](https://mission-plustwo.web.app/)
+[![PWA Ready](https://img.shields.io/badge/PWA-Offline%20Ready-8b5cf6?style=for-the-badge&logo=pwa&logoColor=white)](https://plusone-plustwo-planner.web.app/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-Welcome-brightgreen?style=for-the-badge&logo=github)](CONTRIBUTING.md)
 [![Board Support](https://img.shields.io/badge/Board-Kerala%20DHSE%20%7C%20SCERT-orange?style=for-the-badge&logo=read-the-docs&logoColor=white)](data/kerala-dhse/)
-[![Tests](https://img.shields.io/badge/Vitest-Automated%20Tests-10b981?style=for-the-badge&logo=vitest&logoColor=white)](https://github.com/sreyasts/intelligent-study-planner-for-plus-two-)
+[![Tests](https://img.shields.io/badge/Vitest-Automated%20Tests-10b981?style=for-the-badge&logo=vitest&logoColor=white)](https://github.com/sreyasts/PlusOne-PlusTwo-Planner)
 
 <br/>
 
-## 🌐 👉 [**LAUNCH +1 & +2 PLANNER (WEB APP)**](https://mission-plustwo.web.app/) 👈
+## 🌐 👉 [**LAUNCH +1 & +2 PLANNER (WEB APP)**](https://plusone-plustwo-planner.web.app/) 👈
 *100% Free, Zero-Cost Civic Software • Works Offline in any browser on Phone, Tablet, or PC • Guest Planning & Optional Cloud Sync*
 
 <br/>
 
-<a href="https://mission-plustwo.web.app/">
-  <img src="assets/og-image.png" alt="+1 & +2 Planner — Kerala Plus Two Daily Study Revision Engine" style="border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); max-width: 100%; height: auto;" />
+<a href="https://plusone-plustwo-planner.web.app/">
+  <img src="assets/og-image.png" alt="+1 & +2 Planner — Kerala Plus One & Plus Two Daily Study Revision Engine" style="border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); max-width: 100%; height: auto;" />
 </a>
 
 </div>

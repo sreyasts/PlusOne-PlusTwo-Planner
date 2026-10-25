@@ -1,246 +1,492 @@
 {
-  "hosting": {
-    "public": "dist",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ],
-    "cleanUrls": true,
-    "redirects": [
-      {
-        "source": "/intelligent-study-planner-for-plus-two-",
-        "destination": "/",
-        "type": 301
-      },
-      {
-        "source": "/intelligent-study-planner-for-plus-two",
-        "destination": "/",
-        "type": 301
-      },
-      {
-        "source": "/mission-plustwo",
-        "destination": "/",
-        "type": 301
-      },
-      {
-        "source": "/mission-plus-two",
-        "destination": "/",
-        "type": 301
-      },
-      {
-        "source": "/mission-plusone",
-        "destination": "/",
-        "type": 301
-      },
-      {
-        "source": "/mission-plus-one",
-        "destination": "/",
-        "type": 301
-      },
-      {
-        "source": "/plusone",
-        "destination": "/",
-        "type": 301
-      },
-      {
-        "source": "/plustwo",
-        "destination": "/",
-        "type": 301
-      },
-      {
-        "source": "/hss",
-        "destination": "/",
-        "type": 301
-      },
-      {
-        "source": "/hss-planner",
-        "destination": "/",
-        "type": 301
-      },
-      {
-        "source": "/plus-one-planner",
-        "destination": "/",
-        "type": 301
-      },
-      {
-        "source": "/plus-two-planner",
-        "destination": "/",
-        "type": 301
-      }
-    ],
-    "rewrites": [
-      {
-        "source": "/printable-qr-poster",
-        "destination": "/pages/printable-qr-poster.html"
-      },
-      {
-        "source": "/pages/printable-qr-poster",
-        "destination": "/pages/printable-qr-poster.html"
-      },
-      {
-        "source": "/poster",
-        "destination": "/pages/printable-qr-poster.html"
-      },
-      {
-        "source": "/school-poster",
-        "destination": "/pages/printable-qr-poster.html"
-      },
-      {
-        "source": "/school-poster.html",
-        "destination": "/pages/printable-qr-poster.html"
-      },
-      {
-        "source": "/pages/school-poster",
-        "destination": "/pages/printable-qr-poster.html"
-      },
-      {
-        "source": "/pages/school-poster.html",
-        "destination": "/pages/printable-qr-poster.html"
-      },
-      {
-        "source": "/timetable",
-        "destination": "/pages/plus-two-timetable.html"
-      },
-      {
-        "source": "/plus-one-timetable",
-        "destination": "/pages/plus-two-timetable.html"
-      },
-      {
-        "source": "/pages/plus-one-timetable",
-        "destination": "/pages/plus-two-timetable.html"
-      },
-      {
-        "source": "/plus-two-timetable",
-        "destination": "/pages/plus-two-timetable.html"
-      },
-      {
-        "source": "/pages/plus-two-timetable",
-        "destination": "/pages/plus-two-timetable.html"
-      },
-      {
-        "source": "/hss-timetable",
-        "destination": "/pages/plus-two-timetable.html"
-      },
-      {
-        "source": "/pages/hss-timetable",
-        "destination": "/pages/plus-two-timetable.html"
-      },
-      {
-        "source": "/study-hours-calculator",
-        "destination": "/pages/study-hours-calculator.html"
-      },
-      {
-        "source": "/pages/study-hours-calculator",
-        "destination": "/pages/study-hours-calculator.html"
-      },
-      {
-        "source": "/pages/terms",
-        "destination": "/pages/terms.html"
-      },
-      {
-        "source": "/terms",
-        "destination": "/pages/terms.html"
-      },
-      {
-        "source": "/pages/privacy",
-        "destination": "/pages/privacy.html"
-      },
-      {
-        "source": "/privacy",
-        "destination": "/pages/privacy.html"
-      },
-      {
-        "source": "/pages/syllabus-plus-two",
-        "destination": "/pages/syllabus-plus-two.html"
-      },
-      {
-        "source": "/syllabus-plus-two",
-        "destination": "/pages/syllabus-plus-two.html"
-      },
-      {
-        "source": "/pages/syllabus-plus-one",
-        "destination": "/pages/syllabus-plus-two.html"
-      },
-      {
-        "source": "/syllabus-plus-one",
-        "destination": "/pages/syllabus-plus-two.html"
-      },
-      {
-        "source": "/pages/hss-syllabus",
-        "destination": "/pages/syllabus-plus-two.html"
-      },
-      {
-        "source": "/hss-syllabus",
-        "destination": "/pages/syllabus-plus-two.html"
-      },
-      {
-        "source": "/pages/plus-one-improvement-guide",
-        "destination": "/pages/plus-one-improvement-guide.html"
-      },
-      {
-        "source": "/plus-one-improvement-guide",
-        "destination": "/pages/plus-one-improvement-guide.html"
-      },
-      {
-        "source": "/exam-countdown",
-        "destination": "/pages/exam-countdown.html"
-      },
-      {
-        "source": "/pages/exam-countdown",
-        "destination": "/pages/exam-countdown.html"
-      },
-      {
-        "source": "/backlog-recovery-planner",
-        "destination": "/pages/backlog-recovery-planner.html"
-      },
-      {
-        "source": "/pages/backlog-recovery-planner",
-        "destination": "/pages/backlog-recovery-planner.html"
-      },
-      {
-        "source": "/stats",
-        "destination": "/pages/stats.html"
-      },
-      {
-        "source": "/pages/stats",
-        "destination": "/pages/stats.html"
-      }
-    ],
-    "headers": [
-      {
-        "source": "sw.js",
-        "headers": [
-          {
-            "key": "Cache-Control",
-            "value": "no-cache, no-store, must-revalidate"
-          }
-        ]
-      },
-      {
-        "source": "sitemap.xml",
-        "headers": [
-          {
-            "key": "Content-Type",
-            "value": "application/xml; charset=utf-8"
-          },
-          {
-            "key": "Cache-Control",
-            "value": "no-cache, no-store, must-revalidate"
-          }
-        ]
-      },
-      {
-        "source": "**/*.@(js|css)",
-        "headers": [
-          {
-            "key": "Cache-Control",
-            "value": "public, max-age=31536000, immutable"
-          }
-        ]
-      }
-    ]
-  },
+  "hosting": [
+    {
+      "site": "plusone-plustwo-planner",
+      "public": "dist",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "cleanUrls": true,
+      "redirects": [
+        {
+          "source": "/intelligent-study-planner-for-plus-two-",
+          "destination": "/",
+          "type": 301
+        },
+        {
+          "source": "/intelligent-study-planner-for-plus-two",
+          "destination": "/",
+          "type": 301
+        },
+        {
+          "source": "/mission-plustwo",
+          "destination": "/",
+          "type": 301
+        },
+        {
+          "source": "/mission-plus-two",
+          "destination": "/",
+          "type": 301
+        },
+        {
+          "source": "/mission-plusone",
+          "destination": "/",
+          "type": 301
+        },
+        {
+          "source": "/mission-plus-one",
+          "destination": "/",
+          "type": 301
+        },
+        {
+          "source": "/plusone",
+          "destination": "/",
+          "type": 301
+        },
+        {
+          "source": "/plustwo",
+          "destination": "/",
+          "type": 301
+        },
+        {
+          "source": "/hss",
+          "destination": "/",
+          "type": 301
+        },
+        {
+          "source": "/hss-planner",
+          "destination": "/",
+          "type": 301
+        },
+        {
+          "source": "/plus-one-planner",
+          "destination": "/",
+          "type": 301
+        },
+        {
+          "source": "/plus-two-planner",
+          "destination": "/",
+          "type": 301
+        }
+      ],
+      "rewrites": [
+        {
+          "source": "/printable-qr-poster",
+          "destination": "/pages/printable-qr-poster.html"
+        },
+        {
+          "source": "/pages/printable-qr-poster",
+          "destination": "/pages/printable-qr-poster.html"
+        },
+        {
+          "source": "/poster",
+          "destination": "/pages/printable-qr-poster.html"
+        },
+        {
+          "source": "/school-poster",
+          "destination": "/pages/printable-qr-poster.html"
+        },
+        {
+          "source": "/school-poster.html",
+          "destination": "/pages/printable-qr-poster.html"
+        },
+        {
+          "source": "/pages/school-poster",
+          "destination": "/pages/printable-qr-poster.html"
+        },
+        {
+          "source": "/pages/school-poster.html",
+          "destination": "/pages/printable-qr-poster.html"
+        },
+        {
+          "source": "/timetable",
+          "destination": "/pages/plus-two-timetable.html"
+        },
+        {
+          "source": "/plus-one-timetable",
+          "destination": "/pages/plus-two-timetable.html"
+        },
+        {
+          "source": "/pages/plus-one-timetable",
+          "destination": "/pages/plus-two-timetable.html"
+        },
+        {
+          "source": "/plus-two-timetable",
+          "destination": "/pages/plus-two-timetable.html"
+        },
+        {
+          "source": "/pages/plus-two-timetable",
+          "destination": "/pages/plus-two-timetable.html"
+        },
+        {
+          "source": "/hss-timetable",
+          "destination": "/pages/plus-two-timetable.html"
+        },
+        {
+          "source": "/pages/hss-timetable",
+          "destination": "/pages/plus-two-timetable.html"
+        },
+        {
+          "source": "/study-hours-calculator",
+          "destination": "/pages/study-hours-calculator.html"
+        },
+        {
+          "source": "/pages/study-hours-calculator",
+          "destination": "/pages/study-hours-calculator.html"
+        },
+        {
+          "source": "/pages/terms",
+          "destination": "/pages/terms.html"
+        },
+        {
+          "source": "/terms",
+          "destination": "/pages/terms.html"
+        },
+        {
+          "source": "/pages/privacy",
+          "destination": "/pages/privacy.html"
+        },
+        {
+          "source": "/privacy",
+          "destination": "/pages/privacy.html"
+        },
+        {
+          "source": "/pages/syllabus-plus-two",
+          "destination": "/pages/syllabus-plus-two.html"
+        },
+        {
+          "source": "/syllabus-plus-two",
+          "destination": "/pages/syllabus-plus-two.html"
+        },
+        {
+          "source": "/pages/syllabus-plus-one",
+          "destination": "/pages/syllabus-plus-two.html"
+        },
+        {
+          "source": "/syllabus-plus-one",
+          "destination": "/pages/syllabus-plus-two.html"
+        },
+        {
+          "source": "/pages/hss-syllabus",
+          "destination": "/pages/syllabus-plus-two.html"
+        },
+        {
+          "source": "/hss-syllabus",
+          "destination": "/pages/syllabus-plus-two.html"
+        },
+        {
+          "source": "/pages/plus-one-improvement-guide",
+          "destination": "/pages/plus-one-improvement-guide.html"
+        },
+        {
+          "source": "/plus-one-improvement-guide",
+          "destination": "/pages/plus-one-improvement-guide.html"
+        },
+        {
+          "source": "/exam-countdown",
+          "destination": "/pages/exam-countdown.html"
+        },
+        {
+          "source": "/pages/exam-countdown",
+          "destination": "/pages/exam-countdown.html"
+        },
+        {
+          "source": "/backlog-recovery-planner",
+          "destination": "/pages/backlog-recovery-planner.html"
+        },
+        {
+          "source": "/pages/backlog-recovery-planner",
+          "destination": "/pages/backlog-recovery-planner.html"
+        },
+        {
+          "source": "/stats",
+          "destination": "/pages/stats.html"
+        },
+        {
+          "source": "/pages/stats",
+          "destination": "/pages/stats.html"
+        }
+      ],
+      "headers": [
+        {
+          "source": "sw.js",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "no-cache, no-store, must-revalidate"
+            }
+          ]
+        },
+        {
+          "source": "sitemap.xml",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/xml; charset=utf-8"
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache, no-store, must-revalidate"
+            }
+          ]
+        },
+        {
+          "source": "**/*.@(js|css)",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "public, max-age=31536000, immutable"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "site": "mission-plustwo",
+      "public": "dist",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "cleanUrls": true,
+      "redirects": [
+        {
+          "source": "/intelligent-study-planner-for-plus-two-",
+          "destination": "/",
+          "type": 301
+        },
+        {
+          "source": "/intelligent-study-planner-for-plus-two",
+          "destination": "/",
+          "type": 301
+        },
+        {
+          "source": "/mission-plustwo",
+          "destination": "/",
+          "type": 301
+        },
+        {
+          "source": "/mission-plus-two",
+          "destination": "/",
+          "type": 301
+        },
+        {
+          "source": "/mission-plusone",
+          "destination": "/",
+          "type": 301
+        },
+        {
+          "source": "/mission-plus-one",
+          "destination": "/",
+          "type": 301
+        },
+        {
+          "source": "/plusone",
+          "destination": "/",
+          "type": 301
+        },
+        {
+          "source": "/plustwo",
+          "destination": "/",
+          "type": 301
+        },
+        {
+          "source": "/hss",
+          "destination": "/",
+          "type": 301
+        },
+        {
+          "source": "/hss-planner",
+          "destination": "/",
+          "type": 301
+        },
+        {
+          "source": "/plus-one-planner",
+          "destination": "/",
+          "type": 301
+        },
+        {
+          "source": "/plus-two-planner",
+          "destination": "/",
+          "type": 301
+        }
+      ],
+      "rewrites": [
+        {
+          "source": "/printable-qr-poster",
+          "destination": "/pages/printable-qr-poster.html"
+        },
+        {
+          "source": "/pages/printable-qr-poster",
+          "destination": "/pages/printable-qr-poster.html"
+        },
+        {
+          "source": "/poster",
+          "destination": "/pages/printable-qr-poster.html"
+        },
+        {
+          "source": "/school-poster",
+          "destination": "/pages/printable-qr-poster.html"
+        },
+        {
+          "source": "/school-poster.html",
+          "destination": "/pages/printable-qr-poster.html"
+        },
+        {
+          "source": "/pages/school-poster",
+          "destination": "/pages/printable-qr-poster.html"
+        },
+        {
+          "source": "/pages/school-poster.html",
+          "destination": "/pages/printable-qr-poster.html"
+        },
+        {
+          "source": "/timetable",
+          "destination": "/pages/plus-two-timetable.html"
+        },
+        {
+          "source": "/plus-one-timetable",
+          "destination": "/pages/plus-two-timetable.html"
+        },
+        {
+          "source": "/pages/plus-one-timetable",
+          "destination": "/pages/plus-two-timetable.html"
+        },
+        {
+          "source": "/plus-two-timetable",
+          "destination": "/pages/plus-two-timetable.html"
+        },
+        {
+          "source": "/pages/plus-two-timetable",
+          "destination": "/pages/plus-two-timetable.html"
+        },
+        {
+          "source": "/hss-timetable",
+          "destination": "/pages/plus-two-timetable.html"
+        },
+        {
+          "source": "/pages/hss-timetable",
+          "destination": "/pages/plus-two-timetable.html"
+        },
+        {
+          "source": "/study-hours-calculator",
+          "destination": "/pages/study-hours-calculator.html"
+        },
+        {
+          "source": "/pages/study-hours-calculator",
+          "destination": "/pages/study-hours-calculator.html"
+        },
+        {
+          "source": "/pages/terms",
+          "destination": "/pages/terms.html"
+        },
+        {
+          "source": "/terms",
+          "destination": "/pages/terms.html"
+        },
+        {
+          "source": "/pages/privacy",
+          "destination": "/pages/privacy.html"
+        },
+        {
+          "source": "/privacy",
+          "destination": "/pages/privacy.html"
+        },
+        {
+          "source": "/pages/syllabus-plus-two",
+          "destination": "/pages/syllabus-plus-two.html"
+        },
+        {
+          "source": "/syllabus-plus-two",
+          "destination": "/pages/syllabus-plus-two.html"
+        },
+        {
+          "source": "/pages/syllabus-plus-one",
+          "destination": "/pages/syllabus-plus-two.html"
+        },
+        {
+          "source": "/syllabus-plus-one",
+          "destination": "/pages/syllabus-plus-two.html"
+        },
+        {
+          "source": "/pages/hss-syllabus",
+          "destination": "/pages/syllabus-plus-two.html"
+        },
+        {
+          "source": "/hss-syllabus",
+          "destination": "/pages/syllabus-plus-two.html"
+        },
+        {
+          "source": "/pages/plus-one-improvement-guide",
+          "destination": "/pages/plus-one-improvement-guide.html"
+        },
+        {
+          "source": "/plus-one-improvement-guide",
+          "destination": "/pages/plus-one-improvement-guide.html"
+        },
+        {
+          "source": "/exam-countdown",
+          "destination": "/pages/exam-countdown.html"
+        },
+        {
+          "source": "/pages/exam-countdown",
+          "destination": "/pages/exam-countdown.html"
+        },
+        {
+          "source": "/backlog-recovery-planner",
+          "destination": "/pages/backlog-recovery-planner.html"
+        },
+        {
+          "source": "/pages/backlog-recovery-planner",
+          "destination": "/pages/backlog-recovery-planner.html"
+        },
+        {
+          "source": "/stats",
+          "destination": "/pages/stats.html"
+        },
+        {
+          "source": "/pages/stats",
+          "destination": "/pages/stats.html"
+        }
+      ],
+      "headers": [
+        {
+          "source": "sw.js",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "no-cache, no-store, must-revalidate"
+            }
+          ]
+        },
+        {
+          "source": "sitemap.xml",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/xml; charset=utf-8"
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache, no-store, must-revalidate"
+            }
+          ]
+        },
+        {
+          "source": "**/*.@(js|css)",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "public, max-age=31536000, immutable"
+            }
+          ]
+        }
+      ]
+    }
+  ],
   "firestore": {
     "rules": "firestore.rules"
   }
