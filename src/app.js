@@ -44,6 +44,9 @@ import {
   getSvgIcon,
 } from './ui/icons.js';
 import {
+  STREAM_ICONS,
+  GRADE_ICONS,
+  getSubjectBoxIcon,
   STREAM_ILLUSTRATIONS,
   getSubjectBanner,
 } from './ui/illustrations.js';
@@ -2405,22 +2408,32 @@ function showToastMessage(text, icon = 'checkCircle') {
                                 <div class="grid grid-cols-2 gap-3">
                                     <button type="button" id="grade-btn-p2" onclick="setGradeSelection('+2')" class="cursor-pointer p-3.5 rounded-2xl border-2 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${currentSelectedGrade === '+2' ? 'border-blue-600 dark:border-blue-500 bg-blue-50/70 dark:bg-blue-950/40 ring-2 ring-blue-500/20 shadow-sm' : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600'} transition-transform duration-150 text-left flex flex-col justify-between">
                                         <div class="flex items-center justify-between">
-                                            <span class="text-sm font-black text-slate-900 dark:text-white">🎓 Plus Two (+2)</span>
+                                            <div class="flex items-center gap-2.5">
+                                                <div class="w-9 h-9 rounded-xl bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 flex items-center justify-center shrink-0 p-1.5 border border-blue-200/50 dark:border-blue-800/50">
+                                                    ${typeof GRADE_ICONS !== 'undefined' && GRADE_ICONS.plusTwo ? GRADE_ICONS.plusTwo : '<i class="fa-solid fa-graduation-cap text-sm"></i>'}
+                                                </div>
+                                                <span class="text-sm font-black text-slate-900 dark:text-white">Plus Two (+2)</span>
+                                            </div>
                                             <span class="w-5 h-5 rounded-full ${currentSelectedGrade === '+2' ? 'bg-blue-600 text-white' : 'border border-slate-300 dark:border-slate-600'} flex items-center justify-center text-[10px]">
                                                 ${currentSelectedGrade === '+2' ? '<i class="fa-solid fa-check"></i>' : ''}
                                             </span>
                                         </div>
-                                        <span class="text-xs font-semibold text-slate-400 mt-1">Class 12 Board Syllabus</span>
+                                        <span class="text-xs font-semibold text-slate-400 mt-2">Class 12 Board Syllabus</span>
                                     </button>
 
                                     <button type="button" id="grade-btn-p1" onclick="setGradeSelection('+1')" class="cursor-pointer p-3.5 rounded-2xl border-2 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${currentSelectedGrade === '+1' ? 'border-amber-600 dark:border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 ring-2 ring-amber-500/20 shadow-sm' : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600'} transition-transform duration-150 text-left flex flex-col justify-between">
                                         <div class="flex items-center justify-between">
-                                            <span class="text-sm font-black text-slate-900 dark:text-white">📚 Plus One (+1)</span>
+                                            <div class="flex items-center gap-2.5">
+                                                <div class="w-9 h-9 rounded-xl bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 flex items-center justify-center shrink-0 p-1.5 border border-amber-200/50 dark:border-amber-800/50">
+                                                    ${typeof GRADE_ICONS !== 'undefined' && GRADE_ICONS.plusOne ? GRADE_ICONS.plusOne : '<i class="fa-solid fa-book-open text-sm"></i>'}
+                                                </div>
+                                                <span class="text-sm font-black text-slate-900 dark:text-white">Plus One (+1)</span>
+                                            </div>
                                             <span class="w-5 h-5 rounded-full ${currentSelectedGrade === '+1' ? 'bg-amber-600 text-white' : 'border border-slate-300 dark:border-slate-600'} flex items-center justify-center text-[10px]">
                                                 ${currentSelectedGrade === '+1' ? '<i class="fa-solid fa-check"></i>' : ''}
                                             </span>
                                         </div>
-                                        <span class="text-xs font-semibold text-slate-400 mt-1">Class 11 Annual Syllabus</span>
+                                        <span class="text-xs font-semibold text-slate-400 mt-2">Class 11 Annual Syllabus</span>
                                     </button>
                                 </div>
                             </div>
@@ -2432,14 +2445,10 @@ function showToastMessage(text, icon = 'checkCircle') {
                             <div class="stream-options grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <!-- Option 1: Computer Science -->
                                 <div id="stream-card-cs" aria-pressed="${selectedStream === 'cs'}" role="button" tabindex="0" onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.click(); }" onclick="setStreamSelection('cs')" class="cursor-pointer p-3.5 rounded-2xl border-2 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${selectedStream === 'cs' ? 'border-blue-600 dark:border-blue-500 bg-blue-50/70 dark:bg-blue-950/40 ring-2 ring-blue-500/20 shadow-sm' : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600'} transition-transform duration-150 text-left flex flex-col justify-between">
-                                    <!-- Visual Generative Banner -->
-                                    <div class="mb-2.5 rounded-xl overflow-hidden shadow-xs border border-blue-500/20">
-                                        ${typeof STREAM_ILLUSTRATIONS !== 'undefined' && STREAM_ILLUSTRATIONS.cs ? STREAM_ILLUSTRATIONS.cs : ''}
-                                    </div>
                                     <div class="flex items-center justify-between">
-                                        <div class="flex items-center gap-2">
-                                            <div class="w-8 h-8 rounded-xl bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 flex items-center justify-center text-sm font-bold shrink-0">
-                                                <i class="fa-solid fa-laptop-code"></i>
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 flex items-center justify-center shrink-0 p-2 border border-blue-200/50 dark:border-blue-800/50">
+                                                ${typeof STREAM_ICONS !== 'undefined' && STREAM_ICONS.cs ? STREAM_ICONS.cs : '<i class="fa-solid fa-laptop-code"></i>'}
                                             </div>
                                             <div>
                                                 <h4 class="font-black text-slate-900 dark:text-white text-sm">${isML ? ML_I18N.setup.csTitle : 'Computer Science'} (${currentSelectedGrade})</h4>
@@ -2454,14 +2463,10 @@ function showToastMessage(text, icon = 'checkCircle') {
 
                                 <!-- Option 2: Biology Science -->
                                 <div id="stream-card-bio" aria-pressed="${selectedStream === 'bio'}" role="button" tabindex="0" onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.click(); }" onclick="setStreamSelection('bio')" class="cursor-pointer p-3.5 rounded-2xl border-2 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${selectedStream === 'bio' ? 'border-emerald-600 dark:border-emerald-500 bg-emerald-50/70 dark:bg-emerald-950/40 ring-2 ring-emerald-500/20 shadow-sm' : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600'} transition-transform duration-150 text-left flex flex-col justify-between">
-                                    <!-- Visual Generative Banner -->
-                                    <div class="mb-2.5 rounded-xl overflow-hidden shadow-xs border border-emerald-500/20">
-                                        ${typeof STREAM_ILLUSTRATIONS !== 'undefined' && STREAM_ILLUSTRATIONS.bio ? STREAM_ILLUSTRATIONS.bio : ''}
-                                    </div>
                                     <div class="flex items-center justify-between">
-                                        <div class="flex items-center gap-2">
-                                            <div class="w-8 h-8 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 flex items-center justify-center text-sm font-bold shrink-0">
-                                                <i class="fa-solid fa-seedling"></i>
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 flex items-center justify-center shrink-0 p-2 border border-emerald-200/50 dark:border-emerald-800/50">
+                                                ${typeof STREAM_ICONS !== 'undefined' && STREAM_ICONS.bio ? STREAM_ICONS.bio : '<i class="fa-solid fa-seedling"></i>'}
                                             </div>
                                             <div>
                                                 <h4 class="font-black text-slate-900 dark:text-white text-sm">${isML ? ML_I18N.setup.bioTitle : 'Biology Science'} (${currentSelectedGrade})</h4>
@@ -2476,14 +2481,10 @@ function showToastMessage(text, icon = 'checkCircle') {
 
                                 <!-- Option 3: Commerce -->
                                 <div id="stream-card-commerce" aria-pressed="${selectedStream === 'commerce'}" role="button" tabindex="0" onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.click(); }" onclick="setStreamSelection('commerce')" class="cursor-pointer p-3.5 rounded-2xl border-2 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${selectedStream === 'commerce' ? 'border-purple-600 dark:border-purple-500 bg-purple-50/70 dark:bg-purple-950/40 ring-2 ring-purple-500/20 shadow-sm' : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600'} transition-transform duration-150 text-left flex flex-col justify-between">
-                                    <!-- Visual Generative Banner -->
-                                    <div class="mb-2.5 rounded-xl overflow-hidden shadow-xs border border-purple-500/20">
-                                        ${typeof STREAM_ILLUSTRATIONS !== 'undefined' && STREAM_ILLUSTRATIONS.commerce ? STREAM_ILLUSTRATIONS.commerce : ''}
-                                    </div>
                                     <div class="flex items-center justify-between">
-                                        <div class="flex items-center gap-2">
-                                            <div class="w-8 h-8 rounded-xl bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 flex items-center justify-center text-sm font-bold shrink-0">
-                                                <i class="fa-solid fa-chart-line"></i>
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 flex items-center justify-center shrink-0 p-2 border border-purple-200/50 dark:border-purple-800/50">
+                                                ${typeof STREAM_ICONS !== 'undefined' && STREAM_ICONS.commerce ? STREAM_ICONS.commerce : '<i class="fa-solid fa-chart-line"></i>'}
                                             </div>
                                             <div>
                                                 <h4 class="font-black text-slate-900 dark:text-white text-sm">${isML ? ML_I18N.setup.commerceTitle : 'Commerce'} (${currentSelectedGrade})</h4>
@@ -2498,14 +2499,10 @@ function showToastMessage(text, icon = 'checkCircle') {
 
                                 <!-- Option 4: Humanities -->
                                 <div id="stream-card-humanities" aria-pressed="${selectedStream === 'humanities'}" role="button" tabindex="0" onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.click(); }" onclick="setStreamSelection('humanities')" class="cursor-pointer p-3.5 rounded-2xl border-2 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${selectedStream === 'humanities' ? 'border-rose-600 dark:border-rose-500 bg-rose-50/70 dark:bg-rose-950/40 ring-2 ring-rose-500/20 shadow-sm' : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600'} transition-transform duration-150 text-left flex flex-col justify-between">
-                                    <!-- Visual Generative Banner -->
-                                    <div class="mb-2.5 rounded-xl overflow-hidden shadow-xs border border-rose-500/20">
-                                        ${typeof STREAM_ILLUSTRATIONS !== 'undefined' && STREAM_ILLUSTRATIONS.humanities ? STREAM_ILLUSTRATIONS.humanities : ''}
-                                    </div>
                                     <div class="flex items-center justify-between">
-                                        <div class="flex items-center gap-2">
-                                            <div class="w-8 h-8 rounded-xl bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 flex items-center justify-center text-sm font-bold shrink-0">
-                                                <i class="fa-solid fa-landmark"></i>
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-10 h-10 rounded-xl bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 flex items-center justify-center shrink-0 p-2 border border-rose-200/50 dark:border-rose-800/50">
+                                                ${typeof STREAM_ICONS !== 'undefined' && STREAM_ICONS.humanities ? STREAM_ICONS.humanities : '<i class="fa-solid fa-landmark"></i>'}
                                             </div>
                                             <div>
                                                 <h4 class="font-black text-slate-900 dark:text-white text-sm">${isML ? ML_I18N.setup.humanitiesTitle : 'Humanities'} (${currentSelectedGrade})</h4>
@@ -2678,28 +2675,18 @@ function showToastMessage(text, icon = 'checkCircle') {
                                 <i class="fa-solid fa-rocket text-sm"></i>
                             </button>
 
-                            <!-- Customize Study Hours & Routine Accordion -->
-                            <details id="setup-advanced-accordion" class="group bg-slate-50 dark:bg-[#101726] rounded-2xl border border-slate-200 dark:border-slate-800 p-4 transition-all text-left">
-                                <summary class="cursor-pointer font-bold text-xs sm:text-sm text-slate-700 dark:text-slate-200 flex items-center justify-between select-none list-none">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-8 h-8 rounded-xl bg-blue-100 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center text-sm shrink-0">
-                                            <i class="fa-solid fa-sliders"></i>
-                                        </div>
-                                        <div>
-                                            <span class="block font-black text-slate-900 dark:text-white text-xs sm:text-sm">
-                                                ${isML ? 'പഠന സമയവും രീതിയും ക്രമീകരിക്കുക' : 'More plan options'}
-                                            </span>
-                                            <span class="text-[11px] font-medium text-slate-500 dark:text-slate-400">
-                                                ${isML ? 'ദിവസേനയുള്ള പഠന സമയം, വിശ്രമ ദിനം, സിലബസ് വ്യാപ്തി' : 'Weekly rhythm, rest day and syllabus scope'}
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-[11px] font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-lg border border-blue-200/50 dark:border-blue-800/50 hidden sm:inline-block">
-                                            ${isML ? 'ക്രമീകരിക്കുക' : 'Customize'}
-                                        </span>
-                                        <i class="fa-solid fa-chevron-down text-xs text-slate-400 group-open:rotate-180 transition-transform"></i>
-                                    </div>
+                            <!-- Customize Study Hours & Routine Drawer (Clean Directory Style) -->
+                            <details id="setup-advanced-accordion" class="group bg-slate-50/70 dark:bg-[#111827]/70 hover:bg-slate-100/80 dark:hover:bg-[#151f33]/80 rounded-xl border border-slate-200/70 dark:border-slate-800/70 p-2.5 transition text-left">
+                                <summary class="font-bold text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 flex items-center justify-between select-none cursor-pointer">
+                                    <span class="flex items-center gap-2">
+                                        <svg class="w-3.5 h-3.5 inline-block text-blue-600 dark:text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                                        <span>${isML ? 'കൂടുതൽ ക്രമീകരണങ്ങൾ (ഓപ്ഷണൽ)' : 'Personalize Schedule & Syllabus Scope (Optional)'}</span>
+                                    </span>
+                                    <span class="flex items-center gap-1.5 text-[10px] text-slate-400 dark:text-slate-400 font-normal">
+                                        <span class="group-open:hidden px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 font-semibold border border-blue-200/50 dark:border-blue-800/50">${isML ? 'ഓപ്ഷണൽ' : 'Optional'}</span>
+                                        <span class="group-open:hidden">${isML ? 'തുറക്കുക' : 'Tap to customize'}</span>
+                                        <svg class="w-3.5 h-3.5 inline-block text-slate-400 group-open:rotate-180 transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+                                    </span>
                                 </summary>
 
                                 <div class="mt-4 pt-4 border-t border-slate-200/80 dark:border-slate-700/80 space-y-5 text-left">
@@ -3132,14 +3119,22 @@ function showToastMessage(text, icon = 'checkCircle') {
 
                     syllabusHTML += `
                         <div class="bg-white dark:bg-[#0e1628] rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-4 sm:p-5 mb-5">
-                            <!-- Visual Thematic Subject Banner -->
-                            ${typeof getSubjectBanner === 'function' ? getSubjectBanner(sub) : ''}
-
-                            <div class="border-b dark:border-slate-800 pb-2 mb-3 flex items-center justify-between">
-                                <span class="text-xs text-slate-500 dark:text-slate-400 font-bold">${uniqueP2.length} ${isML ? ML_I18N.syllabus.chaptersCount : 'Official Chapters'}</span>
+                            <div class="border-b dark:border-slate-800 pb-3 mb-4 flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center p-2 border border-slate-200/60 dark:border-slate-700/60 shrink-0">
+                                        ${typeof getSubjectBoxIcon === 'function' ? getSubjectBoxIcon(sub) : ''}
+                                    </div>
+                                    <div>
+                                        <h3 class="font-black text-slate-900 dark:text-white text-base">${sub}</h3>
+                                        <span class="text-xs text-slate-500 dark:text-slate-400 font-semibold">${uniqueP2.length} ${isML ? ML_I18N.syllabus.chaptersCount : 'Official Chapters'}</span>
+                                    </div>
+                                </div>
                                 ${subRes && subPyq ? `
                                 <div class="flex items-center gap-2 text-xs">
-                                    <a href="${subPyq}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-purple-600 dark:text-purple-400 hover:underline font-bold text-xs"><i class="fa-solid fa-file-lines"></i> Official PYQs</a>
+                                    <a href="${subPyq}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400 border border-purple-200/50 dark:border-purple-800/50 hover:bg-purple-100 dark:hover:bg-purple-900/50 font-bold text-xs transition">
+                                        <i class="fa-solid fa-file-lines text-[11px]"></i>
+                                        <span>Official PYQs</span>
+                                    </a>
                                 </div>` : ''}
                             </div>
 
