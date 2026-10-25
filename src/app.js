@@ -3122,22 +3122,29 @@ function showToastMessage(text, icon = 'checkCircle') {
                             </div>
 
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                ${uniqueP2.map(ch => {
-                                    // Check if all tasks of this chapter are completed
-                                    let isAllDone = false;
+                                ${(() => {
+                                    // Pre-compute tasks by chapter ID for efficient lookup
+                                    const tasksByChapId = new Map();
                                     if (appState && appState.plan) {
-                                        const chapterTasksInPlan = [];
                                         appState.plan.forEach(d => {
-                                             d.tasks.forEach(t => {
-                                                if (t.chapId === ch.chapId) chapterTasksInPlan.push(t);
+                                            (d.tasks || []).forEach(t => {
+                                                if (t.chapId) {
+                                                    if (!tasksByChapId.has(t.chapId)) tasksByChapId.set(t.chapId, []);
+                                                    tasksByChapId.get(t.chapId).push(t);
+                                                }
                                             });
                                         });
+                                    }
+
+                                    return uniqueP2.map(ch => {
+                                        // Check if all tasks of this chapter are completed
+                                        let isAllDone = false;
+                                        const chapterTasksInPlan = tasksByChapId.get(ch.chapId) || [];
                                         if (chapterTasksInPlan.length > 0 && chapterTasksInPlan.every(t => t.completed)) {
                                             isAllDone = true;
                                         }
-                                    }
 
-                                    return `
+                                        return `
                                         <div class="p-2.5 rounded-xl border ${isAllDone ? 'bg-emerald-50/60 border-emerald-200 dark:bg-emerald-950/40 dark:border-emerald-800/60' : 'bg-slate-50/50 border-slate-100 dark:bg-slate-800/50 dark:border-slate-700/60'} flex items-start gap-2 text-xs">
                                             <div class="w-5 h-5 rounded-md ${isAllDone ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-400 dark:bg-slate-700 dark:text-slate-400'} flex items-center justify-center shrink-0 mt-0.5 text-xs">
                                                 <i class="fa-solid ${isAllDone ? 'fa-check' : 'fa-book'}"></i>
@@ -3148,7 +3155,8 @@ function showToastMessage(text, icon = 'checkCircle') {
                                             </div>
                                         </div>
                                     `;
-                                }).join('')}
+                                    }).join('');
+                                })()}
                             </div>
                         </div>
                     `;
