@@ -3820,8 +3820,10 @@ function showToastMessage(text, icon = 'checkCircle') {
         // Register Service Worker for PWA
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js').then((_reg) => {
-                    // Service worker active
+                navigator.serviceWorker.register('sw.js').then((reg) => {
+                    if (reg && typeof reg.update === 'function') {
+                        reg.update();
+                    }
                 }).catch((err) => {
                     console.log('SW registration note:', err);
                 });

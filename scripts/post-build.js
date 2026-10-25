@@ -50,7 +50,7 @@ rootAssets.forEach((asset) => {
   const rootPath = path.join(rootDir, asset);
   const srcPath = fs.existsSync(publicPath) ? publicPath : rootPath;
   const destPath = path.join(distDir, asset);
-  if (fs.existsSync(srcPath) && !fs.existsSync(destPath)) {
+  if (fs.existsSync(srcPath)) {
     fs.copyFileSync(srcPath, destPath);
   }
 });
@@ -86,10 +86,10 @@ if (fs.existsSync(distAssetsDir)) {
 const distIndexHtml = path.join(distDir, 'index.html');
 if (fs.existsSync(distIndexHtml)) {
   let html = fs.readFileSync(distIndexHtml, 'utf8');
-  html = html.replace(/<link rel="icon" href="[^"]*" sizes="48x48">/g, '<link rel="icon" href="/favicon.ico" sizes="48x48">');
-  html = html.replace(/<link rel="icon" type="image\/png" sizes="48x48" href="[^"]*">/g, '<link rel="icon" type="image/png" sizes="48x48" href="/icon-48.png">');
-  html = html.replace(/<link rel="icon" type="image\/png" sizes="96x96" href="[^"]*">/g, '<link rel="icon" type="image/png" sizes="96x96" href="/icon-96.png">');
-  html = html.replace(/<link rel="shortcut icon" href="[^"]*">/g, '<link rel="shortcut icon" href="/favicon.ico">');
+  html = html.replace(/<link rel="icon" href="[^"]*" sizes="48x48">/g, '<link rel="icon" href="/favicon.ico?v=7.1.0" sizes="48x48">');
+  html = html.replace(/<link rel="icon" type="image\/png" sizes="48x48" href="[^"]*">/g, '<link rel="icon" type="image/png" sizes="48x48" href="/icon-48.png?v=7.1.0">');
+  html = html.replace(/<link rel="icon" type="image\/png" sizes="96x96" href="[^"]*">/g, '<link rel="icon" type="image/png" sizes="96x96" href="/icon-96.png?v=7.1.0">');
+  html = html.replace(/<link rel="shortcut icon" href="[^"]*">/g, '<link rel="shortcut icon" href="/favicon.ico?v=7.1.0">');
   fs.writeFileSync(distIndexHtml, html);
   console.log('[post-build] Normalized favicon paths in dist/index.html to stable root URLs');
 }

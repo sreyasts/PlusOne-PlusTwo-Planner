@@ -1,23 +1,24 @@
-// +1 & +2 Planner Service Worker v7.0.0 (Socratic AI Tutor & iCal Sync)
-const CACHE_NAME = 'plustwo-mission-v7.0.0';
+// +1 & +2 Planner Service Worker v7.1.0 (Original Brand Logo Restored)
+const CACHE_NAME = 'plustwo-mission-v7.1.0';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './manifest.json',
-  './icon.png',
-  './icon-192.png',
-  './icon-512.png',
-  './icon-maskable-192.png',
-  './icon-maskable-512.png',
-  './favicon-32.png',
-  './apple-touch-icon.png'
+  './icon.png?v=7.1.0',
+  './icon-192.png?v=7.1.0',
+  './icon-512.png?v=7.1.0',
+  './icon-maskable-192.png?v=7.1.0',
+  './icon-maskable-512.png?v=7.1.0',
+  './favicon-32.png?v=7.1.0',
+  './apple-touch-icon.png?v=7.1.0'
 ];
 
 self.addEventListener('install', (event) => {
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(ASSETS_TO_CACHE);
-    }).then(() => self.skipWaiting())
+    })
   );
 });
 
