@@ -44,6 +44,10 @@ import {
   getSvgIcon,
 } from './ui/icons.js';
 import {
+  STREAM_ILLUSTRATIONS,
+  getSubjectBanner,
+} from './ui/illustrations.js';
+import {
   trackEvent,
   ensureFirebaseAnalytics,
 } from './analytics/tracker.js';
@@ -1046,6 +1050,17 @@ function showToastMessage(text, icon = 'checkCircle') {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
+        let activeSyllabusStream = null;
+        function switchSyllabusStream(streamKey) {
+            try {
+                if (typeof playTapSound === 'function' && (typeof getUserSetting !== 'function' || getUserSetting('sound', true))) {
+                    playTapSound();
+                }
+            } catch (_) {}
+            activeSyllabusStream = streamKey;
+            renderApp();
+        }
+
         function goToSyllabusView() {
             currentView = 'syllabus';
             updateActiveNavButtons();
@@ -1450,7 +1465,6 @@ function showToastMessage(text, icon = 'checkCircle') {
             activeSetupGradeTab = selectedGrade;
             selectedCompletedChapters.clear();
             renderApp();
-            goToSetupStep(1);
         }
 
         // getStreamSubjects imported from ./engine/planner.js
@@ -1689,18 +1703,56 @@ function showToastMessage(text, icon = 'checkCircle') {
             return formatLocalDateStr(now);
         }
 
+        function updatePresetButtonsUI(currentVal) {
+            const input = document.getElementById('deadline-date');
+            const val = currentVal || (input ? input.value : '');
+            const presets = [
+                { id: 'preset-btn-30', date: getRelativePresetDate(30) },
+                { id: 'preset-btn-xmas', date: getPresetDate(12, 20) },
+                { id: 'preset-btn-board', date: getPresetDate(2, 28, true) },
+                { id: 'preset-btn-term2', date: getPresetDate(11, 30) }
+            ];
+
+            presets.forEach(p => {
+                const btn = document.getElementById(p.id);
+                if (!btn) return;
+                const isSelected = (val === p.date);
+                btn.setAttribute('aria-pressed', isSelected ? 'true' : 'false');
+                if (isSelected) {
+                    btn.className = 'preset-date-btn py-2.5 px-3 rounded-xl bg-blue-600 dark:bg-blue-600 text-white font-black border-2 border-blue-500 shadow-md shadow-blue-500/30 scale-[1.02] ring-2 ring-blue-500/25 transition-all duration-150 flex flex-col items-center justify-center text-center gap-1 active:scale-95 cursor-pointer';
+                    const icon = btn.querySelector('i');
+                    if (icon) {
+                        icon.className = icon.className.replace(/text-\w+-\d+/, 'text-white');
+                    }
+                    const sub = btn.querySelector('.preset-sub');
+                    if (sub) sub.className = 'preset-sub text-[10px] text-blue-100 font-medium';
+                } else {
+                    btn.className = 'preset-date-btn py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-[#162137] hover:bg-blue-50/80 dark:hover:bg-blue-950/40 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-200 dark:border-slate-700/80 transition-all duration-150 flex flex-col items-center justify-center text-center gap-1 active:scale-95 cursor-pointer';
+                    const sub = btn.querySelector('.preset-sub');
+                    if (sub) sub.className = 'preset-sub text-[10px] text-slate-400 font-medium';
+                }
+            });
+        }
+
         function setDeadlinePreset(dateStr) {
+            try {
+                if (typeof playTapSound === 'function' && (typeof getUserSetting !== 'function' || getUserSetting('sound', true))) {
+                    playTapSound();
+                }
+            } catch (_) {}
             const input = document.getElementById('deadline-date');
             if (input) {
                 input.value = dateStr;
                 updateDeadlinePreview();
             }
+            updatePresetButtonsUI(dateStr);
         }
 
         function updateDeadlinePreview() {
             const input = document.getElementById('deadline-date');
             const label = document.getElementById('deadline-calc-label');
             if (!input || !label) return;
+            updatePresetButtonsUI(input.value);
             const isML = getAppLanguage() === 'ml';
             const smartStart = typeof getSmartStartDate === 'function' ? getSmartStartDate() : { startDate: TODAY_STR, isLateEvening: false };
             const effectiveStart = smartStart.startDate;
@@ -2249,6 +2301,7 @@ function showToastMessage(text, icon = 'checkCircle') {
 
             if (stepNum === 2) {
                 updateDeadlinePreview();
+                updatePresetButtonsUI();
             }
             if (stepNum === 3) {
                 updateCompletedChaptersCountBadge();
@@ -2278,11 +2331,6 @@ function showToastMessage(text, icon = 'checkCircle') {
                 if (completedBadge) {
                     completedBadge.innerText = `${selectedCompletedChapters.size} ${isML ? 'പൂർത്തിയായി' : 'completed'}`;
                 }
-            }
-
-            const wizardCard = document.getElementById('setup-wizard-card');
-            if (wizardCard) {
-                wizardCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         }
 
@@ -2381,12 +2429,16 @@ function showToastMessage(text, icon = 'checkCircle') {
                                 ${isML ? 'സ്ട്രീം തിരഞ്ഞെടുക്കുക' : 'Select Stream'}
                             </label>
 
-                            <div class="stream-options grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                            <div class="stream-options grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <!-- Option 1: Computer Science -->
                                 <div id="stream-card-cs" aria-pressed="${selectedStream === 'cs'}" role="button" tabindex="0" onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.click(); }" onclick="setStreamSelection('cs')" class="cursor-pointer p-3.5 rounded-2xl border-2 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${selectedStream === 'cs' ? 'border-blue-600 dark:border-blue-500 bg-blue-50/70 dark:bg-blue-950/40 ring-2 ring-blue-500/20 shadow-sm' : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600'} transition-transform duration-150 text-left flex flex-col justify-between">
+                                    <!-- Visual Generative Banner -->
+                                    <div class="mb-2.5 rounded-xl overflow-hidden shadow-xs border border-blue-500/20">
+                                        ${typeof STREAM_ILLUSTRATIONS !== 'undefined' && STREAM_ILLUSTRATIONS.cs ? STREAM_ILLUSTRATIONS.cs : ''}
+                                    </div>
                                     <div class="flex items-center justify-between">
-                                        <div class="flex items-center gap-2.5">
-                                            <div class="w-9 h-9 rounded-xl bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 flex items-center justify-center text-base font-bold shrink-0">
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-8 h-8 rounded-xl bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 flex items-center justify-center text-sm font-bold shrink-0">
                                                 <i class="fa-solid fa-laptop-code"></i>
                                             </div>
                                             <div>
@@ -2402,9 +2454,13 @@ function showToastMessage(text, icon = 'checkCircle') {
 
                                 <!-- Option 2: Biology Science -->
                                 <div id="stream-card-bio" aria-pressed="${selectedStream === 'bio'}" role="button" tabindex="0" onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.click(); }" onclick="setStreamSelection('bio')" class="cursor-pointer p-3.5 rounded-2xl border-2 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${selectedStream === 'bio' ? 'border-emerald-600 dark:border-emerald-500 bg-emerald-50/70 dark:bg-emerald-950/40 ring-2 ring-emerald-500/20 shadow-sm' : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600'} transition-transform duration-150 text-left flex flex-col justify-between">
+                                    <!-- Visual Generative Banner -->
+                                    <div class="mb-2.5 rounded-xl overflow-hidden shadow-xs border border-emerald-500/20">
+                                        ${typeof STREAM_ILLUSTRATIONS !== 'undefined' && STREAM_ILLUSTRATIONS.bio ? STREAM_ILLUSTRATIONS.bio : ''}
+                                    </div>
                                     <div class="flex items-center justify-between">
-                                        <div class="flex items-center gap-2.5">
-                                            <div class="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 flex items-center justify-center text-base font-bold shrink-0">
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-8 h-8 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 flex items-center justify-center text-sm font-bold shrink-0">
                                                 <i class="fa-solid fa-seedling"></i>
                                             </div>
                                             <div>
@@ -2420,9 +2476,13 @@ function showToastMessage(text, icon = 'checkCircle') {
 
                                 <!-- Option 3: Commerce -->
                                 <div id="stream-card-commerce" aria-pressed="${selectedStream === 'commerce'}" role="button" tabindex="0" onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.click(); }" onclick="setStreamSelection('commerce')" class="cursor-pointer p-3.5 rounded-2xl border-2 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${selectedStream === 'commerce' ? 'border-purple-600 dark:border-purple-500 bg-purple-50/70 dark:bg-purple-950/40 ring-2 ring-purple-500/20 shadow-sm' : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600'} transition-transform duration-150 text-left flex flex-col justify-between">
+                                    <!-- Visual Generative Banner -->
+                                    <div class="mb-2.5 rounded-xl overflow-hidden shadow-xs border border-purple-500/20">
+                                        ${typeof STREAM_ILLUSTRATIONS !== 'undefined' && STREAM_ILLUSTRATIONS.commerce ? STREAM_ILLUSTRATIONS.commerce : ''}
+                                    </div>
                                     <div class="flex items-center justify-between">
-                                        <div class="flex items-center gap-2.5">
-                                            <div class="w-9 h-9 rounded-xl bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 flex items-center justify-center text-base font-bold shrink-0">
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-8 h-8 rounded-xl bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 flex items-center justify-center text-sm font-bold shrink-0">
                                                 <i class="fa-solid fa-chart-line"></i>
                                             </div>
                                             <div>
@@ -2438,9 +2498,13 @@ function showToastMessage(text, icon = 'checkCircle') {
 
                                 <!-- Option 4: Humanities -->
                                 <div id="stream-card-humanities" aria-pressed="${selectedStream === 'humanities'}" role="button" tabindex="0" onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.click(); }" onclick="setStreamSelection('humanities')" class="cursor-pointer p-3.5 rounded-2xl border-2 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${selectedStream === 'humanities' ? 'border-rose-600 dark:border-rose-500 bg-rose-50/70 dark:bg-rose-950/40 ring-2 ring-rose-500/20 shadow-sm' : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600'} transition-transform duration-150 text-left flex flex-col justify-between">
+                                    <!-- Visual Generative Banner -->
+                                    <div class="mb-2.5 rounded-xl overflow-hidden shadow-xs border border-rose-500/20">
+                                        ${typeof STREAM_ILLUSTRATIONS !== 'undefined' && STREAM_ILLUSTRATIONS.humanities ? STREAM_ILLUSTRATIONS.humanities : ''}
+                                    </div>
                                     <div class="flex items-center justify-between">
-                                        <div class="flex items-center gap-2.5">
-                                            <div class="w-9 h-9 rounded-xl bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 flex items-center justify-center text-base font-bold shrink-0">
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-8 h-8 rounded-xl bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 flex items-center justify-center text-sm font-bold shrink-0">
                                                 <i class="fa-solid fa-landmark"></i>
                                             </div>
                                             <div>
@@ -2480,25 +2544,25 @@ function showToastMessage(text, icon = 'checkCircle') {
 
                             <!-- Fast Presets -->
                             <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
-                                <button type="button" onclick="setDeadlinePreset('${getRelativePresetDate(30)}')" class="py-2.5 px-3 rounded-xl bg-blue-50 dark:bg-blue-950/60 hover:bg-blue-100 dark:hover:bg-blue-900/60 text-blue-700 dark:text-blue-300 text-xs font-bold border border-blue-200 dark:border-blue-700/80 transition-colors duration-150 flex flex-col items-center justify-center text-center gap-1 shadow-xs active:scale-95">
+                                <button type="button" id="preset-btn-30" onclick="setDeadlinePreset('${getRelativePresetDate(30)}')" class="preset-date-btn py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-[#162137] hover:bg-blue-50/80 dark:hover:bg-blue-950/40 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-200 dark:border-slate-700/80 transition-all duration-150 flex flex-col items-center justify-center text-center gap-1 active:scale-95 cursor-pointer">
                                     <i class="fa-solid fa-bolt text-amber-500 text-sm"></i>
                                     <span>${isML ? '30 ദിവസത്തെ പ്ലാൻ' : '30-Day Sprint'}</span>
-                                    <span class="text-[10px] text-slate-400">Fast Crash</span>
+                                    <span class="preset-sub text-[10px] text-slate-400 font-medium">Fast Crash</span>
                                 </button>
-                                <button type="button" onclick="setDeadlinePreset('${getPresetDate(12, 20)}')" class="py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-[#162137] hover:bg-blue-50 dark:hover:bg-blue-950/40 hover:text-blue-700 dark:hover:text-blue-300 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-200 dark:border-slate-700/80 transition-colors duration-150 flex flex-col items-center justify-center text-center gap-1 active:scale-95">
+                                <button type="button" id="preset-btn-xmas" onclick="setDeadlinePreset('${getPresetDate(12, 20)}')" class="preset-date-btn py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-[#162137] hover:bg-blue-50/80 dark:hover:bg-blue-950/40 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-200 dark:border-slate-700/80 transition-all duration-150 flex flex-col items-center justify-center text-center gap-1 active:scale-95 cursor-pointer">
                                     <i class="fa-solid fa-star text-emerald-500 text-sm"></i>
                                     <span>${isML ? 'ക്രിസ്മസ് പരീക്ഷ' : 'Dec 20 Xmas'}</span>
-                                    <span class="text-[10px] text-slate-400">Term 1 & 2</span>
+                                    <span class="preset-sub text-[10px] text-slate-400 font-medium">Term 1 & 2</span>
                                 </button>
-                                <button type="button" onclick="setDeadlinePreset('${getPresetDate(2, 28, true)}')" class="py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-[#162137] hover:bg-blue-50 dark:hover:bg-blue-950/40 hover:text-blue-700 dark:hover:text-blue-300 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-200 dark:border-slate-700/80 transition-colors duration-150 flex flex-col items-center justify-center text-center gap-1 active:scale-95">
+                                <button type="button" id="preset-btn-board" onclick="setDeadlinePreset('${getPresetDate(2, 28, true)}')" class="preset-date-btn py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-[#162137] hover:bg-blue-50/80 dark:hover:bg-blue-950/40 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-200 dark:border-slate-700/80 transition-all duration-150 flex flex-col items-center justify-center text-center gap-1 active:scale-95 cursor-pointer">
                                     <i class="fa-solid fa-bullseye text-purple-500 text-sm"></i>
                                     <span>${isML ? 'പബ്ലിക് പരീക്ഷ' : 'Feb 28 Board'}</span>
-                                    <span class="text-[10px] text-slate-400">Full Syllabus</span>
+                                    <span class="preset-sub text-[10px] text-slate-400 font-medium">Full Syllabus</span>
                                 </button>
-                                <button type="button" onclick="setDeadlinePreset('${getPresetDate(11, 30)}')" class="py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-[#162137] hover:bg-blue-50 dark:hover:bg-blue-950/40 hover:text-blue-700 dark:hover:text-blue-300 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-200 dark:border-slate-700/80 transition-colors duration-150 flex flex-col items-center justify-center text-center gap-1 active:scale-95">
+                                <button type="button" id="preset-btn-term2" onclick="setDeadlinePreset('${getPresetDate(11, 30)}')" class="preset-date-btn py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-[#162137] hover:bg-blue-50/80 dark:hover:bg-blue-950/40 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-200 dark:border-slate-700/80 transition-all duration-150 flex flex-col items-center justify-center text-center gap-1 active:scale-95 cursor-pointer">
                                     <i class="fa-solid fa-calendar-days text-blue-500 text-sm"></i>
                                     <span>${isML ? 'നവം 30' : 'Nov 30 Term 2'}</span>
-                                    <span class="text-[10px] text-slate-400">Half-Yearly</span>
+                                    <span class="preset-sub text-[10px] text-slate-400 font-medium">Half-Yearly</span>
                                 </button>
                             </div>
 
@@ -3052,9 +3116,9 @@ function showToastMessage(text, icon = 'checkCircle') {
                 return;
             }
 
-            // View 3: Official Syllabus Reference & Completed Chapters Overview (Strictly Stream Isolated)
+            // View 3: Official Syllabus Reference & Completed Chapters Overview (Interactive Stream Switcher)
             if (currentView === 'syllabus') {
-                const userStream = appState?.stream || (appState?.plan?.some(d => d.tasks.some(t => t.subject === 'Botany' || t.subject === 'Zoology')) ? 'bio' : 'cs');
+                const userStream = activeSyllabusStream || appState?.stream || (appState?.plan?.some(d => d.tasks.some(t => t.subject === 'Botany' || t.subject === 'Zoology')) ? 'bio' : 'cs');
                 const subjects = userStream === 'imp_only'
                     ? Array.from(new Set((appState?.plan || []).flatMap(d => (d.tasks || []).map(t => t.subject))))
                     : getStreamSubjects(userStream);
@@ -3067,19 +3131,19 @@ function showToastMessage(text, icon = 'checkCircle') {
                     const subPyq = subRes?.pyqUrl || subRes?.pyq;
 
                     syllabusHTML += `
-                        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-5 mb-4">
-                            <div class="border-b pb-2 mb-3">
-                                <h3 class="text-sm sm:text-base font-extrabold text-slate-900 mb-2 flex items-center justify-between">
-                                    <span>${sub} <span class="text-xs text-slate-400 font-normal">(${uniqueP2.length} ${isML ? ML_I18N.syllabus.chaptersCount : 'Official Chapters'})</span></span>
-                                    <span class="text-xs font-extrabold text-blue-700 bg-blue-50 border border-blue-200/60 dark:bg-blue-950/60 dark:text-blue-300 dark:border-blue-800/60 px-2.5 py-0.5 rounded-lg"><i class="fa-solid fa-graduation-cap mr-1"></i> ${isML ? ML_I18N.syllabus.plusTwoDhse : 'Plus Two (+2) DHSE'}</span>
-                                </h3>
+                        <div class="bg-white dark:bg-[#0e1628] rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-4 sm:p-5 mb-5">
+                            <!-- Visual Thematic Subject Banner -->
+                            ${typeof getSubjectBanner === 'function' ? getSubjectBanner(sub) : ''}
+
+                            <div class="border-b dark:border-slate-800 pb-2 mb-3 flex items-center justify-between">
+                                <span class="text-xs text-slate-500 dark:text-slate-400 font-bold">${uniqueP2.length} ${isML ? ML_I18N.syllabus.chaptersCount : 'Official Chapters'}</span>
                                 ${subRes && subPyq ? `
-                                <div class="flex flex-wrap items-center gap-3 text-xs pt-1">
-                                    <a href="${subPyq}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-purple-600 hover:underline font-semibold">${getSvgIcon('fileText', 'w-3.5 h-3.5')} PYQs</a>
+                                <div class="flex items-center gap-2 text-xs">
+                                    <a href="${subPyq}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-purple-600 dark:text-purple-400 hover:underline font-bold text-xs"><i class="fa-solid fa-file-lines"></i> Official PYQs</a>
                                 </div>` : ''}
                             </div>
 
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                                 ${uniqueP2.map(ch => {
                                     // Check if all tasks of this chapter are completed
                                     let isAllDone = false;
@@ -3096,13 +3160,16 @@ function showToastMessage(text, icon = 'checkCircle') {
                                     }
 
                                     return `
-                                        <div class="p-2.5 rounded-xl border ${isAllDone ? 'bg-emerald-50/60 border-emerald-200 dark:bg-emerald-950/40 dark:border-emerald-800/60' : 'bg-slate-50/50 border-slate-100 dark:bg-slate-800/50 dark:border-slate-700/60'} flex items-start gap-2 text-xs">
-                                            <div class="w-5 h-5 rounded-md ${isAllDone ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-400 dark:bg-slate-700 dark:text-slate-400'} flex items-center justify-center shrink-0 mt-0.5 text-xs">
-                                                <i class="fa-solid ${isAllDone ? 'fa-check' : 'fa-book'}"></i>
+                                        <div class="p-3 rounded-xl border ${isAllDone ? 'bg-emerald-50/70 border-emerald-200 dark:bg-emerald-950/40 dark:border-emerald-800/60' : 'bg-slate-50/70 border-slate-200/80 dark:bg-[#141d30]/60 dark:border-slate-800'} flex items-start gap-2.5 text-xs transition hover:border-blue-400">
+                                            <div class="w-6 h-6 rounded-lg ${isAllDone ? 'bg-emerald-600 text-white' : 'bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300'} flex items-center justify-center shrink-0 mt-0.5 text-xs font-bold">
+                                                ${isAllDone ? '<i class="fa-solid fa-check"></i>' : ch.chapNumber}
                                             </div>
                                             <div class="flex-1">
-                                                <span class="font-bold text-slate-800 dark:text-slate-100 block">Chapter ${ch.chapNumber}: ${ch.chapterName.replace(/^Chapter\s+\d+:\s*/i, '').replace(/^\d+\.\s*/, '')}</span>
-                                                <span class="text-xs text-slate-400">Term ${ch.term} ${isAllDone ? `• <strong class="text-emerald-700 dark:text-emerald-400">${isML ? ML_I18N.syllabus.mastered : 'Mastered'}</strong>` : ''}</span>
+                                                <span class="font-extrabold text-slate-800 dark:text-slate-100 block">Chapter ${ch.chapNumber}: ${ch.chapterName.replace(/^Chapter\s+\d+:\s*/i, '').replace(/^\d+\.\s*/, '')}</span>
+                                                <div class="flex items-center gap-2 mt-1">
+                                                    <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 bg-slate-200/60 dark:bg-slate-800 px-1.5 py-0.5 rounded">Term ${ch.term}</span>
+                                                    ${isAllDone ? `<span class="text-[10px] font-extrabold text-emerald-700 dark:text-emerald-400">${isML ? ML_I18N.syllabus.mastered : 'Mastered'}</span>` : ''}
+                                                </div>
                                             </div>
                                         </div>
                                     `;
@@ -3113,10 +3180,10 @@ function showToastMessage(text, icon = 'checkCircle') {
                 });
 
                 container.innerHTML = `
-                    <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center justify-between mb-4">
                         <div>
-                            <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900">${isML ? ML_I18N.syllabus.title : 'Official DHSE Scheme of Work'}</h2>
-                            <p class="text-xs text-slate-500">${(function() {
+                            <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white">${isML ? ML_I18N.syllabus.title : 'Official DHSE Scheme of Work'}</h2>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">${(function() {
                                 if (isML) {
                                     if (userStream === 'bio') return ML_I18N.syllabus.subtitleBio;
                                     if (userStream === 'commerce') return ML_I18N.syllabus.subtitleCommerce;
@@ -3129,8 +3196,28 @@ function showToastMessage(text, icon = 'checkCircle') {
                                 return 'Computer Science Stream • Rationalized Kerala Higher Secondary curriculum.';
                             })()}</p>
                         </div>
-                        <button onclick="goToDashboard()" class="text-xs font-bold bg-white border border-slate-200 hover:bg-slate-50 px-3.5 py-2 rounded-xl text-slate-700 transition">
+                        <button onclick="goToDashboard()" class="text-xs font-bold bg-white dark:bg-[#0e1628] border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 px-3.5 py-2 rounded-xl text-slate-700 dark:text-slate-300 transition">
                             <i class="fa-solid fa-arrow-left mr-1"></i> ${isML ? ML_I18N.syllabus.backToToday : 'Back to Today'}
+                        </button>
+                    </div>
+
+                    <!-- Interactive Stream Switcher Pills Bar -->
+                    <div class="flex items-center gap-2 overflow-x-auto pb-3 mb-5 scrollbar-none">
+                        <button type="button" onclick="switchSyllabusStream('cs')" class="px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition active:scale-95 cursor-pointer ${userStream === 'cs' ? 'bg-blue-600 text-white shadow-xs font-black ring-2 ring-blue-500/20' : 'bg-white dark:bg-[#0e1628] border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50'}">
+                            <i class="fa-solid fa-laptop-code text-xs"></i>
+                            <span>Computer Science</span>
+                        </button>
+                        <button type="button" onclick="switchSyllabusStream('bio')" class="px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition active:scale-95 cursor-pointer ${userStream === 'bio' ? 'bg-emerald-600 text-white shadow-xs font-black ring-2 ring-emerald-500/20' : 'bg-white dark:bg-[#0e1628] border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50'}">
+                            <i class="fa-solid fa-seedling text-xs"></i>
+                            <span>Biology Science</span>
+                        </button>
+                        <button type="button" onclick="switchSyllabusStream('commerce')" class="px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition active:scale-95 cursor-pointer ${userStream === 'commerce' ? 'bg-purple-600 text-white shadow-xs font-black ring-2 ring-purple-500/20' : 'bg-white dark:bg-[#0e1628] border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50'}">
+                            <i class="fa-solid fa-chart-line text-xs"></i>
+                            <span>Commerce</span>
+                        </button>
+                        <button type="button" onclick="switchSyllabusStream('humanities')" class="px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition active:scale-95 cursor-pointer ${userStream === 'humanities' ? 'bg-rose-600 text-white shadow-xs font-black ring-2 ring-rose-500/20' : 'bg-white dark:bg-[#0e1628] border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50'}">
+                            <i class="fa-solid fa-landmark text-xs"></i>
+                            <span>Humanities</span>
                         </button>
                     </div>
 
@@ -3824,6 +3911,7 @@ if (typeof window !== 'undefined') {
         goToDashboard,
         goToPlan,
         goToSyllabusView,
+        switchSyllabusStream,
         switchView: (view) => {
             if (view === 'today') goToDashboard();
             else if (view === 'plan') goToPlan();
@@ -3864,6 +3952,7 @@ if (typeof window !== 'undefined') {
         getPresetDate,
         getRelativePresetDate,
         setDeadlinePreset,
+        updatePresetButtonsUI,
         updateDeadlinePreview,
         goToSetupStep,
         nextSetupStep,
