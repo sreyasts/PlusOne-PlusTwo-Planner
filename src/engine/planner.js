@@ -425,8 +425,18 @@ function _executeCorePlanAlgorithm(
     });
 
     // 3. Intelligently schedule tasks for each improvement paper
+    const p1TasksBySubject = new Map();
+    for (const t of p1Tasks) {
+      let arr = p1TasksBySubject.get(t.subject);
+      if (!arr) {
+        arr = [];
+        p1TasksBySubject.set(t.subject, arr);
+      }
+      arr.push(t);
+    }
+
     sortedImp.forEach((cfg) => {
-      const subTasks = p1Tasks.filter((t) => t.subject === cfg.subject);
+      const subTasks = p1TasksBySubject.get(cfg.subject) || [];
       if (subTasks.length === 0) return;
 
       const examDate = cfg.examDate || deadlineStr;
