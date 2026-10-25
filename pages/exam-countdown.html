@@ -109,6 +109,7 @@
     }
     </script>
     <style>
+        html, body { overflow-x: clip; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
         .font-mono-num { font-family: 'JetBrains Mono', monospace; }
     </style>
@@ -120,7 +121,7 @@
             <a href="/" class="flex items-center gap-3">
                 <img src="/icon.png" alt="+1 & +2 Planner Logo" class="w-10 h-10 rounded-xl shadow-md shadow-blue-500/20 object-contain">
                 <div>
-                    <h1 class="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight leading-none">Mission <span class="text-blue-600">PlusTwo</span></h1>
+                    <h1 class="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight leading-none">+1 & +2 <span class="text-blue-600">Planner</span></h1>
                     <p class="text-xs font-medium text-slate-400 mt-0.5">Exam Countdown & Load Analyzer</p>
                 </div>
             </a>
@@ -128,7 +129,7 @@
                 <a href="/pages/study-hours-calculator.html" class="hidden sm:inline-flex px-3 py-1.5 text-xs font-bold text-slate-600 hover:text-blue-600 transition-colors">
                     Hours Calculator
                 </a>
-                <a href="/" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition-all shadow-sm flex items-center gap-2">
+                <a href="/" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition-colors duration-150 shadow-sm flex items-center gap-2 active:scale-95 transition-transform">
                     <i class="fa-solid fa-calendar-check"></i>
                     <span>Open Planner</span>
                 </a>
@@ -154,13 +155,13 @@
         <!-- Target Milestone Selector Tabs -->
         <div class="flex justify-center mb-6">
             <div class="inline-flex p-1 bg-slate-200/80 rounded-2xl gap-1 flex-wrap justify-center" id="milestoneTabs">
-                <button type="button" data-date="2027-03-01T09:30:00" data-label="DHSE Board Exam (Theory)" class="milestone-btn active px-4 py-2 text-xs font-bold rounded-xl transition-all bg-white text-blue-700 shadow-xs">
+                <button type="button" data-date="2027-03-01T09:30:00" data-label="DHSE Board Exam (Theory)" class="milestone-btn active px-4 py-2 text-xs font-bold rounded-xl transition-colors duration-150 bg-white text-blue-700 shadow-xs">
                     <i class="fa-solid fa-file-signature mr-1.5"></i> Board Exams (March 1)
                 </button>
-                <button type="button" data-date="2027-02-15T09:30:00" data-label="DHSE Model Exams" class="milestone-btn px-4 py-2 text-xs font-bold rounded-xl transition-all text-slate-600 hover:text-slate-900">
+                <button type="button" data-date="2027-02-15T09:30:00" data-label="DHSE Model Exams" class="milestone-btn px-4 py-2 text-xs font-bold rounded-xl transition-colors duration-150 text-slate-600 hover:text-slate-900">
                     <i class="fa-solid fa-clipboard-check mr-1.5"></i> Model Exams (Feb 15)
                 </button>
-                <button type="button" data-date="2027-01-22T09:30:00" data-label="DHSE Practical Exams" class="milestone-btn px-4 py-2 text-xs font-bold rounded-xl transition-all text-slate-600 hover:text-slate-900">
+                <button type="button" data-date="2027-01-22T09:30:00" data-label="DHSE Practical Exams" class="milestone-btn px-4 py-2 text-xs font-bold rounded-xl transition-colors duration-150 text-slate-600 hover:text-slate-900">
                     <i class="fa-solid fa-flask-vial mr-1.5"></i> Practicals (Jan 22)
                 </button>
             </div>
@@ -225,13 +226,13 @@
                     <div>
                         <label class="block text-xs font-bold text-slate-700 mb-1.5">Higher Secondary Stream</label>
                         <div class="grid grid-cols-3 gap-2" id="streamSelector">
-                            <button type="button" data-stream="science" data-chapters="54" class="stream-btn active px-3 py-2 rounded-xl text-xs font-bold border border-blue-600 bg-blue-50 text-blue-700 transition-all text-center">
+                            <button type="button" data-stream="science" data-chapters="54" class="stream-btn active px-3 py-2 rounded-xl text-xs font-bold border border-blue-600 bg-blue-50 text-blue-700 transition-colors duration-150 text-center">
                                 Science (Bio/CS)
                             </button>
-                            <button type="button" data-stream="commerce" data-chapters="42" class="stream-btn px-3 py-2 rounded-xl text-xs font-bold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition-all text-center">
+                            <button type="button" data-stream="commerce" data-chapters="42" class="stream-btn px-3 py-2 rounded-xl text-xs font-bold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition-colors duration-150 text-center">
                                 Commerce
                             </button>
-                            <button type="button" data-stream="humanities" data-chapters="38" class="stream-btn px-3 py-2 rounded-xl text-xs font-bold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition-all text-center">
+                            <button type="button" data-stream="humanities" data-chapters="38" class="stream-btn px-3 py-2 rounded-xl text-xs font-bold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition-colors duration-150 text-center">
                                 Humanities
                             </button>
                         </div>
@@ -301,7 +302,7 @@
                     </div>
 
                     <div class="mt-4 pt-4 border-t border-slate-200">
-                        <a id="btnAutoPlan" href="/" class="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-sm transition-all flex items-center justify-center gap-2">
+                        <a id="btnAutoPlan" href="/" class="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-sm transition-colors duration-150 flex items-center justify-center gap-2 active:scale-95 transition-transform">
                             <i class="fa-solid fa-wand-magic-sparkles"></i>
                             <span>Generate Balanced Day-by-Day Schedule</span>
                         </a>
@@ -336,19 +337,19 @@
 
         <!-- Cross Links -->
         <div class="flex flex-wrap justify-center gap-4 text-xs font-semibold text-slate-600">
-            <a href="/pages/plus-two-timetable.html" class="p-3 bg-white rounded-xl border border-slate-200 hover:border-blue-400 hover:text-blue-600 transition-all flex items-center gap-2 shadow-2xs">
+            <a href="/pages/plus-two-timetable.html" class="p-3 bg-white rounded-xl border border-slate-200 hover:border-blue-400 hover:text-blue-600 transition-colors duration-150 flex items-center gap-2 shadow-2xs">
                 <i class="fa-solid fa-table-list text-blue-600"></i>
                 <span>Timetable & Pacing Guide</span>
             </a>
-            <a href="/pages/study-hours-calculator.html" class="p-3 bg-white rounded-xl border border-slate-200 hover:border-blue-400 hover:text-blue-600 transition-all flex items-center gap-2 shadow-2xs">
+            <a href="/pages/study-hours-calculator.html" class="p-3 bg-white rounded-xl border border-slate-200 hover:border-blue-400 hover:text-blue-600 transition-colors duration-150 flex items-center gap-2 shadow-2xs">
                 <i class="fa-solid fa-clock text-blue-600"></i>
                 <span>Daily Hours Calculator</span>
             </a>
-            <a href="/pages/backlog-recovery-planner.html" class="p-3 bg-white rounded-xl border border-slate-200 hover:border-blue-400 hover:text-blue-600 transition-all flex items-center gap-2 shadow-2xs">
+            <a href="/pages/backlog-recovery-planner.html" class="p-3 bg-white rounded-xl border border-slate-200 hover:border-blue-400 hover:text-blue-600 transition-colors duration-150 flex items-center gap-2 shadow-2xs">
                 <i class="fa-solid fa-rotate-left text-blue-600"></i>
                 <span>Backlog Recovery</span>
             </a>
-            <a href="/pages/syllabus-plus-two.html" class="p-3 bg-white rounded-xl border border-slate-200 hover:border-blue-400 hover:text-blue-600 transition-all flex items-center gap-2 shadow-2xs">
+            <a href="/pages/syllabus-plus-two.html" class="p-3 bg-white rounded-xl border border-slate-200 hover:border-blue-400 hover:text-blue-600 transition-colors duration-150 flex items-center gap-2 shadow-2xs">
                 <i class="fa-solid fa-book text-blue-600"></i>
                 <span>Rationalized Syllabus</span>
             </a>

@@ -2480,23 +2480,23 @@ function showToastMessage(text, icon = 'checkCircle') {
 
                             <!-- Fast Presets -->
                             <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
-                                <button type="button" onclick="setDeadlinePreset('${getRelativePresetDate(30)}')" class="py-2.5 px-3 rounded-xl bg-blue-50 dark:bg-blue-950/60 hover:bg-blue-100 dark:hover:bg-blue-900/60 text-blue-700 dark:text-blue-300 text-xs font-bold border border-blue-200 dark:border-blue-700/80 transition flex flex-col items-center justify-center text-center gap-1 shadow-xs active:scale-95">
-                                    <span class="text-amber-500 text-sm">⚡</span>
+                                <button type="button" onclick="setDeadlinePreset('${getRelativePresetDate(30)}')" class="py-2.5 px-3 rounded-xl bg-blue-50 dark:bg-blue-950/60 hover:bg-blue-100 dark:hover:bg-blue-900/60 text-blue-700 dark:text-blue-300 text-xs font-bold border border-blue-200 dark:border-blue-700/80 transition-colors duration-150 flex flex-col items-center justify-center text-center gap-1 shadow-xs active:scale-95">
+                                    <i class="fa-solid fa-bolt text-amber-500 text-sm"></i>
                                     <span>${isML ? '30 ദിവസത്തെ പ്ലാൻ' : '30-Day Sprint'}</span>
                                     <span class="text-[10px] text-slate-400">Fast Crash</span>
                                 </button>
-                                <button type="button" onclick="setDeadlinePreset('${getPresetDate(12, 20)}')" class="py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-[#162137] hover:bg-blue-50 dark:hover:bg-blue-950/40 hover:text-blue-700 dark:hover:text-blue-300 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-200 dark:border-slate-700/80 transition flex flex-col items-center justify-center text-center gap-1 active:scale-95">
-                                    <span class="text-emerald-500 text-sm">🎄</span>
+                                <button type="button" onclick="setDeadlinePreset('${getPresetDate(12, 20)}')" class="py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-[#162137] hover:bg-blue-50 dark:hover:bg-blue-950/40 hover:text-blue-700 dark:hover:text-blue-300 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-200 dark:border-slate-700/80 transition-colors duration-150 flex flex-col items-center justify-center text-center gap-1 active:scale-95">
+                                    <i class="fa-solid fa-star text-emerald-500 text-sm"></i>
                                     <span>${isML ? 'ക്രിസ്മസ് പരീക്ഷ' : 'Dec 20 Xmas'}</span>
                                     <span class="text-[10px] text-slate-400">Term 1 & 2</span>
                                 </button>
-                                <button type="button" onclick="setDeadlinePreset('${getPresetDate(2, 28, true)}')" class="py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-[#162137] hover:bg-blue-50 dark:hover:bg-blue-950/40 hover:text-blue-700 dark:hover:text-blue-300 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-200 dark:border-slate-700/80 transition flex flex-col items-center justify-center text-center gap-1 active:scale-95">
-                                    <span class="text-purple-500 text-sm">🎯</span>
+                                <button type="button" onclick="setDeadlinePreset('${getPresetDate(2, 28, true)}')" class="py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-[#162137] hover:bg-blue-50 dark:hover:bg-blue-950/40 hover:text-blue-700 dark:hover:text-blue-300 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-200 dark:border-slate-700/80 transition-colors duration-150 flex flex-col items-center justify-center text-center gap-1 active:scale-95">
+                                    <i class="fa-solid fa-bullseye text-purple-500 text-sm"></i>
                                     <span>${isML ? 'പബ്ലിക് പരീക്ഷ' : 'Feb 28 Board'}</span>
                                     <span class="text-[10px] text-slate-400">Full Syllabus</span>
                                 </button>
-                                <button type="button" onclick="setDeadlinePreset('${getPresetDate(11, 30)}')" class="py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-[#162137] hover:bg-blue-50 dark:hover:bg-blue-950/40 hover:text-blue-700 dark:hover:text-blue-300 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-200 dark:border-slate-700/80 transition flex flex-col items-center justify-center text-center gap-1 active:scale-95">
-                                    <span class="text-blue-500 text-sm">📅</span>
+                                <button type="button" onclick="setDeadlinePreset('${getPresetDate(11, 30)}')" class="py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-[#162137] hover:bg-blue-50 dark:hover:bg-blue-950/40 hover:text-blue-700 dark:hover:text-blue-300 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-200 dark:border-slate-700/80 transition-colors duration-150 flex flex-col items-center justify-center text-center gap-1 active:scale-95">
+                                    <i class="fa-solid fa-calendar-days text-blue-500 text-sm"></i>
                                     <span>${isML ? 'നവം 30' : 'Nov 30 Term 2'}</span>
                                     <span class="text-[10px] text-slate-400">Half-Yearly</span>
                                 </button>
@@ -2609,9 +2609,9 @@ function showToastMessage(text, icon = 'checkCircle') {
                             </div>
 
                             <!-- Primary Start Button -->
-                            <button type="button" onclick="handleInitialSetup()" class="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-black py-4 px-6 rounded-2xl shadow-xl shadow-blue-500/25 transform active:scale-[0.98] transition flex items-center justify-center gap-2.5 text-base sm:text-lg">
-                                <span>${isML ? '🚀 പ്ലാൻ തയ്യാറാക്കൂ (Day 1 ആരംഭിക്കാം)' : '🚀 Start Day 1'}</span>
-                                <i class="fa-solid fa-rocket"></i>
+                            <button type="button" onclick="handleInitialSetup()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-4 px-6 rounded-2xl shadow-xl shadow-blue-500/25 transform active:scale-[0.98] transition-transform duration-150 flex items-center justify-center gap-2.5 text-base sm:text-lg">
+                                <span>${isML ? 'പ്ലാൻ തയ്യാറാക്കൂ (Day 1 ആരംഭിക്കാം)' : 'Start Day 1'}</span>
+                                <i class="fa-solid fa-rocket text-sm"></i>
                             </button>
 
                             <!-- Customize Study Hours & Routine Accordion -->
@@ -3004,7 +3004,7 @@ function showToastMessage(text, icon = 'checkCircle') {
                             return filters.map(f => {
                                 const isActive = (currentPlanSubjectFilter === f.id);
                                 return `
-                                    <button onclick="setPlanSubjectFilter('${f.id}')" class="py-1.5 px-3 rounded-xl font-bold transition-all shrink-0 flex items-center gap-1.5 ${isActive ? 'bg-blue-600 text-white shadow-sm shadow-blue-500/20' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'}">
+                                    <button onclick="setPlanSubjectFilter('${f.id}')" class="py-1.5 px-3 rounded-xl font-bold transition-colors duration-150 active:scale-95 shrink-0 flex items-center gap-1.5 ${isActive ? 'bg-blue-600 text-white shadow-sm shadow-blue-500/20' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'}">
                                         <i class="fa-solid ${f.icon} text-xs"></i>
                                         <span>${f.label}</span>
                                     </button>
