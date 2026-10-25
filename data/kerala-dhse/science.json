@@ -3,7 +3,7 @@
   "streamTitle": "Science Stream (Physics, Chemistry, Mathematics, Biology, Computer Science)",
   "board": "Kerala DHSE / SCERT",
   "academicYear": "2026-2027",
-  "lastUpdated": "2026-09-24",
+  "lastUpdated": "2026-10-25",
   "subjects": [
     {
       "subjectId": "physics-plus-two",
@@ -2708,6 +2708,1240 @@
             {
               "title": "Peasant Movements, Workers Movements, Tribal Movements & Women Movements in India",
               "minutes": 70
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "subjectId": "physics-plus-one",
+      "subjectName": "Physics",
+      "stream": "science",
+      "grade": 11,
+      "totalMaxMarks": 60,
+      "chapters": [
+        {
+          "chapterNumber": 1,
+          "title": "Units and Measurements",
+          "weightageScore": 4,
+          "recommendedRevisionHours": 0.9,
+          "term": 1,
+          "effort": "LOW",
+          "parts": [
+            {
+              "title": "SI Units, Dimensions of Physical Quantities & Dimensional Analysis",
+              "minutes": 55
+            }
+          ]
+        },
+        {
+          "chapterNumber": 2,
+          "title": "Motion in a Straight Line",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 2.1,
+          "term": 1,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Position, Average Velocity, Instantaneous Speed & Acceleration",
+              "minutes": 60
+            },
+            {
+              "title": "Kinematic Equations of Uniformly Accelerated Motion & Free Fall",
+              "minutes": 65
+            }
+          ]
+        },
+        {
+          "chapterNumber": 3,
+          "title": "Motion in a Plane",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 2.2,
+          "term": 1,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Vector Addition, Resolution of Vectors & Relative Velocity in 2D",
+              "minutes": 60
+            },
+            {
+              "title": "Projectile Motion: Time of Flight, Range, Max Height & Uniform Circular Motion",
+              "minutes": 70
+            }
+          ]
+        },
+        {
+          "chapterNumber": 4,
+          "title": "Laws of Motion",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 2.3,
+          "term": 1,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Newton's Laws of Motion, Momentum & Principle of Conservation of Momentum",
+              "minutes": 65
+            },
+            {
+              "title": "Static & Kinetic Friction, Rolling Friction & Circular Motion on Banked Roads",
+              "minutes": 75
+            }
+          ]
+        },
+        {
+          "chapterNumber": 5,
+          "title": "Work, Energy and Power",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 2.3,
+          "term": 2,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Work-Energy Theorem, Kinetic Energy & Work Done by Variable Force",
+              "minutes": 65
+            },
+            {
+              "title": "Potential Energy of a Spring, Conservation of Mechanical Energy & Collisions",
+              "minutes": 75
+            }
+          ]
+        },
+        {
+          "chapterNumber": 6,
+          "title": "System of Particles and Rotational Motion",
+          "weightageScore": 8,
+          "recommendedRevisionHours": 2.5,
+          "term": 2,
+          "effort": "VERY_HIGH",
+          "parts": [
+            {
+              "title": "Center of Mass, Linear Momentum Conservation & Vector Product of Vectors",
+              "minutes": 70
+            },
+            {
+              "title": "Torque, Angular Momentum, Moment of Inertia & Kinematics of Rotational Motion",
+              "minutes": 80
+            }
+          ]
+        },
+        {
+          "chapterNumber": 7,
+          "title": "Gravitation",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 2.2,
+          "term": 2,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Universal Law of Gravitation, Kepler's Laws & Acceleration due to Gravity",
+              "minutes": 60
+            },
+            {
+              "title": "Gravitational Potential Energy, Escape Speed & Satellite Orbital Motion",
+              "minutes": 70
+            }
+          ]
+        },
+        {
+          "chapterNumber": 8,
+          "title": "Mechanical Properties of Solids",
+          "weightageScore": 4,
+          "recommendedRevisionHours": 0.9,
+          "term": 2,
+          "effort": "LOW",
+          "parts": [
+            {
+              "title": "Hooke's Law, Stress-Strain Curve, Young's Modulus & Bulk/Shear Modulus",
+              "minutes": 55
+            }
+          ]
+        },
+        {
+          "chapterNumber": 9,
+          "title": "Mechanical Properties of Fluids",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 2.3,
+          "term": 2,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Pascal's Law, Archimedes Principle & Equation of Continuity",
+              "minutes": 65
+            },
+            {
+              "title": "Bernoulli's Principle, Torricelli's Law, Viscosity & Surface Tension",
+              "minutes": 75
+            }
+          ]
+        },
+        {
+          "chapterNumber": 10,
+          "title": "Thermal Properties of Matter",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 2.1,
+          "term": 2,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Temperature Scales, Thermal Expansion & Specific Heat Capacity",
+              "minutes": 60
+            },
+            {
+              "title": "Calorimetry, Latent Heat, Heat Transfer (Conduction, Convection, Radiation) & Newton's Cooling",
+              "minutes": 65
+            }
+          ]
+        },
+        {
+          "chapterNumber": 11,
+          "title": "Thermodynamics",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 2.3,
+          "term": 3,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Thermal Equilibrium, Zeroth & First Law of Thermodynamics (Work & Internal Energy)",
+              "minutes": 65
+            },
+            {
+              "title": "Thermodynamic Processes (Isothermal, Adiabatic, Isochoric) & Second Law of Thermodynamics",
+              "minutes": 70
+            }
+          ]
+        },
+        {
+          "chapterNumber": 12,
+          "title": "Kinetic Theory",
+          "weightageScore": 4,
+          "recommendedRevisionHours": 0.9,
+          "term": 3,
+          "effort": "LOW",
+          "parts": [
+            {
+              "title": "Molecular Nature of Gas, Ideal Gas Equation, Pressure Calculation & Law of Equipartition of Energy",
+              "minutes": 55
+            }
+          ]
+        },
+        {
+          "chapterNumber": 13,
+          "title": "Oscillations",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 2.3,
+          "term": 3,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Periodic & Simple Harmonic Motion (SHM), Displacement, Velocity & Acceleration",
+              "minutes": 65
+            },
+            {
+              "title": "Energy in SHM, Simple Pendulum Period & Forced/Damped Oscillations",
+              "minutes": 70
+            }
+          ]
+        },
+        {
+          "chapterNumber": 14,
+          "title": "Waves",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 2.3,
+          "term": 3,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Transverse & Longitudinal Waves, Wave Speed, Principle of Superposition",
+              "minutes": 65
+            },
+            {
+              "title": "Standing Waves in Pipes (Open/Closed), Stretched Strings, Beats & Harmonics",
+              "minutes": 75
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "subjectId": "chemistry-plus-one",
+      "subjectName": "Chemistry",
+      "stream": "science",
+      "grade": 11,
+      "totalMaxMarks": 60,
+      "chapters": [
+        {
+          "chapterNumber": 1,
+          "title": "Some Basic Concepts of Chemistry",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 2.3,
+          "term": 1,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Law of Chemical Combinations, Dalton Atomic Theory & Mole Concept Calculations",
+              "minutes": 65
+            },
+            {
+              "title": "Empirical/Molecular Formula, Stoichiometry & Concentration Terms (Molarity, Molality)",
+              "minutes": 70
+            }
+          ]
+        },
+        {
+          "chapterNumber": 2,
+          "title": "Structure of Atom",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 3.3,
+          "term": 1,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Bohr Model of Hydrogen Atom, Dual Character of Matter & Heisenberg Uncertainty Principle",
+              "minutes": 65
+            },
+            {
+              "title": "Quantum Mechanical Model, Quantum Numbers (n, l, m, s) & Orbitals Shapes",
+              "minutes": 70
+            },
+            {
+              "title": "Aufbau Principle, Pauli Exclusion, Hund Rule & Electronic Configurations",
+              "minutes": 65
+            }
+          ]
+        },
+        {
+          "chapterNumber": 3,
+          "title": "Classification of Elements & Periodicity",
+          "weightageScore": 4,
+          "recommendedRevisionHours": 0.9,
+          "term": 1,
+          "effort": "LOW",
+          "parts": [
+            {
+              "title": "Modern Periodic Law, Periodic Trends: Atomic Radii, Ionization Enthalpy & Electronegativity",
+              "minutes": 55
+            }
+          ]
+        },
+        {
+          "chapterNumber": 4,
+          "title": "Chemical Bonding and Molecular Structure",
+          "weightageScore": 8,
+          "recommendedRevisionHours": 3.6,
+          "term": 2,
+          "effort": "VERY_HIGH",
+          "parts": [
+            {
+              "title": "Octet Rule, Ionic Bond, Lattice Enthalpy & Covalent Bond Parameters",
+              "minutes": 65
+            },
+            {
+              "title": "VSEPR Theory Geometry Predictions & Valence Bond Theory (Hybridization: sp, sp2, sp3)",
+              "minutes": 75
+            },
+            {
+              "title": "Molecular Orbital Theory (O2, N2 Energy Diagrams, Bond Order) & Hydrogen Bonding",
+              "minutes": 75
+            }
+          ]
+        },
+        {
+          "chapterNumber": 5,
+          "title": "Chemical Thermodynamics",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 2.3,
+          "term": 2,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Internal Energy, Heat, Work, First Law of Thermodynamics & Enthalpy of Reactions",
+              "minutes": 65
+            },
+            {
+              "title": "Hess's Law, Entropy, Second Law & Gibbs Free Energy Criterion for Spontaneity",
+              "minutes": 75
+            }
+          ]
+        },
+        {
+          "chapterNumber": 6,
+          "title": "Equilibrium",
+          "weightageScore": 8,
+          "recommendedRevisionHours": 3.7,
+          "term": 2,
+          "effort": "VERY_HIGH",
+          "parts": [
+            {
+              "title": "Law of Chemical Equilibrium, Equilibrium Constants (Kc, Kp) & Le Chatelier's Principle",
+              "minutes": 70
+            },
+            {
+              "title": "Ionic Equilibrium: Acids & Bases Concepts, Ionization of Water, pH Scale",
+              "minutes": 75
+            },
+            {
+              "title": "Common Ion Effect, Buffer Solutions, Solubility Product (Ksp) & Salt Hydrolysis",
+              "minutes": 75
+            }
+          ]
+        },
+        {
+          "chapterNumber": 7,
+          "title": "Redox Reactions",
+          "weightageScore": 4,
+          "recommendedRevisionHours": 0.9,
+          "term": 2,
+          "effort": "LOW",
+          "parts": [
+            {
+              "title": "Oxidation States Rules, Balancing Redox Reactions (Ion-Electron & Oxidation Number Methods)",
+              "minutes": 55
+            }
+          ]
+        },
+        {
+          "chapterNumber": 8,
+          "title": "Organic Chemistry: Basic Principles & Techniques",
+          "weightageScore": 8,
+          "recommendedRevisionHours": 3.6,
+          "term": 3,
+          "effort": "VERY_HIGH",
+          "parts": [
+            {
+              "title": "IUPAC Nomenclature of Polyfunctional Organic Compounds & Structural Isomerism",
+              "minutes": 70
+            },
+            {
+              "title": "Electronic Displacements: Inductive, Electromeric, Resonance & Hyperconjugation Effects",
+              "minutes": 75
+            },
+            {
+              "title": "Reactive Intermediates (Carbocations, Free Radicals) & Purification/Qualitative Analysis",
+              "minutes": 70
+            }
+          ]
+        },
+        {
+          "chapterNumber": 9,
+          "title": "Hydrocarbons",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 3.6,
+          "term": 3,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Alkanes: Conformations (Ethane), Preparation, Free Radical Halogenation Mechanism",
+              "minutes": 65
+            },
+            {
+              "title": "Alkenes & Alkynes: Geometrical Isomerism, Markovnikov's Addition & Ozonolysis",
+              "minutes": 75
+            },
+            {
+              "title": "Aromatic Hydrocarbons: Huckel's Rule, Electrophilic Substitution in Benzene (Nitration, Friedel-Crafts)",
+              "minutes": 75
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "subjectId": "mathematics-plus-one",
+      "subjectName": "Mathematics",
+      "stream": "science",
+      "grade": 11,
+      "totalMaxMarks": 60,
+      "chapters": [
+        {
+          "chapterNumber": 1,
+          "title": "Sets",
+          "weightageScore": 4,
+          "recommendedRevisionHours": 1.9,
+          "term": 1,
+          "effort": "LOW",
+          "parts": [
+            {
+              "title": "Representation of Sets, Subsets, Power Set, Universal Set & Venn Diagrams",
+              "minutes": 55
+            },
+            {
+              "title": "Operations on Sets (Union, Intersection, Difference) & De Morgan Laws",
+              "minutes": 60
+            }
+          ]
+        },
+        {
+          "chapterNumber": 2,
+          "title": "Relations and Functions",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 2.1,
+          "term": 1,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Cartesian Product of Sets, Definition of Relations, Domain & Range",
+              "minutes": 60
+            },
+            {
+              "title": "Functions, Real Functions (Identity, Polynomial, Modulus, Signum) & Algebra of Functions",
+              "minutes": 65
+            }
+          ]
+        },
+        {
+          "chapterNumber": 3,
+          "title": "Trigonometric Functions",
+          "weightageScore": 8,
+          "recommendedRevisionHours": 3.6,
+          "term": 1,
+          "effort": "VERY_HIGH",
+          "parts": [
+            {
+              "title": "Radian Measure, Signs of Trigonometric Functions & Domain/Range",
+              "minutes": 65
+            },
+            {
+              "title": "Trigonometric Identities of Sum, Difference & Multiple Angles (sin 2x, cos 2x)",
+              "minutes": 75
+            },
+            {
+              "title": "Product-to-Sum Formulas & Comprehensive Proof-Based Trigonometric Equations",
+              "minutes": 75
+            }
+          ]
+        },
+        {
+          "chapterNumber": 4,
+          "title": "Complex Numbers and Quadratic Equations",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 2.1,
+          "term": 1,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Algebra of Complex Numbers, Modulus & Conjugate of Complex Numbers",
+              "minutes": 60
+            },
+            {
+              "title": "Square Root of Complex Numbers & Solving Quadratic Equations in C",
+              "minutes": 65
+            }
+          ]
+        },
+        {
+          "chapterNumber": 5,
+          "title": "Linear Inequalities",
+          "weightageScore": 4,
+          "recommendedRevisionHours": 0.9,
+          "term": 2,
+          "effort": "LOW",
+          "parts": [
+            {
+              "title": "Algebraic Solutions of Linear Inequalities in One Variable & Number Line Representation",
+              "minutes": 55
+            }
+          ]
+        },
+        {
+          "chapterNumber": 6,
+          "title": "Permutations and Combinations",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 2.3,
+          "term": 2,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Fundamental Principle of Counting, Factorial Notation & Permutations (nPr)",
+              "minutes": 65
+            },
+            {
+              "title": "Combinations (nCr) Properties & Applied Word Problems in Selection",
+              "minutes": 70
+            }
+          ]
+        },
+        {
+          "chapterNumber": 7,
+          "title": "Binomial Theorem",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 1,
+          "term": 2,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Binomial Theorem for Positive Integral Indices & General/Middle Term Calculations",
+              "minutes": 60
+            }
+          ]
+        },
+        {
+          "chapterNumber": 8,
+          "title": "Sequences and Series",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 2.1,
+          "term": 2,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Arithmetic Progression (AP) General Term & Sum of n Terms",
+              "minutes": 60
+            },
+            {
+              "title": "Geometric Progression (GP) General Term, Sum of n Terms & Geometric Mean",
+              "minutes": 65
+            }
+          ]
+        },
+        {
+          "chapterNumber": 9,
+          "title": "Straight Lines",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 2.3,
+          "term": 2,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Slope of a Line, Angle Between Two Lines & Various Forms of Line Equations",
+              "minutes": 65
+            },
+            {
+              "title": "General Equation of a Line & Distance of a Point From a Line",
+              "minutes": 70
+            }
+          ]
+        },
+        {
+          "chapterNumber": 10,
+          "title": "Conic Sections",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 2.3,
+          "term": 2,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Standard Equations and Properties of Circles and Parabolas",
+              "minutes": 65
+            },
+            {
+              "title": "Standard Equations, Foci, Vertices, Eccentricity of Ellipse and Hyperbola",
+              "minutes": 75
+            }
+          ]
+        },
+        {
+          "chapterNumber": 11,
+          "title": "Introduction to Three Dimensional Geometry",
+          "weightageScore": 4,
+          "recommendedRevisionHours": 0.9,
+          "term": 3,
+          "effort": "LOW",
+          "parts": [
+            {
+              "title": "Coordinate Axes, Coordinate Planes, Distance Formula & Section Formula in 3D",
+              "minutes": 55
+            }
+          ]
+        },
+        {
+          "chapterNumber": 12,
+          "title": "Limits and Derivatives",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 2.3,
+          "term": 3,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Intuitive Idea of Limits, Standard Algebraic & Trigonometric Limits",
+              "minutes": 65
+            },
+            {
+              "title": "Derivative as Rate of Change, First Principle of Differentiation & Product/Quotient Rules",
+              "minutes": 75
+            }
+          ]
+        },
+        {
+          "chapterNumber": 13,
+          "title": "Statistics",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 2.1,
+          "term": 3,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Measures of Dispersion: Range, Mean Deviation About Mean and Median",
+              "minutes": 60
+            },
+            {
+              "title": "Variance and Standard Deviation of Ungrouped & Grouped Frequency Distributions",
+              "minutes": 65
+            }
+          ]
+        },
+        {
+          "chapterNumber": 14,
+          "title": "Probability",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 2.1,
+          "term": 3,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Random Experiments, Sample Spaces, Events & Mutually Exclusive Events",
+              "minutes": 60
+            },
+            {
+              "title": "Axiomatic Approach to Probability & Addition Rule for Two Events",
+              "minutes": 65
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "subjectId": "computer-science-plus-one",
+      "subjectName": "Computer Science",
+      "stream": "science",
+      "grade": 11,
+      "totalMaxMarks": 60,
+      "chapters": [
+        {
+          "chapterNumber": 1,
+          "title": "The Discipline of Computing",
+          "weightageScore": 4,
+          "recommendedRevisionHours": 0.8,
+          "term": 1,
+          "effort": "LOW",
+          "parts": [
+            {
+              "title": "History of Computing, Von Neumann Architecture, Generation of Computers & Software Types",
+              "minutes": 50
+            }
+          ]
+        },
+        {
+          "chapterNumber": 2,
+          "title": "Data Representation and Boolean Logic",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 2.1,
+          "term": 1,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Number Systems: Binary, Octal, Decimal, Hexadecimal & Base Conversions",
+              "minutes": 60
+            },
+            {
+              "title": "Character Representation (ASCII, Unicode), Boolean Operators, Truth Tables & Logic Gates",
+              "minutes": 65
+            }
+          ]
+        },
+        {
+          "chapterNumber": 3,
+          "title": "Components of the Computer System",
+          "weightageScore": 4,
+          "recommendedRevisionHours": 1.7,
+          "term": 1,
+          "effort": "LOW",
+          "parts": [
+            {
+              "title": "Hardware Components: CPU Registers, ALU, Control Unit & Memory Hierarchy (RAM, ROM, Cache)",
+              "minutes": 50
+            },
+            {
+              "title": "Input/Output Devices, Motherboard Ports & Operating System Functions",
+              "minutes": 50
+            }
+          ]
+        },
+        {
+          "chapterNumber": 4,
+          "title": "Principles of Programming & Problem Solving",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 1.9,
+          "term": 1,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Problem Solving Cycle, Algorithms Conception & Flowcharting Symbols",
+              "minutes": 55
+            },
+            {
+              "title": "Translators: Assemblers, Compilers, Interpreters, IDEs & Programming Paradigms",
+              "minutes": 60
+            }
+          ]
+        },
+        {
+          "chapterNumber": 5,
+          "title": "Introduction to C++ Programming",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 1.9,
+          "term": 2,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "C++ Tokens, Keywords, Identifiers, Literals & Basic C++ Program Structure",
+              "minutes": 55
+            },
+            {
+              "title": "Input/Output Streams (cin, cout), Cascading Operators & Header Files",
+              "minutes": 60
+            }
+          ]
+        },
+        {
+          "chapterNumber": 6,
+          "title": "Data Types and Operators",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 2,
+          "term": 2,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Fundamental Data Types, Modifiers, Variable Declaration & Initialization",
+              "minutes": 55
+            },
+            {
+              "title": "Arithmetic, Relational, Logical, Assignment Operators & Type Conversions (Implicit/Explicit)",
+              "minutes": 65
+            }
+          ]
+        },
+        {
+          "chapterNumber": 7,
+          "title": "Control Statements",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 2.3,
+          "term": 2,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Decision Statements: if, if-else, nested if & switch-case with break",
+              "minutes": 65
+            },
+            {
+              "title": "Iteration Statements: for loop, while loop, do-while loop & Jump Statements (break, continue)",
+              "minutes": 70
+            }
+          ]
+        },
+        {
+          "chapterNumber": 8,
+          "title": "Arrays",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 2.3,
+          "term": 2,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "1D Array Declaration, Memory Allocation, Traversing & Linear Search Algorithm",
+              "minutes": 65
+            },
+            {
+              "title": "Bubble Sort Algorithm, 2D Arrays Declaration & Matrix Input/Output Operations",
+              "minutes": 70
+            }
+          ]
+        },
+        {
+          "chapterNumber": 9,
+          "title": "Functions",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 2.3,
+          "term": 3,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Built-in String/Math Functions, User Defined Functions Prototype & Definitions",
+              "minutes": 65
+            },
+            {
+              "title": "Function Arguments: Call by Value vs Call by Reference, Scope of Variables & Recursion",
+              "minutes": 70
+            }
+          ]
+        },
+        {
+          "chapterNumber": 10,
+          "title": "Computer Networks",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 1.9,
+          "term": 3,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Network Topologies (Star, Bus, Ring, Mesh) & Network Categories (LAN, MAN, WAN)",
+              "minutes": 55
+            },
+            {
+              "title": "Guided/Unguided Media, Network Devices (Hub, Switch, Router, Gateway) & IP Address",
+              "minutes": 60
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "subjectId": "botany-plus-one",
+      "subjectName": "Botany",
+      "stream": "science",
+      "grade": 11,
+      "totalMaxMarks": 30,
+      "chapters": [
+        {
+          "chapterNumber": 1,
+          "title": "Biological Classification",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 1.9,
+          "term": 1,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Five Kingdom Classification: Kingdom Monera, Protista, Fungi Characteristics",
+              "minutes": 60
+            },
+            {
+              "title": "Viruses, Viroids, Prions & Lichens Ecological Significance",
+              "minutes": 55
+            }
+          ]
+        },
+        {
+          "chapterNumber": 2,
+          "title": "Plant Kingdom",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 2.2,
+          "term": 1,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Algae, Bryophytes & Pteridophytes Classification, Life Cycles & Alternation of Generations",
+              "minutes": 65
+            },
+            {
+              "title": "Gymnosperms & Angiosperms Features, Seed Habits & Double Fertilization Outline",
+              "minutes": 65
+            }
+          ]
+        },
+        {
+          "chapterNumber": 3,
+          "title": "Morphology of Flowering Plants",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 2.2,
+          "term": 1,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Roots, Stems & Leaves Modifications (Storage, Support, Photosynthesis)",
+              "minutes": 60
+            },
+            {
+              "title": "Inflorescence (Racemose/Cymose), Flower Parts, Placentation & Fruit/Seed Morphology",
+              "minutes": 70
+            }
+          ]
+        },
+        {
+          "chapterNumber": 4,
+          "title": "Anatomy of Flowering Plants",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 2.1,
+          "term": 2,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Meristematic & Permanent Tissues (Simple vs Complex: Xylem, Phloem)",
+              "minutes": 60
+            },
+            {
+              "title": "Anatomy of Dicot & Monocot Root, Stem & Leaf with Secondary Growth Concept",
+              "minutes": 65
+            }
+          ]
+        },
+        {
+          "chapterNumber": 5,
+          "title": "Cell: The Unit of Life",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 2.1,
+          "term": 2,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Prokaryotic vs Eukaryotic Cells, Cell Wall & Fluid Mosaic Membrane Model",
+              "minutes": 60
+            },
+            {
+              "title": "Endomembrane System: ER, Golgi, Lysosomes, Mitochondria, Chloroplasts & Nucleus Structure",
+              "minutes": 65
+            }
+          ]
+        },
+        {
+          "chapterNumber": 6,
+          "title": "Cell Cycle and Cell Division",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 2.1,
+          "term": 2,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Cell Cycle Phases: Interphase (G1, S, G2) & Mitosis Stages (Prophase to Telophase)",
+              "minutes": 60
+            },
+            {
+              "title": "Meiosis I & Meiosis II Phases, Crossing Over & Biological Significance of Meiosis",
+              "minutes": 65
+            }
+          ]
+        },
+        {
+          "chapterNumber": 7,
+          "title": "Photosynthesis in Higher Plants",
+          "weightageScore": 8,
+          "recommendedRevisionHours": 3.5,
+          "term": 2,
+          "effort": "VERY_HIGH",
+          "parts": [
+            {
+              "title": "Photosynthetic Pigments, Light Reaction, Electron Transport (Z-Scheme) & Photophosphorylation",
+              "minutes": 70
+            },
+            {
+              "title": "Chemiosmotic Hypothesis, Calvin Cycle (C3 Pathway) & C4 Dicarboxylic Acid Pathway",
+              "minutes": 75
+            },
+            {
+              "title": "Photorespiration, Factors Affecting Photosynthesis & Blackman's Law of Limiting Factors",
+              "minutes": 65
+            }
+          ]
+        },
+        {
+          "chapterNumber": 8,
+          "title": "Respiration in Plants",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 2.3,
+          "term": 3,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Glycolysis (EMP Pathway) Steps, Net ATP Yield & Fermentation (Lactic Acid, Alcoholic)",
+              "minutes": 65
+            },
+            {
+              "title": "TCA Cycle (Krebs Cycle), Electron Transport System (ETS), Oxidative Phosphorylation & RQ",
+              "minutes": 75
+            }
+          ]
+        },
+        {
+          "chapterNumber": 9,
+          "title": "Plant Growth and Development",
+          "weightageScore": 4,
+          "recommendedRevisionHours": 1.8,
+          "term": 3,
+          "effort": "LOW",
+          "parts": [
+            {
+              "title": "Growth Characteristics, Differentiation & Plant Growth Regulators (Auxin, Gibberellin, Cytokinin)",
+              "minutes": 55
+            },
+            {
+              "title": "Inhibitory Hormones (Ethylene, Abscisic Acid), Photoperiodism & Vernalization",
+              "minutes": 55
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "subjectId": "zoology-plus-one",
+      "subjectName": "Zoology",
+      "stream": "science",
+      "grade": 11,
+      "totalMaxMarks": 30,
+      "chapters": [
+        {
+          "chapterNumber": 1,
+          "title": "The Living World",
+          "weightageScore": 4,
+          "recommendedRevisionHours": 0.8,
+          "term": 1,
+          "effort": "LOW",
+          "parts": [
+            {
+              "title": "Characteristics of Living Organisms, Binomial Nomenclature Rules & Taxonomic Hierarchy",
+              "minutes": 50
+            }
+          ]
+        },
+        {
+          "chapterNumber": 2,
+          "title": "Animal Kingdom",
+          "weightageScore": 8,
+          "recommendedRevisionHours": 3.8,
+          "term": 1,
+          "effort": "VERY_HIGH",
+          "parts": [
+            {
+              "title": "Basis of Classification (Symmetry, Coelom, Segmentation) & Non-Chordates: Porifera to Aschelminthes",
+              "minutes": 70
+            },
+            {
+              "title": "Higher Non-Chordates: Annelida, Arthropoda, Mollusca, Echinodermata & Hemichordata",
+              "minutes": 75
+            },
+            {
+              "title": "Phylum Chordata: Cyclostomata, Chondrichthyes, Osteichthyes, Amphibia, Reptilia, Aves, Mammalia",
+              "minutes": 80
+            }
+          ]
+        },
+        {
+          "chapterNumber": 3,
+          "title": "Structural Organisation in Animals",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 2.1,
+          "term": 1,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Animal Tissues: Epithelial, Connective (Bone, Cartilage, Blood), Muscular & Neural",
+              "minutes": 60
+            },
+            {
+              "title": "Morphology and Anatomy of Frog: Digestive, Circulatory, Respiratory & Excretory Systems",
+              "minutes": 65
+            }
+          ]
+        },
+        {
+          "chapterNumber": 4,
+          "title": "Biomolecules",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 2.3,
+          "term": 2,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Primary & Secondary Metabolites, Biomacromolecules, Amino Acids & Protein Structures",
+              "minutes": 65
+            },
+            {
+              "title": "Enzymes: Chemical Nature, Mechanism of Action, Factors Affecting Activity & Co-factors",
+              "minutes": 70
+            }
+          ]
+        },
+        {
+          "chapterNumber": 5,
+          "title": "Breathing and Exchange of Gases",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 2.1,
+          "term": 2,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Human Respiratory System Anatomy, Mechanism of Breathing, Respiratory Volumes & Capacities",
+              "minutes": 60
+            },
+            {
+              "title": "Gas Exchange in Alveoli, Transport of O2 and CO2 (Oxygen Dissociation Curve) & Disorders",
+              "minutes": 65
+            }
+          ]
+        },
+        {
+          "chapterNumber": 6,
+          "title": "Body Fluids and Circulation",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 2.3,
+          "term": 2,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Blood Composition, Blood Groups (ABO, Rh System) & Blood Coagulation Mechanism",
+              "minutes": 60
+            },
+            {
+              "title": "Human Circulatory System: Cardiac Cycle, Heart Sounds, ECG Interpretation & Disorders (Hypertension, CAD)",
+              "minutes": 75
+            }
+          ]
+        },
+        {
+          "chapterNumber": 7,
+          "title": "Excretory Products and their Elimination",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 2.3,
+          "term": 2,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Modes of Excretion (Ammonotelic, Ureotelic, Uricotelic) & Human Nephron Structure",
+              "minutes": 65
+            },
+            {
+              "title": "Mechanism of Urine Formation (Filtration, Reabsorption, Secretion), Counter-Current Mechanism & Regulation",
+              "minutes": 75
+            }
+          ]
+        },
+        {
+          "chapterNumber": 8,
+          "title": "Locomotion and Movement",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 2.1,
+          "term": 3,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Types of Movement, Skeletal Muscle Structure & Sliding Filament Mechanism of Muscle Contraction",
+              "minutes": 65
+            },
+            {
+              "title": "Human Skeletal System (Axial vs Appendicular), Joints & Musculoskeletal Disorders",
+              "minutes": 60
+            }
+          ]
+        },
+        {
+          "chapterNumber": 9,
+          "title": "Neural Control and Coordination",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 2.2,
+          "term": 3,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Neuron Structure, Nerve Impulse Generation, Conduction & Synaptic Transmission",
+              "minutes": 65
+            },
+            {
+              "title": "Central Nervous System: Forebrain, Midbrain, Hindbrain & Reflex Action",
+              "minutes": 65
+            }
+          ]
+        },
+        {
+          "chapterNumber": 10,
+          "title": "Chemical Coordination and Integration",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 2.1,
+          "term": 3,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Endocrine Glands: Hypothalamus, Pituitary, Thyroid, Parathyroid, Adrenal, Pancreas Hormones",
+              "minutes": 65
+            },
+            {
+              "title": "Mechanism of Hormone Action (Peptide vs Steroid Hormones) & Endocrine Disorders",
+              "minutes": 60
             }
           ]
         }

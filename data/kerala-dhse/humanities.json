@@ -3,7 +3,7 @@
   "streamTitle": "Humanities Stream (History, Political Science, Sociology, Economics)",
   "board": "Kerala DHSE / SCERT",
   "academicYear": "2026-2027",
-  "lastUpdated": "2026-09-24",
+  "lastUpdated": "2026-10-25",
   "subjects": [
     {
       "subjectId": "history-plus-two",
@@ -32,7 +32,7 @@
           "chapterNumber": 3,
           "title": "Kinship, Caste and Class: Early Societies",
           "weightageScore": 6,
-          "recommendedRevisionHours": 4.0,
+          "recommendedRevisionHours": 4,
           "term": 1,
           "effort": "MEDIUM"
         },
@@ -40,7 +40,7 @@
           "chapterNumber": 4,
           "title": "Thinkers, Beliefs and Buildings: Cultural Developments",
           "weightageScore": 8,
-          "recommendedRevisionHours": 5.0,
+          "recommendedRevisionHours": 5,
           "term": 1,
           "effort": "VERY_HIGH"
         },
@@ -48,7 +48,7 @@
           "chapterNumber": 5,
           "title": "Through the Eyes of Travellers: Perceptions of Society",
           "weightageScore": 6,
-          "recommendedRevisionHours": 4.0,
+          "recommendedRevisionHours": 4,
           "term": 2,
           "effort": "MEDIUM"
         },
@@ -64,7 +64,7 @@
           "chapterNumber": 7,
           "title": "An Imperial Capital: Vijayanagara",
           "weightageScore": 8,
-          "recommendedRevisionHours": 5.0,
+          "recommendedRevisionHours": 5,
           "term": 2,
           "effort": "VERY_HIGH"
         },
@@ -72,7 +72,7 @@
           "chapterNumber": 8,
           "title": "Peasants, Zamindars and the State: Agrarian Society",
           "weightageScore": 6,
-          "recommendedRevisionHours": 4.0,
+          "recommendedRevisionHours": 4,
           "term": 2,
           "effort": "MEDIUM"
         },
@@ -88,7 +88,7 @@
           "chapterNumber": 10,
           "title": "Rebels and the Raj: The 1857 Revolt and Its Representations",
           "weightageScore": 8,
-          "recommendedRevisionHours": 5.0,
+          "recommendedRevisionHours": 5,
           "term": 3,
           "effort": "VERY_HIGH"
         },
@@ -96,7 +96,7 @@
           "chapterNumber": 11,
           "title": "Mahatma Gandhi and the Nationalist Movement",
           "weightageScore": 10,
-          "recommendedRevisionHours": 6.0,
+          "recommendedRevisionHours": 6,
           "term": 3,
           "effort": "VERY_HIGH"
         }
@@ -113,7 +113,7 @@
           "chapterNumber": 1,
           "title": "The End of Bipolarity",
           "weightageScore": 6,
-          "recommendedRevisionHours": 4.0,
+          "recommendedRevisionHours": 4,
           "term": 1,
           "effort": "HIGH"
         },
@@ -121,7 +121,7 @@
           "chapterNumber": 2,
           "title": "Contemporary Centres of Power (New Centres of Power)",
           "weightageScore": 6,
-          "recommendedRevisionHours": 4.0,
+          "recommendedRevisionHours": 4,
           "term": 1,
           "effort": "HIGH"
         },
@@ -137,7 +137,7 @@
           "chapterNumber": 4,
           "title": "International Organisations",
           "weightageScore": 6,
-          "recommendedRevisionHours": 4.0,
+          "recommendedRevisionHours": 4,
           "term": 1,
           "effort": "MEDIUM"
         },
@@ -145,7 +145,7 @@
           "chapterNumber": 5,
           "title": "Security in the Contemporary World",
           "weightageScore": 5,
-          "recommendedRevisionHours": 3.0,
+          "recommendedRevisionHours": 3,
           "term": 2,
           "effort": "LOW"
         },
@@ -153,7 +153,7 @@
           "chapterNumber": 6,
           "title": "Environment and Natural Resources",
           "weightageScore": 5,
-          "recommendedRevisionHours": 3.0,
+          "recommendedRevisionHours": 3,
           "term": 2,
           "effort": "LOW"
         },
@@ -169,7 +169,7 @@
           "chapterNumber": 8,
           "title": "Challenges of Nation Building",
           "weightageScore": 8,
-          "recommendedRevisionHours": 5.0,
+          "recommendedRevisionHours": 5,
           "term": 2,
           "effort": "VERY_HIGH"
         },
@@ -177,7 +177,7 @@
           "chapterNumber": 9,
           "title": "Era of One-Party Dominance",
           "weightageScore": 6,
-          "recommendedRevisionHours": 4.0,
+          "recommendedRevisionHours": 4,
           "term": 2,
           "effort": "MEDIUM"
         },
@@ -185,7 +185,7 @@
           "chapterNumber": 10,
           "title": "Politics of Planned Development",
           "weightageScore": 6,
-          "recommendedRevisionHours": 4.0,
+          "recommendedRevisionHours": 4,
           "term": 3,
           "effort": "MEDIUM"
         },
@@ -234,7 +234,7 @@
           "chapterNumber": 3,
           "title": "Social Institutions: Continuity and Change",
           "weightageScore": 8,
-          "recommendedRevisionHours": 5.0,
+          "recommendedRevisionHours": 5,
           "term": 1,
           "effort": "HIGH"
         },
@@ -242,7 +242,7 @@
           "chapterNumber": 4,
           "title": "The Market as a Social Institution",
           "weightageScore": 6,
-          "recommendedRevisionHours": 4.0,
+          "recommendedRevisionHours": 4,
           "term": 1,
           "effort": "MEDIUM"
         },
@@ -258,7 +258,7 @@
           "chapterNumber": 6,
           "title": "The Challenges of Cultural Diversity",
           "weightageScore": 8,
-          "recommendedRevisionHours": 5.0,
+          "recommendedRevisionHours": 5,
           "term": 2,
           "effort": "HIGH"
         },
@@ -266,7 +266,7 @@
           "chapterNumber": 7,
           "title": "Structural Change & Colonialism",
           "weightageScore": 6,
-          "recommendedRevisionHours": 4.0,
+          "recommendedRevisionHours": 4,
           "term": 2,
           "effort": "MEDIUM"
         },
@@ -290,7 +290,7 @@
           "chapterNumber": 10,
           "title": "Change and Development in Industrial Society",
           "weightageScore": 6,
-          "recommendedRevisionHours": 4.0,
+          "recommendedRevisionHours": 4,
           "term": 3,
           "effort": "MEDIUM"
         },
@@ -298,7 +298,7 @@
           "chapterNumber": 11,
           "title": "Social Movements in Contemporary India",
           "weightageScore": 10,
-          "recommendedRevisionHours": 6.0,
+          "recommendedRevisionHours": 6,
           "term": 3,
           "effort": "VERY_HIGH"
         }
@@ -323,7 +323,7 @@
           "chapterNumber": 2,
           "title": "Theory of Consumer Behaviour",
           "weightageScore": 8,
-          "recommendedRevisionHours": 5.0,
+          "recommendedRevisionHours": 5,
           "term": 1,
           "effort": "VERY_HIGH"
         },
@@ -331,7 +331,7 @@
           "chapterNumber": 3,
           "title": "Production and Costs",
           "weightageScore": 8,
-          "recommendedRevisionHours": 5.0,
+          "recommendedRevisionHours": 5,
           "term": 1,
           "effort": "HIGH"
         },
@@ -339,7 +339,7 @@
           "chapterNumber": 4,
           "title": "The Theory of the Firm under Perfect Competition",
           "weightageScore": 6,
-          "recommendedRevisionHours": 4.0,
+          "recommendedRevisionHours": 4,
           "term": 1,
           "effort": "MEDIUM"
         },
@@ -347,7 +347,7 @@
           "chapterNumber": 5,
           "title": "Market Equilibrium",
           "weightageScore": 6,
-          "recommendedRevisionHours": 4.0,
+          "recommendedRevisionHours": 4,
           "term": 2,
           "effort": "MEDIUM"
         },
@@ -363,7 +363,7 @@
           "chapterNumber": 7,
           "title": "National Income Accounting",
           "weightageScore": 10,
-          "recommendedRevisionHours": 6.0,
+          "recommendedRevisionHours": 6,
           "term": 2,
           "effort": "VERY_HIGH"
         },
@@ -387,7 +387,7 @@
           "chapterNumber": 10,
           "title": "Government Budget and the Economy",
           "weightageScore": 7,
-          "recommendedRevisionHours": 4.0,
+          "recommendedRevisionHours": 4,
           "term": 3,
           "effort": "MEDIUM"
         },
@@ -395,9 +395,883 @@
           "chapterNumber": 11,
           "title": "Open Economy Macroeconomics",
           "weightageScore": 7,
-          "recommendedRevisionHours": 4.0,
+          "recommendedRevisionHours": 4,
           "term": 3,
           "effort": "MEDIUM"
+        }
+      ]
+    },
+    {
+      "subjectId": "history-plus-one",
+      "subjectName": "History",
+      "stream": "humanities",
+      "grade": 11,
+      "totalMaxMarks": 60,
+      "chapters": [
+        {
+          "chapterNumber": 1,
+          "title": "Writing and City Life",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 1.9,
+          "term": 1,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Mesopotamia: Geography, City Planning of Ur and Uruk & Cuneiform Script",
+              "minutes": 60
+            },
+            {
+              "title": "Urban Economy, Literacy, Mathematical Tablets & Urbanism Legacy",
+              "minutes": 55
+            }
+          ]
+        },
+        {
+          "chapterNumber": 2,
+          "title": "An Empire Across Three Continents",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 2.2,
+          "term": 1,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "The Roman Empire: Political Structure (Emperor, Senate, Army) & Social Classes",
+              "minutes": 65
+            },
+            {
+              "title": "Economic Expansion, Slavery, Gender Norms, Christianity & Decline in Late Antiquity",
+              "minutes": 65
+            }
+          ]
+        },
+        {
+          "chapterNumber": 3,
+          "title": "Nomadic Empires",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 1.9,
+          "term": 2,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "The Mongol Empire: Genghis Khan, Military Organisation, Postal System (Yam) & Yasa Code",
+              "minutes": 60
+            },
+            {
+              "title": "Pax Mongolica, Trade Routes & Cultural Synthesis between Nomads and Settled Societies",
+              "minutes": 55
+            }
+          ]
+        },
+        {
+          "chapterNumber": 4,
+          "title": "The Three Orders",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 2.1,
+          "term": 2,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Feudal Society in Medieval Europe: Clergy (First), Nobility (Second) & Peasantry (Third)",
+              "minutes": 65
+            },
+            {
+              "title": "Manorial Economy, Cathedrals, Crisis of 14th Century & Rise of Towns (Fourth Order)",
+              "minutes": 60
+            }
+          ]
+        },
+        {
+          "chapterNumber": 5,
+          "title": "Changing Cultural Traditions",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 2.2,
+          "term": 2,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "The Italian Renaissance: Humanism, Universities, Printing Press & Vernacular Literature",
+              "minutes": 65
+            },
+            {
+              "title": "Visual Arts (Michelangelo, Da Vinci), Scientific Revolution & The Protestant Reformation",
+              "minutes": 65
+            }
+          ]
+        },
+        {
+          "chapterNumber": 6,
+          "title": "Displacing Indigenous Peoples",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 1.9,
+          "term": 3,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "European Colonisation of North America: Encounters, Displacement, Treaties & Gold Rush",
+              "minutes": 60
+            },
+            {
+              "title": "Australia: European Settlement, Terra Nullius, Impact on Aborigines & Rights Movements",
+              "minutes": 55
+            }
+          ]
+        },
+        {
+          "chapterNumber": 7,
+          "title": "Paths to Modernisation",
+          "weightageScore": 8,
+          "recommendedRevisionHours": 3.5,
+          "term": 3,
+          "effort": "VERY_HIGH",
+          "parts": [
+            {
+              "title": "Japan: Meiji Restoration, Industrial Modernisation, Militarism & Post-War Transformation",
+              "minutes": 70
+            },
+            {
+              "title": "China: Opium Wars, Sun Yat-sen, Communist Movement (CCP) & Cultural Revolution",
+              "minutes": 75
+            },
+            {
+              "title": "Deng Xiaoping’s Modernisation Reforms & Comparative Asian Trajectories",
+              "minutes": 65
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "subjectId": "political-science-plus-one",
+      "subjectName": "Political Science",
+      "stream": "humanities",
+      "grade": 11,
+      "totalMaxMarks": 60,
+      "chapters": [
+        {
+          "chapterNumber": 1,
+          "title": "Constitution: Why and How?",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 1.9,
+          "term": 1,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Functions of a Constitution, Authority of Constituent Assembly & National Movement Heritage",
+              "minutes": 60
+            },
+            {
+              "title": "Provisions Borrowed from World Constitutions & Institutional Arrangements",
+              "minutes": 55
+            }
+          ]
+        },
+        {
+          "chapterNumber": 2,
+          "title": "Rights in the Indian Constitution",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 2.1,
+          "term": 1,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Fundamental Rights (Articles 14-32): Equality, Freedom, Religion & Remedies (Writs)",
+              "minutes": 65
+            },
+            {
+              "title": "Directive Principles of State Policy (DPSP) vs Fundamental Rights & Fundamental Duties",
+              "minutes": 60
+            }
+          ]
+        },
+        {
+          "chapterNumber": 3,
+          "title": "Election and Representation",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 1.9,
+          "term": 1,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "First-Past-The-Post (FPTP) vs Proportional Representation (PR) Systems",
+              "minutes": 60
+            },
+            {
+              "title": "Free and Fair Elections: Election Commission of India (Powers, Autonomy) & Electoral Reforms",
+              "minutes": 55
+            }
+          ]
+        },
+        {
+          "chapterNumber": 4,
+          "title": "Executive",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 2,
+          "term": 2,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Parliamentary vs Presidential Executive: President of India (Powers & Discretionary Role)",
+              "minutes": 60
+            },
+            {
+              "title": "Prime Minister, Council of Ministers & Bureaucracy (Civil Services of India)",
+              "minutes": 60
+            }
+          ]
+        },
+        {
+          "chapterNumber": 5,
+          "title": "Legislature",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 2.1,
+          "term": 2,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Bicameral Legislature: Lok Sabha vs Rajya Sabha Composition, Powers and Functions",
+              "minutes": 60
+            },
+            {
+              "title": "Law-Making Procedure in Parliament & Devices of Parliamentary Control",
+              "minutes": 65
+            }
+          ]
+        },
+        {
+          "chapterNumber": 6,
+          "title": "Judiciary",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 2.2,
+          "term": 2,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Independence of Judiciary: Supreme Court Jurisdiction (Original, Appellate, Advisory, Writs)",
+              "minutes": 65
+            },
+            {
+              "title": "Judicial Activism, Public Interest Litigation (PIL) & Judiciary vs Legislature Relations",
+              "minutes": 65
+            }
+          ]
+        },
+        {
+          "chapterNumber": 7,
+          "title": "Federalism",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 1.9,
+          "term": 2,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Federal Features in India: Division of Powers (Union, State, Concurrent Lists)",
+              "minutes": 60
+            },
+            {
+              "title": "Federalism with Strong Central Bias, Interstate Disputes & Special Provisions (Article 371)",
+              "minutes": 55
+            }
+          ]
+        },
+        {
+          "chapterNumber": 8,
+          "title": "Local Governments",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 1.9,
+          "term": 3,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "73rd Constitutional Amendment: Panchayati Raj Institutions (Three-tier Architecture & 11th Schedule)",
+              "minutes": 60
+            },
+            {
+              "title": "74th Constitutional Amendment: Urban Local Bodies & Decentralisation Outcomes",
+              "minutes": 55
+            }
+          ]
+        },
+        {
+          "chapterNumber": 9,
+          "title": "Constitution as a Living Document",
+          "weightageScore": 4,
+          "recommendedRevisionHours": 0.9,
+          "term": 3,
+          "effort": "LOW",
+          "parts": [
+            {
+              "title": "Amendment Procedure (Article 368), Flexibility vs Rigidity & Basic Structure Doctrine",
+              "minutes": 55
+            }
+          ]
+        },
+        {
+          "chapterNumber": 10,
+          "title": "The Philosophy of the Constitution",
+          "weightageScore": 4,
+          "recommendedRevisionHours": 0.8,
+          "term": 3,
+          "effort": "LOW",
+          "parts": [
+            {
+              "title": "Preamble Philosophy, Democratic Values, Secular Credentials & Social Justice Commitments",
+              "minutes": 50
+            }
+          ]
+        },
+        {
+          "chapterNumber": 11,
+          "title": "Political Theory: An Introduction",
+          "weightageScore": 4,
+          "recommendedRevisionHours": 0.8,
+          "term": 1,
+          "effort": "LOW",
+          "parts": [
+            {
+              "title": "Meaning, Scope and Significance of Political Theory in Everyday Life",
+              "minutes": 50
+            }
+          ]
+        },
+        {
+          "chapterNumber": 12,
+          "title": "Freedom",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 1.8,
+          "term": 1,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Concept of Liberty, Negative vs Positive Liberty Dimensions",
+              "minutes": 55
+            },
+            {
+              "title": "Harm Principle (J.S. Mill) & Justified Constraints on Freedom of Expression",
+              "minutes": 55
+            }
+          ]
+        },
+        {
+          "chapterNumber": 13,
+          "title": "Equality",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 1.8,
+          "term": 2,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Dimensions of Equality: Political, Economic and Social Equality",
+              "minutes": 55
+            },
+            {
+              "title": "Affirmative Action, Equality of Opportunity vs Outcome & Special Needs",
+              "minutes": 55
+            }
+          ]
+        },
+        {
+          "chapterNumber": 14,
+          "title": "Social Justice",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 1.9,
+          "term": 2,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Principles of Justice: Equal Treatment, Proportionality & Rawls’ Theory of Justice",
+              "minutes": 60
+            },
+            {
+              "title": "Pursuit of Social Justice in India, Affirmative Policies & Constitutional Safeguards",
+              "minutes": 55
+            }
+          ]
+        },
+        {
+          "chapterNumber": 15,
+          "title": "Rights",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 1.8,
+          "term": 2,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "What are Rights? Origins (Natural vs Legal) & Justification of Rights",
+              "minutes": 55
+            },
+            {
+              "title": "Rights and Responsibilities & Emerging Generation of Human Rights",
+              "minutes": 50
+            }
+          ]
+        },
+        {
+          "chapterNumber": 16,
+          "title": "Development",
+          "weightageScore": 4,
+          "recommendedRevisionHours": 0.9,
+          "term": 3,
+          "effort": "LOW",
+          "parts": [
+            {
+              "title": "Models of Development, Criticisms of Top-Down Growth & Sustainable Democratic Alternatives",
+              "minutes": 55
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "subjectId": "sociology-plus-one",
+      "subjectName": "Sociology",
+      "stream": "humanities",
+      "grade": 11,
+      "totalMaxMarks": 60,
+      "chapters": [
+        {
+          "chapterNumber": 1,
+          "title": "Sociology and Society",
+          "weightageScore": 4,
+          "recommendedRevisionHours": 0.9,
+          "term": 1,
+          "effort": "LOW",
+          "parts": [
+            {
+              "title": "Sociological Imagination, Sociology vs Common Sense & Pluralities in Society",
+              "minutes": 55
+            }
+          ]
+        },
+        {
+          "chapterNumber": 2,
+          "title": "Terms, Concepts and their use in Sociology",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 2.1,
+          "term": 1,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Social Groups: Primary vs Secondary, In-Group vs Out-Group & Reference Groups",
+              "minutes": 60
+            },
+            {
+              "title": "Social Stratification (Caste, Class, Gender), Status, Role & Social Control",
+              "minutes": 65
+            }
+          ]
+        },
+        {
+          "chapterNumber": 3,
+          "title": "Understanding Social Institutions",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 2.1,
+          "term": 1,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Family, Marriage and Kinship: Structures, Types and Contemporary Transformations",
+              "minutes": 60
+            },
+            {
+              "title": "Work and Economic Life, Political Systems & Religion and Education as Institutions",
+              "minutes": 65
+            }
+          ]
+        },
+        {
+          "chapterNumber": 4,
+          "title": "Culture and Socialisation",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 1.8,
+          "term": 2,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Dimensions of Culture (Cognitive, Normative, Material) & Ethnocentrism",
+              "minutes": 55
+            },
+            {
+              "title": "Socialisation: Agencies (Family, School, Media, Peer Groups) & Identity Development",
+              "minutes": 55
+            }
+          ]
+        },
+        {
+          "chapterNumber": 5,
+          "title": "Social Structure, Stratification and Social Processes in Society",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 2,
+          "term": 2,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Social Processes: Cooperation, Competition and Conflict Dynamics",
+              "minutes": 60
+            },
+            {
+              "title": "Social Stratification and Inequality: Functionalist vs Conflict Interpretations",
+              "minutes": 60
+            }
+          ]
+        },
+        {
+          "chapterNumber": 6,
+          "title": "Social Order, Social Change and Social Processes in Rural and Urban Society",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 2,
+          "term": 2,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Social Change: Causes (Technological, Demographic, Cultural, Political) & Social Order",
+              "minutes": 60
+            },
+            {
+              "title": "Authority, Law, Crime and Spatial Differences in Rural vs Urban Communities",
+              "minutes": 60
+            }
+          ]
+        },
+        {
+          "chapterNumber": 7,
+          "title": "Environment and Society",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 1.8,
+          "term": 2,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Ecology and Society: Major Environmental Crises (Resource Depletion, Pollution, Global Warming)",
+              "minutes": 55
+            },
+            {
+              "title": "Environmental Justice, Social Causes of Ecological Problems & Sustainable Alternatives",
+              "minutes": 55
+            }
+          ]
+        },
+        {
+          "chapterNumber": 8,
+          "title": "Introducing Western Sociologists",
+          "weightageScore": 8,
+          "recommendedRevisionHours": 3.4,
+          "term": 3,
+          "effort": "VERY_HIGH",
+          "parts": [
+            {
+              "title": "Origins of Sociology: Enlightenment, French Revolution & Industrial Transformation",
+              "minutes": 60
+            },
+            {
+              "title": "Karl Marx: Historical Materialism, Class Struggle & Alienation",
+              "minutes": 70
+            },
+            {
+              "title": "Emile Durkheim (Social Facts, Division of Labour) & Max Weber (Social Action, Bureaucracy)",
+              "minutes": 75
+            }
+          ]
+        },
+        {
+          "chapterNumber": 9,
+          "title": "Indian Sociologists",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 2.2,
+          "term": 3,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "G.S. Ghurye (Caste and Race in India) & D.P. Mukerji (Tradition and Change)",
+              "minutes": 65
+            },
+            {
+              "title": "M.N. Srinivas (The Indian Village, Sanskritisation) & A.R. Desai (State and Society)",
+              "minutes": 65
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "subjectId": "economics-plus-one",
+      "subjectName": "Economics",
+      "stream": "humanities",
+      "grade": 11,
+      "totalMaxMarks": 60,
+      "chapters": [
+        {
+          "chapterNumber": 1,
+          "title": "Introduction to Statistics",
+          "weightageScore": 4,
+          "recommendedRevisionHours": 0.8,
+          "term": 1,
+          "effort": "LOW",
+          "parts": [
+            {
+              "title": "Meaning, Scope and Importance of Statistics in Economics",
+              "minutes": 50
+            }
+          ]
+        },
+        {
+          "chapterNumber": 2,
+          "title": "Collection of Data",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 1.9,
+          "term": 1,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Sources of Data: Primary vs Secondary Data & Methods of Collecting Primary Data",
+              "minutes": 55
+            },
+            {
+              "title": "Sampling: Random vs Non-Random Sampling, Census vs Sample & NSSO/Census of India",
+              "minutes": 60
+            }
+          ]
+        },
+        {
+          "chapterNumber": 3,
+          "title": "Organisation of Data",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 1.9,
+          "term": 1,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Classification of Data: Chronological, Spatial, Qualitative & Quantitative",
+              "minutes": 55
+            },
+            {
+              "title": "Frequency Distribution: Discrete vs Continuous Series, Class Limits & Tally Marks",
+              "minutes": 60
+            }
+          ]
+        },
+        {
+          "chapterNumber": 4,
+          "title": "Presentation of Data",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 2.1,
+          "term": 2,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Geometric Diagrams: Bar Diagrams (Simple, Multiple, Sub-divided) & Pie Diagrams",
+              "minutes": 60
+            },
+            {
+              "title": "Frequency Diagrams: Histogram, Frequency Polygon, Ogives & Arithmetic Line Graphs",
+              "minutes": 65
+            }
+          ]
+        },
+        {
+          "chapterNumber": 5,
+          "title": "Measures of Central Tendency",
+          "weightageScore": 8,
+          "recommendedRevisionHours": 3.7,
+          "term": 2,
+          "effort": "VERY_HIGH",
+          "parts": [
+            {
+              "title": "Arithmetic Mean: Direct, Shortcut and Step-Deviation Methods for Grouped/Ungrouped Data",
+              "minutes": 75
+            },
+            {
+              "title": "Median and Partition Values (Quartiles, Deciles, Percentiles) in Continuous Series",
+              "minutes": 75
+            },
+            {
+              "title": "Mode Calculation (Inspection, Grouping Method & Empirical Formula) & Comparison of Averages",
+              "minutes": 70
+            }
+          ]
+        },
+        {
+          "chapterNumber": 6,
+          "title": "Correlation",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 2.2,
+          "term": 2,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Meaning and Types of Correlation & Scatter Diagram Analysis",
+              "minutes": 55
+            },
+            {
+              "title": "Karl Pearson’s Coefficient of Correlation & Spearman’s Rank Correlation",
+              "minutes": 75
+            }
+          ]
+        },
+        {
+          "chapterNumber": 7,
+          "title": "Index Numbers",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 2.2,
+          "term": 3,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Meaning, Uses and Construction of Simple Index Numbers (Aggregative vs Relatives)",
+              "minutes": 60
+            },
+            {
+              "title": "Weighted Index Numbers: Laspeyres, Paasche, Fisher’s Ideal Index & CPI/WPI",
+              "minutes": 70
+            }
+          ]
+        },
+        {
+          "chapterNumber": 8,
+          "title": "Indian Economy on the Eve of Independence",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 1.9,
+          "term": 1,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "State of Agricultural, Industrial and Foreign Trade Sectors under Colonial Rule",
+              "minutes": 60
+            },
+            {
+              "title": "Demographic Profile, Occupational Structure & Infrastructure Development before 1947",
+              "minutes": 55
+            }
+          ]
+        },
+        {
+          "chapterNumber": 9,
+          "title": "Indian Economy (1950-1990)",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 2.2,
+          "term": 1,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Five Year Plans: Goals (Growth, Modernisation, Self-Reliance, Equity) & Land Reforms",
+              "minutes": 65
+            },
+            {
+              "title": "Green Revolution, Industrial Policy Resolution 1956 & Inward Looking Trade Strategy",
+              "minutes": 65
+            }
+          ]
+        },
+        {
+          "chapterNumber": 10,
+          "title": "Liberalisation, Privatisation and Globalisation: An Appraisal",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 3.3,
+          "term": 2,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Crisis of 1991 & Liberalisation Measures (Financial, Fiscal, Trade & Industrial Reforms)",
+              "minutes": 70
+            },
+            {
+              "title": "Privatisation (Disinvestment, Navratnas) & Globalisation (Outsourcing, WTO Impact)",
+              "minutes": 65
+            },
+            {
+              "title": "Critical Assessment of LPG Reforms: Growth, Agriculture, Industrial & Employment Performance",
+              "minutes": 60
+            }
+          ]
+        },
+        {
+          "chapterNumber": 11,
+          "title": "Human Capital Formation in India",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 1.9,
+          "term": 2,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Concept of Human Capital, Sources (Education, Health, Migration) & Economic Growth Linkage",
+              "minutes": 60
+            },
+            {
+              "title": "State of Education Sector in India, Regulatory Bodies & Future Prospects",
+              "minutes": 55
+            }
+          ]
+        },
+        {
+          "chapterNumber": 12,
+          "title": "Rural Development",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 2.1,
+          "term": 2,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Rural Credit: Institutional vs Non-Institutional Sources, SHGs & Micro-Credit",
+              "minutes": 60
+            },
+            {
+              "title": "Agricultural Marketing (Defects, Government Measures), Diversification & Organic Farming",
+              "minutes": 65
+            }
+          ]
+        },
+        {
+          "chapterNumber": 13,
+          "title": "Employment: Growth, Informalisation and Other Issues",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 2.1,
+          "term": 3,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Workers and Employment: Types, Worker-Population Ratio & Formal vs Informal Sector",
+              "minutes": 65
+            },
+            {
+              "title": "Unemployment: Types, Causes, Government Employment Generation Schemes (MGNREGA)",
+              "minutes": 60
+            }
+          ]
+        },
+        {
+          "chapterNumber": 14,
+          "title": "Environment and Sustainable Development",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 1.9,
+          "term": 3,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Functions and Carrying Capacity of Environment, Global Warming & Land Degradation",
+              "minutes": 60
+            },
+            {
+              "title": "Sustainable Development: Concept, Principles & Strategies for Sustainable Economic Growth",
+              "minutes": 55
+            }
+          ]
+        },
+        {
+          "chapterNumber": 15,
+          "title": "Comparative Development Experiences of India and its Neighbours",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 2,
+          "term": 3,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Developmental Path of India, China and Pakistan: Demographic & Structural Indicators",
+              "minutes": 60
+            },
+            {
+              "title": "Human Development Index (HDI) Comparison & Sectoral Contribution to GDP",
+              "minutes": 60
+            }
+          ]
         }
       ]
     }

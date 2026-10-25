@@ -7,6 +7,68 @@
       "**/node_modules/**"
     ],
     "cleanUrls": true,
+    "redirects": [
+      {
+        "source": "/intelligent-study-planner-for-plus-two-",
+        "destination": "/",
+        "type": 301
+      },
+      {
+        "source": "/intelligent-study-planner-for-plus-two",
+        "destination": "/",
+        "type": 301
+      },
+      {
+        "source": "/mission-plustwo",
+        "destination": "/",
+        "type": 301
+      },
+      {
+        "source": "/mission-plus-two",
+        "destination": "/",
+        "type": 301
+      },
+      {
+        "source": "/mission-plusone",
+        "destination": "/",
+        "type": 301
+      },
+      {
+        "source": "/mission-plus-one",
+        "destination": "/",
+        "type": 301
+      },
+      {
+        "source": "/plusone",
+        "destination": "/",
+        "type": 301
+      },
+      {
+        "source": "/plustwo",
+        "destination": "/",
+        "type": 301
+      },
+      {
+        "source": "/hss",
+        "destination": "/",
+        "type": 301
+      },
+      {
+        "source": "/hss-planner",
+        "destination": "/",
+        "type": 301
+      },
+      {
+        "source": "/plus-one-planner",
+        "destination": "/",
+        "type": 301
+      },
+      {
+        "source": "/plus-two-planner",
+        "destination": "/",
+        "type": 301
+      }
+    ],
     "rewrites": [
       {
         "source": "/printable-qr-poster",
@@ -37,11 +99,31 @@
         "destination": "/pages/printable-qr-poster.html"
       },
       {
+        "source": "/timetable",
+        "destination": "/pages/plus-two-timetable.html"
+      },
+      {
+        "source": "/plus-one-timetable",
+        "destination": "/pages/plus-two-timetable.html"
+      },
+      {
+        "source": "/pages/plus-one-timetable",
+        "destination": "/pages/plus-two-timetable.html"
+      },
+      {
         "source": "/plus-two-timetable",
         "destination": "/pages/plus-two-timetable.html"
       },
       {
         "source": "/pages/plus-two-timetable",
+        "destination": "/pages/plus-two-timetable.html"
+      },
+      {
+        "source": "/hss-timetable",
+        "destination": "/pages/plus-two-timetable.html"
+      },
+      {
+        "source": "/pages/hss-timetable",
         "destination": "/pages/plus-two-timetable.html"
       },
       {
@@ -74,6 +156,22 @@
       },
       {
         "source": "/syllabus-plus-two",
+        "destination": "/pages/syllabus-plus-two.html"
+      },
+      {
+        "source": "/pages/syllabus-plus-one",
+        "destination": "/pages/syllabus-plus-two.html"
+      },
+      {
+        "source": "/syllabus-plus-one",
+        "destination": "/pages/syllabus-plus-two.html"
+      },
+      {
+        "source": "/pages/hss-syllabus",
+        "destination": "/pages/syllabus-plus-two.html"
+      },
+      {
+        "source": "/hss-syllabus",
         "destination": "/pages/syllabus-plus-two.html"
       },
       {

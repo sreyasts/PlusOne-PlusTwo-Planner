@@ -137,6 +137,7 @@ export function getStreamSubjects(stream = 'cs') {
  * @returns {Array}
  */
 export function getCanonicalTasks({
+  grade = '+2',
   stream = 'cs',
   termScope = 3,
   includePlusOne = false,
@@ -147,9 +148,20 @@ export function getCanonicalTasks({
   const isBio = stream === 'bio' || plusOneSubjects.some((s) => s === 'Botany' || s === 'Zoology');
   let allowedSubjects = customSubjects && Array.isArray(customSubjects) && customSubjects.length > 0
     ? customSubjects
-    : (isBio
-      ? ['Physics', 'Chemistry', 'Mathematics', 'Botany', 'Zoology']
-      : ['Physics', 'Chemistry', 'Mathematics', 'Computer Science']);
+    : (stream === 'commerce'
+      ? ['Accountancy', 'Business Studies', 'Economics', 'Computer Applications']
+      : (stream === 'humanities'
+        ? ['History', 'Political Science', 'Sociology', 'Economics']
+        : (isBio
+          ? ['Physics', 'Chemistry', 'Mathematics', 'Botany', 'Zoology']
+          : ['Physics', 'Chemistry', 'Mathematics', 'Computer Science'])));
+
+  const isPlusOneRegular = (grade === '+1' || grade === 11 || grade === 'plus_one') && !improvementOnly;
+  if (isPlusOneRegular) {
+    return PLUS_ONE_SYLLABUS.filter(
+      (t) => allowedSubjects.includes(t.subject) && (t.term || 1) <= termScope
+    );
+  }
 
   const p2Tasks = improvementOnly
     ? []
@@ -171,6 +183,7 @@ export function getCanonicalTasks({
  * @returns {Array}
  */
 export function allocateActiveRecall({
+  grade = '+2',
   revisionDaysCount,
   streamSubjects,
   completedChaptersBySubject = {},
@@ -187,7 +200,7 @@ export function allocateActiveRecall({
       revisionTasksByDay.push([
         {
           id: `REV_DAY_${r + 1}_MOCK`,
-          grade: isImpOnly ? '+1' : '+2',
+          grade: (isImpOnly || grade === '+1' || grade === 11) ? '+1' : '+2',
           subject: 'All Subjects',
           chapterName: `Final Examination Simulation (Day ${r + 1}/${revisionDaysCount})`,
           topicTitle:
@@ -203,7 +216,7 @@ export function allocateActiveRecall({
       revisionTasksByDay.push([
         {
           id: `REV_DAY_${r + 1}_PYQ`,
-          grade: isImpOnly ? '+1' : '+2',
+          grade: (isImpOnly || grade === '+1' || grade === 11) ? '+1' : '+2',
           subject: 'All Subjects',
           chapterName: `Previous Year Questions (PYQ) Sprint (Day ${r + 1}/${revisionDaysCount})`,
           topicTitle:
@@ -240,7 +253,7 @@ export function allocateActiveRecall({
       revisionTasksByDay.push([
         {
           id: `REV_DAY_${r + 1}_${activeSub.replace(/\s+/g, '_')}`,
-          grade: isImpOnly ? '+1' : '+2',
+          grade: (isImpOnly || grade === '+1' || grade === 11) ? '+1' : '+2',
           subject: activeSub,
           chapterName: `Targeted Revision: ${activeSub} (Day ${r + 1}/${revisionDaysCount})`,
           topicTitle,
@@ -441,6 +454,7 @@ export function validateSchedule(planOrDays, originalTasks = [], options = {}) {
  * @returns {Object} Deterministic study plan and analytics
  */
 export function generateSchedule({
+  grade = '+2',
   stream = 'cs',
   examDate,
   deadlineDate,
@@ -496,6 +510,7 @@ export function generateSchedule({
     : defaultStreamSubjects;
 
   const tasksToSchedule = tasks || getCanonicalTasks({
+    grade,
     stream: effectiveStream,
     termScope,
     includePlusOne: Boolean(includePlusOne || isImpOnly),
@@ -611,8 +626,9 @@ export function generateSchedule({
     return (a.part || 0) - (b.part || 0);
   });
 
-  const p1Tasks = sortedTasks.filter((t) => t.grade === '+1');
-  const p2Tasks = sortedTasks.filter((t) => t.grade === '+2');
+  const impSubjects = new Set(plusOneSubjects || []);
+  const p1Tasks = sortedTasks.filter((t) => t.grade === '+1' && impSubjects.has(t.subject));
+  const p2Tasks = sortedTasks.filter((t) => !(t.grade === '+1' && impSubjects.has(t.subject)));
 
   // 9. Phase 1: Schedule Improvement Tasks (Super-Intelligent Multi-Pass & Exam Eve Exclusivity)
   const impConfig = (plusOneSubjects || []).map((s) => ({

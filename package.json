@@ -1,8 +1,8 @@
 {
-  "name": "mission-plustwo",
-  "version": "6.4.3",
+  "name": "plus-one-plus-two-planner",
+  "version": "7.0.0",
   "private": true,
-  "description": "Intelligent Study Planner for Kerala DHSE Plus Two (Class 12) Students",
+  "description": "+1 & +2 Planner - Intelligent Daily Study Planner for Kerala Higher Secondary (HSS Plus One & Plus Two) Students",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -23,11 +23,15 @@
   "keywords": [
     "kerala",
     "dhse",
+    "hss",
+    "plus-one",
     "plus-two",
     "study-planner",
+    "class-11",
     "class-12",
     "hsslive",
-    "timetable"
+    "timetable",
+    "scert"
   ],
   "author": "Sreyas T S <sreyasts52@gmail.com>",
   "license": "MIT",

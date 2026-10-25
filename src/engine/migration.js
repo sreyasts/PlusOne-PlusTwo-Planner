@@ -95,7 +95,8 @@ export function migrateLegacyUserPlan(existingState) {
   const improvementConfig = existingState.improvementConfig || [];
   const startDate = existingState.startDate || formatLocalDateStr();
 
-  const allTasksToPlan = getRemainingPlanTasks({ stream: userStream, targetTerm, improvementConfig, completedChapterIds });
+  const userGrade = existingState.grade || '+2';
+  const allTasksToPlan = getRemainingPlanTasks({ grade: userGrade, stream: userStream, targetTerm, improvementConfig, completedChapterIds });
 
   const generated = buildIntelligentPlan(
     deadlineDate,
@@ -195,6 +196,7 @@ export function migrateUserState(rawState) {
   return {
     ...rawState,
     engineVersion: ENGINE_VERSION,
+    grade: rawState.grade || (rawState.plan && rawState.plan.some(d => (d.tasks || []).some(t => t.grade === '+1')) && !rawState.plan.some(d => (d.tasks || []).some(t => t.grade === '+2')) ? '+1' : '+2'),
     stream: rawState.stream || 'cs',
     createdDate: rawState.createdDate || formatLocalDateStr(),
     deadlineDate: rawState.deadlineDate || '2027-02-28',

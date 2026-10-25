@@ -1,5 +1,5 @@
-// Mission PlusTwo Service Worker v6.4 (Socratic AI Tutor & iCal Sync)
-const CACHE_NAME = 'plustwo-mission-v6.4.3';
+// +1 & +2 Planner Service Worker v7.0.0 (Socratic AI Tutor & iCal Sync)
+const CACHE_NAME = 'plustwo-mission-v7.0.0';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',

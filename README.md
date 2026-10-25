@@ -1,9 +1,9 @@
 <div align="center">
 
-<img src="assets/icon.png" alt="Mission PlusTwo Logo" width="120" style="border-radius: 28px; box-shadow: 0 10px 25px rgba(37,99,235,0.25);" />
+<img src="assets/icon.png" alt="+1 & +2 Planner Logo" width="120" style="border-radius: 28px; box-shadow: 0 10px 25px rgba(37,99,235,0.25);" />
 
-# 🎓 Mission PlusTwo
-### 🚀 The Intelligent Daily Study Revision Engine for Kerala Higher Secondary (+2) Candidates
+# 🎓 +1 & +2 Planner (HSS)
+### 🚀 The Intelligent Daily Study Revision Engine for Kerala Higher Secondary (Plus One & Plus Two) Students
 
 [![CI Build](https://img.shields.io/github/actions/workflow/status/sreyasts/intelligent-study-planner-for-plus-two-/ci.yml?branch=main&style=for-the-badge&logo=githubactions&logoColor=white&label=CI%20Build)](https://github.com/sreyasts/intelligent-study-planner-for-plus-two-/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](LICENSE)
@@ -14,13 +14,13 @@
 
 <br/>
 
-## 🌐 👉 [**LAUNCH MISSION PLUSTWO (WEB APP)**](https://mission-plustwo.web.app/) 👈
+## 🌐 👉 [**LAUNCH +1 & +2 PLANNER (WEB APP)**](https://mission-plustwo.web.app/) 👈
 *100% Free, Zero-Cost Civic Software • Works Offline in any browser on Phone, Tablet, or PC • Guest Planning & Optional Cloud Sync*
 
 <br/>
 
 <a href="https://mission-plustwo.web.app/">
-  <img src="assets/og-image.png" alt="Mission PlusTwo — Kerala Plus Two Daily Study Revision Engine" style="border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); max-width: 100%; height: auto;" />
+  <img src="assets/og-image.png" alt="+1 & +2 Planner — Kerala Plus Two Daily Study Revision Engine" style="border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); max-width: 100%; height: auto;" />
 </a>
 
 </div>
@@ -29,13 +29,13 @@
 
 ## 🏛️ Mission & Civic Impact Statement
 
-Mission PlusTwo is intended for Kerala DHSE students who want a free daily revision plan. Independent usage, school adoption, and improvements in exam results have not been verified.
++1 & +2 Planner is intended for Kerala DHSE students who want a free daily revision plan. Independent usage, school adoption, and improvements in exam results have not been verified.
 
-**Mission PlusTwo** was created as an uncompromising public good:
+**+1 & +2 Planner** was created as an uncompromising public good:
 - **100% Free and Open-Source**: Zero subscription walls, zero microtransactions, zero sponsored content.
 - **Guest planning and optional cloud sync**: Operates by default in 100% client-side Guest Mode using browser `localStorage`. Google sign-in and Firebase sync are optional. The app also contains event analytics; see the privacy policy. These implementation choices are not a legal compliance certification.
 - **Low-Bandwidth Rural Resilience**: Designed as an **Offline-First Progressive Web App (PWA)** with service worker asset caching. Once loaded, students can generate schedules, track completed chapters, review formulas, and print timetables with zero active internet connection during power outages or limited 2G/3G rural cellular coverage.
-- **Pedagogical Empathy**: Rather than static, demoralizing PDF timetables downloaded from Telegram channels, Mission PlusTwo provides an adaptive constraint-satisfaction scheduler that spaces cognitive load evenly, weaves active recall, and recovers smoothly when a student falls sick or misses a day.
+- **Pedagogical Empathy**: Rather than static, demoralizing PDF timetables downloaded from Telegram channels, +1 & +2 Planner provides an adaptive constraint-satisfaction scheduler that spaces cognitive load evenly, weaves active recall, and recovers smoothly when a student falls sick or misses a day.
 
 ---
 
@@ -43,17 +43,17 @@ Mission PlusTwo is intended for Kerala DHSE students who want a free daily revis
 
 | 🖥️ Desktop Daily Study Dashboard | 📅 Complete Interleaved Timetable & QR |
 | :---: | :---: |
-| <img src="assets/screenshots/screenshot-desktop.png" alt="Mission PlusTwo Desktop Study Dashboard" width="480" style="border-radius: 12px; border: 1px solid #e2e8f0;" /> | <img src="assets/screenshots/screenshot-plan.png" alt="Mission PlusTwo Full Plan Timetable" width="480" style="border-radius: 12px; border: 1px solid #e2e8f0;" /> |
+| <img src="assets/screenshots/screenshot-desktop.png" alt="+1 & +2 Planner Desktop Study Dashboard" width="480" style="border-radius: 12px; border: 1px solid #e2e8f0;" /> | <img src="assets/screenshots/screenshot-plan.png" alt="+1 & +2 Planner Full Plan Timetable" width="480" style="border-radius: 12px; border: 1px solid #e2e8f0;" /> |
 
 | 📱 Mobile Study Experience | ⏳ DHSE Board Exam Countdown & Load Analyzer |
 | :---: | :---: |
-| <img src="assets/screenshots/screenshot-mobile.png" alt="Mission PlusTwo Mobile Checklist" width="260" style="border-radius: 16px; border: 1px solid #e2e8f0;" /> | <img src="assets/screenshots/screenshot-countdown.png" alt="Kerala Plus Two Exam Countdown" width="480" style="border-radius: 12px; border: 1px solid #e2e8f0;" /> |
+| <img src="assets/screenshots/screenshot-mobile.png" alt="+1 & +2 Planner Mobile Checklist" width="260" style="border-radius: 16px; border: 1px solid #e2e8f0;" /> | <img src="assets/screenshots/screenshot-countdown.png" alt="Kerala Plus Two Exam Countdown" width="480" style="border-radius: 12px; border: 1px solid #e2e8f0;" /> |
 
 ---
 
 ## ⚙️ System Architecture & Algorithms
 
-Mission PlusTwo is structured as a decoupled, multi-tier software architecture:
++1 & +2 Planner is structured as a decoupled, multi-tier software architecture:
 
 ```
 intelligent-study-planner-for-plus-two/
@@ -201,4 +201,4 @@ npm run build
 
 ## 📄 License
 
-This project is licensed under the OSI-approved [MIT License](LICENSE) &copy; 2026 Sreyas T S & Mission PlusTwo Contributors. Free to use, adapt, and build upon for educational equity.
+This project is licensed under the OSI-approved [MIT License](LICENSE) &copy; 2026 Sreyas T S & +1 & +2 Planner Contributors. Free to use, adapt, and build upon for educational equity.

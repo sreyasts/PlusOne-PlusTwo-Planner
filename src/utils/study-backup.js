@@ -32,6 +32,7 @@ export function validateStudyBackup(state) {
   checkValues(state);
   requireValid(Array.isArray(state.plan) && state.plan.length > 0 && state.plan.length <= 1500);
   if (state.stream !== undefined) requireValid(['cs', 'bio', 'commerce', 'humanities', 'imp_only'].includes(state.stream));
+  if (state.grade !== undefined) requireValid(['+1', '+2', 'dual'].includes(state.grade));
   for (const key of ['startDate', 'deadlineDate']) {
     if (state[key] !== undefined) requireValid(isCalendarDate(state[key]));
   }

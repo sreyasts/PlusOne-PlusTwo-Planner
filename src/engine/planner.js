@@ -43,6 +43,7 @@ export function calculateDaysBetween(startDateStr, endDateStr) {
 }
 
 export function getCanonicalTasks({
+  grade = '+2',
   stream = 'cs',
   termScope = 3,
   includePlusOne = false,
@@ -50,6 +51,13 @@ export function getCanonicalTasks({
   improvementOnly = false,
 } = {}) {
   const allowedSubjects = getStreamSubjects(stream);
+  const isPlusOneRegular = (grade === '+1' || grade === 11 || grade === 'plus_one') && !improvementOnly;
+
+  if (isPlusOneRegular) {
+    return PLUS_ONE_SYLLABUS.filter((t) =>
+      allowedSubjects.includes(t.subject) && (t.term || 1) <= termScope
+    );
+  }
 
   const p2Tasks = improvementOnly
     ? []
@@ -381,8 +389,9 @@ function _executeCorePlanAlgorithm(
     return a.part - b.part;
   });
 
-  const p1Tasks = sortedTasks.filter((t) => t.grade === '+1');
-  const p2Tasks = sortedTasks.filter((t) => t.grade !== '+1');
+  const impSubjects = new Set((improvementConfig || []).map((c) => c.subject));
+  const p1Tasks = sortedTasks.filter((t) => t.grade === '+1' && impSubjects.has(t.subject));
+  const p2Tasks = sortedTasks.filter((t) => !(t.grade === '+1' && impSubjects.has(t.subject)));
 
   // Phase 1: Plus One Improvement Tasks (Super-Intelligent Multi-Pass & Exam Eve Exclusivity)
   if (improvementConfig && improvementConfig.length > 0) {
@@ -1083,11 +1092,13 @@ export function buildIntelligentPlan(
     const p1Subs = opts.plusOneSubjects || [];
     const impDates = opts.improvementDates || {};
     const impConfig = p1Subs.map((s) => ({ subject: s, examDate: impDates[s] || deadline }));
+    const grade = opts.grade || (opts.tasks && opts.tasks.length > 0 && opts.tasks.every((t) => t.grade === '+1') && !impOnly ? '+1' : '+2');
     const tasks =
       opts.tasks ||
       (opts.adapter && typeof opts.adapter.getTasks === 'function' ? opts.adapter.getTasks() : null) ||
       tasksToSchedule ||
       getCanonicalTasks({
+        grade: grade,
         stream: str,
         termScope: term,
         includePlusOne: incP1,

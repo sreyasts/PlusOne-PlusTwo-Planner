@@ -8,6 +8,7 @@ export const PLUS_ONE_CHAPTERS = {
   Physics: [
     {
       num: 1,
+      term: 1,
       name: 'Units and Measurements',
       effort: 'LOW',
       parts: [
@@ -16,6 +17,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 2,
+      term: 1,
       name: 'Motion in a Straight Line',
       effort: 'MEDIUM',
       parts: [
@@ -25,6 +27,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 3,
+      term: 1,
       name: 'Motion in a Plane',
       effort: 'MEDIUM',
       parts: [
@@ -34,6 +37,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 4,
+      term: 1,
       name: 'Laws of Motion',
       effort: 'HIGH',
       parts: [
@@ -43,6 +47,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 5,
+      term: 2,
       name: 'Work, Energy and Power',
       effort: 'HIGH',
       parts: [
@@ -52,6 +57,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 6,
+      term: 2,
       name: 'System of Particles and Rotational Motion',
       effort: 'VERY_HIGH',
       parts: [
@@ -61,6 +67,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 7,
+      term: 2,
       name: 'Gravitation',
       effort: 'MEDIUM',
       parts: [
@@ -70,6 +77,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 8,
+      term: 2,
       name: 'Mechanical Properties of Solids',
       effort: 'LOW',
       parts: [
@@ -78,6 +86,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 9,
+      term: 2,
       name: 'Mechanical Properties of Fluids',
       effort: 'HIGH',
       parts: [
@@ -87,6 +96,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 10,
+      term: 2,
       name: 'Thermal Properties of Matter',
       effort: 'MEDIUM',
       parts: [
@@ -96,6 +106,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 11,
+      term: 3,
       name: 'Thermodynamics',
       effort: 'HIGH',
       parts: [
@@ -105,6 +116,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 12,
+      term: 3,
       name: 'Kinetic Theory',
       effort: 'LOW',
       parts: [
@@ -113,6 +125,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 13,
+      term: 3,
       name: 'Oscillations',
       effort: 'HIGH',
       parts: [
@@ -122,6 +135,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 14,
+      term: 3,
       name: 'Waves',
       effort: 'HIGH',
       parts: [
@@ -134,6 +148,7 @@ export const PLUS_ONE_CHAPTERS = {
   Chemistry: [
     {
       num: 1,
+      term: 1,
       name: 'Some Basic Concepts of Chemistry',
       effort: 'HIGH',
       parts: [
@@ -143,6 +158,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 2,
+      term: 1,
       name: 'Structure of Atom',
       effort: 'HIGH',
       parts: [
@@ -153,6 +169,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 3,
+      term: 1,
       name: 'Classification of Elements & Periodicity',
       effort: 'LOW',
       parts: [
@@ -161,6 +178,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 4,
+      term: 2,
       name: 'Chemical Bonding and Molecular Structure',
       effort: 'VERY_HIGH',
       parts: [
@@ -171,6 +189,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 5,
+      term: 2,
       name: 'Chemical Thermodynamics',
       effort: 'HIGH',
       parts: [
@@ -180,6 +199,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 6,
+      term: 2,
       name: 'Equilibrium',
       effort: 'VERY_HIGH',
       parts: [
@@ -190,6 +210,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 7,
+      term: 2,
       name: 'Redox Reactions',
       effort: 'LOW',
       parts: [
@@ -198,6 +219,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 8,
+      term: 3,
       name: 'Organic Chemistry: Basic Principles & Techniques',
       effort: 'VERY_HIGH',
       parts: [
@@ -208,6 +230,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 9,
+      term: 3,
       name: 'Hydrocarbons',
       effort: 'HIGH',
       parts: [
@@ -221,6 +244,7 @@ export const PLUS_ONE_CHAPTERS = {
   Mathematics: [
     {
       num: 1,
+      term: 1,
       name: 'Sets',
       effort: 'LOW',
       parts: [
@@ -230,6 +254,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 2,
+      term: 1,
       name: 'Relations and Functions',
       effort: 'MEDIUM',
       parts: [
@@ -239,6 +264,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 3,
+      term: 1,
       name: 'Trigonometric Functions',
       effort: 'VERY_HIGH',
       parts: [
@@ -249,6 +275,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 4,
+      term: 1,
       name: 'Complex Numbers and Quadratic Equations',
       effort: 'MEDIUM',
       parts: [
@@ -258,6 +285,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 5,
+      term: 2,
       name: 'Linear Inequalities',
       effort: 'LOW',
       parts: [
@@ -266,6 +294,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 6,
+      term: 2,
       name: 'Permutations and Combinations',
       effort: 'HIGH',
       parts: [
@@ -275,6 +304,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 7,
+      term: 2,
       name: 'Binomial Theorem',
       effort: 'MEDIUM',
       parts: [
@@ -283,6 +313,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 8,
+      term: 2,
       name: 'Sequences and Series',
       effort: 'MEDIUM',
       parts: [
@@ -292,6 +323,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 9,
+      term: 2,
       name: 'Straight Lines',
       effort: 'HIGH',
       parts: [
@@ -301,6 +333,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 10,
+      term: 2,
       name: 'Conic Sections',
       effort: 'HIGH',
       parts: [
@@ -310,6 +343,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 11,
+      term: 3,
       name: 'Introduction to Three Dimensional Geometry',
       effort: 'LOW',
       parts: [
@@ -318,6 +352,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 12,
+      term: 3,
       name: 'Limits and Derivatives',
       effort: 'HIGH',
       parts: [
@@ -327,6 +362,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 13,
+      term: 3,
       name: 'Statistics',
       effort: 'MEDIUM',
       parts: [
@@ -336,6 +372,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 14,
+      term: 3,
       name: 'Probability',
       effort: 'MEDIUM',
       parts: [
@@ -348,6 +385,7 @@ export const PLUS_ONE_CHAPTERS = {
   'Computer Science': [
     {
       num: 1,
+      term: 1,
       name: 'The Discipline of Computing',
       effort: 'LOW',
       parts: [
@@ -356,6 +394,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 2,
+      term: 1,
       name: 'Data Representation and Boolean Logic',
       effort: 'MEDIUM',
       parts: [
@@ -365,6 +404,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 3,
+      term: 1,
       name: 'Components of the Computer System',
       effort: 'LOW',
       parts: [
@@ -374,6 +414,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 4,
+      term: 1,
       name: 'Principles of Programming & Problem Solving',
       effort: 'HIGH',
       parts: [
@@ -383,6 +424,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 5,
+      term: 2,
       name: 'Introduction to C++ Programming',
       effort: 'MEDIUM',
       parts: [
@@ -392,6 +434,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 6,
+      term: 2,
       name: 'Data Types and Operators',
       effort: 'MEDIUM',
       parts: [
@@ -401,6 +444,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 7,
+      term: 2,
       name: 'Control Statements',
       effort: 'HIGH',
       parts: [
@@ -410,6 +454,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 8,
+      term: 2,
       name: 'Arrays',
       effort: 'HIGH',
       parts: [
@@ -419,6 +464,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 9,
+      term: 3,
       name: 'Functions',
       effort: 'HIGH',
       parts: [
@@ -428,6 +474,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 10,
+      term: 3,
       name: 'Computer Networks',
       effort: 'MEDIUM',
       parts: [
@@ -440,6 +487,7 @@ export const PLUS_ONE_CHAPTERS = {
   Botany: [
     {
       num: 1,
+      term: 1,
       name: 'Biological Classification',
       effort: 'MEDIUM',
       parts: [
@@ -449,6 +497,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 2,
+      term: 1,
       name: 'Plant Kingdom',
       effort: 'HIGH',
       parts: [
@@ -458,6 +507,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 3,
+      term: 1,
       name: 'Morphology of Flowering Plants',
       effort: 'HIGH',
       parts: [
@@ -467,6 +517,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 4,
+      term: 2,
       name: 'Anatomy of Flowering Plants',
       effort: 'MEDIUM',
       parts: [
@@ -476,6 +527,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 5,
+      term: 2,
       name: 'Cell: The Unit of Life',
       effort: 'MEDIUM',
       parts: [
@@ -485,6 +537,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 6,
+      term: 2,
       name: 'Cell Cycle and Cell Division',
       effort: 'MEDIUM',
       parts: [
@@ -494,6 +547,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 7,
+      term: 2,
       name: 'Photosynthesis in Higher Plants',
       effort: 'VERY_HIGH',
       parts: [
@@ -504,6 +558,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 8,
+      term: 3,
       name: 'Respiration in Plants',
       effort: 'HIGH',
       parts: [
@@ -513,6 +568,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 9,
+      term: 3,
       name: 'Plant Growth and Development',
       effort: 'LOW',
       parts: [
@@ -525,6 +581,7 @@ export const PLUS_ONE_CHAPTERS = {
   Zoology: [
     {
       num: 1,
+      term: 1,
       name: 'The Living World',
       effort: 'LOW',
       parts: [
@@ -533,6 +590,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 2,
+      term: 1,
       name: 'Animal Kingdom',
       effort: 'VERY_HIGH',
       parts: [
@@ -543,6 +601,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 3,
+      term: 1,
       name: 'Structural Organisation in Animals',
       effort: 'MEDIUM',
       parts: [
@@ -552,6 +611,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 4,
+      term: 2,
       name: 'Biomolecules',
       effort: 'HIGH',
       parts: [
@@ -561,6 +621,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 5,
+      term: 2,
       name: 'Breathing and Exchange of Gases',
       effort: 'MEDIUM',
       parts: [
@@ -570,6 +631,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 6,
+      term: 2,
       name: 'Body Fluids and Circulation',
       effort: 'HIGH',
       parts: [
@@ -579,6 +641,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 7,
+      term: 2,
       name: 'Excretory Products and their Elimination',
       effort: 'HIGH',
       parts: [
@@ -588,6 +651,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 8,
+      term: 3,
       name: 'Locomotion and Movement',
       effort: 'MEDIUM',
       parts: [
@@ -597,6 +661,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 9,
+      term: 3,
       name: 'Neural Control and Coordination',
       effort: 'HIGH',
       parts: [
@@ -606,6 +671,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 10,
+      term: 3,
       name: 'Chemical Coordination and Integration',
       effort: 'MEDIUM',
       parts: [
@@ -618,6 +684,7 @@ export const PLUS_ONE_CHAPTERS = {
   Accountancy: [
     {
       num: 1,
+      term: 1,
       name: 'Introduction to Accounting',
       effort: 'LOW',
       parts: [
@@ -626,6 +693,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 2,
+      term: 1,
       name: 'Theory Base of Accounting',
       effort: 'MEDIUM',
       parts: [
@@ -635,6 +703,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 3,
+      term: 1,
       name: 'Recording of Transactions - I',
       effort: 'HIGH',
       parts: [
@@ -645,6 +714,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 4,
+      term: 2,
       name: 'Recording of Transactions - II',
       effort: 'HIGH',
       parts: [
@@ -655,6 +725,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 5,
+      term: 2,
       name: 'Bank Reconciliation Statement',
       effort: 'HIGH',
       parts: [
@@ -664,6 +735,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 6,
+      term: 2,
       name: 'Trial Balance and Rectification of Errors',
       effort: 'HIGH',
       parts: [
@@ -674,6 +746,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 7,
+      term: 2,
       name: 'Depreciation, Provisions and Reserves',
       effort: 'HIGH',
       parts: [
@@ -684,6 +757,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 8,
+      term: 3,
       name: 'Financial Statements - I',
       effort: 'HIGH',
       parts: [
@@ -694,6 +768,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 9,
+      term: 3,
       name: 'Financial Statements - II',
       effort: 'VERY_HIGH',
       parts: [
@@ -707,6 +782,7 @@ export const PLUS_ONE_CHAPTERS = {
   'Business Studies': [
     {
       num: 1,
+      term: 1,
       name: 'Business, Trade and Commerce',
       effort: 'MEDIUM',
       parts: [
@@ -716,6 +792,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 2,
+      term: 1,
       name: 'Forms of Business Organisations',
       effort: 'HIGH',
       parts: [
@@ -726,6 +803,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 3,
+      term: 1,
       name: 'Private, Public and Global Enterprises',
       effort: 'MEDIUM',
       parts: [
@@ -735,6 +813,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 4,
+      term: 2,
       name: 'Business Services',
       effort: 'HIGH',
       parts: [
@@ -745,6 +824,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 5,
+      term: 2,
       name: 'Emerging Modes of Business',
       effort: 'LOW',
       parts: [
@@ -754,6 +834,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 6,
+      term: 2,
       name: 'Social Responsibilities of Business and Business Ethics',
       effort: 'LOW',
       parts: [
@@ -763,6 +844,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 7,
+      term: 2,
       name: 'Sources of Business Finance',
       effort: 'HIGH',
       parts: [
@@ -773,6 +855,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 8,
+      term: 3,
       name: 'Small Business and Enterprises',
       effort: 'MEDIUM',
       parts: [
@@ -782,6 +865,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 9,
+      term: 3,
       name: 'Internal Trade',
       effort: 'MEDIUM',
       parts: [
@@ -791,6 +875,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 10,
+      term: 3,
       name: 'International Business',
       effort: 'HIGH',
       parts: [
@@ -804,6 +889,7 @@ export const PLUS_ONE_CHAPTERS = {
   Economics: [
     {
       num: 1,
+      term: 1,
       name: 'Introduction to Statistics',
       effort: 'LOW',
       parts: [
@@ -812,6 +898,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 2,
+      term: 1,
       name: 'Collection of Data',
       effort: 'MEDIUM',
       parts: [
@@ -821,6 +908,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 3,
+      term: 1,
       name: 'Organisation of Data',
       effort: 'MEDIUM',
       parts: [
@@ -830,6 +918,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 4,
+      term: 2,
       name: 'Presentation of Data',
       effort: 'MEDIUM',
       parts: [
@@ -839,6 +928,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 5,
+      term: 2,
       name: 'Measures of Central Tendency',
       effort: 'VERY_HIGH',
       parts: [
@@ -849,6 +939,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 6,
+      term: 2,
       name: 'Correlation',
       effort: 'HIGH',
       parts: [
@@ -858,6 +949,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 7,
+      term: 3,
       name: 'Index Numbers',
       effort: 'HIGH',
       parts: [
@@ -867,6 +959,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 8,
+      term: 1,
       name: 'Indian Economy on the Eve of Independence',
       effort: 'MEDIUM',
       parts: [
@@ -876,6 +969,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 9,
+      term: 1,
       name: 'Indian Economy (1950-1990)',
       effort: 'HIGH',
       parts: [
@@ -885,6 +979,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 10,
+      term: 2,
       name: 'Liberalisation, Privatisation and Globalisation: An Appraisal',
       effort: 'HIGH',
       parts: [
@@ -895,6 +990,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 11,
+      term: 2,
       name: 'Human Capital Formation in India',
       effort: 'MEDIUM',
       parts: [
@@ -904,6 +1000,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 12,
+      term: 2,
       name: 'Rural Development',
       effort: 'HIGH',
       parts: [
@@ -913,6 +1010,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 13,
+      term: 3,
       name: 'Employment: Growth, Informalisation and Other Issues',
       effort: 'HIGH',
       parts: [
@@ -922,6 +1020,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 14,
+      term: 3,
       name: 'Environment and Sustainable Development',
       effort: 'MEDIUM',
       parts: [
@@ -931,6 +1030,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 15,
+      term: 3,
       name: 'Comparative Development Experiences of India and its Neighbours',
       effort: 'MEDIUM',
       parts: [
@@ -943,6 +1043,7 @@ export const PLUS_ONE_CHAPTERS = {
   'Computer Applications': [
     {
       num: 1,
+      term: 1,
       name: 'Fundamentals of Computers',
       effort: 'LOW',
       parts: [
@@ -951,6 +1052,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 2,
+      term: 1,
       name: 'Components of the Computer System',
       effort: 'MEDIUM',
       parts: [
@@ -960,6 +1062,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 3,
+      term: 1,
       name: 'Principles of Programming and Problem Solving',
       effort: 'MEDIUM',
       parts: [
@@ -969,6 +1072,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 4,
+      term: 2,
       name: 'Getting Started with C++',
       effort: 'MEDIUM',
       parts: [
@@ -978,6 +1082,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 5,
+      term: 2,
       name: 'Data Types and Operators',
       effort: 'HIGH',
       parts: [
@@ -987,6 +1092,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 6,
+      term: 2,
       name: 'Introduction to Programming (Control Statements)',
       effort: 'VERY_HIGH',
       parts: [
@@ -997,6 +1103,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 7,
+      term: 2,
       name: 'Arrays',
       effort: 'HIGH',
       parts: [
@@ -1006,6 +1113,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 8,
+      term: 3,
       name: 'Functions',
       effort: 'HIGH',
       parts: [
@@ -1015,6 +1123,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 9,
+      term: 3,
       name: 'Computer Networks',
       effort: 'MEDIUM',
       parts: [
@@ -1024,6 +1133,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 10,
+      term: 3,
       name: 'Internet and Mobile Computing',
       effort: 'LOW',
       parts: [
@@ -1036,6 +1146,7 @@ export const PLUS_ONE_CHAPTERS = {
   History: [
     {
       num: 1,
+      term: 1,
       name: 'Writing and City Life',
       effort: 'MEDIUM',
       parts: [
@@ -1045,6 +1156,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 2,
+      term: 1,
       name: 'An Empire Across Three Continents',
       effort: 'HIGH',
       parts: [
@@ -1054,6 +1166,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 3,
+      term: 2,
       name: 'Nomadic Empires',
       effort: 'MEDIUM',
       parts: [
@@ -1063,6 +1176,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 4,
+      term: 2,
       name: 'The Three Orders',
       effort: 'HIGH',
       parts: [
@@ -1072,6 +1186,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 5,
+      term: 2,
       name: 'Changing Cultural Traditions',
       effort: 'HIGH',
       parts: [
@@ -1081,6 +1196,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 6,
+      term: 3,
       name: 'Displacing Indigenous Peoples',
       effort: 'MEDIUM',
       parts: [
@@ -1090,6 +1206,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 7,
+      term: 3,
       name: 'Paths to Modernisation',
       effort: 'VERY_HIGH',
       parts: [
@@ -1103,6 +1220,7 @@ export const PLUS_ONE_CHAPTERS = {
   'Political Science': [
     {
       num: 1,
+      term: 1,
       name: 'Constitution: Why and How?',
       effort: 'MEDIUM',
       parts: [
@@ -1112,6 +1230,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 2,
+      term: 1,
       name: 'Rights in the Indian Constitution',
       effort: 'HIGH',
       parts: [
@@ -1121,6 +1240,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 3,
+      term: 1,
       name: 'Election and Representation',
       effort: 'MEDIUM',
       parts: [
@@ -1130,6 +1250,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 4,
+      term: 2,
       name: 'Executive',
       effort: 'MEDIUM',
       parts: [
@@ -1139,6 +1260,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 5,
+      term: 2,
       name: 'Legislature',
       effort: 'HIGH',
       parts: [
@@ -1148,6 +1270,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 6,
+      term: 2,
       name: 'Judiciary',
       effort: 'HIGH',
       parts: [
@@ -1157,6 +1280,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 7,
+      term: 2,
       name: 'Federalism',
       effort: 'MEDIUM',
       parts: [
@@ -1166,6 +1290,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 8,
+      term: 3,
       name: 'Local Governments',
       effort: 'MEDIUM',
       parts: [
@@ -1175,6 +1300,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 9,
+      term: 3,
       name: 'Constitution as a Living Document',
       effort: 'LOW',
       parts: [
@@ -1183,6 +1309,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 10,
+      term: 3,
       name: 'The Philosophy of the Constitution',
       effort: 'LOW',
       parts: [
@@ -1191,6 +1318,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 11,
+      term: 1,
       name: 'Political Theory: An Introduction',
       effort: 'LOW',
       parts: [
@@ -1199,6 +1327,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 12,
+      term: 1,
       name: 'Freedom',
       effort: 'MEDIUM',
       parts: [
@@ -1208,6 +1337,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 13,
+      term: 2,
       name: 'Equality',
       effort: 'MEDIUM',
       parts: [
@@ -1217,6 +1347,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 14,
+      term: 2,
       name: 'Social Justice',
       effort: 'MEDIUM',
       parts: [
@@ -1226,6 +1357,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 15,
+      term: 2,
       name: 'Rights',
       effort: 'MEDIUM',
       parts: [
@@ -1235,6 +1367,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 16,
+      term: 3,
       name: 'Development',
       effort: 'LOW',
       parts: [
@@ -1246,6 +1379,7 @@ export const PLUS_ONE_CHAPTERS = {
   Sociology: [
     {
       num: 1,
+      term: 1,
       name: 'Sociology and Society',
       effort: 'LOW',
       parts: [
@@ -1254,6 +1388,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 2,
+      term: 1,
       name: 'Terms, Concepts and their use in Sociology',
       effort: 'HIGH',
       parts: [
@@ -1263,6 +1398,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 3,
+      term: 1,
       name: 'Understanding Social Institutions',
       effort: 'HIGH',
       parts: [
@@ -1272,6 +1408,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 4,
+      term: 2,
       name: 'Culture and Socialisation',
       effort: 'MEDIUM',
       parts: [
@@ -1281,6 +1418,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 5,
+      term: 2,
       name: 'Social Structure, Stratification and Social Processes in Society',
       effort: 'HIGH',
       parts: [
@@ -1290,6 +1428,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 6,
+      term: 2,
       name: 'Social Order, Social Change and Social Processes in Rural and Urban Society',
       effort: 'HIGH',
       parts: [
@@ -1299,6 +1438,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 7,
+      term: 2,
       name: 'Environment and Society',
       effort: 'MEDIUM',
       parts: [
@@ -1308,6 +1448,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 8,
+      term: 3,
       name: 'Introducing Western Sociologists',
       effort: 'VERY_HIGH',
       parts: [
@@ -1318,6 +1459,7 @@ export const PLUS_ONE_CHAPTERS = {
     },
     {
       num: 9,
+      term: 3,
       name: 'Indian Sociologists',
       effort: 'HIGH',
       parts: [

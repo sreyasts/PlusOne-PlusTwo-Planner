@@ -36,11 +36,14 @@ export function validateImprovementSelection(config, stream, startDate, deadline
 }
 
 /** Rebuild only the original study scope, retaining exclusions and completed task IDs. */
-export function getRemainingPlanTasks({ stream, targetTerm = 3, improvementConfig = [], completedChapterIds = new Set(), completedTaskIds = new Set() }) {
+export function getRemainingPlanTasks({ grade = '+2', stream, targetTerm = 3, improvementConfig = [], completedChapterIds = new Set(), completedTaskIds = new Set() }) {
   const allowedSubjects = getStreamSubjects(stream);
   const selected = new Set(improvementConfig.filter(item => allowedSubjects.includes(item.subject)).map(item => item.subject));
-  const tasks = stream === 'imp_only' ? [] : PLUS_TWO_SYLLABUS.filter(task =>
+  const isRegularPlusOne = grade === '+1' && stream !== 'imp_only';
+  const sourceSyllabus = isRegularPlusOne ? PLUS_ONE_SYLLABUS : PLUS_TWO_SYLLABUS;
+  const tasks = stream === 'imp_only' ? [] : sourceSyllabus.filter(task =>
     allowedSubjects.includes(task.subject) && task.term <= targetTerm);
-  return [...tasks, ...PLUS_ONE_SYLLABUS.filter(task => selected.has(task.subject))]
+  const impTasks = isRegularPlusOne ? [] : PLUS_ONE_SYLLABUS.filter(task => selected.has(task.subject));
+  return [...tasks, ...impTasks]
     .filter(task => !completedChapterIds.has(task.chapId) && !completedTaskIds.has(task.id));
 }

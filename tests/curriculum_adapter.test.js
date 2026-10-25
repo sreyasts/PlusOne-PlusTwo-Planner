@@ -96,6 +96,19 @@ describe('Curriculum Adapter Architecture & Multi-Board Scheduling', () => {
       expect(phyChapters[0].chapterName).toBe('Electric Charges and Fields');
       expect(phyChapters[0].parts.length).toBeGreaterThan(0);
     });
+
+    it('initializes Plus One canonical tasks across all streams when grade is +1', () => {
+      const adapter = new KeralaDHSEAdapter({ grade: '+1', stream: 'commerce' });
+      expect(adapter.grade).toBe('+1');
+      const tasks = adapter.getTasks();
+      expect(tasks.length).toBeGreaterThan(50);
+      expect(tasks.every((t) => t.grade === '+1')).toBe(true);
+      const subjects = adapter.getSubjects();
+      expect(subjects).toContain('Accountancy');
+      expect(subjects).toContain('Business Studies');
+      expect(subjects).toContain('Economics');
+      expect(subjects).toContain('Computer Applications');
+    });
   });
 
   describe('CBSEClass12Adapter (National Board Integration)', () => {

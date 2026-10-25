@@ -686,5 +686,46 @@ describe('Edge Cases, Boundary Conditions & Invariant Hardening', () => {
       expect(reviewDay).toBeGreaterThanOrEqual(initialDay);
     });
   });
+
+  describe('Plus One (+1) Full Support Invariants', () => {
+    const streams = ['cs', 'bio', 'commerce', 'humanities'];
+
+    streams.forEach((stream) => {
+      it(`generates valid pure Plus One schedule for ${stream} stream`, () => {
+        const plan = buildIntelligentPlan({
+          grade: '+1',
+          stream: stream,
+          startDateStr: '2026-10-25',
+          deadlineDateStr: '2027-02-28',
+          termScope: 3,
+        });
+
+        expect(plan.valid).toBe(true);
+        expect(plan.plan.length).toBeGreaterThan(60);
+
+        const allTasks = plan.plan.flatMap((d) => d.tasks);
+        expect(allTasks.length).toBeGreaterThan(0);
+        // All non-mock tasks must be +1
+        expect(allTasks.every((t) => t.grade === '+1')).toBe(true);
+
+        const val = validatePlan(plan);
+        expect(val.scorecard.orderingViolations).toBe(0);
+        expect(val.scorecard.duplicateTasks).toBe(0);
+      });
+    });
+
+    it('respects academic term ceilings for Plus One Onam (Term 1) and Christmas (Term 2)', () => {
+      const term1Plan = buildIntelligentPlan({
+        grade: '+1',
+        stream: 'commerce',
+        startDateStr: '2026-06-01',
+        deadlineDateStr: '2026-08-31',
+        termScope: 1,
+      });
+
+      const t1Tasks = term1Plan.plan.flatMap((d) => d.tasks).filter((t) => !t.isRevision);
+      expect(t1Tasks.every((t) => (t.term || 1) <= 1)).toBe(true);
+    });
+  });
 });
 

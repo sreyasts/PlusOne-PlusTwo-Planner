@@ -3,7 +3,7 @@
   "streamTitle": "Commerce Stream (Accountancy, Business Studies, Economics, Computer Applications)",
   "board": "Kerala DHSE / SCERT",
   "academicYear": "2026-2027",
-  "lastUpdated": "2026-09-24",
+  "lastUpdated": "2026-10-25",
   "subjects": [
     {
       "subjectId": "accountancy-plus-two",
@@ -16,7 +16,7 @@
           "chapterNumber": 1,
           "title": "Accounting for Not-for-Profit Organisation",
           "weightageScore": 8,
-          "recommendedRevisionHours": 5.0,
+          "recommendedRevisionHours": 5,
           "term": 1,
           "effort": "HIGH"
         },
@@ -32,7 +32,7 @@
           "chapterNumber": 3,
           "title": "Reconstitution of a Partnership Firm: Admission of a Partner",
           "weightageScore": 9,
-          "recommendedRevisionHours": 6.0,
+          "recommendedRevisionHours": 6,
           "term": 1,
           "effort": "VERY_HIGH"
         },
@@ -48,7 +48,7 @@
           "chapterNumber": 5,
           "title": "Dissolution of Partnership Firm",
           "weightageScore": 6,
-          "recommendedRevisionHours": 4.0,
+          "recommendedRevisionHours": 4,
           "term": 2,
           "effort": "MEDIUM"
         },
@@ -56,7 +56,7 @@
           "chapterNumber": 6,
           "title": "Accounting for Share Capital",
           "weightageScore": 9,
-          "recommendedRevisionHours": 6.0,
+          "recommendedRevisionHours": 6,
           "term": 2,
           "effort": "VERY_HIGH"
         },
@@ -64,7 +64,7 @@
           "chapterNumber": 7,
           "title": "Issue and Redemption of Debentures",
           "weightageScore": 6,
-          "recommendedRevisionHours": 4.0,
+          "recommendedRevisionHours": 4,
           "term": 2,
           "effort": "MEDIUM"
         },
@@ -80,7 +80,7 @@
           "chapterNumber": 9,
           "title": "Analysis of Financial Statements & Accounting Ratios",
           "weightageScore": 8,
-          "recommendedRevisionHours": 5.0,
+          "recommendedRevisionHours": 5,
           "term": 3,
           "effort": "HIGH"
         },
@@ -88,7 +88,7 @@
           "chapterNumber": 10,
           "title": "Computerized Accounting System & Spreadsheet",
           "weightageScore": 15,
-          "recommendedRevisionHours": 5.0,
+          "recommendedRevisionHours": 5,
           "term": 3,
           "effort": "HIGH"
         }
@@ -113,7 +113,7 @@
           "chapterNumber": 2,
           "title": "Principles of Management",
           "weightageScore": 7,
-          "recommendedRevisionHours": 4.0,
+          "recommendedRevisionHours": 4,
           "term": 1,
           "effort": "HIGH"
         },
@@ -121,7 +121,7 @@
           "chapterNumber": 3,
           "title": "Business Environment",
           "weightageScore": 5,
-          "recommendedRevisionHours": 3.0,
+          "recommendedRevisionHours": 3,
           "term": 1,
           "effort": "LOW"
         },
@@ -145,7 +145,7 @@
           "chapterNumber": 6,
           "title": "Staffing",
           "weightageScore": 7,
-          "recommendedRevisionHours": 4.0,
+          "recommendedRevisionHours": 4,
           "term": 2,
           "effort": "HIGH"
         },
@@ -161,7 +161,7 @@
           "chapterNumber": 8,
           "title": "Controlling",
           "weightageScore": 5,
-          "recommendedRevisionHours": 3.0,
+          "recommendedRevisionHours": 3,
           "term": 2,
           "effort": "LOW"
         },
@@ -169,7 +169,7 @@
           "chapterNumber": 9,
           "title": "Financial Management",
           "weightageScore": 9,
-          "recommendedRevisionHours": 5.0,
+          "recommendedRevisionHours": 5,
           "term": 2,
           "effort": "VERY_HIGH"
         },
@@ -177,7 +177,7 @@
           "chapterNumber": 10,
           "title": "Financial Markets",
           "weightageScore": 7,
-          "recommendedRevisionHours": 4.0,
+          "recommendedRevisionHours": 4,
           "term": 3,
           "effort": "MEDIUM"
         },
@@ -185,7 +185,7 @@
           "chapterNumber": 11,
           "title": "Marketing Management",
           "weightageScore": 9,
-          "recommendedRevisionHours": 5.0,
+          "recommendedRevisionHours": 5,
           "term": 3,
           "effort": "VERY_HIGH"
         },
@@ -218,7 +218,7 @@
           "chapterNumber": 2,
           "title": "Theory of Consumer Behaviour",
           "weightageScore": 8,
-          "recommendedRevisionHours": 5.0,
+          "recommendedRevisionHours": 5,
           "term": 1,
           "effort": "VERY_HIGH"
         },
@@ -226,7 +226,7 @@
           "chapterNumber": 3,
           "title": "Production and Costs",
           "weightageScore": 8,
-          "recommendedRevisionHours": 5.0,
+          "recommendedRevisionHours": 5,
           "term": 1,
           "effort": "HIGH"
         },
@@ -234,7 +234,7 @@
           "chapterNumber": 4,
           "title": "The Theory of the Firm under Perfect Competition",
           "weightageScore": 6,
-          "recommendedRevisionHours": 4.0,
+          "recommendedRevisionHours": 4,
           "term": 1,
           "effort": "MEDIUM"
         },
@@ -242,7 +242,7 @@
           "chapterNumber": 5,
           "title": "Market Equilibrium",
           "weightageScore": 6,
-          "recommendedRevisionHours": 4.0,
+          "recommendedRevisionHours": 4,
           "term": 2,
           "effort": "MEDIUM"
         },
@@ -258,7 +258,7 @@
           "chapterNumber": 7,
           "title": "National Income Accounting",
           "weightageScore": 10,
-          "recommendedRevisionHours": 6.0,
+          "recommendedRevisionHours": 6,
           "term": 2,
           "effort": "VERY_HIGH"
         },
@@ -282,7 +282,7 @@
           "chapterNumber": 10,
           "title": "Government Budget and the Economy",
           "weightageScore": 7,
-          "recommendedRevisionHours": 4.0,
+          "recommendedRevisionHours": 4,
           "term": 3,
           "effort": "MEDIUM"
         },
@@ -290,7 +290,7 @@
           "chapterNumber": 11,
           "title": "Open Economy Macroeconomics",
           "weightageScore": 7,
-          "recommendedRevisionHours": 4.0,
+          "recommendedRevisionHours": 4,
           "term": 3,
           "effort": "MEDIUM"
         }
@@ -315,7 +315,7 @@
           "chapterNumber": 2,
           "title": "Arrays and String Handling",
           "weightageScore": 7,
-          "recommendedRevisionHours": 4.0,
+          "recommendedRevisionHours": 4,
           "term": 1,
           "effort": "HIGH"
         },
@@ -331,7 +331,7 @@
           "chapterNumber": 4,
           "title": "Cascading Style Sheets (CSS)",
           "weightageScore": 5,
-          "recommendedRevisionHours": 3.0,
+          "recommendedRevisionHours": 3,
           "term": 1,
           "effort": "LOW"
         },
@@ -339,7 +339,7 @@
           "chapterNumber": 5,
           "title": "JavaScript and Client-side Scripting",
           "weightageScore": 8,
-          "recommendedRevisionHours": 5.0,
+          "recommendedRevisionHours": 5,
           "term": 2,
           "effort": "HIGH"
         },
@@ -382,6 +382,874 @@
           "recommendedRevisionHours": 2.5,
           "term": 3,
           "effort": "LOW"
+        }
+      ]
+    },
+    {
+      "subjectId": "accountancy-plus-one",
+      "subjectName": "Accountancy",
+      "stream": "commerce",
+      "grade": 11,
+      "totalMaxMarks": 60,
+      "chapters": [
+        {
+          "chapterNumber": 1,
+          "title": "Introduction to Accounting",
+          "weightageScore": 4,
+          "recommendedRevisionHours": 0.9,
+          "term": 1,
+          "effort": "LOW",
+          "parts": [
+            {
+              "title": "Meaning, Objectives, Qualitative Characteristics & Basic Accounting Terms",
+              "minutes": 55
+            }
+          ]
+        },
+        {
+          "chapterNumber": 2,
+          "title": "Theory Base of Accounting",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 1.9,
+          "term": 1,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "GAAP, Basic Concepts & Accounting Principles (Going Concern, Accrual, Matching)",
+              "minutes": 60
+            },
+            {
+              "title": "Accounting Standards, IFRS & Basis of Accounting (Cash vs Accrual)",
+              "minutes": 55
+            }
+          ]
+        },
+        {
+          "chapterNumber": 3,
+          "title": "Recording of Transactions - I",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 3.4,
+          "term": 1,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Accounting Equation, Rules of Debit and Credit & Source Documents",
+              "minutes": 65
+            },
+            {
+              "title": "Journal Entries: Compound Entries, Discount (Trade & Cash) & GST Entries",
+              "minutes": 75
+            },
+            {
+              "title": "Ledger Posting & Balancing of Ledger Accounts",
+              "minutes": 65
+            }
+          ]
+        },
+        {
+          "chapterNumber": 4,
+          "title": "Recording of Transactions - II",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 3.3,
+          "term": 2,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Cash Book: Simple Cash Book, Two-Column Cash Book & Petty Cash Book",
+              "minutes": 70
+            },
+            {
+              "title": "Special Purpose Subsidiary Books: Purchases, Sales, Purchases Return & Sales Return Books",
+              "minutes": 65
+            },
+            {
+              "title": "Journal Proper: Opening, Transfer, Rectification & Adjustment Entries",
+              "minutes": 60
+            }
+          ]
+        },
+        {
+          "chapterNumber": 5,
+          "title": "Bank Reconciliation Statement",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 2.3,
+          "term": 2,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Causes of Differences between Cash Book and Pass Book Balances",
+              "minutes": 60
+            },
+            {
+              "title": "Preparation of BRS with Normal and Overdraft Balances (Favourable & Unfavourable)",
+              "minutes": 75
+            }
+          ]
+        },
+        {
+          "chapterNumber": 6,
+          "title": "Trial Balance and Rectification of Errors",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 3.3,
+          "term": 2,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Objectives, Preparation and Limitations of Trial Balance",
+              "minutes": 60
+            },
+            {
+              "title": "Classification of Errors: Errors of Omission, Commission, Principle & Compensating",
+              "minutes": 65
+            },
+            {
+              "title": "Rectification of Errors: Before and After Trial Balance & Suspense Account",
+              "minutes": 75
+            }
+          ]
+        },
+        {
+          "chapterNumber": 7,
+          "title": "Depreciation, Provisions and Reserves",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 3.3,
+          "term": 2,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Meaning, Causes and Factors of Depreciation: Straight Line Method (SLM)",
+              "minutes": 65
+            },
+            {
+              "title": "Written Down Value Method (WDV) & Disposal of Asset Account",
+              "minutes": 75
+            },
+            {
+              "title": "Provisions vs Reserves: Revenue, Capital, General and Specific Reserves",
+              "minutes": 55
+            }
+          ]
+        },
+        {
+          "chapterNumber": 8,
+          "title": "Financial Statements - I",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 3.3,
+          "term": 3,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Stakeholders of Financial Statements & Capital vs Revenue Expenditure/Receipts",
+              "minutes": 55
+            },
+            {
+              "title": "Trading Account, Gross Profit & Cost of Goods Sold Calculations",
+              "minutes": 65
+            },
+            {
+              "title": "Profit and Loss Account, Net Profit & Preparation of Balance Sheet without Adjustments",
+              "minutes": 75
+            }
+          ]
+        },
+        {
+          "chapterNumber": 9,
+          "title": "Financial Statements - II",
+          "weightageScore": 8,
+          "recommendedRevisionHours": 3.8,
+          "term": 3,
+          "effort": "VERY_HIGH",
+          "parts": [
+            {
+              "title": "Adjustments: Closing Stock, Outstanding/Prepaid Expenses, Accrued/Unearned Income",
+              "minutes": 70
+            },
+            {
+              "title": "Bad Debts, Provision for Doubtful Debts & Provision for Discount on Debtors",
+              "minutes": 75
+            },
+            {
+              "title": "Comprehensive Final Accounts Problem with Multiple Adjustments",
+              "minutes": 80
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "subjectId": "business-studies-plus-one",
+      "subjectName": "Business Studies",
+      "stream": "commerce",
+      "grade": 11,
+      "totalMaxMarks": 60,
+      "chapters": [
+        {
+          "chapterNumber": 1,
+          "title": "Business, Trade and Commerce",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 1.9,
+          "term": 1,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Concept, Characteristics, Objectives of Business & Classification (Industry vs Commerce)",
+              "minutes": 60
+            },
+            {
+              "title": "Business Risks: Nature, Causes & Role of Profit in Business",
+              "minutes": 55
+            }
+          ]
+        },
+        {
+          "chapterNumber": 2,
+          "title": "Forms of Business Organisations",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 3.3,
+          "term": 1,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Sole Proprietorship, Hindu Undivided Family (HUF) & Partnership (Types & Registration)",
+              "minutes": 65
+            },
+            {
+              "title": "Cooperative Societies: Meaning, Types, Merits & Limitations",
+              "minutes": 60
+            },
+            {
+              "title": "Joint Stock Company: Features, Types (Private vs Public) & Choice of Enterprise Form",
+              "minutes": 70
+            }
+          ]
+        },
+        {
+          "chapterNumber": 3,
+          "title": "Private, Public and Global Enterprises",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 2.1,
+          "term": 1,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Public Sector Enterprises: Departmental Undertakings, Statutory Corporations & Government Companies",
+              "minutes": 65
+            },
+            {
+              "title": "Changing Role of Public Sector, Global Enterprises (MNCs) & Joint Ventures / PPP",
+              "minutes": 60
+            }
+          ]
+        },
+        {
+          "chapterNumber": 4,
+          "title": "Business Services",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 3.2,
+          "term": 2,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Banking Services: Types of Bank Accounts, RTGS, NEFT, Bank Overdraft & E-Banking",
+              "minutes": 65
+            },
+            {
+              "title": "Insurance: Principles of Insurance & Types (Life, Fire, Marine Insurance)",
+              "minutes": 70
+            },
+            {
+              "title": "Communication Services, Postal Services & Warehousing (Functions & Types)",
+              "minutes": 55
+            }
+          ]
+        },
+        {
+          "chapterNumber": 5,
+          "title": "Emerging Modes of Business",
+          "weightageScore": 4,
+          "recommendedRevisionHours": 1.8,
+          "term": 2,
+          "effort": "LOW",
+          "parts": [
+            {
+              "title": "E-Business: Scope, Benefits, Limitations & Online Transaction Process",
+              "minutes": 60
+            },
+            {
+              "title": "Outsourcing (BPO/KPO): Concept, Need, Scope and Ethical Concerns",
+              "minutes": 50
+            }
+          ]
+        },
+        {
+          "chapterNumber": 6,
+          "title": "Social Responsibilities of Business and Business Ethics",
+          "weightageScore": 4,
+          "recommendedRevisionHours": 1.8,
+          "term": 2,
+          "effort": "LOW",
+          "parts": [
+            {
+              "title": "Concept and Arguments For/Against Social Responsibility towards Stakeholders",
+              "minutes": 55
+            },
+            {
+              "title": "Business Ethics, Elements of Ethics & Environmental Protection by Business",
+              "minutes": 50
+            }
+          ]
+        },
+        {
+          "chapterNumber": 7,
+          "title": "Sources of Business Finance",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 3.3,
+          "term": 2,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Classification of Financial Sources: Short, Medium & Long-term Funds",
+              "minutes": 60
+            },
+            {
+              "title": "Equity Shares, Preference Shares, Retained Earnings & Debentures",
+              "minutes": 70
+            },
+            {
+              "title": "Commercial Banks, Financial Institutions, Trade Credit & International Financing (ADR, GDR, FCCB)",
+              "minutes": 65
+            }
+          ]
+        },
+        {
+          "chapterNumber": 8,
+          "title": "Small Business and Enterprises",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 1.9,
+          "term": 3,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Entrepreneurship Development (EDP), Intellectual Property Rights (IPR) & Start-up Scheme",
+              "minutes": 60
+            },
+            {
+              "title": "MSME Definition, Role of Small Business in Rural India & Government Assistance (DIC, NSIC)",
+              "minutes": 55
+            }
+          ]
+        },
+        {
+          "chapterNumber": 9,
+          "title": "Internal Trade",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 2.1,
+          "term": 3,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Wholesale and Retail Trade: Types of Retailers (Itinerant & Fixed Shop Retailers)",
+              "minutes": 60
+            },
+            {
+              "title": "Departmental Stores, Multiple Chain Shops, Mail Order & GST (Goods and Services Tax) Concepts",
+              "minutes": 65
+            }
+          ]
+        },
+        {
+          "chapterNumber": 10,
+          "title": "International Business",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 3.3,
+          "term": 3,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Domestic vs International Trade: Scope, Benefits & Export Trade Procedure",
+              "minutes": 65
+            },
+            {
+              "title": "Import Trade Procedure & Key International Trade Documents (Letter of Credit, Bill of Lading)",
+              "minutes": 70
+            },
+            {
+              "title": "International Trade Institutions: WTO Objectives, Functions & IMF/World Bank",
+              "minutes": 60
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "subjectId": "economics-plus-one",
+      "subjectName": "Economics",
+      "stream": "commerce",
+      "grade": 11,
+      "totalMaxMarks": 60,
+      "chapters": [
+        {
+          "chapterNumber": 1,
+          "title": "Introduction to Statistics",
+          "weightageScore": 4,
+          "recommendedRevisionHours": 0.8,
+          "term": 1,
+          "effort": "LOW",
+          "parts": [
+            {
+              "title": "Meaning, Scope and Importance of Statistics in Economics",
+              "minutes": 50
+            }
+          ]
+        },
+        {
+          "chapterNumber": 2,
+          "title": "Collection of Data",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 1.9,
+          "term": 1,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Sources of Data: Primary vs Secondary Data & Methods of Collecting Primary Data",
+              "minutes": 55
+            },
+            {
+              "title": "Sampling: Random vs Non-Random Sampling, Census vs Sample & NSSO/Census of India",
+              "minutes": 60
+            }
+          ]
+        },
+        {
+          "chapterNumber": 3,
+          "title": "Organisation of Data",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 1.9,
+          "term": 1,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Classification of Data: Chronological, Spatial, Qualitative & Quantitative",
+              "minutes": 55
+            },
+            {
+              "title": "Frequency Distribution: Discrete vs Continuous Series, Class Limits & Tally Marks",
+              "minutes": 60
+            }
+          ]
+        },
+        {
+          "chapterNumber": 4,
+          "title": "Presentation of Data",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 2.1,
+          "term": 2,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Geometric Diagrams: Bar Diagrams (Simple, Multiple, Sub-divided) & Pie Diagrams",
+              "minutes": 60
+            },
+            {
+              "title": "Frequency Diagrams: Histogram, Frequency Polygon, Ogives & Arithmetic Line Graphs",
+              "minutes": 65
+            }
+          ]
+        },
+        {
+          "chapterNumber": 5,
+          "title": "Measures of Central Tendency",
+          "weightageScore": 8,
+          "recommendedRevisionHours": 3.7,
+          "term": 2,
+          "effort": "VERY_HIGH",
+          "parts": [
+            {
+              "title": "Arithmetic Mean: Direct, Shortcut and Step-Deviation Methods for Grouped/Ungrouped Data",
+              "minutes": 75
+            },
+            {
+              "title": "Median and Partition Values (Quartiles, Deciles, Percentiles) in Continuous Series",
+              "minutes": 75
+            },
+            {
+              "title": "Mode Calculation (Inspection, Grouping Method & Empirical Formula) & Comparison of Averages",
+              "minutes": 70
+            }
+          ]
+        },
+        {
+          "chapterNumber": 6,
+          "title": "Correlation",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 2.2,
+          "term": 2,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Meaning and Types of Correlation & Scatter Diagram Analysis",
+              "minutes": 55
+            },
+            {
+              "title": "Karl Pearson’s Coefficient of Correlation & Spearman’s Rank Correlation",
+              "minutes": 75
+            }
+          ]
+        },
+        {
+          "chapterNumber": 7,
+          "title": "Index Numbers",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 2.2,
+          "term": 3,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Meaning, Uses and Construction of Simple Index Numbers (Aggregative vs Relatives)",
+              "minutes": 60
+            },
+            {
+              "title": "Weighted Index Numbers: Laspeyres, Paasche, Fisher’s Ideal Index & CPI/WPI",
+              "minutes": 70
+            }
+          ]
+        },
+        {
+          "chapterNumber": 8,
+          "title": "Indian Economy on the Eve of Independence",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 1.9,
+          "term": 1,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "State of Agricultural, Industrial and Foreign Trade Sectors under Colonial Rule",
+              "minutes": 60
+            },
+            {
+              "title": "Demographic Profile, Occupational Structure & Infrastructure Development before 1947",
+              "minutes": 55
+            }
+          ]
+        },
+        {
+          "chapterNumber": 9,
+          "title": "Indian Economy (1950-1990)",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 2.2,
+          "term": 1,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Five Year Plans: Goals (Growth, Modernisation, Self-Reliance, Equity) & Land Reforms",
+              "minutes": 65
+            },
+            {
+              "title": "Green Revolution, Industrial Policy Resolution 1956 & Inward Looking Trade Strategy",
+              "minutes": 65
+            }
+          ]
+        },
+        {
+          "chapterNumber": 10,
+          "title": "Liberalisation, Privatisation and Globalisation: An Appraisal",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 3.3,
+          "term": 2,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Crisis of 1991 & Liberalisation Measures (Financial, Fiscal, Trade & Industrial Reforms)",
+              "minutes": 70
+            },
+            {
+              "title": "Privatisation (Disinvestment, Navratnas) & Globalisation (Outsourcing, WTO Impact)",
+              "minutes": 65
+            },
+            {
+              "title": "Critical Assessment of LPG Reforms: Growth, Agriculture, Industrial & Employment Performance",
+              "minutes": 60
+            }
+          ]
+        },
+        {
+          "chapterNumber": 11,
+          "title": "Human Capital Formation in India",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 1.9,
+          "term": 2,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Concept of Human Capital, Sources (Education, Health, Migration) & Economic Growth Linkage",
+              "minutes": 60
+            },
+            {
+              "title": "State of Education Sector in India, Regulatory Bodies & Future Prospects",
+              "minutes": 55
+            }
+          ]
+        },
+        {
+          "chapterNumber": 12,
+          "title": "Rural Development",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 2.1,
+          "term": 2,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Rural Credit: Institutional vs Non-Institutional Sources, SHGs & Micro-Credit",
+              "minutes": 60
+            },
+            {
+              "title": "Agricultural Marketing (Defects, Government Measures), Diversification & Organic Farming",
+              "minutes": 65
+            }
+          ]
+        },
+        {
+          "chapterNumber": 13,
+          "title": "Employment: Growth, Informalisation and Other Issues",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 2.1,
+          "term": 3,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Workers and Employment: Types, Worker-Population Ratio & Formal vs Informal Sector",
+              "minutes": 65
+            },
+            {
+              "title": "Unemployment: Types, Causes, Government Employment Generation Schemes (MGNREGA)",
+              "minutes": 60
+            }
+          ]
+        },
+        {
+          "chapterNumber": 14,
+          "title": "Environment and Sustainable Development",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 1.9,
+          "term": 3,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Functions and Carrying Capacity of Environment, Global Warming & Land Degradation",
+              "minutes": 60
+            },
+            {
+              "title": "Sustainable Development: Concept, Principles & Strategies for Sustainable Economic Growth",
+              "minutes": 55
+            }
+          ]
+        },
+        {
+          "chapterNumber": 15,
+          "title": "Comparative Development Experiences of India and its Neighbours",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 2,
+          "term": 3,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Developmental Path of India, China and Pakistan: Demographic & Structural Indicators",
+              "minutes": 60
+            },
+            {
+              "title": "Human Development Index (HDI) Comparison & Sectoral Contribution to GDP",
+              "minutes": 60
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "subjectId": "computer-applications-plus-one",
+      "subjectName": "Computer Applications",
+      "stream": "commerce",
+      "grade": 11,
+      "totalMaxMarks": 60,
+      "chapters": [
+        {
+          "chapterNumber": 1,
+          "title": "Fundamentals of Computers",
+          "weightageScore": 4,
+          "recommendedRevisionHours": 0.8,
+          "term": 1,
+          "effort": "LOW",
+          "parts": [
+            {
+              "title": "Evolution of Computers, Functional Units & Von Neumann Architecture",
+              "minutes": 50
+            }
+          ]
+        },
+        {
+          "chapterNumber": 2,
+          "title": "Components of the Computer System",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 1.9,
+          "term": 1,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Hardware: Processor, Memory (RAM, ROM, Cache), Secondary Storage Devices & I/O Ports",
+              "minutes": 60
+            },
+            {
+              "title": "Software: System vs Application Software, OS Functions & Open Source Concepts",
+              "minutes": 55
+            }
+          ]
+        },
+        {
+          "chapterNumber": 3,
+          "title": "Principles of Programming and Problem Solving",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 1.8,
+          "term": 1,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Problem Solving Phases, Algorithm Representation & Flowchart Symbols",
+              "minutes": 55
+            },
+            {
+              "title": "Structured Programming Concepts, Debugging Techniques & Program Documentation",
+              "minutes": 55
+            }
+          ]
+        },
+        {
+          "chapterNumber": 4,
+          "title": "Getting Started with C++",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 1.9,
+          "term": 2,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Character Set, Tokens (Keywords, Identifiers, Literals, Operators, Punctuators)",
+              "minutes": 55
+            },
+            {
+              "title": "Structure of a C++ Program, Header Files, Compilation & Basic I/O (cin, cout)",
+              "minutes": 60
+            }
+          ]
+        },
+        {
+          "chapterNumber": 5,
+          "title": "Data Types and Operators",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 2,
+          "term": 2,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Fundamental Data Types, Variables, Constants & Type Modifiers in C++",
+              "minutes": 55
+            },
+            {
+              "title": "Operators (Arithmetic, Relational, Logical, Assignment, Conditional) & Type Conversion",
+              "minutes": 65
+            }
+          ]
+        },
+        {
+          "chapterNumber": 6,
+          "title": "Introduction to Programming (Control Statements)",
+          "weightageScore": 8,
+          "recommendedRevisionHours": 3.6,
+          "term": 2,
+          "effort": "VERY_HIGH",
+          "parts": [
+            {
+              "title": "Conditional Branching: if, if-else, nested if & switch-case Statements",
+              "minutes": 70
+            },
+            {
+              "title": "Iteration Statements: while, do-while & for loops with break and continue",
+              "minutes": 75
+            },
+            {
+              "title": "Nested Loops, Programming Patterns & Dry Run Tracing",
+              "minutes": 70
+            }
+          ]
+        },
+        {
+          "chapterNumber": 7,
+          "title": "Arrays",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 2.3,
+          "term": 2,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Array Concept, Declaration, Initialization & One-Dimensional Array Traversal",
+              "minutes": 65
+            },
+            {
+              "title": "Linear Search, Finding Maximum/Minimum & Character Arrays (Strings) in C++",
+              "minutes": 70
+            }
+          ]
+        },
+        {
+          "chapterNumber": 8,
+          "title": "Functions",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 2.3,
+          "term": 3,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Built-in Library Functions (cmath, cctype, cstring) & User-Defined Function Prototypes",
+              "minutes": 65
+            },
+            {
+              "title": "Function Arguments: Call by Value vs Call by Reference & Scope of Variables",
+              "minutes": 70
+            }
+          ]
+        },
+        {
+          "chapterNumber": 9,
+          "title": "Computer Networks",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 2,
+          "term": 3,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Network Benefits, Transmission Media (Guided vs Unguided) & Network Topologies",
+              "minutes": 60
+            },
+            {
+              "title": "Network Types (LAN, MAN, WAN), Devices (Switch, Router, Gateway) & Protocols (TCP/IP)",
+              "minutes": 60
+            }
+          ]
+        },
+        {
+          "chapterNumber": 10,
+          "title": "Internet and Mobile Computing",
+          "weightageScore": 4,
+          "recommendedRevisionHours": 1.8,
+          "term": 3,
+          "effort": "LOW",
+          "parts": [
+            {
+              "title": "Internet Architecture, IP Addressing, DNS, WWW, Email Services & Cloud Computing",
+              "minutes": 55
+            },
+            {
+              "title": "Mobile Computing Technologies: Cellular Generations (4G/5G), Wi-Fi & Cyber Security",
+              "minutes": 50
+            }
+          ]
         }
       ]
     }

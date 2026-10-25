@@ -1153,7 +1153,7 @@ function showToastMessage(text, icon = 'checkCircle') {
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.setAttribute('href', url);
-            link.setAttribute('download', `mission-plustwo-schedule-${appState.stream || 'plan'}.csv`);
+            link.setAttribute('download', `plus-planner-schedule-${appState.grade || '+2'}-${appState.stream || 'plan'}.csv`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -1432,13 +1432,33 @@ function showToastMessage(text, icon = 'checkCircle') {
             };
         }
 
-        let selectedStream = 'cs'; // default: 'cs' (Computer Science preset), 'bio', or 'imp_only'
+        let selectedGrade = '+2'; // '+2' or '+1'
+        let selectedStream = 'cs'; // default: 'cs', 'bio', 'commerce', 'humanities', or 'imp_only'
         let activeSetupSubjectTab = 'Physics';
         let activeSetupGradeTab = '+2'; // '+2' or '+1'
         const selectedCompletedChapters = new Set();
         let setupHasImprovement = false;
         const setupImprovementSelection = new Map();
         const setupImprovementDates = new Map();
+
+        function setGradeSelection(grade) {
+            if (grade === 'dual') {
+                selectedGrade = '+2';
+                activeSetupGradeTab = '+2';
+                setImprovementToggle(true);
+            } else if (grade === '+1') {
+                selectedGrade = '+1';
+                activeSetupGradeTab = '+1';
+                setImprovementToggle(false);
+            } else {
+                selectedGrade = '+2';
+                activeSetupGradeTab = '+2';
+                setImprovementToggle(false);
+            }
+            selectedCompletedChapters.clear();
+            renderApp();
+            goToSetupStep(1);
+        }
 
         // getStreamSubjects imported from ./engine/planner.js
 
@@ -1450,12 +1470,13 @@ function showToastMessage(text, icon = 'checkCircle') {
             setupImprovementDates.clear();
             const subs = getStreamSubjects(stream);
             if (stream === 'imp_only') {
+                selectedGrade = '+1';
                 activeSetupGradeTab = '+1';
                 activeSetupSubjectTab = 'Physics';
                 const cb = document.getElementById('has-improvement');
                 if (cb) cb.checked = true;
             } else {
-                activeSetupGradeTab = '+2';
+                activeSetupGradeTab = selectedGrade || '+2';
                 activeSetupSubjectTab = subs[0];
             }
             renderApp();
@@ -1997,6 +2018,8 @@ function showToastMessage(text, icon = 'checkCircle') {
             const checkedCompletedBoxes = Array.from(selectedCompletedChapters);
 
             const isImpOnly = selectedStream === 'imp_only';
+            const currentGrade = (typeof selectedGrade !== 'undefined' ? selectedGrade : (selectedStream === 'imp_only' ? '+1' : '+2'));
+            const isPlusOne = currentGrade === '+1' && !isImpOnly;
             let improvementConfig = [];
             const hasImp = isImpOnly || document.getElementById('has-improvement')?.checked;
             try {
@@ -2014,6 +2037,7 @@ function showToastMessage(text, icon = 'checkCircle') {
                 return;
             }
             const tasksToPlan = getRemainingPlanTasks({
+                grade: currentGrade,
                 stream: selectedStream, targetTerm, improvementConfig,
                 completedChapterIds: new Set(checkedCompletedBoxes),
             });
@@ -2039,6 +2063,7 @@ function showToastMessage(text, icon = 'checkCircle') {
                 if (planResult && planResult.planDays) {
                     appState = {
                         engineVersion: PLANNER_ENGINE_VERSION,
+                        grade: currentGrade,
                         stream: selectedStream,
                         improvementOnly: isImpOnly,
                         studyIntensity: studyIntensity,
@@ -2204,7 +2229,9 @@ function showToastMessage(text, icon = 'checkCircle') {
 
             const userStream = appState.stream || (appState.plan.some(d => d.tasks.some(t => t.subject === 'Botany' || t.subject === 'Zoology')) ? 'bio' : 'cs');
             const targetTerm = appState.targetTerm || 3;
+            const userGrade = appState.grade || (typeof selectedGrade !== 'undefined' ? selectedGrade : '+2');
             const uncompletedTasks = getRemainingPlanTasks({
+                grade: userGrade,
                 stream: userStream, targetTerm, improvementConfig: appState.improvementConfig || [],
                 completedChapterIds, completedTaskIds,
             });
@@ -2350,6 +2377,7 @@ function showToastMessage(text, icon = 'checkCircle') {
             const openSections = new Set([...container.querySelectorAll('details[id][open]')].map(section => section.id));
             document.body.classList.toggle('is-setting-up', !appState);
             const isML = getAppLanguage() === 'ml';
+            const currentSelectedGrade = (typeof selectedGrade !== 'undefined' ? selectedGrade : '+2');
             const dateDisplay = document.getElementById('date-display');
             if (dateDisplay) {
                 dateDisplay.innerText = new Date().toLocaleDateString(isML ? 'ml-IN' : 'en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
@@ -2387,16 +2415,58 @@ function showToastMessage(text, icon = 'checkCircle') {
                         <!-- Form state inputs preserved for engine compatibility -->
                         <input type="hidden" id="target-term" value="2">
 
-                        <!-- STEP 1: Stream Selection -->
+                        <!-- STEP 1: Grade & Stream Selection -->
                         <div id="setup-step-1" class="${setupCurrentStep === 1 ? '' : 'hidden'} space-y-5 animate-fade-in-up">
                             <div class="text-left">
                                 <h3 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">
-                                    ${isML ? 'സ്ട്രീം തിരഞ്ഞെടുക്കുക' : 'Select Your Stream'}
+                                    ${isML ? 'ക്ലാസും സ്ട്രീമും തിരഞ്ഞെടുക്കുക' : 'Select Your Class & Stream'}
                                 </h3>
                                 <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-300 mt-1">
-                                    ${isML ? 'നിങ്ങൾ പഠിക്കുന്ന വിഷയം തിരഞ്ഞെടുക്കുക. സിലബസ് ഉടൻ തയ്യാറാകും.' : 'Choose your stream to load the bundled DHSE chapter list.'}
+                                    ${isML ? 'നിങ്ങളുടെ ക്ലാസും പഠിക്കുന്ന വിഷയങ്ങളും തിരഞ്ഞെടുക്കുക. സിലബസ് ഉടൻ തയ്യാറാകും.' : 'Choose whether you are studying Plus One (+1) or Plus Two (+2) and pick your stream.'}
                                 </p>
                             </div>
+
+                            <!-- Class / Grade Selection Tabs -->
+                            <div>
+                                <label class="block text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
+                                    ${isML ? 'ക്ലാസ് / ഗ്രേഡ്' : 'Class / Academic Year'}
+                                </label>
+                                <div class="grid grid-cols-3 gap-2">
+                                    <button type="button" id="grade-btn-p2" onclick="setGradeSelection('+2')" class="cursor-pointer p-3 rounded-2xl border-2 ${currentSelectedGrade === '+2' && !document.getElementById('has-improvement')?.checked ? 'border-blue-600 dark:border-blue-500 bg-blue-50/70 dark:bg-blue-950/40 ring-2 ring-blue-500/20 shadow-sm' : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600'} transition text-left flex flex-col justify-between">
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-xs font-black text-slate-900 dark:text-white">🎓 Plus Two (+2)</span>
+                                            <span class="w-4 h-4 rounded-full ${currentSelectedGrade === '+2' && !document.getElementById('has-improvement')?.checked ? 'bg-blue-600 text-white' : 'border border-slate-300 dark:border-slate-600'} flex items-center justify-center text-[10px]">
+                                                ${currentSelectedGrade === '+2' && !document.getElementById('has-improvement')?.checked ? '<i class="fa-solid fa-check"></i>' : ''}
+                                            </span>
+                                        </div>
+                                        <span class="text-[10px] font-semibold text-slate-400 mt-0.5">Class 12 Regular</span>
+                                    </button>
+
+                                    <button type="button" id="grade-btn-p1" onclick="setGradeSelection('+1')" class="cursor-pointer p-3 rounded-2xl border-2 ${currentSelectedGrade === '+1' ? 'border-amber-600 dark:border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 ring-2 ring-amber-500/20 shadow-sm' : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600'} transition text-left flex flex-col justify-between">
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-xs font-black text-slate-900 dark:text-white">📚 Plus One (+1)</span>
+                                            <span class="w-4 h-4 rounded-full ${currentSelectedGrade === '+1' ? 'bg-amber-600 text-white' : 'border border-slate-300 dark:border-slate-600'} flex items-center justify-center text-[10px]">
+                                                ${currentSelectedGrade === '+1' ? '<i class="fa-solid fa-check"></i>' : ''}
+                                            </span>
+                                        </div>
+                                        <span class="text-[10px] font-semibold text-slate-400 mt-0.5">Class 11 Regular</span>
+                                    </button>
+
+                                    <button type="button" id="grade-btn-dual" onclick="setGradeSelection('dual')" class="cursor-pointer p-3 rounded-2xl border-2 ${currentSelectedGrade === '+2' && document.getElementById('has-improvement')?.checked ? 'border-purple-600 dark:border-purple-500 bg-purple-50/70 dark:bg-purple-950/40 ring-2 ring-purple-500/20 shadow-sm' : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600'} transition text-left flex flex-col justify-between">
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-xs font-black text-slate-900 dark:text-white">⚡ Dual (+2 & +1)</span>
+                                            <span class="w-4 h-4 rounded-full ${currentSelectedGrade === '+2' && document.getElementById('has-improvement')?.checked ? 'bg-purple-600 text-white' : 'border border-slate-300 dark:border-slate-600'} flex items-center justify-center text-[10px]">
+                                                ${currentSelectedGrade === '+2' && document.getElementById('has-improvement')?.checked ? '<i class="fa-solid fa-check"></i>' : ''}
+                                            </span>
+                                        </div>
+                                        <span class="text-[10px] font-semibold text-slate-400 mt-0.5">+1 Improvement</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <label class="block text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 pt-1">
+                                ${isML ? 'സ്ട്രീം തിരഞ്ഞെടുക്കുക' : 'Select Stream'}
+                            </label>
 
                             <div class="stream-options grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                                 <!-- Option 1: Computer Science -->
@@ -2407,7 +2477,7 @@ function showToastMessage(text, icon = 'checkCircle') {
                                                 <i class="fa-solid fa-laptop-code"></i>
                                             </div>
                                             <div>
-                                                <h4 class="font-black text-slate-900 dark:text-white text-sm">${isML ? ML_I18N.setup.csTitle : 'Computer Science (+2)'}</h4>
+                                                <h4 class="font-black text-slate-900 dark:text-white text-sm">${isML ? ML_I18N.setup.csTitle : 'Computer Science'} (${currentSelectedGrade})</h4>
                                                 <span class="text-[11px] font-semibold text-blue-700 dark:text-blue-300">Physics • Chem • Maths • CS</span>
                                             </div>
                                         </div>
@@ -2425,7 +2495,7 @@ function showToastMessage(text, icon = 'checkCircle') {
                                                 <i class="fa-solid fa-seedling"></i>
                                             </div>
                                             <div>
-                                                <h4 class="font-black text-slate-900 dark:text-white text-sm">${isML ? ML_I18N.setup.bioTitle : 'Biology Science (+2)'}</h4>
+                                                <h4 class="font-black text-slate-900 dark:text-white text-sm">${isML ? ML_I18N.setup.bioTitle : 'Biology Science'} (${currentSelectedGrade})</h4>
                                                 <span class="text-[11px] font-semibold text-emerald-700 dark:text-emerald-300">Physics • Chem • Maths • Bio</span>
                                             </div>
                                         </div>
@@ -2443,7 +2513,7 @@ function showToastMessage(text, icon = 'checkCircle') {
                                                 <i class="fa-solid fa-chart-line"></i>
                                             </div>
                                             <div>
-                                                <h4 class="font-black text-slate-900 dark:text-white text-sm">${isML ? ML_I18N.setup.commerceTitle : 'Commerce (+2)'}</h4>
+                                                <h4 class="font-black text-slate-900 dark:text-white text-sm">${isML ? ML_I18N.setup.commerceTitle : 'Commerce'} (${currentSelectedGrade})</h4>
                                                 <span class="text-[11px] font-semibold text-purple-700 dark:text-purple-300">Accountancy • Business • Econ</span>
                                             </div>
                                         </div>
@@ -2461,7 +2531,7 @@ function showToastMessage(text, icon = 'checkCircle') {
                                                 <i class="fa-solid fa-landmark"></i>
                                             </div>
                                             <div>
-                                                <h4 class="font-black text-slate-900 dark:text-white text-sm">${isML ? ML_I18N.setup.humanitiesTitle : 'Humanities (+2)'}</h4>
+                                                <h4 class="font-black text-slate-900 dark:text-white text-sm">${isML ? ML_I18N.setup.humanitiesTitle : 'Humanities'} (${currentSelectedGrade})</h4>
                                                 <span class="text-[11px] font-semibold text-rose-700 dark:text-rose-300">History • Pol Science • Sociology</span>
                                             </div>
                                         </div>
@@ -2965,8 +3035,8 @@ function showToastMessage(text, icon = 'checkCircle') {
                     <div class="print-only mb-6 border-b-2 border-slate-900 pb-3">
                         <div class="flex justify-between items-start">
                             <div>
-                                <h1 class="text-2xl font-black text-slate-900 tracking-tight">Mission PlusTwo — Daily Study Schedule</h1>
-                                <p class="text-xs text-slate-600 font-semibold mt-0.5">Kerala DHSE Class 12 (+2) & +1 Improvement Scheme of Work</p>
+                                <h1 class="text-2xl font-black text-slate-900 tracking-tight">+1 +2 Planner - Daily Schedule (Science . Commerce . Humanities)</h1>
+                                <p class="text-xs text-slate-600 font-semibold mt-0.5">Kerala Higher Secondary (HSS • Plus One & Plus Two) Scheme of Work</p>
                             </div>
                             <div class="text-right text-xs">
                                 <span class="font-bold text-slate-900 block">Deadline: ${new Date(appState.deadlineDate).toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'})}</span>
@@ -3063,8 +3133,8 @@ function showToastMessage(text, icon = 'checkCircle') {
                     <div class="print-only mt-8 pt-4 border-t-2 border-slate-900 text-xs text-slate-800">
                         <div class="flex items-center justify-between gap-6">
                             <div>
-                                <p class="font-black text-slate-900 text-sm">Mission PlusTwo — Free Daily Study Planner</p>
-                                <p class="text-xs text-slate-600 mt-0.5">Kerala DHSE Class 12 (+2) & +1 Improvement • Verified SCERT Scheme of Work</p>
+                                <p class="font-black text-slate-900 text-sm">+1 & +2 Planner — Free Daily Study Planner</p>
+                                <p class="text-xs text-slate-600 mt-0.5">Kerala Higher Secondary (HSS • +1 & +2) • Verified SCERT Scheme of Work</p>
                                 <p class="text-[11px] text-slate-500 mt-1">Scan the QR code to load or rebalance this timetable on any phone: <strong>https://mission-plustwo.web.app/</strong></p>
                             </div>
                             <div id="printQrCodeContainer" class="shrink-0 w-20 h-20 flex items-center justify-center border border-slate-300 rounded-lg p-1 bg-white"></div>

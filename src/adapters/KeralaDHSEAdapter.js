@@ -10,8 +10,9 @@ import { getCanonicalTasks } from '../engine/planner.js';
 
 export class KeralaDHSEAdapter extends CurriculumAdapter {
   constructor(options = {}) {
+    const grade = options.grade || '+2';
     super('kerala-dhse', {
-      grade: '+2',
+      grade: grade,
       boardName: 'Kerala Higher Secondary Directorate (DHSE)',
       stream: options.stream || 'cs',
       metadata: {
@@ -21,6 +22,7 @@ export class KeralaDHSEAdapter extends CurriculumAdapter {
       },
     });
 
+    this.grade = grade;
     this.termScope = options.termScope || 3;
     this.includePlusOne = Boolean(options.includePlusOne);
     this.plusOneSubjects = options.plusOneSubjects || [];
@@ -31,6 +33,7 @@ export class KeralaDHSEAdapter extends CurriculumAdapter {
 
   _initializeTasks() {
     this.tasks = getCanonicalTasks({
+      grade: this.grade,
       stream: this.stream,
       termScope: this.termScope,
       includePlusOne: this.includePlusOne,
