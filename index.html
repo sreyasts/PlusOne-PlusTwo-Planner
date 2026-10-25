@@ -347,13 +347,13 @@
 <body class="text-slate-800 min-h-screen flex flex-col antialiased selection:bg-blue-100 selection:text-blue-900 pb-20 md:pb-12">
 
     <!-- Top Sticky Navigation Bar -->
-    <header class="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-30 transition-all">
+    <header class="bg-white/95 dark:bg-[#0a0f1d]/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 sticky top-0 z-30 transition-colors">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-2">
             <!-- App Branding with Bilingual Malayalam Touchpoint -->
             <div class="flex items-center gap-3 cursor-pointer" onclick="goToDashboard()">
                 <img src="/icon.png" alt="+1 & +2 Planner Logo" class="w-10 h-10 rounded-xl shadow-md shadow-blue-500/20 object-contain">
                 <div>
-                    <h1 class="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight leading-none">+1 & +2 <span class="text-blue-600">Planner</span></h1>
+                    <h1 class="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white tracking-tight leading-none">+1 & +2 <span class="text-blue-600">Planner</span></h1>
                     <p class="text-xs font-medium text-slate-400 mt-0.5 hidden sm:block">Kerala Higher Secondary (HSS) Intelligent Study System</p>
                 </div>
             </div>
@@ -361,21 +361,21 @@
             <!-- Header Action Controls -->
             <div class="flex items-center gap-2 sm:gap-3">
                 <!-- 1-Click Install PWA Button -->
-                <button id="pwa-install-btn" onclick="triggerPWAInstall()" class="hidden items-center gap-1.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white text-xs font-bold py-2 px-3 sm:px-3.5 rounded-xl shadow-md shadow-emerald-500/20 transition-all transform active:scale-95">
+                <button id="pwa-install-btn" onclick="triggerPWAInstall()" class="hidden items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2 px-3 sm:px-3.5 rounded-xl shadow-md shadow-emerald-500/20 transition-transform transform active:scale-95">
                     <svg class="w-3.5 h-3.5 inline-block text-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                     <span class="hidden xs:inline">Install App</span>
                     <span class="xs:hidden">Install</span>
                 </button>
 
                 <!-- Navigation Tabs (Desktop / Tablet) -->
-                <nav aria-label="Study views" id="nav-desktop-tabs" class="hidden sm:flex items-center bg-slate-100 p-1 rounded-xl text-xs font-bold text-slate-600">
-                    <button id="nav-btn-today" onclick="goToDashboard()" class="py-1.5 px-3 rounded-lg transition-all text-blue-600 bg-white shadow-sm">
+                <nav aria-label="Study views" id="nav-desktop-tabs" class="hidden sm:flex items-center bg-slate-100 dark:bg-slate-800/80 p-1 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300">
+                    <button id="nav-btn-today" onclick="goToDashboard()" class="py-1.5 px-3 rounded-lg transition-colors text-blue-600 bg-white dark:bg-slate-900 dark:text-blue-400 shadow-sm">
                         <svg class="w-4 h-4 inline-block mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> <span id="nav-text-today">Today</span>
                     </button>
-                    <button id="nav-btn-plan" onclick="goToPlan()" class="py-1.5 px-3 rounded-lg transition-all hover:text-slate-900">
+                    <button id="nav-btn-plan" onclick="goToPlan()" class="py-1.5 px-3 rounded-lg transition-colors hover:text-slate-900 dark:hover:text-white">
                         <svg class="w-4 h-4 inline-block mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="10" x2="21" y1="6" y2="6"/><line x1="10" x2="21" y1="12" y2="12"/><line x1="10" x2="21" y1="18" y2="18"/><path d="m3 6 1.5 1.5L7 4"/><path d="m3 12 1.5 1.5L7 10"/><path d="m3 18 1.5 1.5L7 16"/></svg> <span id="nav-text-plan">Full Plan</span>
                     </button>
-                    <button id="nav-btn-syllabus" onclick="goToSyllabusView()" class="py-1.5 px-3 rounded-lg transition-all hover:text-slate-900">
+                    <button id="nav-btn-syllabus" onclick="goToSyllabusView()" class="py-1.5 px-3 rounded-lg transition-colors hover:text-slate-900 dark:hover:text-white">
                         <svg class="w-4 h-4 inline-block mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg> <span id="nav-text-syllabus">Syllabus</span>
                     </button>
                 </nav>
@@ -384,11 +384,11 @@
                 <div id="auth-container" class="relative">
                     <button id="auth-avatar-btn" onclick="toggleUserDropdown()" class="flex items-center gap-1.5 p-1 sm:px-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 transition active:scale-95 group" title="Profile, Theme & Settings">
                         <!-- Guest Avatar (Shown when logged out) -->
-                        <div id="guest-avatar-icon" class="w-7 h-7 rounded-lg bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center text-xs font-bold shadow-xs">
+                        <div id="guest-avatar-icon" class="w-7 h-7 rounded-lg bg-blue-600 text-white flex items-center justify-center text-xs font-bold shadow-xs">
                             <svg class="w-4 h-4 inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                         </div>
                         <!-- User Google Avatar (Shown when logged in) -->
-                        <img id="user-avatar-img" src="" alt="User" referrerpolicy="no-referrer" class="hidden w-7 h-7 rounded-lg object-cover border border-slate-200 dark:border-slate-700 bg-slate-200 dark:bg-slate-700" onerror="this.onerror=null; this.src='icon.png';">
+                        <img id="user-avatar-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E" alt="User" referrerpolicy="no-referrer" class="hidden w-7 h-7 rounded-lg object-cover border border-slate-200 dark:border-slate-700 bg-slate-200 dark:bg-slate-700" onerror="this.onerror=null; this.src='icon.png';">
                         <span id="user-name-short" class="text-xs font-bold text-slate-700 dark:text-slate-200 hidden md:inline max-w-[85px] truncate">Guest</span>
                         <svg class="w-3.5 h-3.5 inline-block text-xs text-slate-400 dark:text-slate-500 mr-0.5 transition group-hover:text-slate-700 dark:group-hover:text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
                     </button>
@@ -398,7 +398,7 @@
                         <!-- Profile Details: Logged In State -->
                         <div id="dropdown-signed-in-block" class="hidden pb-3 border-b border-slate-100 dark:border-slate-800 mb-3">
                             <div class="flex items-center gap-2.5 mb-2.5">
-                                <img id="dropdown-avatar-img" src="" alt="Avatar" referrerpolicy="no-referrer" class="w-10 h-10 rounded-xl object-cover bg-slate-200 dark:bg-slate-700" onerror="this.onerror=null; this.src='icon.png';">
+                                <img id="dropdown-avatar-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E" alt="Avatar" referrerpolicy="no-referrer" class="w-10 h-10 rounded-xl object-cover bg-slate-200 dark:bg-slate-700" onerror="this.onerror=null; this.src='icon.png';">
                                 <div class="truncate">
                                     <span id="dropdown-user-name" class="font-bold text-slate-800 dark:text-white block truncate text-sm"></span>
                                     <span id="dropdown-user-email" class="text-xs text-slate-400 block truncate"></span>
@@ -418,7 +418,7 @@
                         <!-- Profile Details: Guest / Logged Out State -->
                         <div id="dropdown-guest-block" class="pb-3 border-b border-slate-100 dark:border-slate-800 mb-3">
                             <div class="flex items-center gap-2.5 mb-3">
-                                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center text-base font-bold shadow-md shadow-blue-500/20">
+                                <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center text-base font-bold shadow-md shadow-blue-500/20">
                                     <svg class="w-4 h-4 inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                                 </div>
                                 <div>
@@ -427,8 +427,8 @@
                                 </div>
                             </div>
                             <!-- Prominent Google Sign-in to sync -->
-                            <button id="auth-signin-btn" onclick="signInWithGoogle()" class="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-2.5 px-3 rounded-xl shadow-md shadow-blue-500/20 transition active:scale-95 text-xs">
-                                <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24">
+                            <button id="auth-signin-btn" onclick="signInWithGoogle()" class="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-3 rounded-xl shadow-md shadow-blue-500/20 transition active:scale-95 text-xs">
+                                <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" aria-hidden="true">
                                     <path fill="#ffffff" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                                     <path fill="#ffffff" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
                                     <path fill="#ffffff" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
@@ -441,19 +441,19 @@
                         <!-- 1-Tap Theme Switcher inside Profile Menu -->
                         <div class="mb-3 pb-3 border-b border-slate-100 dark:border-slate-800">
                             <div class="flex items-center justify-between mb-1.5">
-                                <span class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Theme</span>
-                                <span id="dropdown-theme-badge" class="text-xs bg-blue-100 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300 font-extrabold px-1.5 py-0.5 rounded uppercase">System</span>
+                                <span class="text-xs font-bold text-slate-500 dark:text-slate-400">Theme</span>
+                                <span id="dropdown-theme-badge" class="text-xs bg-blue-100 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300 font-extrabold px-1.5 py-0.5 rounded">System</span>
                             </div>
                             <div class="grid grid-cols-3 gap-1 p-1 bg-slate-100 dark:bg-[#141d30] rounded-xl border border-slate-200/60 dark:border-slate-700/60">
-                                <button type="button" id="menu-theme-btn-light" onclick="setThemePreference('light')" class="py-1.5 px-2 rounded-lg text-center font-bold text-xs transition-all flex items-center justify-center gap-1 text-slate-600 dark:text-slate-300 hover:text-slate-900">
+                                <button type="button" id="menu-theme-btn-light" onclick="setThemePreference('light')" class="py-1.5 px-2 rounded-lg text-center font-bold text-xs transition-colors flex items-center justify-center gap-1 text-slate-600 dark:text-slate-300 hover:text-slate-900">
                                     <svg class="w-3.5 h-3.5 inline-block text-amber-500 text-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
                                     <span>Light</span>
                                 </button>
-                                <button type="button" id="menu-theme-btn-dark" onclick="setThemePreference('dark')" class="py-1.5 px-2 rounded-lg text-center font-bold text-xs transition-all flex items-center justify-center gap-1 text-slate-600 dark:text-slate-300 hover:text-slate-900">
+                                <button type="button" id="menu-theme-btn-dark" onclick="setThemePreference('dark')" class="py-1.5 px-2 rounded-lg text-center font-bold text-xs transition-colors flex items-center justify-center gap-1 text-slate-600 dark:text-slate-300 hover:text-slate-900">
                                     <svg class="w-3.5 h-3.5 inline-block text-indigo-400 text-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
                                     <span>Dark</span>
                                 </button>
-                                <button type="button" id="menu-theme-btn-system" onclick="setThemePreference('system')" class="py-1.5 px-2 rounded-lg text-center font-bold text-xs transition-all flex items-center justify-center gap-1 text-slate-600 dark:text-slate-300 hover:text-slate-900">
+                                <button type="button" id="menu-theme-btn-system" onclick="setThemePreference('system')" class="py-1.5 px-2 rounded-lg text-center font-bold text-xs transition-colors flex items-center justify-center gap-1 text-slate-600 dark:text-slate-300 hover:text-slate-900">
                                     <svg class="w-3.5 h-3.5 inline-block text-blue-500 text-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/></svg>
                                     <span>Auto</span>
                                 </button>
@@ -525,7 +525,7 @@
             <!-- Guide Part 1: How Can I Complete My Plus Two Syllabus? -->
             <div class="space-y-3">
                 <h3 class="text-base sm:text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                    <span class="text-blue-600 dark:text-blue-400">⚡</span>
+                    <svg class="w-4 h-4 text-blue-600 dark:text-blue-400 inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
                     <span>How Can I Complete My Plus Two Syllabus? (Top DHSE Board Strategy)</span>
                 </h3>
                 <p class="leading-relaxed text-sm">
@@ -562,7 +562,7 @@
             <!-- Guide Part 2: HSS Level Planner for All Streams -->
             <div class="space-y-3 pt-2">
                 <h3 class="text-base sm:text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                    <span class="text-emerald-600 dark:text-emerald-400">🔬</span>
+                    <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400 inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
                     <span>HSS Level Planner: Stream-Specific Guidance (DHSE Kerala)</span>
                 </h3>
                 <p class="leading-relaxed text-sm">
@@ -590,21 +590,21 @@
                 </div>
             </div>
 
-            <!-- Guide Part 3: Plus One Study Planner & Improvement Support -->
+            <!-- Guide Part 3: Dual-Grade Planning (+1 and +2) -->
             <div class="space-y-3 pt-2">
                 <h3 class="text-base sm:text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                    <span class="text-amber-500">🎯</span>
-                    <span>Plus One Study Planner & Improvement Exam Integration</span>
+                    <svg class="w-4 h-4 text-amber-500 inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+                    <span>Full Plus One (+1) & Plus Two (+2) SCERT Curriculum Support</span>
                 </h3>
                 <p class="leading-relaxed text-sm">
-                    Many Kerala students must balance their ongoing Plus Two coursework with Plus One improvement papers. The +1 & +2 Planner includes a dedicated dual-grade mode that smoothly interleaves Class 11 improvement chapters without disrupting your Class 12 board preparations.
+                    Whether you are starting Class 11 (Plus One) or preparing for the Class 12 (Plus Two) Board Examinations, the +1 & +2 Planner organizes the entire syllabus according to the official Kerala DHSE & SCERT Scheme of Work. Switch seamlessly between grades with a single click and access customized chapter sequences and revision milestones.
                 </p>
             </div>
 
             <!-- Frequently Asked Questions Accordion -->
             <div class="pt-2 border-t border-slate-100 dark:border-slate-800">
                 <h3 class="text-base sm:text-lg font-bold text-slate-800 dark:text-slate-100 mb-4 flex items-center gap-2">
-                    <span class="text-purple-600 dark:text-purple-400">❓</span>
+                    <svg class="w-4 h-4 text-purple-600 dark:text-purple-400 inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                     <span>Frequently Asked Questions (FAQ)</span>
                 </h3>
                 <div class="space-y-3">
@@ -654,11 +654,11 @@
             <div class="pt-4 border-t border-slate-100 dark:border-slate-800">
                 <h4 class="font-bold text-slate-700 dark:text-slate-200 text-xs mb-3">Explore Kerala Higher Secondary Study Resources:</h4>
                 <div class="flex flex-wrap gap-2 text-xs">
-                    <a href="/pages/plus-two-timetable.html" class="px-3 py-1.5 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-semibold hover:bg-blue-100 transition">⚡ Plus Two Study Timetable (30 Days)</a>
-                    <a href="/pages/syllabus-plus-two.html" class="px-3 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-semibold hover:bg-emerald-100 transition">📖 Kerala Higher Secondary Syllabus Planner</a>
-                    <a href="/pages/study-hours-calculator.html" class="px-3 py-1.5 rounded-lg bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 font-semibold hover:bg-purple-100 transition">⏱️ Study Hours & Buffer Calculator</a>
-                    <a href="/pages/backlog-recovery-planner.html" class="px-3 py-1.5 rounded-lg bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 font-semibold hover:bg-amber-100 transition">🔄 Backlog Recovery Catch-Up Planner</a>
-                    <a href="/pages/exam-countdown.html" class="px-3 py-1.5 rounded-lg bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 font-semibold hover:bg-rose-100 transition">⏳ DHSE Board Exam Countdown</a>
+                    <a href="/pages/plus-two-timetable.html" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-semibold hover:bg-blue-100 transition"><svg class="w-3.5 h-3.5 inline-block text-blue-600 dark:text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> <span>Plus Two Study Timetable (30 Days)</span></a>
+                    <a href="/pages/syllabus-plus-two.html" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-semibold hover:bg-emerald-100 transition"><svg class="w-3.5 h-3.5 inline-block text-emerald-600 dark:text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg> <span>Kerala Higher Secondary Syllabus Planner</span></a>
+                    <a href="/pages/study-hours-calculator.html" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 font-semibold hover:bg-purple-100 transition"><svg class="w-3.5 h-3.5 inline-block text-purple-600 dark:text-purple-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> <span>Study Hours & Buffer Calculator</span></a>
+                    <a href="/pages/backlog-recovery-planner.html" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 font-semibold hover:bg-amber-100 transition"><svg class="w-3.5 h-3.5 inline-block text-amber-600 dark:text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg> <span>Backlog Recovery Catch-Up Planner</span></a>
+                    <a href="/pages/exam-countdown.html" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 font-semibold hover:bg-rose-100 transition"><svg class="w-3.5 h-3.5 inline-block text-rose-600 dark:text-rose-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 22h14"/><path d="M5 2h14"/><path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/><path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/></svg> <span>DHSE Board Exam Countdown</span></a>
                 </div>
             </div>
 
@@ -671,7 +671,7 @@
             <details class="group bg-slate-50/70 dark:bg-[#111827]/70 hover:bg-slate-100/80 dark:hover:bg-[#151f33]/80 rounded-xl border border-slate-200/70 dark:border-slate-800/70 p-2.5 transition">
                 <summary class="font-bold text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 flex items-center justify-between select-none cursor-pointer">
                     <span class="flex items-center gap-1.5">
-                        <span class="text-blue-600 dark:text-blue-400">⚡</span>
+                        <svg class="w-3.5 h-3.5 inline-block text-blue-600 dark:text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
                         <span>Timetables, Tools & Study Guides Directory (9 Pages)</span>
                     </span>
                     <span class="flex items-center gap-1 text-[10px] text-slate-400 dark:text-slate-400 font-normal">
@@ -684,8 +684,8 @@
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 text-left pt-4 mt-3 border-t border-slate-200/60 dark:border-slate-800/60">
                     <!-- Column 1: Study Planners -->
                     <div class="space-y-2">
-                        <h4 class="font-bold text-slate-900 dark:text-slate-200 uppercase tracking-wider text-[10px] flex items-center gap-1.5">
-                            <span class="text-blue-600 dark:text-blue-400">⚡</span> Timetables & Planners
+                        <h4 class="font-bold text-slate-900 dark:text-slate-200 text-xs flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5 inline-block text-blue-600 dark:text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> <span>Timetables & Planners</span>
                         </h4>
                         <ul class="space-y-1.5 text-xs">
                             <li>
@@ -703,8 +703,8 @@
 
                     <!-- Column 2: Tools & Calculators -->
                     <div class="space-y-2">
-                        <h4 class="font-bold text-slate-900 dark:text-slate-200 uppercase tracking-wider text-[10px] flex items-center gap-1.5">
-                            <span class="text-emerald-600 dark:text-emerald-400">⏱️</span> Tools & Calculators
+                        <h4 class="font-bold text-slate-900 dark:text-slate-200 text-xs flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5 inline-block text-emerald-600 dark:text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> <span>Tools & Calculators</span>
                         </h4>
                         <ul class="space-y-1.5 text-xs">
                             <li>
@@ -727,23 +727,23 @@
 
                     <!-- Column 3: Community & School -->
                     <div class="space-y-2">
-                        <h4 class="font-bold text-slate-900 dark:text-slate-200 uppercase tracking-wider text-[10px] flex items-center gap-1.5">
-                            <span class="text-indigo-600 dark:text-indigo-400">🏫</span> Classroom & Notice Board
+                        <h4 class="font-bold text-slate-900 dark:text-slate-200 text-xs flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5 inline-block text-indigo-600 dark:text-indigo-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> <span>Classroom & Notice Board</span>
                         </h4>
                         <ul class="space-y-1.5 text-xs">
                             <li>
                                 <a href="/pages/printable-qr-poster.html" class="hover:text-blue-600 dark:hover:text-blue-400 transition flex items-center gap-1.5 font-bold text-blue-600 dark:text-blue-400">
-                                    <span>🖨️ Printable School Notice Board Poster</span>
+                                    <svg class="w-3.5 h-3.5 inline-block text-blue-600 dark:text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> <span>Printable School Notice Board Poster</span>
                                 </a>
                             </li>
                             <li>
                                 <a href="/pages/stats.html" class="hover:text-blue-600 dark:hover:text-blue-400 transition flex items-center gap-1.5 font-medium">
-                                    <span>📊 Public Audit & Usage Stats</span>
+                                    <svg class="w-3.5 h-3.5 inline-block text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> <span>Public Audit & Usage Stats</span>
                                 </a>
                             </li>
                             <li>
                                 <a href="https://github.com/sreyasts/PlusOne-PlusTwo-Planner" target="_blank" rel="noopener noreferrer" class="hover:text-slate-900 dark:hover:text-white transition flex items-center gap-1.5 font-medium">
-                                    <span>⭐ GitHub Open Source (Apache 2.0)</span>
+                                    <svg class="w-3.5 h-3.5 inline-block text-amber-500" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> <span>GitHub Open Source (Apache 2.0)</span>
                                 </a>
                             </li>
                         </ul>
@@ -753,16 +753,16 @@
 
             <!-- Bottom Sub-Footer Row (Ultra compact 1-line text) -->
             <div class="flex flex-col sm:flex-row items-center justify-between gap-1.5 text-[11px] text-slate-500 dark:text-slate-400">
-                <div class="flex items-center gap-1.5 text-center sm:text-left">
+                <div class="flex items-center gap-2 text-center sm:text-left">
                     <span class="font-bold text-slate-700 dark:text-slate-300">+1 & +2 Planner</span>
-                    <span>•</span>
+                    <span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-700"></span>
                     <span>Free & Open Source (Kerala DHSE / HSS)</span>
                 </div>
                 <div class="flex items-center gap-3 text-[11px]">
                     <a href="/pages/privacy.html" class="hover:underline">Privacy</a>
-                    <span>•</span>
+                    <span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-700"></span>
                     <a href="/pages/terms.html" class="hover:underline">Terms</a>
-                    <span>•</span>
+                    <span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-700"></span>
                     <a href="https://github.com/sreyasts/PlusOne-PlusTwo-Planner/issues" target="_blank" rel="noopener noreferrer" class="hover:underline">Report Issue</a>
                 </div>
             </div>
@@ -849,7 +849,7 @@
             <!-- Header -->
             <div class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800/80 mb-4">
                 <div class="flex items-center gap-2.5">
-                    <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white text-lg shadow-md shadow-blue-500/20">
+                    <div class="w-10 h-10 rounded-2xl bg-blue-600 flex items-center justify-center text-white text-lg shadow-md shadow-blue-500/20">
                         <svg class="w-4 h-4 inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" x2="4" y1="21" y2="14"/><line x1="4" x2="4" y1="10" y2="3"/><line x1="12" x2="12" y1="21" y2="12"/><line x1="12" x2="12" y1="8" y2="3"/><line x1="20" x2="20" y1="21" y2="16"/><line x1="20" x2="20" y1="12" y2="3"/><line x1="1" x2="7" y1="14" y2="14"/><line x1="9" x2="15" y1="8" y2="8"/><line x1="17" x2="23" y1="16" y2="16"/></svg>
                     </div>
                     <div>
@@ -1021,14 +1021,17 @@
                     </label>
                     <p class="text-xs text-slate-400 mb-2.5">Open source project. Report issues or suggest DHSE syllabus adjustments.</p>
                     <div class="flex flex-wrap gap-2 text-xs font-semibold">
-                        <a href="https://github.com/sreyasts/PlusOne-PlusTwo-Planner/issues/new/choose" target="_blank" rel="noopener noreferrer" class="py-1.5 px-2.5 bg-white hover:bg-slate-100 dark:bg-[#0e1422] dark:hover:bg-[#1a2640] text-blue-600 dark:text-blue-400 rounded-lg border border-slate-200 dark:border-slate-700 inline-flex items-center gap-1 transition">
-                            <span>🐛 Report a Bug / Fix</span>
+                        <a href="https://github.com/sreyasts/PlusOne-PlusTwo-Planner/issues/new/choose" target="_blank" rel="noopener noreferrer" class="py-1.5 px-2.5 bg-white hover:bg-slate-100 dark:bg-[#0e1422] dark:hover:bg-[#1a2640] text-blue-600 dark:text-blue-400 rounded-lg border border-slate-200 dark:border-slate-700 inline-flex items-center gap-1.5 transition">
+                            <svg class="w-3.5 h-3.5 inline-block text-rose-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="8" height="14" x="8" y="6" rx="4"/><path d="m19 7-3 2"/><path d="m5 7 3 2"/><path d="m19 19-3-2"/><path d="m5 19 3-2"/><path d="M20 13h-4"/><path d="M4 13h4"/><path d="m10 4 1 2"/><path d="m14 4-1 2"/></svg>
+                            <span>Report a Bug / Fix</span>
                         </a>
-                        <a href="https://github.com/sreyasts/PlusOne-PlusTwo-Planner/discussions" target="_blank" rel="noopener noreferrer" class="py-1.5 px-2.5 bg-white hover:bg-slate-100 dark:bg-[#0e1422] dark:hover:bg-[#1a2640] text-slate-700 dark:text-slate-300 rounded-lg border border-slate-200 dark:border-slate-700 inline-flex items-center gap-1 transition">
-                            <span>💬 Discussions</span>
+                        <a href="https://github.com/sreyasts/PlusOne-PlusTwo-Planner/discussions" target="_blank" rel="noopener noreferrer" class="py-1.5 px-2.5 bg-white hover:bg-slate-100 dark:bg-[#0e1422] dark:hover:bg-[#1a2640] text-slate-700 dark:text-slate-300 rounded-lg border border-slate-200 dark:border-slate-700 inline-flex items-center gap-1.5 transition">
+                            <svg class="w-3.5 h-3.5 inline-block text-blue-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                            <span>Discussions</span>
                         </a>
-                        <a href="/pages/stats.html" class="py-1.5 px-2.5 bg-white hover:bg-slate-100 dark:bg-[#0e1422] dark:hover:bg-[#1a2640] text-emerald-600 dark:text-emerald-400 rounded-lg border border-slate-200 dark:border-slate-700 inline-flex items-center gap-1 transition">
-                            <span>📊 Usage & Audit Stats</span>
+                        <a href="/pages/stats.html" class="py-1.5 px-2.5 bg-white hover:bg-slate-100 dark:bg-[#0e1422] dark:hover:bg-[#1a2640] text-emerald-600 dark:text-emerald-400 rounded-lg border border-slate-200 dark:border-slate-700 inline-flex items-center gap-1.5 transition">
+                            <svg class="w-3.5 h-3.5 inline-block text-emerald-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                            <span>Usage & Audit Stats</span>
                         </a>
                     </div>
                 </div>
@@ -1165,8 +1168,8 @@
             <div class="relative w-20 h-20 mx-auto flex items-center justify-center">
                 <div class="absolute inset-0 rounded-full border-4 border-blue-500/20 dark:border-blue-400/10 animate-ping opacity-75"></div>
                 <div class="absolute inset-0 rounded-full border-4 border-t-blue-600 border-r-indigo-600 border-b-transparent border-l-transparent animate-spin"></div>
-                <div class="w-14 h-14 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center shadow-lg shadow-blue-500/30">
-                    <i id="plan-gen-icon" class="fa-solid fa-compass-drafting text-xl transition-all duration-300"></i>
+                <div class="w-14 h-14 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-lg shadow-blue-500/30">
+                    <i id="plan-gen-icon" class="fa-solid fa-compass-drafting text-xl transition-transform duration-300"></i>
                 </div>
             </div>
 
@@ -1179,7 +1182,7 @@
             <!-- Progress Bar & Percentage -->
             <div class="space-y-2">
                 <div class="h-2.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden p-0.5 border border-slate-200/60 dark:border-slate-700/60">
-                    <div id="plan-gen-progress-bar" class="h-full bg-gradient-to-r from-blue-600 via-indigo-500 to-emerald-500 rounded-full transition-all duration-500 ease-out" style="width: 15%;"></div>
+                    <div id="plan-gen-progress-bar" class="h-full bg-blue-600 rounded-full transition-all duration-500 ease-out" style="width: 15%;"></div>
                 </div>
                 <div class="flex justify-between items-center text-[11px] font-bold text-slate-400 dark:text-slate-500 px-1">
                     <span id="plan-gen-stage-label" class="flex items-center gap-1.5"><i class="fa-solid fa-circle-notch fa-spin text-blue-500 text-[10px]"></i> Phase 1 of 4</span>
