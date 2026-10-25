@@ -500,7 +500,8 @@
                     });
                 }
                 planEl.innerHTML = '<span class="badge-pass">Generated & Active</span>';
-                streamEl.textContent = streamName.toUpperCase();
+                streamEl.innerHTML = '<span class="code-tag"></span>';
+                streamEl.firstChild.textContent = streamName.toUpperCase();
                 chEl.innerHTML = '<span class="code-tag">' + completedCount + ' tasks completed</span>';
             } else {
                 planEl.innerHTML = '<span class="code-tag">No local plan yet</span>';

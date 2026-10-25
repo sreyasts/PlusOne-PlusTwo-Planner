@@ -501,7 +501,8 @@
                     });
                 }
                 planEl.innerHTML = '<span class="badge-pass">Generated & Active</span>';
-                streamEl.innerHTML = '<span class="code-tag">' + (streamName.toUpperCase()) + '</span>';
+                streamEl.innerHTML = '<span class="code-tag"></span>';
+                streamEl.firstChild.textContent = streamName.toUpperCase();
                 chEl.innerHTML = '<span class="code-tag">' + completedCount + ' tasks completed</span>';
             } else {
                 planEl.innerHTML = '<span class="code-tag">No local plan yet</span>';
@@ -510,7 +511,8 @@
             }
 
             var streak = localStorage.getItem('studyStreak') || '0';
-            streakEl.innerHTML = '<span class="code-tag">' + streak + ' days</span>';
+            streakEl.innerHTML = '<span class="code-tag"></span>';
+            streakEl.firstChild.textContent = streak + ' days';
 
             var totalBytes = 0;
             for (var key in localStorage) {
