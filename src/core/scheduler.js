@@ -842,11 +842,11 @@ export function generateSchedule({
 
   // 10. Phase 2: Schedule Regular Plus Two Tasks (State Machine & Interleaving)
   const subjectChapterMap = {};
-  streamSubjects.forEach((s) => (subjectChapterMap[s] = []));
+  streamSubjects.forEach((s) => (subjectChapterMap[s] = new Map()));
 
   p2Tasks.forEach((task) => {
-    if (!subjectChapterMap[task.subject]) subjectChapterMap[task.subject] = [];
-    let ch = subjectChapterMap[task.subject].find((c) => c.chapNumber === task.chapNumber);
+    if (!subjectChapterMap[task.subject]) subjectChapterMap[task.subject] = new Map();
+    let ch = subjectChapterMap[task.subject].get(task.chapNumber);
     if (!ch) {
       ch = {
         chapNumber: task.chapNumber,
@@ -856,12 +856,13 @@ export function generateSchedule({
         term: task.term,
         parts: [],
       };
-      subjectChapterMap[task.subject].push(ch);
+      subjectChapterMap[task.subject].set(task.chapNumber, ch);
     }
     ch.parts.push(task);
   });
 
   Object.keys(subjectChapterMap).forEach((s) => {
+    subjectChapterMap[s] = Array.from(subjectChapterMap[s].values());
     subjectChapterMap[s].sort((a, b) => a.chapNumber - b.chapNumber);
     subjectChapterMap[s].forEach((ch) => ch.parts.sort((a, b) => a.part - b.part));
   });
