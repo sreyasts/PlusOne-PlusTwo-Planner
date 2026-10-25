@@ -1,6 +1,6 @@
 /**
  * +1 & +2 Planner - RFC 5545 iCalendar (.ics) Generator & Synchronizer
- * Enables students to export their complete Kerala Plus One, Plus Two & Improvement
+ * Enables students to export their complete Kerala Plus One & Plus Two
  * study schedule into Google Calendar, Apple Calendar, and Outlook.
  */
 

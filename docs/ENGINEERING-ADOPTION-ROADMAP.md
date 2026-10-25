@@ -125,7 +125,7 @@
   - *Query*: "Plus two exam countdown live" &rarr; Land on [`/pages/exam-countdown.html`](https://plusone-plustwo-planner.web.app/exam-countdown)
   - *Query*: "Class 12 backlog recovery study plan" &rarr; Land on [`/pages/backlog-recovery-planner.html`](https://plusone-plustwo-planner.web.app/backlog-recovery-planner)
   - *Query*: "Plus two daily study hours calculator" &rarr; Land on [`/pages/study-hours-calculator.html`](https://plusone-plustwo-planner.web.app/study-hours-calculator)
-  - *Query*: "+1 improvement exam date & study schedule" &rarr; Land on [`/pages/plus-one-improvement-guide.html`](https://plusone-plustwo-planner.web.app/plus-one-improvement-guide)
+  - *Query*: "Kerala Plus Two study timetable & schedule" &rarr; Land on [`/pages/plus-two-timetable.html`](https://plusone-plustwo-planner.web.app/plus-two-timetable)
 - **Technical SEO Hygiene**:
   - 100% valid Schema.org `WebApplication` and `FAQPage` JSON-LD markup.
   - Sub-second First Contentful Paint (FCP) on 3G network profiles.

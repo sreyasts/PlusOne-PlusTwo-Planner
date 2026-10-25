@@ -69,6 +69,26 @@
           "source": "/plus-two-planner",
           "destination": "/",
           "type": 301
+        },
+        {
+          "source": "/pages/plus-one-improvement-guide",
+          "destination": "/",
+          "type": 301
+        },
+        {
+          "source": "/pages/plus-one-improvement-guide.html",
+          "destination": "/",
+          "type": 301
+        },
+        {
+          "source": "/plus-one-improvement-guide",
+          "destination": "/",
+          "type": 301
+        },
+        {
+          "source": "/plus-one-improvement-guide.html",
+          "destination": "/",
+          "type": 301
         }
       ],
       "rewrites": [
@@ -175,14 +195,6 @@
         {
           "source": "/hss-syllabus",
           "destination": "/pages/syllabus-plus-two.html"
-        },
-        {
-          "source": "/pages/plus-one-improvement-guide",
-          "destination": "/pages/plus-one-improvement-guide.html"
-        },
-        {
-          "source": "/plus-one-improvement-guide",
-          "destination": "/pages/plus-one-improvement-guide.html"
         },
         {
           "source": "/exam-countdown",
@@ -312,6 +324,26 @@
           "source": "/plus-two-planner",
           "destination": "/",
           "type": 301
+        },
+        {
+          "source": "/pages/plus-one-improvement-guide",
+          "destination": "/",
+          "type": 301
+        },
+        {
+          "source": "/pages/plus-one-improvement-guide.html",
+          "destination": "/",
+          "type": 301
+        },
+        {
+          "source": "/plus-one-improvement-guide",
+          "destination": "/",
+          "type": 301
+        },
+        {
+          "source": "/plus-one-improvement-guide.html",
+          "destination": "/",
+          "type": 301
         }
       ],
       "rewrites": [
@@ -418,14 +450,6 @@
         {
           "source": "/hss-syllabus",
           "destination": "/pages/syllabus-plus-two.html"
-        },
-        {
-          "source": "/pages/plus-one-improvement-guide",
-          "destination": "/pages/plus-one-improvement-guide.html"
-        },
-        {
-          "source": "/plus-one-improvement-guide",
-          "destination": "/pages/plus-one-improvement-guide.html"
         },
         {
           "source": "/exam-countdown",

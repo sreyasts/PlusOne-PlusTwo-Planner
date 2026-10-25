@@ -1,5 +1,5 @@
 /** Validate portable study plans before they can replace saved progress. */
-import { getImprovementSubjects, isCalendarDate } from './improvement.js';
+import { isCalendarDate } from './improvement.js';
 export const MAX_BACKUP_BYTES = 2 * 1024 * 1024;
 const STATE_KEYS = ['plusTwoMissionState_v2', 'plusTwoPlanState'];
 const ACCOUNT_FIELDS = ['uid', 'userId', 'userEmail', 'email', 'displayName', 'photoURL'];
@@ -40,9 +40,8 @@ export function validateStudyBackup(state) {
   if (state.personalization !== undefined) requireValid(isRecord(state.personalization));
   if (state.improvementConfig !== undefined) {
     const subjects = new Set();
-    const supported = getImprovementSubjects(state.stream || 'imp_only');
     requireValid(Array.isArray(state.improvementConfig) && state.improvementConfig.every(item => {
-      if (!isRecord(item) || !supported.includes(item.subject) || !isCalendarDate(item.examDate) || subjects.has(item.subject)) return false;
+      if (!isRecord(item) || typeof item.subject !== 'string' || !isCalendarDate(item.examDate) || subjects.has(item.subject)) return false;
       subjects.add(item.subject);
       return true;
     }));

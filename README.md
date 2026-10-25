@@ -56,7 +56,7 @@
 +1 & +2 Planner is structured as a decoupled, multi-tier software architecture:
 
 ```
-intelligent-study-planner-for-plus-two/
+PlusOne-PlusTwo-Planner/
 ├── data/kerala-dhse/            # Machine-readable curriculum JSON specifications
 │   ├── science.json             # Physics, Chemistry, Math, Biology, CS
 │   ├── commerce.json            # Accountancy, Business Studies, Economics, CA
@@ -153,8 +153,8 @@ To add or update chapter marks or revision hours:
 ### Quick Start
 ```bash
 # 1. Clone the repository
-git clone https://github.com/sreyasts/intelligent-study-planner-for-plus-two-.git
-cd intelligent-study-planner-for-plus-two-
+git clone https://github.com/sreyasts/PlusOne-PlusTwo-Planner.git
+cd PlusOne-PlusTwo-Planner
 
 # 2. Install dependencies
 npm install

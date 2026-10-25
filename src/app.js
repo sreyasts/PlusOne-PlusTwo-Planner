@@ -67,7 +67,7 @@ import {
 import { getDailyPlan } from './ui/daily-plan.js';
 import { MAX_BACKUP_BYTES, parseStudyBackup, validateStudyBackup, createStudyBackup, persistStudyBackup } from './utils/study-backup.js';
 import { persistTaskCompletion } from './utils/study-progress.js';
-import { getImprovementSubjects, getRemainingPlanTasks, validateImprovementSelection } from './utils/improvement.js';
+import { getRemainingPlanTasks } from './utils/plan-scope.js';
 import appPackage from '../package.json' with { type: 'json' };
 const APP_VERSION = appPackage.version;
 
@@ -313,8 +313,9 @@ function loadInitialState() {
                             showToastMessage("Signed in! Your progress has been synced to your Google Account.", "fa-circle-check text-emerald-400");
                         } else {
                             // Different streams between cloud and local session (e.g. Bio vs CS)
-                            const cloudStreamName = cloudData.stream === 'bio' ? 'Biology Science' : (cloudData.stream === 'imp_only' ? '+1 Improvement Only' : 'Computer Science');
-                            const localStreamName = appState.stream === 'bio' ? 'Biology Science' : (appState.stream === 'imp_only' ? '+1 Improvement Only' : 'Computer Science');
+                            const streamNamesMap = { cs: 'Computer Science', bio: 'Biology Science', commerce: 'Commerce', humanities: 'Humanities' };
+                            const cloudStreamName = streamNamesMap[cloudData.stream] || (cloudData.grade === '+1' ? 'Plus One' : 'Plus Two');
+                            const localStreamName = streamNamesMap[appState.stream] || (appState.grade === '+1' ? 'Plus One' : 'Plus Two');
                             const restoreCloud = await showAppConfirm({
                                 title: "Cloud Backup Found",
                                 message: `We found a saved <strong>${cloudStreamName}</strong> study plan in your Google Account.<br><br>Your current unsaved guest plan is for <strong>${localStreamName}</strong>.<br><br>Do you want to load your saved ${cloudStreamName} plan, or keep your current ${localStreamName} plan?`,
@@ -1437,24 +1438,9 @@ function showToastMessage(text, icon = 'checkCircle') {
         let activeSetupSubjectTab = 'Physics';
         let activeSetupGradeTab = '+2'; // '+2' or '+1'
         const selectedCompletedChapters = new Set();
-        let setupHasImprovement = false;
-        const setupImprovementSelection = new Map();
-        const setupImprovementDates = new Map();
-
         function setGradeSelection(grade) {
-            if (grade === 'dual') {
-                selectedGrade = '+2';
-                activeSetupGradeTab = '+2';
-                setImprovementToggle(true);
-            } else if (grade === '+1') {
-                selectedGrade = '+1';
-                activeSetupGradeTab = '+1';
-                setImprovementToggle(false);
-            } else {
-                selectedGrade = '+2';
-                activeSetupGradeTab = '+2';
-                setImprovementToggle(false);
-            }
+            selectedGrade = grade === '+1' ? '+1' : '+2';
+            activeSetupGradeTab = selectedGrade;
             selectedCompletedChapters.clear();
             renderApp();
             goToSetupStep(1);
@@ -1465,23 +1451,12 @@ function showToastMessage(text, icon = 'checkCircle') {
         function setStreamSelection(stream) {
             selectedStream = stream;
             selectedCompletedChapters.clear();
-            setupHasImprovement = stream === 'imp_only';
-            setupImprovementSelection.clear();
-            setupImprovementDates.clear();
             const subs = getStreamSubjects(stream);
-            if (stream === 'imp_only') {
-                selectedGrade = '+1';
-                activeSetupGradeTab = '+1';
-                activeSetupSubjectTab = 'Physics';
-                const cb = document.getElementById('has-improvement');
-                if (cb) cb.checked = true;
-            } else {
-                activeSetupGradeTab = selectedGrade || '+2';
-                activeSetupSubjectTab = subs[0];
-            }
+            activeSetupGradeTab = selectedGrade || '+2';
+            activeSetupSubjectTab = subs[0];
             renderApp();
             goToSetupStep(1);
-            document.getElementById(`stream-card-${stream === 'imp_only' ? 'imp' : stream}`)?.focus();
+            document.getElementById(`stream-card-${stream}`)?.focus();
         }
 
         function updateTermCardsDescriptions() {
@@ -1516,12 +1491,7 @@ function showToastMessage(text, icon = 'checkCircle') {
 
         function renderSetupSubjectTabs() {
             let subs = getStreamSubjects(selectedStream);
-            if (selectedStream === 'imp_only') {
-                const checkedSubs = subs.filter(sub => setupImprovementSelection.get(sub));
-                if (checkedSubs.length > 0) {
-                    subs = checkedSubs;
-                }
-            }
+
             if (!subs.includes(activeSetupSubjectTab) && subs.length > 0) {
                 activeSetupSubjectTab = subs[0];
             }
@@ -1530,44 +1500,6 @@ function showToastMessage(text, icon = 'checkCircle') {
                     ${sub}
                 </button>
             `).join('');
-        }
-
-        function setImprovementToggle(enabled) {
-            setupHasImprovement = selectedStream === 'imp_only' || enabled;
-            const checkbox = document.getElementById('has-improvement');
-            if (checkbox) checkbox.checked = setupHasImprovement;
-            const panel = document.getElementById('improvement-options');
-            if (panel) panel.classList.toggle('hidden', !setupHasImprovement);
-        }
-
-        function setImprovementSubjectSelection(subject, checked) {
-            if (!getImprovementSubjects(selectedStream).includes(subject)) return;
-            setupImprovementSelection.set(subject, checked);
-        }
-
-        function setImprovementExamDate(subject, value) {
-            if (!getImprovementSubjects(selectedStream).includes(subject)) return;
-            setupImprovementDates.set(subject, value);
-        }
-
-        function renderImprovementSubjectItems() {
-            const isML = getAppLanguage() === 'ml';
-            return getImprovementSubjects(selectedStream).map(subject => {
-                const subId = subject.replace(/\s+/g, '-').toLowerCase();
-                const checked = setupImprovementSelection.get(subject) || false;
-                const examDate = setupImprovementDates.get(subject) || '';
-                return `
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 rounded-xl border border-amber-200 dark:border-amber-700">
-                        <label class="flex items-center gap-2.5 text-sm font-bold">
-                            <input type="checkbox" id="imp-${subId}" ${checked ? 'checked' : ''} onchange="setImprovementSubjectSelection('${subject}', this.checked)">
-                            <span>${escapeStudyText(subject)} (+1)</span>
-                        </label>
-                        <label class="flex flex-wrap items-center gap-2 text-xs">
-                            <span>${isML ? 'പരീക്ഷാ തീയതി' : 'Exam date'} — ${escapeStudyText(subject)}</span>
-                            <input type="date" id="input-date-${subId}" value="${escapeStudyText(examDate)}" onchange="setImprovementExamDate('${subject}', this.value)" class="border rounded-lg px-2 py-1 bg-white dark:bg-[#141d30]">
-                        </label>
-                    </div>`;
-            }).join('');
         }
 
         function switchSetupGrade(grade) {
@@ -1676,7 +1608,7 @@ function showToastMessage(text, icon = 'checkCircle') {
                 <div class="flex items-center justify-between pb-2 mb-2.5 border-b border-slate-100 dark:border-slate-700/60">
                     <div class="flex items-center gap-2">
                         <span class="text-xs font-bold text-slate-700 dark:text-slate-200">
-                            ${grade === '+1' ? '<span class="text-amber-700 dark:text-amber-300 font-extrabold bg-amber-50 dark:bg-amber-950/40 px-2 py-0.5 rounded border border-amber-200/60 dark:border-amber-700/60">+1 Improvement</span>' : '<span class="text-blue-700 dark:text-blue-300 font-extrabold bg-blue-50 dark:bg-blue-950/40 px-2 py-0.5 rounded border border-blue-200/60 dark:border-blue-700/60">+2 Regular</span>'} • ${subject}
+                            ${grade === '+1' ? '<span class="text-amber-700 dark:text-amber-300 font-extrabold bg-amber-50 dark:bg-amber-950/40 px-2 py-0.5 rounded border border-amber-200/60 dark:border-amber-700/60">Class 11 (+1)</span>' : '<span class="text-blue-700 dark:text-blue-300 font-extrabold bg-blue-50 dark:bg-blue-950/40 px-2 py-0.5 rounded border border-blue-200/60 dark:border-blue-700/60">Class 12 (+2)</span>'} • ${subject}
                         </span>
                         <span class="text-xs text-slate-400 dark:text-slate-400 font-medium">${completedText}</span>
                     </div>
@@ -1696,7 +1628,7 @@ function showToastMessage(text, icon = 'checkCircle') {
                         <input type="checkbox" data-grade="${grade}" data-subject="${subject}" value="${ch.chapId}" ${isChecked ? 'checked' : ''} onchange="toggleChapterSelection('${ch.chapId}', this.checked); this.closest('label').classList.toggle('bg-emerald-50/70', this.checked); this.closest('label').classList.toggle('dark:bg-emerald-950/40', this.checked); this.closest('label').classList.toggle('border-emerald-200', this.checked); this.closest('label').classList.toggle('dark:border-emerald-600/50', this.checked); this.closest('label').classList.toggle('border-slate-200/80', !this.checked); this.closest('label').classList.toggle('dark:border-slate-700/60', !this.checked);" class="completed-chapter-cb mt-0.5 rounded border-slate-300 dark:border-slate-600 text-emerald-600 focus:ring-emerald-500 w-4 h-4">
                         <div class="flex-1 truncate">
                             <span class="font-bold text-slate-800 dark:text-white block truncate" title="${ch.chapterName}">Chapter ${ch.chapNumber}: ${ch.chapterName.replace(/^Chapter\s+\d+:\s*/i, '').replace(/^\d+\.\s*/, '')}</span>
-                            <span class="text-xs ${grade === '+1' ? 'text-amber-700 dark:text-amber-300' : 'text-slate-400 dark:text-slate-400'} font-medium">${grade === '+1' ? '+1 Improvement Paper' : 'Term ' + ch.term} • ${ch.totalParts} ${studyPartsLabel}</span>
+                            <span class="text-xs text-slate-400 dark:text-slate-400 font-medium">Term ${ch.term} • ${ch.totalParts} ${studyPartsLabel}</span>
                         </div>
                     </label>
                 `;
@@ -2014,31 +1946,14 @@ function showToastMessage(text, icon = 'checkCircle') {
                 return;
             }
 
-            // Collect excluded / already completed chapters (both +2 and +1)
+            // Collect excluded / already completed chapters
             const checkedCompletedBoxes = Array.from(selectedCompletedChapters);
+            const currentGrade = typeof selectedGrade !== 'undefined' ? selectedGrade : '+2';
 
-            const isImpOnly = selectedStream === 'imp_only';
-            const currentGrade = (typeof selectedGrade !== 'undefined' ? selectedGrade : (selectedStream === 'imp_only' ? '+1' : '+2'));
-            const isPlusOne = currentGrade === '+1' && !isImpOnly;
-            let improvementConfig = [];
-            const hasImp = isImpOnly || document.getElementById('has-improvement')?.checked;
-            try {
-                const selected = hasImp ? getImprovementSubjects(selectedStream)
-                    .filter(subject => setupImprovementSelection.get(subject))
-                    .map(subject => ({ subject, examDate: setupImprovementDates.get(subject) || '' })) : [];
-                improvementConfig = validateImprovementSelection(selected, selectedStream, effectiveStartDate, deadlineInput);
-            } catch (error) {
-                goToSetupStep(2);
-                showAppAlert({
-                    title: isML ? 'ഇംപ്രൂവ്മെന്റ് വിവരങ്ങൾ പരിശോധിക്കുക' : 'Check improvement subjects and dates',
-                    message: isML ? 'ഒരു വിഷയമെങ്കിലും തിരഞ്ഞെടുത്ത് പ്ലാൻ ആരംഭിച്ചതിന് ശേഷവും ലക്ഷ്യ തീയതിക്ക് മുമ്പായോ അന്നോ ഉള്ള പരീക്ഷാ തീയതി നൽകുക.' : error.message,
-                    icon: 'fa-calendar-day text-amber-500',
-                });
-                return;
-            }
             const tasksToPlan = getRemainingPlanTasks({
                 grade: currentGrade,
-                stream: selectedStream, targetTerm, improvementConfig,
+                stream: selectedStream,
+                targetTerm,
                 completedChapterIds: new Set(checkedCompletedBoxes),
             });
 
@@ -2052,12 +1967,10 @@ function showToastMessage(text, icon = 'checkCircle') {
             }
 
             animatePlanGeneration({ mode: 'create', isLateEvening: smartStart.isLateEvening }, () => {
-                const impSubs = (improvementConfig || []).map(c => c.subject);
-                const personalization = getPersonalizationConfig(impSubs);
-                const planResult = buildIntelligentPlan(deadlineInput, tasksToPlan, effectiveStartDate, improvementConfig, selectedStream, {
+                const personalization = getPersonalizationConfig();
+                const planResult = buildIntelligentPlan(deadlineInput, tasksToPlan, effectiveStartDate, [], selectedStream, {
                     intensity: studyIntensity,
                     personalization: personalization,
-                    improvementOnly: isImpOnly
                 });
 
                 if (planResult && planResult.planDays) {
@@ -2065,14 +1978,12 @@ function showToastMessage(text, icon = 'checkCircle') {
                         engineVersion: PLANNER_ENGINE_VERSION,
                         grade: currentGrade,
                         stream: selectedStream,
-                        improvementOnly: isImpOnly,
                         studyIntensity: studyIntensity,
                         personalization: personalization,
                         startDate: effectiveStartDate,
                         deadlineDate: deadlineInput,
-                        targetTerm: isImpOnly ? 1 : targetTerm,
+                        targetTerm: targetTerm,
                         completedChaptersOnInit: checkedCompletedBoxes,
-                        improvementConfig: improvementConfig,
                         plan: planResult.planDays,
                         revisionDaysCount: planResult.revisionDaysCount,
                         totalConfiguredTasks: tasksToPlan.length,
@@ -2232,14 +2143,14 @@ function showToastMessage(text, icon = 'checkCircle') {
             const userGrade = appState.grade || (typeof selectedGrade !== 'undefined' ? selectedGrade : '+2');
             const uncompletedTasks = getRemainingPlanTasks({
                 grade: userGrade,
-                stream: userStream, targetTerm, improvementConfig: appState.improvementConfig || [],
+                stream: userStream, targetTerm,
                 completedChapterIds, completedTaskIds,
             });
 
             closeRegenerateModal();
 
             animatePlanGeneration({ mode: 'rebalance', isLateEvening: (completedUpTo === 0 && smartStart.isLateEvening) }, () => {
-                const result = buildIntelligentPlan(appState.deadlineDate, uncompletedTasks, rebuildStartDate, appState.improvementConfig || [], userStream, {
+                const result = buildIntelligentPlan(appState.deadlineDate, uncompletedTasks, rebuildStartDate, [], userStream, {
                     intensity: appState.studyIntensity || 'balanced',
                     personalization: appState.personalization || {}
                 });
@@ -2337,12 +2248,12 @@ function showToastMessage(text, icon = 'checkCircle') {
             if (stepNum === 4) {
                 const streamBadge = document.getElementById('summary-stream-badge');
                 if (streamBadge) {
+                    const gradeLabel = selectedGrade === '+1' ? '+1' : '+2';
                     const streamNames = {
-                        cs: 'Computer Science (+2)',
-                        bio: 'Biology Science (+2)',
-                        commerce: 'Commerce (+2)',
-                        humanities: 'Humanities (+2)',
-                        imp_only: '+1 Improvement Only'
+                        cs: `Computer Science (${gradeLabel})`,
+                        bio: `Biology Science (${gradeLabel})`,
+                        commerce: `Commerce (${gradeLabel})`,
+                        humanities: `Humanities (${gradeLabel})`
                     };
                     streamBadge.innerText = streamNames[selectedStream] || selectedStream;
                 }
@@ -2431,35 +2342,25 @@ function showToastMessage(text, icon = 'checkCircle') {
                                 <label class="block text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
                                     ${isML ? 'ക്ലാസ് / ഗ്രേഡ്' : 'Class / Academic Year'}
                                 </label>
-                                <div class="grid grid-cols-3 gap-2">
-                                    <button type="button" id="grade-btn-p2" onclick="setGradeSelection('+2')" class="cursor-pointer p-3 rounded-2xl border-2 ${currentSelectedGrade === '+2' && !document.getElementById('has-improvement')?.checked ? 'border-blue-600 dark:border-blue-500 bg-blue-50/70 dark:bg-blue-950/40 ring-2 ring-blue-500/20 shadow-sm' : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600'} transition text-left flex flex-col justify-between">
+                                <div class="grid grid-cols-2 gap-3">
+                                    <button type="button" id="grade-btn-p2" onclick="setGradeSelection('+2')" class="cursor-pointer p-3.5 rounded-2xl border-2 ${currentSelectedGrade === '+2' ? 'border-blue-600 dark:border-blue-500 bg-blue-50/70 dark:bg-blue-950/40 ring-2 ring-blue-500/20 shadow-sm' : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600'} transition text-left flex flex-col justify-between">
                                         <div class="flex items-center justify-between">
-                                            <span class="text-xs font-black text-slate-900 dark:text-white">🎓 Plus Two (+2)</span>
-                                            <span class="w-4 h-4 rounded-full ${currentSelectedGrade === '+2' && !document.getElementById('has-improvement')?.checked ? 'bg-blue-600 text-white' : 'border border-slate-300 dark:border-slate-600'} flex items-center justify-center text-[10px]">
-                                                ${currentSelectedGrade === '+2' && !document.getElementById('has-improvement')?.checked ? '<i class="fa-solid fa-check"></i>' : ''}
+                                            <span class="text-sm font-black text-slate-900 dark:text-white">🎓 Plus Two (+2)</span>
+                                            <span class="w-5 h-5 rounded-full ${currentSelectedGrade === '+2' ? 'bg-blue-600 text-white' : 'border border-slate-300 dark:border-slate-600'} flex items-center justify-center text-[10px]">
+                                                ${currentSelectedGrade === '+2' ? '<i class="fa-solid fa-check"></i>' : ''}
                                             </span>
                                         </div>
-                                        <span class="text-[10px] font-semibold text-slate-400 mt-0.5">Class 12 Regular</span>
+                                        <span class="text-xs font-semibold text-slate-400 mt-1">Class 12 Board Syllabus</span>
                                     </button>
 
-                                    <button type="button" id="grade-btn-p1" onclick="setGradeSelection('+1')" class="cursor-pointer p-3 rounded-2xl border-2 ${currentSelectedGrade === '+1' ? 'border-amber-600 dark:border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 ring-2 ring-amber-500/20 shadow-sm' : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600'} transition text-left flex flex-col justify-between">
+                                    <button type="button" id="grade-btn-p1" onclick="setGradeSelection('+1')" class="cursor-pointer p-3.5 rounded-2xl border-2 ${currentSelectedGrade === '+1' ? 'border-amber-600 dark:border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 ring-2 ring-amber-500/20 shadow-sm' : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600'} transition text-left flex flex-col justify-between">
                                         <div class="flex items-center justify-between">
-                                            <span class="text-xs font-black text-slate-900 dark:text-white">📚 Plus One (+1)</span>
-                                            <span class="w-4 h-4 rounded-full ${currentSelectedGrade === '+1' ? 'bg-amber-600 text-white' : 'border border-slate-300 dark:border-slate-600'} flex items-center justify-center text-[10px]">
+                                            <span class="text-sm font-black text-slate-900 dark:text-white">📚 Plus One (+1)</span>
+                                            <span class="w-5 h-5 rounded-full ${currentSelectedGrade === '+1' ? 'bg-amber-600 text-white' : 'border border-slate-300 dark:border-slate-600'} flex items-center justify-center text-[10px]">
                                                 ${currentSelectedGrade === '+1' ? '<i class="fa-solid fa-check"></i>' : ''}
                                             </span>
                                         </div>
-                                        <span class="text-[10px] font-semibold text-slate-400 mt-0.5">Class 11 Regular</span>
-                                    </button>
-
-                                    <button type="button" id="grade-btn-dual" onclick="setGradeSelection('dual')" class="cursor-pointer p-3 rounded-2xl border-2 ${currentSelectedGrade === '+2' && document.getElementById('has-improvement')?.checked ? 'border-purple-600 dark:border-purple-500 bg-purple-50/70 dark:bg-purple-950/40 ring-2 ring-purple-500/20 shadow-sm' : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600'} transition text-left flex flex-col justify-between">
-                                        <div class="flex items-center justify-between">
-                                            <span class="text-xs font-black text-slate-900 dark:text-white">⚡ Dual (+2 & +1)</span>
-                                            <span class="w-4 h-4 rounded-full ${currentSelectedGrade === '+2' && document.getElementById('has-improvement')?.checked ? 'bg-purple-600 text-white' : 'border border-slate-300 dark:border-slate-600'} flex items-center justify-center text-[10px]">
-                                                ${currentSelectedGrade === '+2' && document.getElementById('has-improvement')?.checked ? '<i class="fa-solid fa-check"></i>' : ''}
-                                            </span>
-                                        </div>
-                                        <span class="text-[10px] font-semibold text-slate-400 mt-0.5">+1 Improvement</span>
+                                        <span class="text-xs font-semibold text-slate-400 mt-1">Class 11 Annual Syllabus</span>
                                     </button>
                                 </div>
                             </div>
@@ -2543,10 +2444,7 @@ function showToastMessage(text, icon = 'checkCircle') {
 
                             </div>
 
-                            <button type="button" id="stream-card-imp" aria-pressed="${selectedStream === 'imp_only'}" onclick="setStreamSelection('imp_only')" class="w-full p-3.5 rounded-2xl border-2 text-left ${selectedStream === 'imp_only' ? 'border-amber-600 bg-amber-50 dark:bg-amber-950/40' : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0e1526]'}">
-                                <span class="block font-black text-sm">${isML ? '+1 ഇംപ്രൂവ്മെന്റ് മാത്രം' : '+1 Improvement Only'}</span>
-                                <span class="block text-xs mt-1">${isML ? '+2 പാഠങ്ങൾ ഇല്ലാതെ തിരഞ്ഞെടുത്ത +1 വിഷയങ്ങൾ പഠിക്കുക.' : 'Plan selected +1 subjects without adding +2 lessons.'}</span>
-                            </button>
+                            
 
                             <!-- Step 1 Navigation (Strictly "Next", No extra clutter) -->
                             <div class="pt-5 flex justify-end">
@@ -2599,17 +2497,7 @@ function showToastMessage(text, icon = 'checkCircle') {
                             <!-- Live Calculation Feedback Box -->
                             <div id="deadline-calc-label" class="p-3 rounded-2xl bg-blue-50/70 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-800/40 text-xs text-slate-600 dark:text-slate-200"></div>
 
-                            <fieldset class="space-y-3 rounded-2xl border border-amber-200 dark:border-amber-700 p-3">
-                                <legend class="px-1 font-bold text-sm">${isML ? '+1 ഇംപ്രൂവ്മെന്റ് പരീക്ഷകൾ' : '+1 Improvement exams'}</legend>
-                                <label class="flex items-center gap-2 text-sm font-semibold">
-                                    <input type="checkbox" id="has-improvement" ${setupHasImprovement || selectedStream === 'imp_only' ? 'checked' : ''} ${selectedStream === 'imp_only' ? 'disabled' : ''} onchange="setImprovementToggle(this.checked)">
-                                    ${isML ? '+1 വിഷയങ്ങൾ പ്ലാനിൽ ഉൾപ്പെടുത്തുക' : 'Include +1 subjects in this plan'}
-                                </label>
-                                <div id="improvement-options" class="space-y-2 ${setupHasImprovement || selectedStream === 'imp_only' ? '' : 'hidden'}">
-                                    <p class="text-xs">${isML ? 'വിഷയങ്ങൾ തിരഞ്ഞെടുത്ത് നിങ്ങളുടെ പരീക്ഷാ തീയതികൾ നൽകുക. ലക്ഷ്യ തീയതി എല്ലാ പരീക്ഷാ തീയതികളും ഉൾക്കൊള്ളണം.' : 'Select your subjects and enter your exam dates. Dates must be after the plan start and on or before the target date above. These are your dates, not an official exam timetable.'}</p>
-                                    ${renderImprovementSubjectItems()}
-                                </div>
-                            </fieldset>
+                            
 
                             <!-- Step 2 Navigation -->
                             <div class="pt-5 flex items-center justify-between gap-3">
@@ -2958,11 +2846,7 @@ function showToastMessage(text, icon = 'checkCircle') {
                     const isToday = (day.date === TODAY_STR);
 
                     let displayedTasks = day.tasks;
-                    if (currentPlanSubjectFilter === '+1 Improvement') {
-                        displayedTasks = day.tasks.filter(t => t.grade === '+1');
-                    } else if (currentPlanSubjectFilter === '+2 Regular') {
-                        displayedTasks = day.tasks.filter(t => t.grade === '+2');
-                    } else if (currentPlanSubjectFilter !== 'All') {
+                    if (currentPlanSubjectFilter !== 'All') {
                         displayedTasks = day.tasks.filter(t => t.subject === currentPlanSubjectFilter);
                     }
 
@@ -3095,22 +2979,14 @@ function showToastMessage(text, icon = 'checkCircle') {
                                 'Sociology': 'fa-users',
                             };
                             const streamSubs = getStreamSubjects(userStream);
-                            const activeSubs = userStream === 'imp_only'
-                                ? Array.from(new Set((appState?.plan || []).flatMap(d => (d.tasks || []).map(t => t.subject))))
-                                : streamSubs;
-
-                            const hasImprovementTasks = appState?.improvementConfig && appState.improvementConfig.length > 0;
+                            const activeSubs = streamSubs;
                             const filters = [
                                 { id: 'All', label: isML ? ML_I18N.plan.allSubjects : 'All Subjects', icon: 'fa-layer-group' },
                                 ...activeSubs.map(s => ({
                                     id: s,
                                     label: s === 'Mathematics' ? 'Maths' : s === 'Computer Science' ? 'CS' : s === 'Business Studies' ? 'Business' : s === 'Computer Applications' ? 'CA' : s === 'Political Science' ? 'Pol Science' : s,
                                     icon: subjectIcons[s] || 'fa-book'
-                                })),
-                                ...(hasImprovementTasks ? [
-                                    { id: '+2 Regular', label: '+2 Regular', icon: 'fa-graduation-cap' },
-                                    { id: '+1 Improvement', label: '+1 Improvement', icon: 'fa-arrow-up-right-dots' }
-                                ] : [])
+                                }))
                             ];
 
                             return filters.map(f => {
@@ -3964,10 +3840,6 @@ if (typeof window !== 'undefined') {
         setStreamSelection,
         updateTermCardsDescriptions,
         renderSetupSubjectTabs,
-        setImprovementToggle,
-        setImprovementSubjectSelection,
-        setImprovementExamDate,
-        renderImprovementSubjectItems,
         switchSetupGrade,
         switchSetupSubject,
         updateSetupTabsUI,
