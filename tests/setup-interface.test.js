@@ -52,6 +52,8 @@ function setup({ grade = '+2', stream = 'cs', step = 1 } = {}) {
     showAppAlert: vi.fn(),
     showAppToast: vi.fn(),
     saveAppState: vi.fn(),
+    playTapSound: vi.fn(),
+    getUserSetting: vi.fn(() => true),
     getPersonalizationConfig: () => ({ dailyHours: 3.5 }),
     animatePlanGeneration: (_options, done) => done(),
     goToDashboard: vi.fn(),

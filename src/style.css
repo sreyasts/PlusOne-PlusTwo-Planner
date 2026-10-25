@@ -94,6 +94,9 @@ html.dark .study-capacity, html.dark .study-tools { border-color: #334155; }
 }
 
         * { -webkit-tap-highlight-color: transparent; }
+        html, body {
+            overflow-x: clip;
+        }
         body { font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif; background-color: #f8fafc; }
         
         /* Custom Guaranteed Checkbox Styling */

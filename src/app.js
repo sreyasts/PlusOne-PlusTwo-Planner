@@ -32,7 +32,9 @@ import {
   playTaskCompleteSound,
   playMilestoneCelebrationSound,
   playUntickSound,
+  playTapSound,
 } from './audio/chime.js';
+import { triggerStudyConfetti } from './utils/confetti.js';
 import {
   showAppToast,
   showAppAlert,
@@ -1439,6 +1441,11 @@ function showToastMessage(text, icon = 'checkCircle') {
         let activeSetupGradeTab = '+2'; // '+2' or '+1'
         const selectedCompletedChapters = new Set();
         function setGradeSelection(grade) {
+            try {
+                if (typeof playTapSound === 'function' && (typeof getUserSetting !== 'function' || getUserSetting('sound', true))) {
+                    playTapSound();
+                }
+            } catch (_) {}
             selectedGrade = grade === '+1' ? '+1' : '+2';
             activeSetupGradeTab = selectedGrade;
             selectedCompletedChapters.clear();
@@ -1449,6 +1456,11 @@ function showToastMessage(text, icon = 'checkCircle') {
         // getStreamSubjects imported from ./engine/planner.js
 
         function setStreamSelection(stream) {
+            try {
+                if (typeof playTapSound === 'function' && (typeof getUserSetting !== 'function' || getUserSetting('sound', true))) {
+                    playTapSound();
+                }
+            } catch (_) {}
             selectedStream = stream;
             selectedCompletedChapters.clear();
             const subs = getStreamSubjects(stream);
@@ -2343,7 +2355,7 @@ function showToastMessage(text, icon = 'checkCircle') {
                                     ${isML ? 'ക്ലാസ് / ഗ്രേഡ്' : 'Class / Academic Year'}
                                 </label>
                                 <div class="grid grid-cols-2 gap-3">
-                                    <button type="button" id="grade-btn-p2" onclick="setGradeSelection('+2')" class="cursor-pointer p-3.5 rounded-2xl border-2 ${currentSelectedGrade === '+2' ? 'border-blue-600 dark:border-blue-500 bg-blue-50/70 dark:bg-blue-950/40 ring-2 ring-blue-500/20 shadow-sm' : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600'} transition text-left flex flex-col justify-between">
+                                    <button type="button" id="grade-btn-p2" onclick="setGradeSelection('+2')" class="cursor-pointer p-3.5 rounded-2xl border-2 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${currentSelectedGrade === '+2' ? 'border-blue-600 dark:border-blue-500 bg-blue-50/70 dark:bg-blue-950/40 ring-2 ring-blue-500/20 shadow-sm' : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600'} transition-transform duration-150 text-left flex flex-col justify-between">
                                         <div class="flex items-center justify-between">
                                             <span class="text-sm font-black text-slate-900 dark:text-white">🎓 Plus Two (+2)</span>
                                             <span class="w-5 h-5 rounded-full ${currentSelectedGrade === '+2' ? 'bg-blue-600 text-white' : 'border border-slate-300 dark:border-slate-600'} flex items-center justify-center text-[10px]">
@@ -2353,7 +2365,7 @@ function showToastMessage(text, icon = 'checkCircle') {
                                         <span class="text-xs font-semibold text-slate-400 mt-1">Class 12 Board Syllabus</span>
                                     </button>
 
-                                    <button type="button" id="grade-btn-p1" onclick="setGradeSelection('+1')" class="cursor-pointer p-3.5 rounded-2xl border-2 ${currentSelectedGrade === '+1' ? 'border-amber-600 dark:border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 ring-2 ring-amber-500/20 shadow-sm' : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600'} transition text-left flex flex-col justify-between">
+                                    <button type="button" id="grade-btn-p1" onclick="setGradeSelection('+1')" class="cursor-pointer p-3.5 rounded-2xl border-2 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${currentSelectedGrade === '+1' ? 'border-amber-600 dark:border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 ring-2 ring-amber-500/20 shadow-sm' : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600'} transition-transform duration-150 text-left flex flex-col justify-between">
                                         <div class="flex items-center justify-between">
                                             <span class="text-sm font-black text-slate-900 dark:text-white">📚 Plus One (+1)</span>
                                             <span class="w-5 h-5 rounded-full ${currentSelectedGrade === '+1' ? 'bg-amber-600 text-white' : 'border border-slate-300 dark:border-slate-600'} flex items-center justify-center text-[10px]">
@@ -2371,7 +2383,7 @@ function showToastMessage(text, icon = 'checkCircle') {
 
                             <div class="stream-options grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                                 <!-- Option 1: Computer Science -->
-                                <div id="stream-card-cs" aria-pressed="${selectedStream === 'cs'}" role="button" tabindex="0" onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.click(); }" onclick="setStreamSelection('cs')" class="cursor-pointer p-3.5 rounded-2xl border-2 ${selectedStream === 'cs' ? 'border-blue-600 dark:border-blue-500 bg-blue-50/70 dark:bg-blue-950/40 ring-2 ring-blue-500/20 shadow-sm' : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600'} transition text-left flex flex-col justify-between">
+                                <div id="stream-card-cs" aria-pressed="${selectedStream === 'cs'}" role="button" tabindex="0" onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.click(); }" onclick="setStreamSelection('cs')" class="cursor-pointer p-3.5 rounded-2xl border-2 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${selectedStream === 'cs' ? 'border-blue-600 dark:border-blue-500 bg-blue-50/70 dark:bg-blue-950/40 ring-2 ring-blue-500/20 shadow-sm' : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600'} transition-transform duration-150 text-left flex flex-col justify-between">
                                     <div class="flex items-center justify-between">
                                         <div class="flex items-center gap-2.5">
                                             <div class="w-9 h-9 rounded-xl bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 flex items-center justify-center text-base font-bold shrink-0">
@@ -2389,7 +2401,7 @@ function showToastMessage(text, icon = 'checkCircle') {
                                 </div>
 
                                 <!-- Option 2: Biology Science -->
-                                <div id="stream-card-bio" aria-pressed="${selectedStream === 'bio'}" role="button" tabindex="0" onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.click(); }" onclick="setStreamSelection('bio')" class="cursor-pointer p-3.5 rounded-2xl border-2 ${selectedStream === 'bio' ? 'border-emerald-600 dark:border-emerald-500 bg-emerald-50/70 dark:bg-emerald-950/40 ring-2 ring-emerald-500/20 shadow-sm' : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600'} transition text-left flex flex-col justify-between">
+                                <div id="stream-card-bio" aria-pressed="${selectedStream === 'bio'}" role="button" tabindex="0" onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.click(); }" onclick="setStreamSelection('bio')" class="cursor-pointer p-3.5 rounded-2xl border-2 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${selectedStream === 'bio' ? 'border-emerald-600 dark:border-emerald-500 bg-emerald-50/70 dark:bg-emerald-950/40 ring-2 ring-emerald-500/20 shadow-sm' : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600'} transition-transform duration-150 text-left flex flex-col justify-between">
                                     <div class="flex items-center justify-between">
                                         <div class="flex items-center gap-2.5">
                                             <div class="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 flex items-center justify-center text-base font-bold shrink-0">
@@ -2407,7 +2419,7 @@ function showToastMessage(text, icon = 'checkCircle') {
                                 </div>
 
                                 <!-- Option 3: Commerce -->
-                                <div id="stream-card-commerce" aria-pressed="${selectedStream === 'commerce'}" role="button" tabindex="0" onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.click(); }" onclick="setStreamSelection('commerce')" class="cursor-pointer p-3.5 rounded-2xl border-2 ${selectedStream === 'commerce' ? 'border-purple-600 dark:border-purple-500 bg-purple-50/70 dark:bg-purple-950/40 ring-2 ring-purple-500/20 shadow-sm' : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600'} transition text-left flex flex-col justify-between">
+                                <div id="stream-card-commerce" aria-pressed="${selectedStream === 'commerce'}" role="button" tabindex="0" onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.click(); }" onclick="setStreamSelection('commerce')" class="cursor-pointer p-3.5 rounded-2xl border-2 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${selectedStream === 'commerce' ? 'border-purple-600 dark:border-purple-500 bg-purple-50/70 dark:bg-purple-950/40 ring-2 ring-purple-500/20 shadow-sm' : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600'} transition-transform duration-150 text-left flex flex-col justify-between">
                                     <div class="flex items-center justify-between">
                                         <div class="flex items-center gap-2.5">
                                             <div class="w-9 h-9 rounded-xl bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 flex items-center justify-center text-base font-bold shrink-0">
@@ -2425,7 +2437,7 @@ function showToastMessage(text, icon = 'checkCircle') {
                                 </div>
 
                                 <!-- Option 4: Humanities -->
-                                <div id="stream-card-humanities" aria-pressed="${selectedStream === 'humanities'}" role="button" tabindex="0" onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.click(); }" onclick="setStreamSelection('humanities')" class="cursor-pointer p-3.5 rounded-2xl border-2 ${selectedStream === 'humanities' ? 'border-rose-600 dark:border-rose-500 bg-rose-50/70 dark:bg-rose-950/40 ring-2 ring-rose-500/20 shadow-sm' : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600'} transition text-left flex flex-col justify-between">
+                                <div id="stream-card-humanities" aria-pressed="${selectedStream === 'humanities'}" role="button" tabindex="0" onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.click(); }" onclick="setStreamSelection('humanities')" class="cursor-pointer p-3.5 rounded-2xl border-2 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${selectedStream === 'humanities' ? 'border-rose-600 dark:border-rose-500 bg-rose-50/70 dark:bg-rose-950/40 ring-2 ring-rose-500/20 shadow-sm' : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600'} transition-transform duration-150 text-left flex flex-col justify-between">
                                     <div class="flex items-center justify-between">
                                         <div class="flex items-center gap-2.5">
                                             <div class="w-9 h-9 rounded-xl bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 flex items-center justify-center text-base font-bold shrink-0">
@@ -3837,6 +3849,7 @@ if (typeof window !== 'undefined') {
         setDailyHoursSelection,
         getPersonalizationConfig,
         getStreamSubjects,
+        setGradeSelection,
         setStreamSelection,
         updateTermCardsDescriptions,
         renderSetupSubjectTabs,
