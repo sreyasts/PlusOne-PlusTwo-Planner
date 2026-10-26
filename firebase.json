@@ -1,7 +1,7 @@
 {
   "hosting": [
     {
-      "site": "plusone-plustwo-planner",
+      "site": "hssplanner",
       "public": "dist",
       "ignore": [
         "firebase.json",
