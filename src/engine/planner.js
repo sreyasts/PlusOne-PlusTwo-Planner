@@ -628,9 +628,12 @@ function _executeCorePlanAlgorithm(
   const subjectChapterMap = {};
   streamSubjects.forEach((s) => (subjectChapterMap[s] = []));
 
+  const chapterLookup = {};
   p2Tasks.forEach((task) => {
     if (!subjectChapterMap[task.subject]) subjectChapterMap[task.subject] = [];
-    let ch = subjectChapterMap[task.subject].find((c) => c.chapNumber === task.chapNumber);
+    if (!chapterLookup[task.subject]) chapterLookup[task.subject] = {};
+
+    let ch = chapterLookup[task.subject][task.chapNumber];
     if (!ch) {
       ch = {
         chapNumber: task.chapNumber,
@@ -640,6 +643,7 @@ function _executeCorePlanAlgorithm(
         term: task.term,
         parts: [],
       };
+      chapterLookup[task.subject][task.chapNumber] = ch;
       subjectChapterMap[task.subject].push(ch);
     }
     ch.parts.push(task);
