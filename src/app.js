@@ -177,7 +177,6 @@ function loadInitialState() {
                         loaded = migratedV3;
                         localStorage.setItem('plusTwoMissionState_v2', JSON.stringify(loaded));
                         localStorage.setItem('plusTwoPlanState', JSON.stringify(loaded));
-                        console.log("One-time automatic upgrade to Planner Engine v3 completed.");
                         setTimeout(() => {
                             showToastMessage("✨ Your study plan was automatically upgraded to the intelligent v3 engine!", "fa-wand-magic-sparkles text-blue-400");
                         }, 700);
