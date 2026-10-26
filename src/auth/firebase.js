@@ -8,9 +8,9 @@ export const firebaseConfig = {
   apiKey: "AIzaSyDPcQQkOABPaZAv1lc9-u4Xm5UvMcI0g1A",
   authDomain: "mission-plustwo.firebaseapp.com",
   projectId: "mission-plustwo",
-  storageBucket: "mission-plustwo.appspot.com",
+  storageBucket: "mission-plustwo.firebasestorage.app",
   messagingSenderId: "376961059569",
-  appId: "1:376961059569:web:77d0a7c7-ae77-471b-a1b2-37e4c8b4fb83",
+  appId: "1:376961059569:web:4519080be63d1069a57750",
   measurementId: "G-12KPP3ZZ80"
 };
 

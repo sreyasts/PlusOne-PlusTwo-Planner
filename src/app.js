@@ -495,26 +495,25 @@ function loadInitialState() {
             initFirebaseAuth();
         }
 
-        /* First-Time Open Login Modal Trigger (8 Seconds after first opening) */
-        function scheduleFirstTimeAuthModal(delayMs = 8000) {
+        /* Post-Plan Generation Auth Modal Trigger (8 Seconds after plan generation) */
+        function schedulePostPlanAuthModal(delayMs = 8000) {
             if (typeof window === 'undefined' || typeof localStorage === 'undefined') return;
             if (currentUser) return;
             if (localStorage.getItem('mpt_was_logged_in') === 'true') return;
             if (localStorage.getItem('has_seen_auth_modal') === 'true') return;
-            if (localStorage.getItem('mpt_has_opened') === 'true') return;
-
-            // Mark as opened so subsequent visits do not re-trigger
-            localStorage.setItem('mpt_has_opened', 'true');
+            if (!appState || !Array.isArray(appState.plan) || appState.plan.length === 0) return;
 
             if (authModalTimer) clearTimeout(authModalTimer);
             authModalTimer = setTimeout(() => {
                 authModalTimer = null;
-                if (!currentUser && localStorage.getItem('has_seen_auth_modal') !== 'true' && localStorage.getItem('mpt_was_logged_in') !== 'true') {
+                if (!currentUser && appState && localStorage.getItem('has_seen_auth_modal') !== 'true' && localStorage.getItem('mpt_was_logged_in') !== 'true') {
                     openAuthModal();
                 }
             }, delayMs);
             return authModalTimer;
         }
+
+        const scheduleFirstTimeAuthModal = schedulePostPlanAuthModal;
 
         /* Milestone-Triggered Google Auth Modal (Zero Friction - Triggered only after first milestone) */
         function checkAndTriggerMilestoneAuth() {
@@ -2158,6 +2157,9 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                             "fa-rocket text-blue-400");
                     }
 
+                    if (typeof schedulePostPlanAuthModal === 'function') {
+                        schedulePostPlanAuthModal(8000);
+                    }
                 }
             });
         }
@@ -2357,6 +2359,9 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                     }
                     renderApp();
 
+                    if (typeof schedulePostPlanAuthModal === 'function') {
+                        schedulePostPlanAuthModal(8000);
+                    }
                 }
             });
         }
@@ -4007,9 +4012,9 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
         // Initialize App on DOM Load
         renderApp();
 
-        // Show login panel after 8 seconds when the user opened for first time if not logged in
-        if (typeof window !== 'undefined') {
-            scheduleFirstTimeAuthModal(8000);
+        // If user already has a generated plan on this device and hasn't seen the sign-in modal, prompt after 8 seconds
+        if (typeof window !== 'undefined' && appState && !localStorage.getItem('has_seen_auth_modal')) {
+            schedulePostPlanAuthModal(8000);
         }
     
 
@@ -4022,6 +4027,7 @@ if (typeof window !== 'undefined') {
         saveAppStateLocally,
         saveAppState,
         performCloudSync,
+        schedulePostPlanAuthModal,
         scheduleFirstTimeAuthModal,
         checkAndTriggerMilestoneAuth,
         openAuthModal,

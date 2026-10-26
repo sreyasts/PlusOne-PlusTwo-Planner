@@ -15,12 +15,12 @@ describe('Authentication & Cross-Domain Unification Invariants', () => {
     expect(appJsContent).toContain('clearTimeout(authModalTimer)');
   });
 
-  it('schedules login panel 8 seconds after first time open for non-logged-in users', () => {
+  it('schedules simple sign-in modal 8 seconds after plan generation for non-signed-in users', () => {
     const appJsContent = fs.readFileSync(appJsPath, 'utf8');
     expect(appJsContent).toContain('authModalTimer = setTimeout');
     expect(appJsContent).toContain('8000');
     expect(appJsContent).toContain('openAuthModal()');
-    expect(appJsContent).toContain('scheduleFirstTimeAuthModal');
+    expect(appJsContent).toContain('schedulePostPlanAuthModal');
   });
 
   it('renders a simple and uncluttered sign-in screen in index.html', () => {
@@ -99,8 +99,8 @@ describe('Authentication & Cross-Domain Unification Invariants', () => {
     expect(swContent).toContain('self.clients.claim()');
   });
 
-  describe('scheduleFirstTimeAuthModal behavior', () => {
-    function setupSandbox(initialStorage = {}, user = null) {
+  describe('schedulePostPlanAuthModal behavior', () => {
+    function setupSandbox(initialStorage = {}, user = null, appState = { plan: [{ dayNumber: 1, tasks: [] }] }) {
       const storage = { ...initialStorage };
       const localStorageMock = {
         getItem: vi.fn((k) => storage[k] ?? null),
@@ -110,12 +110,13 @@ describe('Authentication & Cross-Domain Unification Invariants', () => {
       let openAuthModalCalled = false;
       const appJsContent = fs.readFileSync(appJsPath, 'utf8');
 
-      const fnMatch = appJsContent.match(/function scheduleFirstTimeAuthModal\([\s\S]*?\n        \}/);
-      if (!fnMatch) throw new Error('scheduleFirstTimeAuthModal function not found in app.js');
+      const fnMatch = appJsContent.match(/function schedulePostPlanAuthModal\([\s\S]*?\n        \}/);
+      if (!fnMatch) throw new Error('schedulePostPlanAuthModal function not found in app.js');
 
       const scriptCode = `
         let authModalTimer = null;
         let currentUser = sandboxUser;
+        let appState = sandboxAppState;
         function openAuthModal() {
           openAuthModalCalled = true;
         }
@@ -126,6 +127,7 @@ describe('Authentication & Cross-Domain Unification Invariants', () => {
         window: {},
         localStorage: localStorageMock,
         sandboxUser: user,
+        sandboxAppState: appState,
         setTimeout: vi.fn((cb, delay) => {
           return { id: 123, cb, delay };
         }),
@@ -139,13 +141,12 @@ describe('Authentication & Cross-Domain Unification Invariants', () => {
       return { sandbox, storage, localStorageMock };
     }
 
-    it('schedules auth modal after 8000ms on first open for non-logged-in user', () => {
-      const { sandbox, storage } = setupSandbox({});
-      const timer = sandbox.scheduleFirstTimeAuthModal(8000);
+    it('schedules auth modal after 8000ms upon plan generation for non-logged-in user', () => {
+      const { sandbox } = setupSandbox({});
+      const timer = sandbox.schedulePostPlanAuthModal(8000);
 
       expect(timer).toBeDefined();
       expect(sandbox.setTimeout).toHaveBeenCalledWith(expect.any(Function), 8000);
-      expect(storage['mpt_has_opened']).toBe('true');
 
       // Trigger the timer callback
       const timerCall = sandbox.setTimeout.mock.calls[0];
@@ -155,9 +156,9 @@ describe('Authentication & Cross-Domain Unification Invariants', () => {
       expect(sandbox.openAuthModalCalled).toBe(true);
     });
 
-    it('does not schedule auth modal if already opened before', () => {
-      const { sandbox } = setupSandbox({ mpt_has_opened: 'true' });
-      const timer = sandbox.scheduleFirstTimeAuthModal(8000);
+    it('does not schedule auth modal if plan has not been generated yet', () => {
+      const { sandbox } = setupSandbox({}, null, null);
+      const timer = sandbox.schedulePostPlanAuthModal(8000);
 
       expect(timer).toBeUndefined();
       expect(sandbox.setTimeout).not.toHaveBeenCalled();
@@ -165,7 +166,7 @@ describe('Authentication & Cross-Domain Unification Invariants', () => {
 
     it('does not schedule auth modal if user is already logged in', () => {
       const { sandbox } = setupSandbox({}, { uid: 'user_123', email: 'test@example.com' });
-      const timer = sandbox.scheduleFirstTimeAuthModal(8000);
+      const timer = sandbox.schedulePostPlanAuthModal(8000);
 
       expect(timer).toBeUndefined();
       expect(sandbox.setTimeout).not.toHaveBeenCalled();
@@ -173,7 +174,7 @@ describe('Authentication & Cross-Domain Unification Invariants', () => {
 
     it('does not schedule auth modal if user was previously logged in', () => {
       const { sandbox } = setupSandbox({ mpt_was_logged_in: 'true' });
-      const timer = sandbox.scheduleFirstTimeAuthModal(8000);
+      const timer = sandbox.schedulePostPlanAuthModal(8000);
 
       expect(timer).toBeUndefined();
       expect(sandbox.setTimeout).not.toHaveBeenCalled();
@@ -181,7 +182,7 @@ describe('Authentication & Cross-Domain Unification Invariants', () => {
 
     it('does not schedule auth modal if user already saw or dismissed the auth modal', () => {
       const { sandbox } = setupSandbox({ has_seen_auth_modal: 'true' });
-      const timer = sandbox.scheduleFirstTimeAuthModal(8000);
+      const timer = sandbox.schedulePostPlanAuthModal(8000);
 
       expect(timer).toBeUndefined();
       expect(sandbox.setTimeout).not.toHaveBeenCalled();
