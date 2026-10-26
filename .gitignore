@@ -45,3 +45,7 @@ lerna-debug.log*
 # Firebase cache
 .firebase/
 
+
+# Teamwork Agent Scratch
+.agents/
+

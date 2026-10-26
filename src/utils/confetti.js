@@ -42,7 +42,6 @@ export function triggerStudyConfetti() {
     });
   }
 
-  let animationFrame;
   function update() {
     ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
@@ -68,7 +67,7 @@ export function triggerStudyConfetti() {
     });
 
     if (activeParticles > 0) {
-      animationFrame = requestAnimationFrame(update);
+      window.requestAnimationFrame(update);
     } else {
       ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
       if (canvas && canvas.parentNode) {

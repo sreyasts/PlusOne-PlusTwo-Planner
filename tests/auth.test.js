@@ -1,6 +1,7 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import fs from 'fs';
 import path from 'path';
+import vm from 'vm';
 
 describe('Authentication & Cross-Domain Unification Invariants', () => {
   const appJsPath = path.resolve(__dirname, '../src/app.js');
@@ -14,10 +15,12 @@ describe('Authentication & Cross-Domain Unification Invariants', () => {
     expect(appJsContent).toContain('clearTimeout(authModalTimer)');
   });
 
-  it('keeps sign-in explicit rather than scheduling a guest interruption', () => {
+  it('schedules login panel 8 seconds after first time open for non-logged-in users', () => {
     const appJsContent = fs.readFileSync(appJsPath, 'utf8');
-    expect(appJsContent.includes('authModalTimer = setTimeout')).toBe(false);
-    expect(appJsContent.includes('function openAuthModal()')).toBe(true);
+    expect(appJsContent).toContain('authModalTimer = setTimeout');
+    expect(appJsContent).toContain('8000');
+    expect(appJsContent).toContain('openAuthModal()');
+    expect(appJsContent).toContain('scheduleFirstTimeAuthModal');
   });
 
   it('renders a simple and uncluttered sign-in screen in index.html', () => {
@@ -94,5 +97,94 @@ describe('Authentication & Cross-Domain Unification Invariants', () => {
     const swContent = fs.readFileSync(swJsPath, 'utf8');
     expect(swContent).toContain('keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))');
     expect(swContent).toContain('self.clients.claim()');
+  });
+
+  describe('scheduleFirstTimeAuthModal behavior', () => {
+    function setupSandbox(initialStorage = {}, user = null) {
+      const storage = { ...initialStorage };
+      const localStorageMock = {
+        getItem: vi.fn((k) => storage[k] ?? null),
+        setItem: vi.fn((k, v) => { storage[k] = String(v); }),
+        removeItem: vi.fn((k) => { delete storage[k]; }),
+      };
+      let openAuthModalCalled = false;
+      const appJsContent = fs.readFileSync(appJsPath, 'utf8');
+
+      const fnMatch = appJsContent.match(/function scheduleFirstTimeAuthModal\([\s\S]*?\n        \}/);
+      if (!fnMatch) throw new Error('scheduleFirstTimeAuthModal function not found in app.js');
+
+      const scriptCode = `
+        let authModalTimer = null;
+        let currentUser = sandboxUser;
+        function openAuthModal() {
+          openAuthModalCalled = true;
+        }
+        ${fnMatch[0]}
+      `;
+
+      const sandbox = {
+        window: {},
+        localStorage: localStorageMock,
+        sandboxUser: user,
+        setTimeout: vi.fn((cb, delay) => {
+          return { id: 123, cb, delay };
+        }),
+        clearTimeout: vi.fn(),
+        openAuthModalCalled: false,
+      };
+
+      vm.createContext(sandbox);
+      vm.runInContext(scriptCode, sandbox);
+
+      return { sandbox, storage, localStorageMock };
+    }
+
+    it('schedules auth modal after 8000ms on first open for non-logged-in user', () => {
+      const { sandbox, storage } = setupSandbox({});
+      const timer = sandbox.scheduleFirstTimeAuthModal(8000);
+
+      expect(timer).toBeDefined();
+      expect(sandbox.setTimeout).toHaveBeenCalledWith(expect.any(Function), 8000);
+      expect(storage['mpt_has_opened']).toBe('true');
+
+      // Trigger the timer callback
+      const timerCall = sandbox.setTimeout.mock.calls[0];
+      const callback = timerCall[0];
+      callback();
+
+      expect(sandbox.openAuthModalCalled).toBe(true);
+    });
+
+    it('does not schedule auth modal if already opened before', () => {
+      const { sandbox } = setupSandbox({ mpt_has_opened: 'true' });
+      const timer = sandbox.scheduleFirstTimeAuthModal(8000);
+
+      expect(timer).toBeUndefined();
+      expect(sandbox.setTimeout).not.toHaveBeenCalled();
+    });
+
+    it('does not schedule auth modal if user is already logged in', () => {
+      const { sandbox } = setupSandbox({}, { uid: 'user_123', email: 'test@example.com' });
+      const timer = sandbox.scheduleFirstTimeAuthModal(8000);
+
+      expect(timer).toBeUndefined();
+      expect(sandbox.setTimeout).not.toHaveBeenCalled();
+    });
+
+    it('does not schedule auth modal if user was previously logged in', () => {
+      const { sandbox } = setupSandbox({ mpt_was_logged_in: 'true' });
+      const timer = sandbox.scheduleFirstTimeAuthModal(8000);
+
+      expect(timer).toBeUndefined();
+      expect(sandbox.setTimeout).not.toHaveBeenCalled();
+    });
+
+    it('does not schedule auth modal if user already saw or dismissed the auth modal', () => {
+      const { sandbox } = setupSandbox({ has_seen_auth_modal: 'true' });
+      const timer = sandbox.scheduleFirstTimeAuthModal(8000);
+
+      expect(timer).toBeUndefined();
+      expect(sandbox.setTimeout).not.toHaveBeenCalled();
+    });
   });
 });

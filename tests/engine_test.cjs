@@ -94,7 +94,7 @@ function assert(condition, message) {
 }
 
 console.log('\n--- 1. CANONICAL SYLLABUS AUDIT (HSSLIVE SCERT SCHEME OF WORK) ---');
-assert(PLANNER_ENGINE_VERSION === 5, 'PLANNER_ENGINE_VERSION is 5');
+assert(PLANNER_ENGINE_VERSION === 6, 'PLANNER_ENGINE_VERSION is 6');
 
 // Chemistry Class 12: 10 chapters (Alcohols & Aldehydes in Term 2, Amines & Biomolecules in Term 3)
 const chem12 = PLUS_TWO_SYLLABUS.filter(t => t.subject === 'Chemistry');
@@ -353,7 +353,7 @@ const legacyState = {
 };
 
 const migrated = migrateLegacyUserPlan(legacyState);
-assert(migrated.engineVersion === 5, 'Migrated state has engineVersion 5');
+assert(migrated.engineVersion === 6, 'Migrated state has engineVersion 6');
 assert(migrated.plan.length > 0, 'Migrated state has new generated study plan');
 assert(migrated.diagnostics !== null, 'Migrated state has diagnostics');
 

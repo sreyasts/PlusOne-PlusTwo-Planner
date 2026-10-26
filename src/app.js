@@ -14,6 +14,7 @@ import {
 } from './data/chapter-resources.js';
 import {
   PLANNER_ENGINE_VERSION,
+  ENGINE_VERSION,
   getLocalDateStr,
   formatLocalDateStr,
   TODAY_STR,
@@ -47,8 +48,6 @@ import {
   STREAM_ICONS,
   GRADE_ICONS,
   getSubjectBoxIcon,
-  STREAM_ILLUSTRATIONS,
-  getSubjectBanner,
 } from './ui/illustrations.js';
 import {
   trackEvent,
@@ -496,6 +495,27 @@ function loadInitialState() {
             initFirebaseAuth();
         }
 
+        /* First-Time Open Login Modal Trigger (8 Seconds after first opening) */
+        function scheduleFirstTimeAuthModal(delayMs = 8000) {
+            if (typeof window === 'undefined' || typeof localStorage === 'undefined') return;
+            if (currentUser) return;
+            if (localStorage.getItem('mpt_was_logged_in') === 'true') return;
+            if (localStorage.getItem('has_seen_auth_modal') === 'true') return;
+            if (localStorage.getItem('mpt_has_opened') === 'true') return;
+
+            // Mark as opened so subsequent visits do not re-trigger
+            localStorage.setItem('mpt_has_opened', 'true');
+
+            if (authModalTimer) clearTimeout(authModalTimer);
+            authModalTimer = setTimeout(() => {
+                authModalTimer = null;
+                if (!currentUser && localStorage.getItem('has_seen_auth_modal') !== 'true' && localStorage.getItem('mpt_was_logged_in') !== 'true') {
+                    openAuthModal();
+                }
+            }, delayMs);
+            return authModalTimer;
+        }
+
         /* Milestone-Triggered Google Auth Modal (Zero Friction - Triggered only after first milestone) */
         function checkAndTriggerMilestoneAuth() {
             if (currentUser) return;
@@ -510,6 +530,9 @@ function loadInitialState() {
 
         function openAuthModal() {
             if (currentUser) return;
+            try {
+                localStorage.setItem('has_seen_auth_modal', 'true');
+            } catch (_) {}
             const modal = document.getElementById('auth-modal');
             if (modal) {
                 modal.classList.remove('hidden');
@@ -523,6 +546,7 @@ function loadInitialState() {
                 authModalTimer = null;
             }
             localStorage.setItem('has_dismissed_milestone_auth', 'true');
+            localStorage.setItem('has_seen_auth_modal', 'true');
             const modal = document.getElementById('auth-modal');
             if (modal) {
                 modal.classList.add('hidden');
@@ -902,6 +926,22 @@ function showToastMessage(text, icon = 'checkCircle') {
     showAppToast(text, icon);
 }
 
+function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 0.65 } }) {
+    if (!getUserSetting('confetti', true)) return;
+    let fired = false;
+    if (typeof confetti === 'function') {
+        try {
+            confetti(opts);
+            fired = true;
+        } catch (_) {}
+    }
+    if (!fired) {
+        try {
+            triggerStudyConfetti();
+        } catch (_) {}
+    }
+}
+
         function getActiveMissionDayNumber() {
             if (!appState || !appState.plan || appState.plan.length === 0) return 1;
             const calendarToday = appState.plan.find(day => day.date === getLocalDateStr());
@@ -949,6 +989,23 @@ function showToastMessage(text, icon = 'checkCircle') {
                 }
             });
 
+            // Dynamically update day card counter in Plan View
+            if (targetDay) {
+                const dayCard = document.querySelector(`[data-day-number="${targetDay.dayNumber}"]`);
+                if (dayCard) {
+                    const counterSpan = dayCard.querySelector('.day-card-counter');
+                    if (counterSpan) {
+                        let displayedTasks = targetDay.tasks;
+                        if (typeof currentPlanSubjectFilter !== 'undefined' && currentPlanSubjectFilter !== 'All') {
+                            displayedTasks = targetDay.tasks.filter(t => t.subject === currentPlanSubjectFilter);
+                        }
+                        const completedCount = displayedTasks.filter(t => t.completed).length;
+                        const isML = (typeof getAppLanguage === 'function' && getAppLanguage() === 'ml');
+                        counterSpan.textContent = `${completedCount}/${displayedTasks.length} ${isML ? ML_I18N.plan.done : 'Done'}`;
+                    }
+                }
+            }
+
             // Play celebratory feedback or untick sound
             if (targetTask.completed) {
                 try {
@@ -961,10 +1018,30 @@ function showToastMessage(text, icon = 'checkCircle') {
 
                 // Quick dopamine particle burst
                 try {
-                    if (typeof confetti === 'function' && getUserSetting('confetti', true)) {
-                        confetti({ particleCount: 70, spread: 60, origin: { y: 0.65 } });
-                    }
+                    fireStudyConfetti({ particleCount: 70, spread: 60, origin: { y: 0.65 } });
                 } catch(e) {}
+
+                // 100% Full Syllabus Mastery Celebration Check
+                const overallStats = getOverallStats();
+                if (overallStats.percentage === 100 && overallStats.totalCount > 0) {
+                    playCelebrationSound();
+                    fireStudyConfetti({ particleCount: 200, spread: 120, origin: { y: 0.5 } });
+                    const isML = (typeof getAppLanguage === 'function' && getAppLanguage() === 'ml');
+                    showAppToast(isML ? '🎉 100% സിലബസും പൂർത്തിയായി!' : '🎉 100% Syllabus Mastery Achieved!', 'fa-trophy text-amber-400');
+                    try {
+                        if (!sessionStorage.getItem('mpt_mastery_celebrated')) {
+                            sessionStorage.setItem('mpt_mastery_celebrated', 'true');
+                            showAppAlert({
+                                title: isML ? '🎉 100% സിലബസ് പൂർത്തിയായി!' : '🎉 100% Syllabus Mastery Achieved!',
+                                message: isML 
+                                    ? 'നിങ്ങൾ മുഴുവൻ സിലബസും വിജയകരമായി പൂർത്തിയാക്കി. മോഡൽ പരീക്ഷകൾക്കും പൊതുപരീക്ഷയ്ക്കും എല്ലാവിധ വിജയങ്ങളും നേരുന്നു!'
+                                    : 'Outstanding accomplishment! You have successfully completed 100% of your Higher Secondary syllabus tasks across all subjects. Best of luck on your DHSE Board Examinations!',
+                                icon: 'fa-trophy text-amber-500',
+                                confirmText: isML ? 'തുടരുക' : 'Celebrate!'
+                            });
+                        }
+                    } catch (_) {}
+                }
 
                 // Calculate today's status
                 const activeDayNum = typeof getActiveMissionDayNumber === 'function' ? getActiveMissionDayNumber() : 1;
@@ -974,9 +1051,7 @@ function showToastMessage(text, icon = 'checkCircle') {
                     const totalToday = todayPlan.tasks.length;
                     if (completedToday === totalToday && totalToday > 0) {
                         try {
-                            if (typeof confetti === 'function' && getUserSetting('confetti', true)) {
-                                confetti({ particleCount: 140, spread: 90, origin: { y: 0.55 } });
-                            }
+                            fireStudyConfetti({ particleCount: 140, spread: 90, origin: { y: 0.55 } });
                         } catch(e) {}
                         playCelebrationSound();
                         showAppToast(getAppLanguage() === 'ml' ? 'ഇന്നത്തെ പഠനം പൂർത്തിയായി.' : 'All tasks for today are complete.');
@@ -1011,6 +1086,9 @@ function showToastMessage(text, icon = 'checkCircle') {
                 if (getUserSetting('sound', true)) {
                     playUntickSound();
                 }
+                try {
+                    sessionStorage.removeItem('mpt_mastery_celebrated');
+                } catch (_) {}
                 if (currentView === 'today') {
                     renderApp();
                     return;
@@ -1317,6 +1395,7 @@ function showToastMessage(text, icon = 'checkCircle') {
             localStorage.removeItem('plusTwoMissionState_v2');
             localStorage.removeItem('plusTwoPlanState');
             localStorage.removeItem('has_seen_auth_modal');
+            localStorage.removeItem('mpt_has_opened');
             if (authModalTimer) {
                 clearTimeout(authModalTimer);
                 authModalTimer = null;
@@ -2217,10 +2296,35 @@ function showToastMessage(text, icon = 'checkCircle') {
             closeRegenerateModal();
 
             animatePlanGeneration({ mode: 'rebalance', isLateEvening: (completedUpTo === 0 && smartStart.isLateEvening) }, () => {
-                const result = buildIntelligentPlan(appState.deadlineDate, uncompletedTasks, rebuildStartDate, [], userStream, {
-                    intensity: appState.studyIntensity || 'balanced',
-                    personalization: appState.personalization || {}
-                });
+                let result;
+                try {
+                    if (rebuildStartDate >= appState.deadlineDate) {
+                        const [ry, rm, rd] = rebuildStartDate.split('-').map(Number);
+                        const newDeadlineDate = new Date(ry, rm - 1, rd + 30);
+                        appState.deadlineDate = formatLocalDateStr(newDeadlineDate);
+                        const isML = (typeof getAppLanguage === 'function' && getAppLanguage() === 'ml');
+                        showAppToast(
+                            isML
+                                ? "പഴയ പരീക്ഷാ തീയതി കഴിഞ്ഞതിനാൽ അവസാന തീയതി 30 ദിവസം നീട്ടി നൽകി."
+                                : "Target deadline has elapsed. Deadline auto-extended by 30 days for remaining portions.",
+                            "fa-clock-rotate-left text-amber-400"
+                        );
+                    }
+
+                    result = buildIntelligentPlan(appState.deadlineDate, uncompletedTasks, rebuildStartDate, [], userStream, {
+                        intensity: appState.studyIntensity || 'balanced',
+                        personalization: appState.personalization || {}
+                    });
+                } catch (err) {
+                    console.error('Plan regeneration error:', err);
+                    const isML = (typeof getAppLanguage === 'function' && getAppLanguage() === 'ml');
+                    showAppAlert({
+                        title: isML ? 'പ്ലാൻ ക്രമീകരണം' : 'Plan Adjustment Notice',
+                        message: isML ? 'ടൈംടേബിൾ ക്രമീകരിക്കാനായില്ല. ക്രമീകരണങ്ങളിൽ അവസാന തീയതി പരിശോധിക്കുക.' : 'Could not rebalance remaining tasks. Please check your target deadline date.',
+                        icon: 'fa-triangle-exclamation text-amber-500'
+                    });
+                    return;
+                }
 
                 if (result && result.planDays) {
                     // Adjust day numbering seamlessly following keptDays
@@ -2919,7 +3023,7 @@ function showToastMessage(text, icon = 'checkCircle') {
                     }
 
                     planDaysHTML += `
-                        <div class="bg-white rounded-2xl border ${isToday ? 'border-blue-300 ring-2 ring-blue-100' : 'border-slate-200'} shadow-sm overflow-hidden mb-4 transition-all print-avoid-break">
+                        <div class="bg-white rounded-2xl border ${isToday ? 'border-blue-300 ring-2 ring-blue-100' : 'border-slate-200'} shadow-sm overflow-hidden mb-4 transition-all print-avoid-break" data-day-number="${day.dayNumber}">
                             <div class="p-3.5 sm:p-4 bg-slate-50/80 border-b border-slate-100 flex items-center justify-between">
                                 <div class="flex items-center gap-2">
                                     <span class="text-xs font-extrabold text-slate-900">${isML ? `${ML_I18N.plan.day} ${day.dayNumber}` : `Day ${day.dayNumber}`}</span>
@@ -2930,7 +3034,7 @@ function showToastMessage(text, icon = 'checkCircle') {
                                     ${day.isRevisionDay ? `<span class="text-xs font-bold bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full">${isML ? ML_I18N.plan.revisionDay : 'Revision Day'}</span>` : ''}
                                     ${day.isRestDay ? `<span class="text-xs font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full"><i class="fa-solid fa-mug-hot mr-1"></i>${isML ? ML_I18N.plan.restDay : 'Rest Day'}</span>` : ''}
                                 </div>
-                                <span class="text-xs font-bold text-slate-500">${displayedTasks.filter(t => t.completed).length}/${displayedTasks.length} ${isML ? ML_I18N.plan.done : 'Done'}</span>
+                                <span class="day-card-counter text-xs font-bold text-slate-500">${displayedTasks.filter(t => t.completed).length}/${displayedTasks.length} ${isML ? ML_I18N.plan.done : 'Done'}</span>
                             </div>
 
                             <div class="p-3 sm:p-4 divide-y divide-slate-100">
@@ -2996,7 +3100,10 @@ function showToastMessage(text, icon = 'checkCircle') {
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 no-print">
                         <div>
                             <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900">${isML ? ML_I18N.plan.title : 'Complete Study Schedule'}</h2>
-                            <p class="text-xs text-slate-500">${isML ? ML_I18N.plan.subtitle : 'Every single day planned out until your deadline.'}</p>
+                            <div class="flex items-center gap-2 mt-0.5">
+                                <p class="text-xs text-slate-500">${isML ? ML_I18N.plan.subtitle : 'Every single day planned out until your deadline.'}</p>
+                                <span id="plan-progress-summary" class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200/60">${getOverallStats().percentage}% ${isML ? 'പൂർത്തിയായി' : 'Done'} (${getOverallStats().completedCount}/${getOverallStats().totalCount})</span>
+                            </div>
                         </div>
                         <div class="flex items-center flex-wrap gap-2">
                             <button onclick="exportTimetableIcs()" class="text-xs font-bold bg-white border border-slate-200 hover:bg-slate-50 px-3 py-2 rounded-xl text-slate-700 transition flex items-center gap-1.5 shadow-sm active:scale-95" title="Export to Google Calendar, Apple Calendar, or Outlook (.ics)">
@@ -3111,9 +3218,10 @@ function showToastMessage(text, icon = 'checkCircle') {
                     : getStreamSubjects(userStream);
 
                 let syllabusHTML = '';
+                const sourceSyllabus = (appState?.grade === '+1' || (typeof activeSetupGradeTab !== 'undefined' && activeSetupGradeTab === '+1')) ? PLUS_ONE_SYLLABUS : PLUS_TWO_SYLLABUS;
                 subjects.forEach(sub => {
-                    const p2Chaps = PLUS_TWO_SYLLABUS.filter(t => t.subject === sub);
-                    const uniqueP2 = [...new Map(p2Chaps.map(item => [item.chapId, item])).values()];
+                    const subChaps = sourceSyllabus.filter(t => t.subject === sub);
+                    const uniqueChaps = [...new Map(subChaps.map(item => [item.chapId, item])).values()];
                     const subRes = CHAPTER_RESOURCES?.subjects?.[sub] || CHAPTER_RESOURCES?.[sub];
                     const subPyq = subRes?.pyqUrl || subRes?.pyq;
 
@@ -3126,7 +3234,7 @@ function showToastMessage(text, icon = 'checkCircle') {
                                     </div>
                                     <div>
                                         <h3 class="font-black text-slate-900 dark:text-white text-base">${sub}</h3>
-                                        <span class="text-xs text-slate-500 dark:text-slate-400 font-semibold">${uniqueP2.length} ${isML ? ML_I18N.syllabus.chaptersCount : 'Official Chapters'}</span>
+                                        <span class="text-xs text-slate-500 dark:text-slate-400 font-semibold">${uniqueChaps.length} ${isML ? ML_I18N.syllabus.chaptersCount : 'Official Chapters'}</span>
                                     </div>
                                 </div>
                                 ${subRes && subPyq ? `
@@ -3139,7 +3247,7 @@ function showToastMessage(text, icon = 'checkCircle') {
                             </div>
 
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                                ${uniqueP2.map(ch => {
+                                ${uniqueChaps.map(ch => {
                                     // Check if all tasks of this chapter are completed
                                     let isAllDone = false;
                                     if (appState && appState.plan) {
@@ -3349,8 +3457,36 @@ function showToastMessage(text, icon = 'checkCircle') {
         }
 
         function updateProgressHeader() {
-            getOverallStats();
-            // In case there are quick summary elements
+            const stats = getOverallStats();
+            const isML = (typeof getAppLanguage === 'function' && getAppLanguage() === 'ml');
+
+            const progressBar = document.getElementById('overall-progress-bar');
+            if (progressBar) {
+                progressBar.style.width = `${stats.percentage}%`;
+            }
+            const progressText = document.getElementById('overall-progress-text');
+            if (progressText) {
+                progressText.textContent = `${stats.percentage}%`;
+            }
+            const progressCount = document.getElementById('overall-progress-count');
+            if (progressCount) {
+                progressCount.textContent = `${stats.completedCount}/${stats.totalCount}`;
+            }
+            const planProgressSummary = document.getElementById('plan-progress-summary');
+            if (planProgressSummary) {
+                planProgressSummary.textContent = `${stats.percentage}% ${isML ? 'പൂർത്തിയായി' : 'Done'} (${stats.completedCount}/${stats.totalCount})`;
+            }
+            const todayOverviewP = document.querySelector('#today-overview div p');
+            if (todayOverviewP && appState?.plan) {
+                const localToday = getLocalDateStr();
+                const activeDayNum = typeof getActiveMissionDayNumber === 'function' ? getActiveMissionDayNumber() : 1;
+                const todayPlan = appState.plan.find(d => d.dayNumber === activeDayNum) || appState.plan.find(d => d.date === localToday);
+                if (todayPlan) {
+                    const doneToday = todayPlan.tasks.filter(t => t.completed).length;
+                    const totalToday = todayPlan.tasks.length;
+                    todayOverviewP.textContent = `${doneToday} / ${totalToday} ${isML ? 'പൂർത്തിയായി' : 'tasks complete'}`;
+                }
+            }
         }
 
         /* ==========================================================================
@@ -3732,7 +3868,7 @@ function showToastMessage(text, icon = 'checkCircle') {
             try {
                 if (file.size > MAX_BACKUP_BYTES) throw new TypeError('Backup exceeds 2 MB.');
                 let validPlan = parseStudyBackup(await file.text());
-                if (validPlan.engineVersion > PLANNER_ENGINE_VERSION) throw new TypeError('Newer backup version.');
+                if (validPlan.engineVersion > Math.max(PLANNER_ENGINE_VERSION, ENGINE_VERSION, 6)) throw new TypeError('Newer backup version.');
                 if (!validPlan.engineVersion || validPlan.engineVersion < PLANNER_ENGINE_VERSION) {
                     validPlan = migrateLegacyUserPlan(validPlan);
                 }
@@ -3870,6 +4006,11 @@ function showToastMessage(text, icon = 'checkCircle') {
 
         // Initialize App on DOM Load
         renderApp();
+
+        // Show login panel after 8 seconds when the user opened for first time if not logged in
+        if (typeof window !== 'undefined') {
+            scheduleFirstTimeAuthModal(8000);
+        }
     
 
 // Attach all controllers and API to window for inline HTML onclick handlers
@@ -3881,6 +4022,7 @@ if (typeof window !== 'undefined') {
         saveAppStateLocally,
         saveAppState,
         performCloudSync,
+        scheduleFirstTimeAuthModal,
         checkAndTriggerMilestoneAuth,
         openAuthModal,
         closeAuthModal,
@@ -3990,6 +4132,7 @@ if (typeof window !== 'undefined') {
         triggerPWAInstall,
         triggerPwaInstall: triggerPWAInstall,
         PLANNER_ENGINE_VERSION,
+        ENGINE_VERSION,
         PLAN_MIGRATION_VERSION,
         PLUS_TWO_SYLLABUS,
         PLUS_ONE_SYLLABUS,

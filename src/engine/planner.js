@@ -9,7 +9,7 @@ import { PLUS_ONE_SYLLABUS, PLUS_ONE_CHAPTERS } from '../data/syllabus-plus-one.
 
 export { PLUS_TWO_CHAPTERS, PLUS_ONE_CHAPTERS };
 
-export const PLANNER_ENGINE_VERSION = 5;
+export const PLANNER_ENGINE_VERSION = 6;
 export const ENGINE_VERSION = 6;
 
 export const EFFORT_WEIGHTS = {
