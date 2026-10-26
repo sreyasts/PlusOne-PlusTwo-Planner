@@ -126,6 +126,7 @@ describe('Authentication & Cross-Domain Unification Invariants', () => {
       const sandbox = {
         window: {},
         localStorage: localStorageMock,
+        sessionStorage: localStorageMock,
         sandboxUser: user,
         sandboxAppState: appState,
         setTimeout: vi.fn((cb, delay) => {

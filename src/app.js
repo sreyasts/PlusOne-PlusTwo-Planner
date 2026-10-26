@@ -497,16 +497,16 @@ function loadInitialState() {
 
         /* Post-Plan Generation Auth Modal Trigger (8 Seconds after plan generation) */
         function schedulePostPlanAuthModal(delayMs = 8000) {
-            if (typeof window === 'undefined' || typeof localStorage === 'undefined') return;
+            if (typeof window === 'undefined') return;
             if (currentUser) return;
             if (localStorage.getItem('mpt_was_logged_in') === 'true') return;
-            if (localStorage.getItem('has_seen_auth_modal') === 'true') return;
+            if (sessionStorage.getItem('auth_modal_dismissed') === 'true' || localStorage.getItem('has_seen_auth_modal') === 'true') return;
             if (!appState || !Array.isArray(appState.plan) || appState.plan.length === 0) return;
 
             if (authModalTimer) clearTimeout(authModalTimer);
             authModalTimer = setTimeout(() => {
                 authModalTimer = null;
-                if (!currentUser && appState && localStorage.getItem('has_seen_auth_modal') !== 'true' && localStorage.getItem('mpt_was_logged_in') !== 'true') {
+                if (!currentUser && appState && sessionStorage.getItem('auth_modal_dismissed') !== 'true') {
                     openAuthModal();
                 }
             }, delayMs);
@@ -544,6 +544,7 @@ function loadInitialState() {
                 clearTimeout(authModalTimer);
                 authModalTimer = null;
             }
+            sessionStorage.setItem('auth_modal_dismissed', 'true');
             localStorage.setItem('has_dismissed_milestone_auth', 'true');
             localStorage.setItem('has_seen_auth_modal', 'true');
             const modal = document.getElementById('auth-modal');
@@ -2157,6 +2158,13 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                             "fa-rocket text-blue-400");
                     }
 
+                    if (typeof sessionStorage !== 'undefined') {
+                        sessionStorage.removeItem('auth_modal_dismissed');
+                    }
+                    if (typeof localStorage !== 'undefined') {
+                        localStorage.removeItem('has_seen_auth_modal');
+                        localStorage.removeItem('has_dismissed_milestone_auth');
+                    }
                     if (typeof schedulePostPlanAuthModal === 'function') {
                         schedulePostPlanAuthModal(8000);
                     }
@@ -2359,6 +2367,13 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                     }
                     renderApp();
 
+                    if (typeof sessionStorage !== 'undefined') {
+                        sessionStorage.removeItem('auth_modal_dismissed');
+                    }
+                    if (typeof localStorage !== 'undefined') {
+                        localStorage.removeItem('has_seen_auth_modal');
+                        localStorage.removeItem('has_dismissed_milestone_auth');
+                    }
                     if (typeof schedulePostPlanAuthModal === 'function') {
                         schedulePostPlanAuthModal(8000);
                     }

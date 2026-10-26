@@ -342,7 +342,7 @@ async function generateOgPromoBanner() {
       <!-- Footer Tags -->
       <g transform="translate(75, 545)">
         <text x="0" y="0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="600" fill="#64748b">
-          ⚡ 100% Free &amp; Open Source • 📱 Offline PWA • 🌐 mission-plustwo.web.app
+          ⚡ 100% Free &amp; Open Source • 📱 Offline PWA • 🌐 hss-planner.web.app
         </text>
       </g>
 

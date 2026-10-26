@@ -33,7 +33,7 @@ This document tracks all product, acquisition, retention, and community experime
 ## Experiment 3: Frictionless WhatsApp & Peer Timetable Sharing
 
 - **Hypothesis**: Kerala high school students study in peer study groups and communicate predominantly via WhatsApp and Telegram. Providing a 1-tap "Share Plan with Study Partner" button generating an anonymized summary with a deep-link back to the planner will create a natural viral loop.
-- **Change**: Add native Web Share API integration with WhatsApp and Telegram fallbacks, generating clean text summaries of today's study targets and linking to `https://plusone-plustwo-planner.web.app/`.
+- **Change**: Add native Web Share API integration with WhatsApp and Telegram fallbacks, generating clean text summaries of today's study targets and linking to `https://hss-planner.web.app/`.
 - **Expected Metric**: Share event rate \(\ge 10\%\) among students who complete Day-1 tasks.
 - **Start Date**: 2026-09-23
 - **Result**: Share mechanism integrated into header and day-view completion cards.

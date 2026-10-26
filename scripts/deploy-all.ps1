@@ -39,7 +39,7 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 # Step 4A: Deploy to Firebase Hosting
-Write-Host "`n[4A/4] Deploying to Firebase Hosting (mission-plustwo.web.app)..." -ForegroundColor Yellow
+Write-Host "`n[4A/4] Deploying to Firebase Hosting (hss-planner.web.app)..." -ForegroundColor Yellow
 npx -y firebase-tools@latest deploy --only hosting
 if ($LASTEXITCODE -ne 0) {
     Write-Host "`n⚠️ Firebase deploy warning or error. Ensure you are logged in via: npx -y firebase-tools@latest login" -ForegroundColor Red
@@ -57,5 +57,5 @@ if ($LASTEXITCODE -eq 0) {
 }
 
 Write-Host "`n🎉 DUAL-DOMAIN DEPLOYMENT PIPELINE COMPLETE!" -ForegroundColor Green
-Write-Host "• Firebase Hosting : https://mission-plustwo.web.app" -ForegroundColor Cyan
-Write-Host "• GitHub Pages     : https://sreyasts.github.io/intelligent-study-planner-for-plus-two-/" -ForegroundColor Cyan
+Write-Host "• Firebase Hosting : https://hss-planner.web.app" -ForegroundColor Cyan
+Write-Host "• GitHub Pages     : https://sreyasts.github.io/PlusOne-PlusTwo-Planner/" -ForegroundColor Cyan

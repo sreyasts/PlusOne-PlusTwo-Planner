@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://mission-plustwo.web.app/schemas/curriculum.schema.json",
+  "$id": "https://hss-planner.web.app/schemas/curriculum.schema.json",
   "title": "Kerala DHSE Curriculum Specification",
   "description": "Rigid machine-readable schema for Kerala Directorate of Higher Secondary Education (DHSE) syllabi, chapter weightages, and revision hours.",
   "oneOf": [

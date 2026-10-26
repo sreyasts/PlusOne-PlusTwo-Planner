@@ -36,6 +36,16 @@ function setup({ grade = '+2', stream = 'cs', step = 1 } = {}) {
       body: { classList: { toggle() {} } },
     },
     getAppLanguage: () => 'en',
+    sessionStorage: {
+      getItem: vi.fn(() => null),
+      setItem: vi.fn(),
+      removeItem: vi.fn(),
+    },
+    localStorage: {
+      getItem: vi.fn(() => null),
+      setItem: vi.fn(),
+      removeItem: vi.fn(),
+    },
     escapeStudyText: value => String(value ?? '').replace(/[&<>"']/g, ''),
     getRemainingPlanTasks,
     getStreamSubjects,

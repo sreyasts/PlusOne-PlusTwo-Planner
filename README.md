@@ -187,7 +187,7 @@ npm run build
 
 - **[Project Maintainers & 48h SLA](MAINTAINERS.md)**: Maintainer identity (Sreyas T S), review commitments, and project invariants.
 - **[Project Governance](GOVERNANCE.md)**: Decision-making model, RFC process, and release policies.
-- **[Public Audit & Usage Statistics](https://mission-plustwo.web.app/pages/stats.html)**: Public telemetry, 0-fake commitment, and test scorecards.
+- **[Public Audit & Usage Statistics](https://hss-planner.web.app/pages/stats.html)**: Public telemetry, 0-fake commitment, and test scorecards.
 - **[Contributor Outreach & Good First Issues](docs/contributor-outreach.md)**: Ready-to-claim beginner issues and Malayalam tech community outreach.
 - **[Project mission](docs/MISSION.md)** and **[student testing](docs/STUDENT-TESTING.md)**: Product priorities, a short practical testing guide, and evidence limits.
 - **[Contributing Guidelines](CONTRIBUTING.md)**: Local setup, Conventional Commits, branch workflows, and curriculum updates.
