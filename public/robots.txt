@@ -1,4 +1,14 @@
 User-agent: *
 Allow: /
+Disallow: /assets/*.map$
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /
+
+User-agent: Bingbot
+Allow: /
 
 Sitemap: https://hss-planner.web.app/sitemap.xml
