@@ -1,4 +1,4 @@
-name: Deploy +1 & +2 Planner to GitHub Pages
+name: Deploy HSS Planner to GitHub Pages
 
 on:
   push:

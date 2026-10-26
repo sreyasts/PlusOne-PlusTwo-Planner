@@ -1,4 +1,4 @@
-# Project: +1 & +2 Planner Simulation, Stress-Testing & Defect Resolution
+# Project: HSS Planner Simulation, Stress-Testing & Defect Resolution
 
 ## Architecture
 - **Application Type**: Zero-runtime-dependency Vanilla JavaScript (ESM) Single Page Application (SPA), served by Vite.

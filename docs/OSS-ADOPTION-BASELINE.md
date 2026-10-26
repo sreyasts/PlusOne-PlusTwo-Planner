@@ -1,8 +1,8 @@
-# +1 & +2 Planner — Open Source & Adoption Forensic Baseline
+# HSS Planner — Open Source & Adoption Forensic Baseline
 
 **Baseline Date**: 2026-09-23  
 **Auditor**: Autonomous Maintainer System  
-**Repository**: [`sreyasts/PlusOne-PlusTwo-Planner`](https://github.com/sreyasts/PlusOne-PlusTwo-Planner)  
+**Repository**: [`sreyasts/hss-planner`](https://github.com/sreyasts/hss-planner)  
 **Production Site**: [https://hss-planner.web.app/](https://hss-planner.web.app/)  
 **Integrity Invariant**: Every number in this document is real, measured directly via API or codebase inspection, and zero values are fabricated.
 
@@ -10,7 +10,7 @@
 
 ## 1. GitHub Repository Metrics
 
-*Source: GitHub REST API (`gh api repos/sreyasts/PlusOne-PlusTwo-Planner` & `/traffic` endpoints) on 2026-09-23.*
+*Source: GitHub REST API (`gh api repos/sreyasts/hss-planner` & `/traffic` endpoints) on 2026-09-23.*
 
 | Metric | Measured Value | Verification Source |
 | :--- | :--- | :--- |

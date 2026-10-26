@@ -1,7 +1,7 @@
 /**
  * CBSE Class 12 Science Curriculum Adapter
  * Encapsulates rationalized NCERT curriculum for CBSE Class 12 Senior School Certificate Examination.
- * Demonstrates the cross-board extensibility of the +1 & +2 Planner scheduling core.
+ * Demonstrates the cross-board extensibility of the HSS Planner scheduling core.
  */
 
 import { CurriculumAdapter } from './CurriculumAdapter.js';

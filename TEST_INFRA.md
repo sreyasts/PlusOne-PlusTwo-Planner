@@ -1,4 +1,4 @@
-# E2E Test Infra: +1 & +2 Planner
+# E2E Test Infra: HSS Planner
 
 ## Test Philosophy
 - Opaque-box, requirement-driven testing derived from `ORIGINAL_REQUEST.md` and user-facing specifications.

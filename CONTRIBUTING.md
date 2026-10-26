@@ -1,6 +1,6 @@
-# Contributing to +1 & +2 Planner
+# Contributing to HSS Planner
 
-Thank you for your interest in contributing to **+1 & +2 Planner**! This open-source project provides a free, deterministic, privacy-first study planning and timetable generation platform for students taking the Kerala Directorate of Higher Secondary Education (DHSE) examinations.
+Thank you for your interest in contributing to **HSS Planner**! This open-source project provides a free, deterministic, privacy-first study planning and timetable generation platform for students taking the Kerala Directorate of Higher Secondary Education (DHSE) examinations.
 
 Whether you are a student correcting a syllabus typo, a teacher refining difficulty weightings, a translator polishing Malayalam phrasing, or an engineer improving our scheduling engine, your contribution is deeply appreciated.
 
@@ -43,8 +43,8 @@ You do not need to be an expert programmer to make high-impact contributions:
 
 ```bash
 # 1. Fork the repository on GitHub, then clone your fork:
-git clone https://github.com/<your-username>/PlusOne-PlusTwo-Planner.git
-cd PlusOne-PlusTwo-Planner
+git clone https://github.com/<your-username>/hss-planner.git
+cd hss-planner
 
 # 2. Install dependencies:
 npm install
@@ -60,7 +60,7 @@ npm run dev
 ## 4. Project Structure
 
 ```
-PlusOne-PlusTwo-Planner/
+hss-planner/
 ├── index.html                 # Main web application entry point
 ├── src/
 │   ├── app.js                 # Reactive application state, UI rendering, event dispatch

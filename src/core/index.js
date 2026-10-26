@@ -1,5 +1,5 @@
 /**
- * +1 & +2 Planner Core Engine Entry Point
+ * HSS Planner Core Engine Entry Point
  * Framework-agnostic civic study scheduler and curriculum processor.
  */
 

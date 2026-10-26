@@ -1,5 +1,5 @@
 /**
- * Offline QR Code Generator for +1 & +2 Planner
+ * Offline QR Code Generator for HSS Planner
  * Generates vector SVG QR codes client-side with zero external network requests.
  * Used for printable schedules, desk wall study timetables, and peer-to-peer scanning.
  */

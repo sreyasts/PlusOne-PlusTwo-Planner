@@ -1,5 +1,5 @@
 /**
- * +1 & +2 Planner - Multi-Sensory Audio & Haptics Engine
+ * HSS Planner - Multi-Sensory Audio & Haptics Engine
  * Synthesizes pure Web Audio frequencies with zero external network audio files.
  * Provides instant, ultra-low latency acoustic and tactile reinforcement.
  */

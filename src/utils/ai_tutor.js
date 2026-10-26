@@ -1,5 +1,5 @@
 /**
- * +1 & +2 Planner - Socratic AI Revision Tutor & Prompt Generator
+ * HSS Planner - Socratic AI Revision Tutor & Prompt Generator
  * Generates pedagogically structured revision prompts designed for LLMs
  * (ChatGPT, OpenAI API, Gemini, Claude) aligned with the Kerala SCERT/DHSE curriculum.
  */

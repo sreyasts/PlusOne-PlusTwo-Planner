@@ -1,5 +1,5 @@
 /**
- * Base Abstract Curriculum Adapter for +1 & +2 Planner Ecosystem.
+ * Base Abstract Curriculum Adapter for HSS Planner Ecosystem.
  * Allows state boards, national boards (CBSE/ICSE), and international curricula
  * to interface seamlessly with the constraint-propagation scheduling engine.
  */

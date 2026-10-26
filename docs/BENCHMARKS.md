@@ -1,8 +1,8 @@
-# +1 & +2 Planner — Empirical Scheduler Benchmarks
+# HSS Planner — Empirical Scheduler Benchmarks
 
 ## 1. Overview & Reproducibility
 
-This benchmark compares the **+1 & +2 Planner Deterministic Adaptive Planner** against two common scheduling baselines:
+This benchmark compares the **HSS Planner Deterministic Adaptive Planner** against two common scheduling baselines:
 1. **Naive Sequential Scheduler**: Packs all tasks in syllabus sequence day-by-day without constraint resolution or buffer allocation.
 2. **Naive Round-Robin Scheduler**: Rotates subjects evenly one-by-one without dependency tracking or exam date awareness.
 
@@ -32,7 +32,7 @@ node scripts/benchmark-planner.js
 
 *Runway: 2026-10-01 to 2026-12-29 (90 days). Tasks: 105 canonical Plus Two CS stream parts.*
 
-| Metric | +1 & +2 Planner (v6.1) | Naive Sequential | Naive Round-Robin |
+| Metric | HSS Planner (v6.1) | Naive Sequential | Naive Round-Robin |
 | :--- | :---: | :---: | :---: |
 | **Task Coverage** | **100.0%** | 100.0% | 100.0% |
 | **Duplicates** | **0** | 0 | 0 |
@@ -48,7 +48,7 @@ node scripts/benchmark-planner.js
 
 *Runway: 2026-10-01 to 2027-01-28 (120 days). Tasks: 111 canonical Plus Two Biology stream parts.*
 
-| Metric | +1 & +2 Planner (v6.1) | Naive Sequential | Naive Round-Robin |
+| Metric | HSS Planner (v6.1) | Naive Sequential | Naive Round-Robin |
 | :--- | :---: | :---: | :---: |
 | **Task Coverage** | **100.0%** | 100.0% | 100.0% |
 | **Duplicates** | **0** | 0 | 0 |
@@ -64,7 +64,7 @@ node scripts/benchmark-planner.js
 
 *Runway: 2026-10-01 to 2027-01-08 (100 days). Tasks: 77 canonical Plus Two Commerce parts (Accountancy, Business Studies, Economics, CA).*
 
-| Metric | +1 & +2 Planner (v6.1) | Naive Sequential | Naive Round-Robin |
+| Metric | HSS Planner (v6.1) | Naive Sequential | Naive Round-Robin |
 | :--- | :---: | :---: | :---: |
 | **Task Coverage** | **100.0%** | 100.0% | 100.0% |
 | **Duplicates** | **0** | 0 | 0 |
@@ -80,7 +80,7 @@ node scripts/benchmark-planner.js
 
 *Runway: 2026-10-01 to 2027-01-18 (110 days). Tasks: 97 canonical Plus Two Humanities parts (History, Political Science, Sociology, Economics).*
 
-| Metric | +1 & +2 Planner (v6.1) | Naive Sequential | Naive Round-Robin |
+| Metric | HSS Planner (v6.1) | Naive Sequential | Naive Round-Robin |
 | :--- | :---: | :---: | :---: |
 | **Task Coverage** | **100.0%** | 100.0% | 100.0% |
 | **Duplicates** | **0** | 0 | 0 |
@@ -96,7 +96,7 @@ node scripts/benchmark-planner.js
 
 *Runway: 2026-10-01 to 2027-02-15 (138 days). 151 tasks (+2 CS tasks + 46 +1 Improvement tasks). Physics exam on Day 25; Chemistry exam on Day 30.*
 
-| Metric | +1 & +2 Planner (v6.1) | Naive Sequential | Naive Round-Robin |
+| Metric | HSS Planner (v6.1) | Naive Sequential | Naive Round-Robin |
 | :--- | :---: | :---: | :---: |
 | **Task Coverage** | **100.0%** | 100.0% | 100.0% |
 | **Duplicates** | **0** | 0 | 0 |
@@ -107,7 +107,7 @@ node scripts/benchmark-planner.js
 | **Revision Buffer Days** | **10 days** | 0 days | 0 days |
 
 > [!IMPORTANT]
-> **Key Finding**: In dual improvement scenarios, naive sequential and naive round-robin schedulers catastrophically fail with **46** and **41** deadline violations, respectively, scheduling +1 chapters weeks after the actual exam has already taken place. +1 & +2 Planner prioritizes improvement tasks before exam dates, yielding **0** deadline violations.
+> **Key Finding**: In dual improvement scenarios, naive sequential and naive round-robin schedulers catastrophically fail with **46** and **41** deadline violations, respectively, scheduling +1 chapters weeks after the actual exam has already taken place. HSS Planner prioritizes improvement tasks before exam dates, yielding **0** deadline violations.
 
 ---
 
@@ -115,7 +115,7 @@ node scripts/benchmark-planner.js
 
 *Runway: 2026-10-01 to 2026-10-21 (21 days, 105 tasks).*
 
-| Metric | +1 & +2 Planner (v6.1) | Naive Sequential | Naive Round-Robin |
+| Metric | HSS Planner (v6.1) | Naive Sequential | Naive Round-Robin |
 | :--- | :---: | :---: | :---: |
 | **Task Coverage** | **100.0%** | 100.0% | 100.0% |
 | **Duplicates** | **0** | 0 | 0 |
@@ -129,6 +129,6 @@ node scripts/benchmark-planner.js
 
 ## 4. Benchmark Summary
 
-1. **Safety**: +1 & +2 Planner consistently achieved **0 ordering violations**, **0 duplicate tasks**, and **0 deadline violations** across all six evaluated scenarios (CS, Bio, Commerce, Humanities, Dual Improvement, and Fast Cram).
+1. **Safety**: HSS Planner consistently achieved **0 ordering violations**, **0 duplicate tasks**, and **0 deadline violations** across all six evaluated scenarios (CS, Bio, Commerce, Humanities, Dual Improvement, and Fast Cram).
 2. **Smooth Workload Distribution**: Workload variance remained between \(0.09\) and \(0.71\) tasks/day, avoiding cramming spikes.
 3. **Dedicated Revision Buffer**: Automatically reserved between 2 and 10 days strictly for past paper and mock exam practice, an invariant ignored by naive baselines.

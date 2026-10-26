@@ -191,7 +191,7 @@ export const ML_STRINGS = {
   },
   settingsModal: {
     title: 'ക്രമീകരണങ്ങൾ (Settings)',
-    subtitle: 'നിങ്ങളുടെ +1 & +2 Planner ആപ്പ് ഇഷ്ടാനുസരണം മാറ്റുക',
+    subtitle: 'നിങ്ങളുടെ HSS Planner ആപ്പ് ഇഷ്ടാനുസരണം മാറ്റുക',
     themeTitle: 'തീം & രൂപം (Theme)',
     themeLight: 'ലൈറ്റ്',
     themeDark: 'ഡാർക്ക്',

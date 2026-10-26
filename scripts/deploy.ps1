@@ -1,12 +1,12 @@
 # ==============================================================================
-# +1 & +2 Planner - 1-Click Build & Deploy Script for Firebase Hosting
+# HSS Planner - 1-Click Build & Deploy Script for Firebase Hosting
 # ==============================================================================
 
 # Switch to project directory automatically
 Set-Location -Path (Split-Path -Parent $PSScriptRoot)
 
 Write-Host "=========================================" -ForegroundColor Cyan
-Write-Host "  +1 & +2 Planner - Deploy to Firebase   " -ForegroundColor Cyan
+Write-Host "  HSS Planner - Deploy to Firebase   " -ForegroundColor Cyan
 Write-Host "  Target 1: https://hss-planner.web.app" -ForegroundColor Cyan
 Write-Host "  Target 2: https://mission-plustwo.web.app" -ForegroundColor Cyan
 Write-Host "=========================================" -ForegroundColor Cyan

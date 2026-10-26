@@ -849,8 +849,8 @@ function loadInitialState() {
         }
 
         function shareTodayCompletion(dayNumber) {
-            const shareTitle = `+1 & +2 Planner — Day ${dayNumber} Cleared!`;
-            const shareText = `🏆 Day ${dayNumber} study targets 100% completed on +1 & +2 Planner! Free adaptive daily study planner for Kerala DHSE Plus One & Plus Two — with guaranteed mock revision buffer. Try it:`;
+            const shareTitle = `HSS Planner — Day ${dayNumber} Cleared!`;
+            const shareText = `🏆 Day ${dayNumber} study targets 100% completed on HSS Planner! Free adaptive daily study planner for Kerala DHSE Plus One & Plus Two — with guaranteed mock revision buffer. Try it:`;
             const shareUrl = 'https://hss-planner.web.app/';
 
             if (navigator.share) {
@@ -1153,13 +1153,13 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
             const stats = (typeof getOverallStats === 'function' && appState?.plan?.length > 0) ? getOverallStats() : null;
             const streak = typeof getActiveStreak === 'function' ? getActiveStreak() : 0;
             if (stats && stats.totalCount > 0) {
-                return `📚 +1 & +2 Planner — Kerala DHSE Study Planner\n🎯 My Progress: ${stats.percentage}% completed (${stats.completedCount}/${stats.totalCount} tasks)\n🔥 Study Streak: ${streak} days\nPlan your Plus One & Plus Two timetable with built-in revision buffer:`;
+                return `📚 HSS Planner — Kerala DHSE Study Planner\n🎯 My Progress: ${stats.percentage}% completed (${stats.completedCount}/${stats.totalCount} tasks)\n🔥 Study Streak: ${streak} days\nPlan your Plus One & Plus Two timetable with built-in revision buffer:`;
             }
-            return '+1 & +2 Planner: Free intelligent daily study planner for Kerala DHSE Plus One (+1) & Plus Two (+2) students with built-in revision buffer. Set your target date and generate your personalized daily study plan:';
+            return 'HSS Planner: Free intelligent daily study planner for Kerala DHSE Plus One (+1) & Plus Two (+2) students with built-in revision buffer. Set your target date and generate your personalized daily study plan:';
         }
 
         function shareApp() {
-            const shareTitle = '+1 & +2 Planner — Kerala DHSE Study Planner';
+            const shareTitle = 'HSS Planner — Kerala DHSE Study Planner';
             const shareText = getShareSummaryText();
             const shareUrl = 'https://hss-planner.web.app/';
 
@@ -3199,7 +3199,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                     <div class="print-only mt-8 pt-4 border-t-2 border-slate-900 text-xs text-slate-800">
                         <div class="flex items-center justify-between gap-6">
                             <div>
-                                <p class="font-black text-slate-900 text-sm">+1 & +2 Planner — Free Daily Study Planner</p>
+                                <p class="font-black text-slate-900 text-sm">HSS Planner — Free Daily Study Planner</p>
                                 <p class="text-xs text-slate-600 mt-0.5">Kerala Higher Secondary (HSS • +1 & +2) • Verified SCERT Scheme of Work</p>
                                 <p class="text-[11px] text-slate-500 mt-1">Scan the QR code to load or rebalance this timetable on any phone: <strong>https://hss-planner.web.app/</strong></p>
                             </div>
@@ -3702,7 +3702,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
 
             // 6. Settings Modal Localization
             setText('settings-modal-title', isML ? ML_I18N.settingsModal.title : 'Settings & Customization');
-            setText('settings-modal-subtitle', isML ? ML_I18N.settingsModal.subtitle : 'Personalize your +1 & +2 Planner workspace');
+            setText('settings-modal-subtitle', isML ? ML_I18N.settingsModal.subtitle : 'Personalize your HSS Planner workspace');
             setText('settings-theme-title-text', isML ? ML_I18N.settingsModal.themeTitle : 'Theme & Appearance');
             setText('settings-theme-hint', isML ? ML_I18N.settingsModal.themeHint : 'Dark mode features a high-contrast deep slate palette designed for long study sessions without eye strain.');
             setText('settings-lang-title-text', isML ? ML_I18N.settingsModal.langTitle : 'Language / ഭാഷ');
@@ -3867,7 +3867,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 const a = document.createElement('a');
                 const dateStr = new Date().toISOString().split('T')[0];
                 a.href = url;
-                a.download = `plus-one-plus-two-planner-backup-${dateStr}.json`;
+                a.download = `hss-planner-backup-${dateStr}.json`;
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
@@ -3913,7 +3913,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 console.error('Import error:', err);
                 showAppAlert({
                     title: restored ? 'Backup saved' : 'Backup not restored',
-                    message: restored ? 'The backup was saved, but the app could not refresh. Reload to reopen your saved plan.' : 'The backup could not be read, validated or saved. Use a valid +1 & +2 Planner backup (up to 2 MB) from this app version or an older version. Check available device storage and try again.',
+                    message: restored ? 'The backup was saved, but the app could not refresh. Reload to reopen your saved plan.' : 'The backup could not be read, validated or saved. Use a valid HSS Planner backup (up to 2 MB) from this app version or an older version. Check available device storage and try again.',
                     icon: 'fa-triangle-exclamation text-rose-500'
                 });
             } finally {
@@ -3957,7 +3957,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 deferredPWAInstallPrompt.prompt();
                 deferredPWAInstallPrompt.userChoice.then((choiceResult) => {
                     if (choiceResult.outcome === 'accepted') {
-                        showAppToast("Thank you for installing +1 & +2 Planner!", "fa-circle-check text-emerald-400");
+                        showAppToast("Thank you for installing HSS Planner!", "fa-circle-check text-emerald-400");
                         const installBtn = document.getElementById('pwa-install-btn');
                         if (installBtn) installBtn.classList.add('hidden');
                     }
@@ -3966,7 +3966,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
             } else {
                 // If browser already installed or iOS Safari
                 showAppAlert({
-                    title: "Install +1 & +2 Planner App",
+                    title: "Install HSS Planner App",
                     message: "• <strong>On Android / Chrome:</strong> Tap menu (⋮) ➔ 'Install App'<br>• <strong>On iPhone / Safari:</strong> Tap Share (📤) ➔ 'Add to Home Screen'<br>• <strong>On Brave / Edge:</strong> Click the install icon in the URL address bar.",
                     icon: "fa-download text-emerald-500"
                 });

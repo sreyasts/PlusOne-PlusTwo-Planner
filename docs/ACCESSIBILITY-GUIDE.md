@@ -1,8 +1,8 @@
-# +1 & +2 Planner — Accessibility & Low-Bandwidth Standards
+# HSS Planner — Accessibility & Low-Bandwidth Standards
 
 ## 1. Context & Inclusivity Invariant
 
-Many Kerala high school students access +1 & +2 Planner on:
+Many Kerala high school students access HSS Planner on:
 - Budget Android smartphones (< 3GB RAM, 720p screens)
 - Spotty 4G/3G mobile data connections in rural panchayats
 - Shared family computers with varying browser capabilities

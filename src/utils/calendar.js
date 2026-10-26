@@ -1,5 +1,5 @@
 /**
- * +1 & +2 Planner - RFC 5545 iCalendar (.ics) Generator & Synchronizer
+ * HSS Planner - RFC 5545 iCalendar (.ics) Generator & Synchronizer
  * Enables students to export their complete Kerala Plus One & Plus Two
  * study schedule into Google Calendar, Apple Calendar, and Outlook.
  */
@@ -58,13 +58,13 @@ export function escapeIcsText(text) {
  */
 export function generateIcsCalendar(plan, options = {}) {
   const stream = options.stream || 'Plus Two';
-  const calName = options.title || `+1 & +2 Planner Study Schedule (${stream})`;
+  const calName = options.title || `HSS Planner Study Schedule (${stream})`;
   const nowIcs = formatIcsDate(new Date(), '12:00') + 'Z';
 
   const lines = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//+1 & +2 Planner//DHSE Kerala Study Engine//EN',
+    'PRODID:-//HSS Planner//DHSE Kerala Study Engine//EN',
     'CALSCALE:GREGORIAN',
     'METHOD:PUBLISH',
     `X-WR-CALNAME:${escapeIcsText(calName)}`,
@@ -91,7 +91,7 @@ export function generateIcsCalendar(plan, options = {}) {
           `DTSTAMP:${nowIcs}`,
           `DTSTART:${dtStart}`,
           `DTEND:${dtEnd}`,
-          `SUMMARY:+1 & +2 Planner: Day ${day.dayNumber || dayIndex + 1} - Rest & Recharging`,
+          `SUMMARY:HSS Planner: Day ${day.dayNumber || dayIndex + 1} - Rest & Recharging`,
           'DESCRIPTION:Dedicated rest buffer to avoid burnout and consolidate memory.',
           'STATUS:CONFIRMED',
           'END:VEVENT'
@@ -136,7 +136,7 @@ export function generateIcsCalendar(plan, options = {}) {
         'BEGIN:VALARM',
         'TRIGGER:-PT15M',
         'ACTION:DISPLAY',
-        `DESCRIPTION:Reminder: +1 & +2 Planner session for ${escapeIcsText(subject)} begins in 15 minutes!`,
+        `DESCRIPTION:Reminder: HSS Planner session for ${escapeIcsText(subject)} begins in 15 minutes!`,
         'END:VALARM',
         'END:VEVENT'
       );
@@ -160,7 +160,7 @@ export function downloadIcsCalendar(plan, stream = 'science') {
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.setAttribute('href', url);
-  link.setAttribute('download', `plus-one-plus-two-planner-calendar-${stream.toLowerCase().replace(/\s+/g, '-')}.ics`);
+  link.setAttribute('download', `hss-planner-calendar-${stream.toLowerCase().replace(/\s+/g, '-')}.ics`);
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);

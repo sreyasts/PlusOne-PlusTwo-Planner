@@ -1,5 +1,5 @@
 /**
- * +1 & +2 Planner Curriculum Adapters
+ * HSS Planner Curriculum Adapters
  * Standardized interfaces for multi-board and multi-state curriculum scheduling.
  */
 

@@ -90,7 +90,7 @@ describe('Authentication & Cross-Domain Unification Invariants', () => {
     expect(publicSwCacheMatch).not.toBeNull();
     expect(swCacheMatch[1]).toBe(publicSwCacheMatch[1]);
     const { version } = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../package.json'), 'utf8'));
-    expect(swCacheMatch[1]).toBe(`plustwo-mission-v${version}`);
+    expect(swCacheMatch[1]).toBe(`hss-planner-v${version}`);
   });
 
   it('ensures service worker deletes obsolete caches on activation', () => {

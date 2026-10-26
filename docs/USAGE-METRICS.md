@@ -1,6 +1,6 @@
-# +1 & +2 Planner — Privacy-First Usage Telemetry & Metrics Specification
+# HSS Planner — Privacy-First Usage Telemetry & Metrics Specification
 
-This document describes telemetry design and metric definitions for **+1 & +2 Planner**. It is not a legal compliance assessment.
+This document describes telemetry design and metric definitions for **HSS Planner**. It is not a legal compliance assessment.
 
 No independent DPDP/GDPR review has been established. The local tracker filters known property keys and may forward events through Firebase Analytics; provider metadata, cookie behavior and network delivery have not been audited. Local counters do not measure independent students or prove study habits.
 

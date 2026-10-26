@@ -1,4 +1,4 @@
-# +1 & +2 Planner — Public Impact & Community Metrics
+# HSS Planner — Public Impact & Community Metrics
 
 **Transparency Commitment**: All metrics reported in this document are strictly measured and traceable. No numbers are projected, modeled, or fabricated.
 
@@ -55,7 +55,7 @@
 
 ## 4. Historical Milestones
 
-- **2026-09-19**: Initial public release of +1 & +2 Planner codebase.
+- **2026-09-19**: Initial public release of HSS Planner codebase.
 - **2026-09-21**: Offline-first PWA caching and canonical domain unification deployed.
 - **2026-09-23**: Released `v6.1.0` introducing deterministic constraint-propagation scheduler, empirical benchmark suite (`docs/BENCHMARKS.md`), and Vitest test suite.
 - **2026-09-24**: Released `v6.2.0` introducing sharing engine (Web Share API, WhatsApp/Telegram fallback), CSV export, `@media print` PDF stylesheet, high-intent landing pages, and Contributor Covenant 2.1 infrastructure.

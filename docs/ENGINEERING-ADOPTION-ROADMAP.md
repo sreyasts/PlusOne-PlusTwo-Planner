@@ -1,6 +1,6 @@
-# +1 & +2 Planner — Engineering & Adoption Roadmap (2026–2027)
+# HSS Planner — Engineering & Adoption Roadmap (2026–2027)
 
-> **North Star Objective**: Make +1 & +2 Planner the most trusted, scientifically grounded, and widely adopted free study planning platform for Kerala Higher Secondary (DHSE) students, reaching 100,000+ legitimate students through organic word-of-mouth, teacher endorsements, and peer study networks — while demonstrating exemplary open-source software maintenance.
+> **North Star Objective**: Make HSS Planner the most trusted, scientifically grounded, and widely adopted free study planning platform for Kerala Higher Secondary (DHSE) students, reaching 100,000+ legitimate students through organic word-of-mouth, teacher endorsements, and peer study networks — while demonstrating exemplary open-source software maintenance.
 
 ---
 
@@ -107,7 +107,7 @@
 - **Actionable Steps**:
   1. Optimize the 1-click Web Share card: When a student finishes their daily study quota, a single tap generates a clean, non-spammy summary card:
      ```
-     📚 +1 & +2 Planner Study Check-in:
+     📚 HSS Planner Study Check-in:
      ✅ Covered: Electric Charges & Fields (Part 2)
      🎯 Next: Electrostatic Potential
      ⏳ 132 days until DHSE Board Exam
@@ -158,5 +158,5 @@
 
 ---
 
-*Authored by the +1 & +2 Planner Autonomous Maintainer & Sreyas T S (`sreyasts52@gmail.com`).*  
-*Licensed under the [MIT License](https://github.com/sreyasts/PlusOne-PlusTwo-Planner/blob/main/LICENSE).*
+*Authored by the HSS Planner Autonomous Maintainer & Sreyas T S (`sreyasts52@gmail.com`).*  
+*Licensed under the [MIT License](https://github.com/sreyasts/hss-planner/blob/main/LICENSE).*

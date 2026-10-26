@@ -1,4 +1,4 @@
-# +1 & +2 Planner Project Rules & Guidelines
+# HSS Planner Project Rules & Guidelines
 
 ## 🚨 MANDATORY DUAL-DOMAIN DEPLOYMENT POLICY
 

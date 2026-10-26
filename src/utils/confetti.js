@@ -1,5 +1,5 @@
 /**
- * +1 & +2 Planner - Lightweight Celebration Particle Confetti
+ * HSS Planner - Lightweight Celebration Particle Confetti
  * Pure vanilla HTML5 canvas particle simulation with zero external dependencies.
  */
 

@@ -1,4 +1,4 @@
-# +1 & +2 Planner — Growth & Adoption Experiments Engine
+# HSS Planner — Growth & Adoption Experiments Engine
 
 This document tracks all product, acquisition, retention, and community experiments using an empirical scientific method:
 **Hypothesis → Change → Expected Metric → Start Date → Result → Decision**.

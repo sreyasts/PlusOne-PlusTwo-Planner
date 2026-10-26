@@ -1,8 +1,8 @@
 {
-  "name": "plus-one-plus-two-planner",
+  "name": "hss-planner",
   "version": "7.1.0",
   "private": true,
-  "description": "+1 & +2 Planner - Intelligent Daily Study Planner for Kerala Higher Secondary (HSS Plus One & Plus Two) Students",
+  "description": "HSS Planner - Intelligent Daily Study Planner for Kerala Higher Secondary (HSS Plus One & Plus Two) Students",
   "type": "module",
   "scripts": {
     "dev": "vite",

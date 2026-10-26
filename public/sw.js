@@ -1,5 +1,5 @@
-// +1 & +2 Planner Service Worker v7.1.0 (Original Brand Logo Restored)
-const CACHE_NAME = 'plustwo-mission-v7.1.0';
+// HSS Planner Service Worker v7.1.0 (Original Brand Logo Restored)
+const CACHE_NAME = 'hss-planner-v7.1.0';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',

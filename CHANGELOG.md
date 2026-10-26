@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to **+1 & +2 Planner** will be documented in this file.
+All notable changes to **HSS Planner** will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -57,7 +57,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **RFC 5545 iCalendar Exporter (`src/utils/calendar.js`)**:
   - Generates cross-platform standard `.ics` calendar files containing daily scheduled revision sessions.
   - Features automated 15-minute advance notifications (`VALARM`) to keep students disciplined.
-  - Deep links directly back to the active chapter task within +1 & +2 Planner.
+  - Deep links directly back to the active chapter task within HSS Planner.
   - Seamless import into Google Calendar, Apple Calendar, and Microsoft Outlook.
 - **Desktop Focus Experience & PiP Refinement**:
   - Compacted desktop Picture-in-Picture controls with streamlined Play/Pause and Done dopamine feedback loops.
@@ -183,7 +183,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - **Formal Algorithm Specification**: Authored [`docs/ALGORITHM.md`](docs/ALGORITHM.md) detailing continuous accumulator pacing, multi-subject interleaving, and topological constraint satisfaction.
-- **Empirical Benchmark Suite**: Created [`scripts/benchmark-planner.js`](scripts/benchmark-planner.js) and [`docs/BENCHMARKS.md`](docs/BENCHMARKS.md) comparing +1 & +2 Planner against Naive Sequential and Round-Robin models across 60-day CS, 90-day Bio, and 25-day sprint scenarios.
+- **Empirical Benchmark Suite**: Created [`scripts/benchmark-planner.js`](scripts/benchmark-planner.js) and [`docs/BENCHMARKS.md`](docs/BENCHMARKS.md) comparing HSS Planner against Naive Sequential and Round-Robin models across 60-day CS, 90-day Bio, and 25-day sprint scenarios.
 - **Telemetry & DPDP Act Specification**: Published [`docs/USAGE-METRICS.md`](docs/USAGE-METRICS.md) codifying cookieless, zero-PII retention funnels and legal compliance under India's Digital Personal Data Protection Act 2023.
 - **Forensic Growth Baseline**: Documented complete Day 0 verifiable metrics in [`docs/OSS-GROWTH-BASELINE.md`](docs/OSS-GROWTH-BASELINE.md) and adoption ledger in [`docs/IMPACT.md`](docs/IMPACT.md).
 - **Expanded Contributor Templates**: Added standardized GitHub issue templates for Feature Requests, Malayalam Translation, Accessibility (a11y), and Performance profiling.
@@ -213,5 +213,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [5.0.0] - 2026-09-19
 
 ### Added
-- Initial public release of +1 & +2 Planner interactive study timetable generator for Kerala DHSE Class 12.
+- Initial public release of HSS Planner interactive study timetable generator for Kerala DHSE Class 12.
 - LocalStorage state persistence and task checkmark tracking.

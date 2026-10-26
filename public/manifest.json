@@ -1,7 +1,7 @@
 {
-  "id": "/plus-one-plus-two-planner/",
-  "name": "+1 & +2 Planner",
-  "short_name": "+1 & +2 Planner",
+  "id": "/hss-planner/",
+  "name": "HSS Planner",
+  "short_name": "HSS Planner",
   "description": "Adaptive daily study timetable & revision engine for Kerala Higher Secondary (HSS Plus One and Plus Two) students.",
   "start_url": "./?source=pwa",
   "scope": "./",

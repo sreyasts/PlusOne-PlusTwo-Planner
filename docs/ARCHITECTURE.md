@@ -1,8 +1,8 @@
-# +1 & +2 Planner — System Architecture
+# HSS Planner — System Architecture
 
 ## 1. Overview & High-Level System Design
 
-+1 & +2 Planner is a client-side progressive web application (PWA) tailored specifically for Kerala Higher Secondary Examination (DHSE) students across Class 11 Improvement and Class 12 (+2) curricula. The system operates under a local-first, offline-capable architecture where all schedule synthesis, dependency resolution, and state updates run deterministically in the client browser with zero mandatory backend roundtrips.
+HSS Planner is a client-side progressive web application (PWA) tailored specifically for Kerala Higher Secondary Examination (DHSE) students across Class 11 Improvement and Class 12 (+2) curricula. The system operates under a local-first, offline-capable architecture where all schedule synthesis, dependency resolution, and state updates run deterministically in the client browser with zero mandatory backend roundtrips.
 
 ```mermaid
 flowchart TD
@@ -163,7 +163,7 @@ The core planning engine in `src/engine/planner.js` is architected with a strict
 ```
 
 ### Implemented Curriculum Adapters (`src/adapters/`)
-+1 & +2 Planner includes first-class curriculum adapter implementations located in `src/adapters/`:
+HSS Planner includes first-class curriculum adapter implementations located in `src/adapters/`:
 
 1. **`CurriculumAdapter` (`src/adapters/CurriculumAdapter.js`)**: Abstract base class providing task validation (`CurriculumAdapter.validateTask`), subject aggregation, chapter-part hierarchy grouping, and planning payload conversion.
 2. **`KeralaDHSEAdapter` (`src/adapters/KeralaDHSEAdapter.js`)**: Encapsulates the canonical Kerala SCERT syllabus for Science, Commerce, and Humanities streams, including dual-stream +1 Improvement interweaving.
@@ -230,5 +230,5 @@ const customSchedule = buildIntelligentPlan({
 });
 ```
 
-This permits any educational board or open-source community to leverage +1 & +2 Planner's verified, bug-free scheduling engine without modifying core codebase algorithms.
+This permits any educational board or open-source community to leverage HSS Planner's verified, bug-free scheduling engine without modifying core codebase algorithms.
 

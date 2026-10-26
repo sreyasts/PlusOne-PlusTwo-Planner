@@ -1,4 +1,4 @@
-# +1 & +2 Planner mission
+# HSS Planner mission
 
 Updated 18 October 2026.
 
