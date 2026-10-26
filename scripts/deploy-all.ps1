@@ -1,7 +1,7 @@
 # ==============================================================================
 # +1 & +2 Planner - Zero-Error Dual-Domain Deployment Script
 # Deploys to BOTH:
-# 1. Firebase Hosting (https://plusone-plustwo-planner.web.app & https://mission-plustwo.web.app)
+# 1. Firebase Hosting (https://hss-planner.web.app & https://mission-plustwo.web.app)
 # 2. GitHub Pages (https://sreyasts.github.io/PlusOne-PlusTwo-Planner/)
 # ==============================================================================
 
@@ -10,7 +10,7 @@ Set-Location -Path (Split-Path -Parent $PSScriptRoot)
 
 Write-Host "==========================================================" -ForegroundColor Cyan
 Write-Host "  +1 & +2 Planner - Zero-Error Dual-Domain Deployment     " -ForegroundColor Cyan
-Write-Host "  Domain 1: https://plusone-plustwo-planner.web.app        " -ForegroundColor Cyan
+Write-Host "  Domain 1: https://hss-planner.web.app        " -ForegroundColor Cyan
 Write-Host "  Domain 2: https://sreyasts.github.io/ (GitHub Pages)     " -ForegroundColor Cyan
 Write-Host "==========================================================" -ForegroundColor Cyan
 

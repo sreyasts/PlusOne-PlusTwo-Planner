@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://plusone-plustwo-planner.web.app/sitemap.xml
+Sitemap: https://hss-planner.web.app/sitemap.xml

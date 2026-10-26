@@ -1,7 +1,7 @@
 {
   "hosting": [
     {
-      "site": "hssplanner",
+      "site": "hss-planner",
       "public": "dist",
       "ignore": [
         "firebase.json",

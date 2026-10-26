@@ -851,7 +851,7 @@ function loadInitialState() {
         function shareTodayCompletion(dayNumber) {
             const shareTitle = `+1 & +2 Planner — Day ${dayNumber} Cleared!`;
             const shareText = `🏆 Day ${dayNumber} study targets 100% completed on +1 & +2 Planner! Free adaptive daily study planner for Kerala DHSE Plus One & Plus Two — with guaranteed mock revision buffer. Try it:`;
-            const shareUrl = 'https://plusone-plustwo-planner.web.app/';
+            const shareUrl = 'https://hss-planner.web.app/';
 
             if (navigator.share) {
                 navigator.share({
@@ -1161,7 +1161,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
         function shareApp() {
             const shareTitle = '+1 & +2 Planner — Kerala DHSE Study Planner';
             const shareText = getShareSummaryText();
-            const shareUrl = 'https://plusone-plustwo-planner.web.app/';
+            const shareUrl = 'https://hss-planner.web.app/';
 
             if (navigator.share) {
                 navigator.share({
@@ -1179,7 +1179,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
 
         function shareOnWhatsApp() {
             const shareText = getShareSummaryText();
-            const shareUrl = 'https://plusone-plustwo-planner.web.app/';
+            const shareUrl = 'https://hss-planner.web.app/';
             trackEvent('plan_shared', { channel: 'whatsapp' });
             const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText + '\n' + shareUrl)}`;
             window.open(whatsappUrl, '_blank');
@@ -1187,14 +1187,14 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
 
         function shareOnTelegram() {
             const shareText = '🎓 ' + getShareSummaryText();
-            const shareUrl = 'https://plusone-plustwo-planner.web.app/';
+            const shareUrl = 'https://hss-planner.web.app/';
             trackEvent('plan_shared', { channel: 'telegram' });
             const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`;
             window.open(telegramUrl, '_blank');
         }
 
         function copyShareLink() {
-            const shareUrl = 'https://plusone-plustwo-planner.web.app/';
+            const shareUrl = 'https://hss-planner.web.app/';
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(shareUrl).then(() => {
                     trackEvent('plan_shared', { channel: 'copy_link' });
@@ -3181,7 +3181,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                             <div>
                                 <p class="font-black text-slate-900 text-sm">+1 & +2 Planner — Free Daily Study Planner</p>
                                 <p class="text-xs text-slate-600 mt-0.5">Kerala Higher Secondary (HSS • +1 & +2) • Verified SCERT Scheme of Work</p>
-                                <p class="text-[11px] text-slate-500 mt-1">Scan the QR code to load or rebalance this timetable on any phone: <strong>https://plusone-plustwo-planner.web.app/</strong></p>
+                                <p class="text-[11px] text-slate-500 mt-1">Scan the QR code to load or rebalance this timetable on any phone: <strong>https://hss-planner.web.app/</strong></p>
                             </div>
                             <div id="printQrCodeContainer" class="shrink-0 w-20 h-20 flex items-center justify-center border border-slate-300 rounded-lg p-1 bg-white"></div>
                         </div>
@@ -3197,7 +3197,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 `;
 
                 const targetStream = appState?.stream || 'cs';
-                const qrTarget = `https://plusone-plustwo-planner.web.app/?stream=${encodeURIComponent(targetStream)}`;
+                const qrTarget = `https://hss-planner.web.app/?stream=${encodeURIComponent(targetStream)}`;
                 generateQrSvg(qrTarget, { width: 72, margin: 0 })
                     .then((svg) => {
                         const el = document.getElementById('printQrCodeContainer');

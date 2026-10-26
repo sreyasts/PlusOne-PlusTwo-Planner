@@ -3,7 +3,7 @@ import { generateQrSvg } from '../src/utils/qr.js';
 
 describe('Offline Vector QR Code Generator', () => {
   it('generates valid vector SVG markup for URLs', async () => {
-    const url = 'https://plusone-plustwo-planner.web.app/?stream=cs';
+    const url = 'https://hss-planner.web.app/?stream=cs';
     const svg = await generateQrSvg(url, { width: 120 });
 
     expect(svg).toBeDefined();

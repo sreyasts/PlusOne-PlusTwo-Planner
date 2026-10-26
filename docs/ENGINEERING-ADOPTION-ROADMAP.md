@@ -96,7 +96,7 @@
 
 - **Actionable Steps**:
   1. Distribute the free, non-commercial teacher toolkit (`docs/distribution-growth-kit.md`) to Higher Secondary School Teachers' associations across all 14 districts of Kerala.
-  2. Provide printable, high-resolution wall posters (`dist/assets/printable-timetable-qr.pdf`) for school notice boards and staff rooms with embedded vector QR codes linking to [`https://plusone-plustwo-planner.web.app/`](https://plusone-plustwo-planner.web.app/).
+  2. Provide printable, high-resolution wall posters (`dist/assets/printable-timetable-qr.pdf`) for school notice boards and staff rooms with embedded vector QR codes linking to [`https://hss-planner.web.app/`](https://hss-planner.web.app/).
   3. Conduct informational workshops for Career Guidance & Adolescent Counselling Cell (CG&ACC) coordinators in government schools.
 
 ---
@@ -111,7 +111,7 @@
      ✅ Covered: Electric Charges & Fields (Part 2)
      🎯 Next: Electrostatic Potential
      ⏳ 132 days until DHSE Board Exam
-     Plan your timetable: https://plusone-plustwo-planner.web.app/
+     Plan your timetable: https://hss-planner.web.app/
      ```
   2. Distribute high-yield study resources (SCERT rationalized chapter checklists) on educational Telegram channels (HSSLive, Plus Two Science Kerala, Bio-Vision).
 
@@ -121,11 +121,11 @@
 *Students search for exam schedules, syllabus breakdowns, and revision timetables.*
 
 - **Target High-Intent Queries & Landing Pages**:
-  - *Query*: "Kerala plus two timetable 2027" &rarr; Land on [`/pages/plus-two-timetable.html`](https://plusone-plustwo-planner.web.app/plus-two-timetable)
-  - *Query*: "Plus two exam countdown live" &rarr; Land on [`/pages/exam-countdown.html`](https://plusone-plustwo-planner.web.app/exam-countdown)
-  - *Query*: "Class 12 backlog recovery study plan" &rarr; Land on [`/pages/backlog-recovery-planner.html`](https://plusone-plustwo-planner.web.app/backlog-recovery-planner)
-  - *Query*: "Plus two daily study hours calculator" &rarr; Land on [`/pages/study-hours-calculator.html`](https://plusone-plustwo-planner.web.app/study-hours-calculator)
-  - *Query*: "Kerala Plus Two study timetable & schedule" &rarr; Land on [`/pages/plus-two-timetable.html`](https://plusone-plustwo-planner.web.app/plus-two-timetable)
+  - *Query*: "Kerala plus two timetable 2027" &rarr; Land on [`/pages/plus-two-timetable.html`](https://hss-planner.web.app/plus-two-timetable)
+  - *Query*: "Plus two exam countdown live" &rarr; Land on [`/pages/exam-countdown.html`](https://hss-planner.web.app/exam-countdown)
+  - *Query*: "Class 12 backlog recovery study plan" &rarr; Land on [`/pages/backlog-recovery-planner.html`](https://hss-planner.web.app/backlog-recovery-planner)
+  - *Query*: "Plus two daily study hours calculator" &rarr; Land on [`/pages/study-hours-calculator.html`](https://hss-planner.web.app/study-hours-calculator)
+  - *Query*: "Kerala Plus Two study timetable & schedule" &rarr; Land on [`/pages/plus-two-timetable.html`](https://hss-planner.web.app/plus-two-timetable)
 - **Technical SEO Hygiene**:
   - 100% valid Schema.org `WebApplication` and `FAQPage` JSON-LD markup.
   - Sub-second First Contentful Paint (FCP) on 3G network profiles.

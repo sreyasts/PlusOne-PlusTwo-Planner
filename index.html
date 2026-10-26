@@ -8,10 +8,10 @@
     <script id="canonical-domain-bridge">
     (function() {
         try {
-            var CANONICAL_HOST = 'plusone-plustwo-planner.web.app';
+            var CANONICAL_HOST = 'hss-planner.web.app';
             var currentHost = window.location.hostname;
             var isLocal = currentHost === 'localhost' || currentHost === '127.0.0.1' || currentHost.startsWith('192.168.');
-            if (!isLocal && currentHost !== CANONICAL_HOST && currentHost.includes('github.io')) {
+            if (!isLocal && currentHost !== CANONICAL_HOST && (currentHost.includes('github.io') || currentHost.includes('plusone-plustwo-planner.web.app') || currentHost.includes('mission-plustwo.web.app') || currentHost.includes('hssplanner.web.app'))) {
                 var syncPayload = '';
                 var v2 = localStorage.getItem('plusTwoMissionState_v2');
                 var v1 = localStorage.getItem('plusTwoPlanState');
@@ -48,32 +48,32 @@
     <meta name="keywords" content="Plus One study planner, Plus One planner, Plus Two study planner, Plus Two planner, planner, HSS planner, HSS level planner, plan, study plan, How can I complete my Plus Two syllabus, How to complete HSS syllabus, how to complete plus one syllabus, custom syllabus planner, Plus Two, Plus One, HSS, Kerala Higher Secondary study planner, DHSE Kerala timetable 2026, SCERT Kerala scheme of work, Plus One revision timetable, Plus Two revision timetable, 12th study planner, 11th study planner, Plus Two Science study plan, Plus Two Commerce study plan, Plus Two Humanities study plan, Kerala state board exam planner, Plus One improvement exam planner, Plus Two backlog recovery timetable, Kerala 12th board exam study routine, DHSE daily syllabus completion tracker, Kerala HSS study timetable 30 days, 60 days study plan Plus Two, Physics Chemistry Maths Biology Plus Two study timetable, Accountancy Economics Business Studies Plus Two planner, HSS live study notes and timetable, Kerala exam winner study schedule alternative, topper study timetable Plus Two Kerala, free online study planner for Kerala students, PWA offline study planner Kerala DHSE, study schedule generator">
     <meta name="author" content="+1 & +2 Planner">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-    <meta name="thumbnail" content="https://plusone-plustwo-planner.web.app/og-image.png">
-    <meta name="image" content="https://plusone-plustwo-planner.web.app/og-image.png">
-    <link rel="canonical" href="https://plusone-plustwo-planner.web.app/">
+    <meta name="thumbnail" content="https://hss-planner.web.app/og-image.png">
+    <meta name="image" content="https://hss-planner.web.app/og-image.png">
+    <link rel="canonical" href="https://hss-planner.web.app/">
     <meta name="google-site-verification" content="google03905a8a03a50ab1" />
 
     <!-- Open Graph / Facebook / WhatsApp / Telegram Previews -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://plusone-plustwo-planner.web.app/">
+    <meta property="og:url" content="https://hss-planner.web.app/">
     <meta property="og:site_name" content="+1 & +2 Planner">
     <meta property="og:title" content="Plus One & Plus Two Study Planner (HSS) | Kerala Higher Secondary Daily Timetable & Syllabus Revision Plan">
     <meta property="og:description" content="Free Plus One and Plus Two study planner & daily revision timetable for Kerala Higher Secondary (HSS DHSE). Plan how to complete your Plus Two & Plus One syllabus in 30 days, 60 days, or custom study plan for Science, Commerce, and Humanities.">
-    <meta property="og:image" content="https://plusone-plustwo-planner.web.app/og-image.png">
-    <meta property="og:image:secure_url" content="https://plusone-plustwo-planner.web.app/og-image.png">
+    <meta property="og:image" content="https://hss-planner.web.app/og-image.png">
+    <meta property="og:image:secure_url" content="https://hss-planner.web.app/og-image.png">
     <meta property="og:image:type" content="image/png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:image:alt" content="Plus One & Plus Two Study Planner | Kerala Higher Secondary (HSS) Study Timetable">
-    <meta property="og:logo" content="https://plusone-plustwo-planner.web.app/icon.png">
+    <meta property="og:logo" content="https://hss-planner.web.app/icon.png">
     <meta property="og:locale" content="en_IN">
 
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content="https://plusone-plustwo-planner.web.app/">
+    <meta name="twitter:url" content="https://hss-planner.web.app/">
     <meta name="twitter:title" content="Plus One & Plus Two Study Planner (HSS) | Kerala Higher Secondary Daily Timetable & Syllabus Revision Plan">
     <meta name="twitter:description" content="Free Plus One and Plus Two study planner & daily revision timetable for Kerala Higher Secondary (HSS DHSE). Plan how to complete your Plus Two & Plus One syllabus in 30 days, 60 days, or custom study plan for Science, Commerce, and Humanities.">
-    <meta name="twitter:image" content="https://plusone-plustwo-planner.web.app/og-image.png">
+    <meta name="twitter:image" content="https://hss-planner.web.app/og-image.png">
     <meta name="twitter:image:alt" content="Plus One & Plus Two Study Planner - Kerala Higher Secondary Daily Timetable">
 
     <!-- Schema.org Structured Data (WebSite, Organization, WebApplication, FAQPage & HowTo) -->
@@ -104,16 +104,16 @@
             "11th Study Planner",
             "Mission PlusTwo"
           ],
-          "url": "https://plusone-plustwo-planner.web.app/",
+          "url": "https://hss-planner.web.app/",
           "description": "Free Kerala Higher Secondary (HSS) Plus One & Plus Two daily study planner, dynamic timetable generator, and syllabus completion tracker for DHSE Science, Commerce, and Humanities.",
-          "image": "https://plusone-plustwo-planner.web.app/icon.png"
+          "image": "https://hss-planner.web.app/icon.png"
         },
         {
           "@type": "Organization",
           "name": "+1 & +2 Planner",
-          "url": "https://plusone-plustwo-planner.web.app/",
-          "logo": "https://plusone-plustwo-planner.web.app/icon.png",
-          "image": "https://plusone-plustwo-planner.web.app/icon.png",
+          "url": "https://hss-planner.web.app/",
+          "logo": "https://hss-planner.web.app/icon.png",
+          "image": "https://hss-planner.web.app/icon.png",
           "sameAs": [
             "https://github.com/sreyasts/PlusOne-PlusTwo-Planner"
           ]
@@ -135,7 +135,7 @@
             "DHSE Plus Two Study Planner",
             "Plus One Improvement Planner"
           ],
-          "url": "https://plusone-plustwo-planner.web.app/",
+          "url": "https://hss-planner.web.app/",
           "applicationCategory": "EducationalApplication",
           "applicationSubCategory": "Curriculum Pacing & Timetable Generator",
           "operatingSystem": "All (Web, Android, iOS, Windows, Mac)",
@@ -151,14 +151,14 @@
             "Multi-Device Google Cloud Sync and Offline PWA Support"
           ],
           "image": [
-            "https://plusone-plustwo-planner.web.app/icon.png",
-            "https://plusone-plustwo-planner.web.app/og-image.png"
+            "https://hss-planner.web.app/icon.png",
+            "https://hss-planner.web.app/og-image.png"
           ],
           "screenshot": [
-            "https://plusone-plustwo-planner.web.app/assets/screenshots/screenshot-desktop.png",
-            "https://plusone-plustwo-planner.web.app/assets/screenshots/screenshot-mobile.png",
-            "https://plusone-plustwo-planner.web.app/assets/screenshots/screenshot-plan.png",
-            "https://plusone-plustwo-planner.web.app/assets/screenshots/screenshot-countdown.png"
+            "https://hss-planner.web.app/assets/screenshots/screenshot-desktop.png",
+            "https://hss-planner.web.app/assets/screenshots/screenshot-mobile.png",
+            "https://hss-planner.web.app/assets/screenshots/screenshot-plan.png",
+            "https://hss-planner.web.app/assets/screenshots/screenshot-countdown.png"
           ],
           "inLanguage": [
             "en",
@@ -267,35 +267,35 @@
               "position": 1,
               "name": "Plus Two Study Timetable (30 Days)",
               "description": "Generate an intensive 30-day Kerala Plus Two crash revision timetable with daily chapter pacing.",
-              "url": "https://plusone-plustwo-planner.web.app/pages/plus-two-timetable.html"
+              "url": "https://hss-planner.web.app/pages/plus-two-timetable.html"
             },
             {
               "@type": "SiteNavigationElement",
               "position": 2,
               "name": "Kerala Higher Secondary Syllabus Daily Planner",
               "description": "Official SCERT & DHSE scheme of work syllabus pacing and daily chapter milestones.",
-              "url": "https://plusone-plustwo-planner.web.app/pages/syllabus-plus-two.html"
+              "url": "https://hss-planner.web.app/pages/syllabus-plus-two.html"
             },
             {
               "@type": "SiteNavigationElement",
               "position": 3,
               "name": "Study Hours & Revision Buffer Calculator",
               "description": "Calculate exact daily study hours needed to complete Plus Two syllabus before board exams.",
-              "url": "https://plusone-plustwo-planner.web.app/pages/study-hours-calculator.html"
+              "url": "https://hss-planner.web.app/pages/study-hours-calculator.html"
             },
             {
               "@type": "SiteNavigationElement",
               "position": 4,
               "name": "Backlog Recovery Catch-Up Planner",
               "description": "Catch up on missed Plus Two chapters without burning out before terminal examinations.",
-              "url": "https://plusone-plustwo-planner.web.app/pages/backlog-recovery-planner.html"
+              "url": "https://hss-planner.web.app/pages/backlog-recovery-planner.html"
             },
             {
               "@type": "SiteNavigationElement",
               "position": 5,
               "name": "Printable School Notice Board Poster",
               "description": "High-resolution Kerala Plus Two study planner QR poster ready for classroom notice boards.",
-              "url": "https://plusone-plustwo-planner.web.app/pages/printable-qr-poster.html"
+              "url": "https://hss-planner.web.app/pages/printable-qr-poster.html"
             }
           ]
         }

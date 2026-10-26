@@ -30,7 +30,7 @@
 
 | Metric | Measured Status | Verification Source | Definition |
 | :--- | :--- | :--- | :--- |
-| **Production Domain** | `https://plusone-plustwo-planner.web.app/` | Firebase Hosting Console | Primary canonical production endpoint. |
+| **Production Domain** | `https://hss-planner.web.app/` | Firebase Hosting Console | Primary canonical production endpoint. |
 | **PWA Capability** | Full Offline Support | `sw.js` + Web App Manifest | Installable on Android, iOS, Windows, macOS, and Linux without app stores. |
 | **Syllabus Chapters** | 100% Kerala DHSE Rationalized | `src/data/syllabus-plus-two.js` | Physics (14), Chemistry (10), Maths (13), Biology (16), Computer Science (11), Commerce & Humanities. |
 | **Stream Coverage** | Bio, CS, Commerce, Humanities | Application Engine | Includes +1 Improvement exam integration for all major subjects. |

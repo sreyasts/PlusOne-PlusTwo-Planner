@@ -82,7 +82,7 @@ export function generateIcsCalendar(plan, options = {}) {
 
     if (tasks.length === 0) {
       if (day.isRestDay) {
-        const uid = `rest-day-${day.dayNumber || dayIndex + 1}-${dayDate}@plusone-plustwo-planner.web.app`;
+        const uid = `rest-day-${day.dayNumber || dayIndex + 1}-${dayDate}@hss-planner.web.app`;
         const dtStart = formatIcsDate(dayDate, '09:00');
         const dtEnd = formatIcsDate(dayDate, '10:00');
         lines.push(
@@ -114,7 +114,7 @@ export function generateIcsCalendar(plan, options = {}) {
 
       const dtStart = formatIcsDate(dayDate, slotTime);
       const dtEnd = formatIcsDate(dayDate, endTimeStr);
-      const uid = `task-${task.id || `${dayIndex}-${taskIdx}`}-${dayDate}@plusone-plustwo-planner.web.app`;
+      const uid = `task-${task.id || `${dayIndex}-${taskIdx}`}-${dayDate}@hss-planner.web.app`;
 
       const subject = task.subject || 'DHSE Study';
       const chapter = task.chapterTitle || task.chapterName || task.title || 'Revision Session';
@@ -122,7 +122,7 @@ export function generateIcsCalendar(plan, options = {}) {
       const grade = task.grade ? ` [${task.grade}]` : '';
 
       const summary = `Study: ${subject} - ${chapter}${part}${grade}`;
-      const description = `Kerala Higher Secondary (${stream})\\nSubject: ${subject}\\nChapter: ${chapter}\\nEstimated Study: ${durationMins} mins\\n\\nOpen Study Timer & Resources: https://plusone-plustwo-planner.web.app/`;
+      const description = `Kerala Higher Secondary (${stream})\\nSubject: ${subject}\\nChapter: ${chapter}\\nEstimated Study: ${durationMins} mins\\n\\nOpen Study Timer & Resources: https://hss-planner.web.app/`;
 
       lines.push(
         'BEGIN:VEVENT',

@@ -17,7 +17,7 @@ Build and synchronize the production distribution:
 npm run build
 ```
 
-### 3. Deploy to Firebase Hosting (Domain 1: plusone-plustwo-planner.web.app)
+### 3. Deploy to Firebase Hosting (Domain 1: hss-planner.web.app)
 Deploy the verified build to Firebase Hosting:
 ```powershell
 npx -y firebase-tools@latest deploy --only hosting

@@ -122,4 +122,4 @@ npm run build
 4. **Code Review & Triage**:
    - A maintainer will review your PR within 48 hours.
    - All automated GitHub Actions CI checks must pass before merging.
-   - Once merged, your changes will automatically deploy to [https://plusone-plustwo-planner.web.app/](https://plusone-plustwo-planner.web.app/) in the next release!
+   - Once merged, your changes will automatically deploy to [https://hss-planner.web.app/](https://hss-planner.web.app/) in the next release!

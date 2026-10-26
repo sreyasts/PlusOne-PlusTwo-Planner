@@ -24,7 +24,7 @@ In accordance with our strict anti-fabrication policy, every metric recorded her
 | **Repository Age** | 4 days (Created 2026-09-19T03:42:25Z) | GitHub API (`createdAt`) | 2026-09-23 |
 | **Total Commits on `main`** | `57` | Git (`git rev-list --count HEAD`) | 2026-09-23 |
 | **Commit Activity Span** | 2026-09-19 to 2026-09-23 | Git commit history | 2026-09-23 |
-| **Live Web App (Primary)** | [https://plusone-plustwo-planner.web.app/](https://plusone-plustwo-planner.web.app/) | Firebase Hosting (SSL Active, HTTP 200) | 2026-09-23 |
+| **Live Web App (Primary)** | [https://hss-planner.web.app/](https://hss-planner.web.app/) | Firebase Hosting (SSL Active, HTTP 200) | 2026-09-23 |
 | **Live Web App (Canonical Forwarder)** | [https://sreyasts.github.io/PlusOne-PlusTwo-Planner/](https://sreyasts.github.io/PlusOne-PlusTwo-Planner/) | GitHub Pages (Workflow deployment, HTTP 200) | 2026-09-23 |
 | **GitHub Traffic (Past 14 Days)** | 162 views, 21 unique visitors | GitHub API (`traffic/views`) | 2026-09-23 |
 | **Vitest Unit Test Suite** | 3 test files, 25 tests passing | Local test run (`npm test`) | 2026-09-23 |

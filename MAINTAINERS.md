@@ -26,7 +26,7 @@ The maintainer commits to upholding the following architectural and ethical inva
 2. **Deterministic Scheduling Engine**: Study timetable allocations are deterministic, reproducible, and verifiable. PRs affecting the core engine (`src/engine/planner.js` or `src/core/scheduler.js`) must pass all 551 legacy invariant checks and Vitest test suites.
 3. **Student Privacy First**: +1 & +2 Planner operates by default in 100% offline Guest Mode with zero Personally Identifiable Information (PII) collection. Any cloud sync features must strictly require affirmative parent/guardian consent under India's Digital Personal Data Protection (DPDP) Act 2023.
 4. **Kerala DHSE / SCERT Canon**: All chapter listings, mark weights, and part splits must strictly reflect the official Kerala State Board SCERT Scheme of Work.
-5. **Dual-Domain Production Continuity**: Every release must deploy cleanly across both primary hosting ([`plusone-plustwo-planner.web.app`](https://plusone-plustwo-planner.web.app/)) and GitHub Pages mirror.
+5. **Dual-Domain Production Continuity**: Every release must deploy cleanly across both primary hosting ([`hss-planner.web.app`](https://hss-planner.web.app/)) and GitHub Pages mirror.
 
 ---
 

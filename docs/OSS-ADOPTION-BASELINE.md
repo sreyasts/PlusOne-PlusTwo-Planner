@@ -3,7 +3,7 @@
 **Baseline Date**: 2026-09-23  
 **Auditor**: Autonomous Maintainer System  
 **Repository**: [`sreyasts/PlusOne-PlusTwo-Planner`](https://github.com/sreyasts/PlusOne-PlusTwo-Planner)  
-**Production Site**: [https://plusone-plustwo-planner.web.app/](https://plusone-plustwo-planner.web.app/)  
+**Production Site**: [https://hss-planner.web.app/](https://hss-planner.web.app/)  
 **Integrity Invariant**: Every number in this document is real, measured directly via API or codebase inspection, and zero values are fabricated.
 
 ---
@@ -40,8 +40,8 @@
 
 | Area | Baseline Status | Notes |
 | :--- | :--- | :--- |
-| **Production URL** | `https://plusone-plustwo-planner.web.app/` | Hosted on Firebase Hosting (project `mission-plustwo`) |
-| **Canonical Bridge** | Active | Redirects `github.io` traffic to `plusone-plustwo-planner.web.app` while preserving local state |
+| **Production URL** | `https://hss-planner.web.app/` | Hosted on Firebase Hosting (project `mission-plustwo`) |
+| **Canonical Bridge** | Active | Redirects `github.io` traffic to `hss-planner.web.app` while preserving local state |
 | **Offline Capability** | Service Worker (`sw.js`) active | PWA installable, full offline plan generation |
 | **Storage Architecture** | IndexedDB (`plusTwoMissionState_v2`) + LocalStorage fallback | Multi-day state, subject selections, completed tasks |
 | **Cloud Synchronization** | Optional Firebase Auth (Google Sign-In) | Firestore subcollections for cross-device routine sync |
@@ -64,7 +64,7 @@
 | **Robots.txt** | Present (`/robots.txt`) | Allows all bots, points to sitemap |
 | **Schema.org Structured Data** | `WebApplication` + `FAQPage` JSON-LD | Embedded in `<head>` |
 | **Open Graph / Twitter Cards** | Configured | 512x512 icon preview |
-| **Canonical URL Tag** | Configured (`https://plusone-plustwo-planner.web.app/`) | `<link rel="canonical">` |
+| **Canonical URL Tag** | Configured (`https://hss-planner.web.app/`) | `<link rel="canonical">` |
 | **Search Console Queries/Clicks** | Direct API credentials pending | Requires GSC OAuth / service account authorization |
 
 ---

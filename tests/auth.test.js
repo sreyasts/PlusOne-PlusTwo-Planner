@@ -67,7 +67,7 @@ describe('Authentication & Cross-Domain Unification Invariants', () => {
   it('includes Canonical Domain Bridge in index.html for seamless cross-domain unification', () => {
     const indexContent = fs.readFileSync(indexPath, 'utf8');
     expect(indexContent).toContain('id="canonical-domain-bridge"');
-    expect(indexContent).toContain("CANONICAL_HOST = 'plusone-plustwo-planner.web.app'");
+    expect(indexContent).toContain("CANONICAL_HOST = 'hss-planner.web.app'");
     expect(indexContent).toContain('mpt_sync=');
     expect(indexContent).toContain('window.location.replace(');
   });

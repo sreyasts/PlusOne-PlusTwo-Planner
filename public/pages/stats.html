@@ -9,7 +9,7 @@
             var CANONICAL_HOST = 'mission-plustwo.web.app';
             var currentHost = window.location.hostname;
             var isLocal = currentHost === 'localhost' || currentHost === '127.0.0.1' || currentHost.startsWith('192.168.');
-            if (!isLocal && currentHost !== CANONICAL_HOST && currentHost.includes('github.io')) {
+            if (!isLocal && currentHost !== CANONICAL_HOST && (currentHost.includes('github.io') || currentHost.includes('plusone-plustwo-planner.web.app') || currentHost.includes('mission-plustwo.web.app') || currentHost.includes('hssplanner.web.app'))) {
                 var cleanPath = window.location.pathname.replace(/^\/intelligent-study-planner-for-plus-two-?/, '');
                 if (!cleanPath || cleanPath === '') cleanPath = '/';
                 var target = 'https://' + CANONICAL_HOST + cleanPath + window.location.search + window.location.hash;
