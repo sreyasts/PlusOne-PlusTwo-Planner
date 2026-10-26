@@ -160,8 +160,10 @@ export function migrateUserState(rawState) {
   }
 
   // Upgrade the plan days and tasks
-  const upgradedPlan = (rawState.plan || []).map((day, dIdx) => {
-    const upgradedTasks = (day.tasks || []).map((t, tIdx) => {
+  const rawPlanArray = Array.isArray(rawState.plan) ? rawState.plan : [];
+  const upgradedPlan = rawPlanArray.map((day, dIdx) => {
+    const rawTasksArray = (day && Array.isArray(day.tasks)) ? day.tasks : [];
+    const upgradedTasks = rawTasksArray.map((t, tIdx) => {
       const isCompleted = completedTaskIds.has(t.id) || Boolean(t.completed);
 
       // Clean topic title formatting (replace legacy "Part 1 of 3" with clean subtopics)
@@ -196,7 +198,7 @@ export function migrateUserState(rawState) {
   return {
     ...rawState,
     engineVersion: ENGINE_VERSION,
-    grade: rawState.grade || (rawState.plan && rawState.plan.some(d => (d.tasks || []).some(t => t.grade === '+1')) && !rawState.plan.some(d => (d.tasks || []).some(t => t.grade === '+2')) ? '+1' : '+2'),
+    grade: rawState.grade || (rawPlanArray.some(d => ((d && d.tasks) || []).some(t => t.grade === '+1')) && !rawPlanArray.some(d => ((d && d.tasks) || []).some(t => t.grade === '+2')) ? '+1' : '+2'),
     stream: rawState.stream || 'cs',
     createdDate: rawState.createdDate || formatLocalDateStr(),
     deadlineDate: rawState.deadlineDate || '2027-02-28',
