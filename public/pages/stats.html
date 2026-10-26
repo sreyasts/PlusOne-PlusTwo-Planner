@@ -501,7 +501,8 @@
                     });
                 }
                 planEl.innerHTML = '<span class="badge-pass">Generated & Active</span>';
-                streamEl.innerHTML = '<span class="code-tag">' + (streamName.toUpperCase()) + '</span>';
+                streamEl.innerHTML = '<span class="code-tag"></span>';
+                streamEl.querySelector('.code-tag').textContent = String(streamName).toUpperCase();
                 chEl.innerHTML = '<span class="code-tag">' + completedCount + ' tasks completed</span>';
             } else {
                 planEl.innerHTML = '<span class="code-tag">No local plan yet</span>';
