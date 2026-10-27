@@ -75,6 +75,7 @@ function setup({ grade = '+2', stream = 'cs', step = 1 } = {}) {
   });
 
   for (const name of [
+    'savePreviousPlanSnapshot',
     'setGradeSelection',
     'setStreamSelection',
     'setTermSelection',

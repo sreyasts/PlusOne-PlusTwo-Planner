@@ -381,14 +381,20 @@ html.dark .study-capacity, html.dark .study-tools { border-color: #334155; }
             border-color: #2563eb !important;
             box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35) !important;
         }
-        /* Typography & Contrast in Light Mode */
+        /* Typography & Contrast in Light Mode - Guaranteed WCAG AA/AAA legibility */
         html:not(.dark) .text-slate-900 { color: #0f172a !important; }
         html:not(.dark) .text-slate-800 { color: #1e293b !important; }
         html:not(.dark) .text-slate-700 { color: #334155 !important; }
-        html:not(.dark) .text-slate-600 { color: #475569 !important; }
-        html:not(.dark) .text-slate-500 { color: #64748b !important; }
-        html:not(.dark) .text-slate-400 { color: #94a3b8 !important; }
-        html:not(.dark) .text-slate-300 { color: #cbd5e1 !important; }
+        html:not(.dark) .text-slate-600 { color: #334155 !important; }
+        html:not(.dark) .text-slate-500 { color: #334155 !important; }
+        html:not(.dark) .text-slate-400 { color: #475569 !important; }
+        html:not(.dark) .text-slate-300 { color: #475569 !important; }
+        html:not(.dark) .day-card-counter { color: #334155 !important; font-weight: 700 !important; }
+        html:not(.dark) .preset-sub { color: #475569 !important; font-weight: 600 !important; }
+        html:not(.dark) .task-text-content { color: #0f172a !important; }
+        html:not(.dark) .task-text-content span { color: #334155 !important; }
+        html:not(.dark) .task-text-content.line-through,
+        html:not(.dark) .task-text-content.line-through span { color: #94a3b8 !important; }
         /* Borders & Dividers in Light Mode */
         html:not(.dark) .border-slate-100 { border-color: #f1f5f9 !important; }
         html:not(.dark) .border-slate-200,

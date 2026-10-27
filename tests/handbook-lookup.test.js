@@ -183,8 +183,8 @@ describe('Mission+1+2 Study Material Handbook Lookup Engine', () => {
       ...new Map(PLUS_TWO_SYLLABUS.map((t) => [t.chapId, t])).values(),
     ];
 
-    it('verifies all 288 unique syllabus chapters resolve without error', () => {
-      expect(allChaps.length).toBe(288);
+    it('verifies all 289 unique syllabus chapters resolve without error', () => {
+      expect(allChaps.length).toBe(289);
 
       let resolvedCount = 0;
       let rationalizedCount = 0;
@@ -207,9 +207,9 @@ describe('Mission+1+2 Study Material Handbook Lookup Engine', () => {
         }
       }
 
-      expect(resolvedCount).toBe(280);
+      expect(resolvedCount).toBe(281);
       expect(rationalizedCount).toBe(8);
-      expect(resolvedCount + rationalizedCount).toBe(288);
+      expect(resolvedCount + rationalizedCount).toBe(289);
     });
   });
 

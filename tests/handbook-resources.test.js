@@ -99,15 +99,15 @@ describe('Milestone 3: Mission+1+2 Handbook Automated Verification & Guardrails'
       }
     }
 
-    it('contains exactly 288 unique syllabus chapters (142 for +1, 146 for +2)', () => {
-      expect(uniqueChapters.size).toBe(288);
+    it('contains exactly 289 unique syllabus chapters (143 for +1, 146 for +2)', () => {
+      expect(uniqueChapters.size).toBe(289);
       const plusOneCount = [...uniqueChapters.values()].filter(t => t.grade === '+1').length;
       const plusTwoCount = [...uniqueChapters.values()].filter(t => t.grade === '+2').length;
-      expect(plusOneCount).toBe(142);
+      expect(plusOneCount).toBe(143);
       expect(plusTwoCount).toBe(146);
     });
 
-    it('resolves 100% of the 280 active curriculum chapters with 0 broken links on disk', () => {
+    it('resolves 100% of the 281 active curriculum chapters with 0 broken links on disk', () => {
       let resolvedCount = 0;
       for (const [chapId, chap] of uniqueChapters.entries()) {
         if (!RATIONALIZED_CHAPTER_IDS.has(chapId)) {
@@ -122,10 +122,10 @@ describe('Milestone 3: Mission+1+2 Handbook Automated Verification & Guardrails'
           resolvedCount++;
         }
       }
-      expect(resolvedCount).toBe(280);
+      expect(resolvedCount).toBe(281);
     });
 
-    it('cross-checks all 288 chapters across all 4 streams (CS, Bio, Commerce, Humanities)', () => {
+    it('cross-checks all 289 chapters across all 4 streams (CS, Bio, Commerce, Humanities)', () => {
       const streams = ['cs', 'bio', 'commerce', 'humanities'];
       for (const [chapId, chap] of uniqueChapters.entries()) {
         const isRat = RATIONALIZED_CHAPTER_IDS.has(chapId);

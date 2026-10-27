@@ -972,22 +972,30 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 return;
             }
             const targetDay = appState.plan.find(day => day.tasks.some(task => task.id === taskId));
-            const targetTask = targetDay.tasks.find(task => task.id === taskId);
+            const targetTask = targetDay?.tasks.find(task => task.id === taskId);
+            if (!targetDay || !targetTask) return;
             void syncAppStateToCloud(appState);
 
-            // Update UI elements in DOM
-            const checkboxElements = document.querySelectorAll(`[data-task-id="${taskId}"]`);
-            checkboxElements.forEach(cb => {
-                if (targetTask.completed) {
-                    cb.classList.add('checked');
-                    const textLabel = cb.closest('.task-item-container')?.querySelector('.task-text-content');
-                    if (textLabel) textLabel.classList.add('line-through', 'opacity-50');
-                } else {
-                    cb.classList.remove('checked');
-                    const textLabel = cb.closest('.task-item-container')?.querySelector('.task-text-content');
-                    if (textLabel) textLabel.classList.remove('line-through', 'opacity-50');
-                }
-            });
+            // Update UI elements in DOM safely using escaped selector or dataset
+            try {
+                const escapedId = (typeof CSS !== 'undefined' && CSS.escape) ? CSS.escape(taskId) : taskId.replace(/"/g, '\\"');
+                const checkboxElements = document.querySelectorAll(`[data-task-id="${escapedId}"]`);
+                checkboxElements.forEach(cb => {
+                    if (targetTask.completed) {
+                        cb.classList.add('checked');
+                        cb.setAttribute('aria-checked', 'true');
+                        const textLabel = cb.closest('.task-item-container')?.querySelector('.task-text-content');
+                        if (textLabel) textLabel.classList.add('line-through', 'opacity-50');
+                    } else {
+                        cb.classList.remove('checked');
+                        cb.setAttribute('aria-checked', 'false');
+                        const textLabel = cb.closest('.task-item-container')?.querySelector('.task-text-content');
+                        if (textLabel) textLabel.classList.remove('line-through', 'opacity-50');
+                    }
+                });
+            } catch (e) {
+                console.warn('DOM checkbox update note:', e);
+            }
 
             // Dynamically update day card counter in Plan View
             if (targetDay) {
@@ -1004,6 +1012,14 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                         counterSpan.textContent = `${completedCount}/${displayedTasks.length} ${isML ? ML_I18N.plan.done : 'Done'}`;
                     }
                 }
+            }
+
+            // Synchronize Plan progress summary pill
+            const planProgressSummary = document.getElementById('plan-progress-summary');
+            if (planProgressSummary) {
+                const stats = getOverallStats();
+                const isML = (typeof getAppLanguage === 'function' && getAppLanguage() === 'ml');
+                planProgressSummary.textContent = `${stats.percentage}% ${isML ? 'പൂർത്തിയായി' : 'Done'} (${stats.completedCount}/${stats.totalCount})`;
             }
 
             // Play celebratory feedback or untick sound
@@ -2198,13 +2214,148 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
             }
         }
 
+        /* ==========================================================================
+           7. PLAN SNAPSHOT, RESTORE & COMPACT ENGINE
+           Fast student acceleration & undo support
+           ========================================================================== */
+
+        function savePreviousPlanSnapshot() {
+            if (!appState || !appState.plan || appState.plan.length === 0) return;
+            try {
+                const snapshot = {
+                    state: JSON.parse(JSON.stringify(appState)),
+                    savedAt: new Date().toISOString(),
+                    formattedTime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                    formattedDate: new Date().toLocaleDateString([], { month: 'short', day: 'numeric' })
+                };
+                localStorage.setItem('mpt_previous_plan_snapshot', JSON.stringify(snapshot));
+            } catch (e) {
+                console.warn('Could not save plan snapshot:', e);
+            }
+        }
+
+        function restorePreviousPlan() {
+            try {
+                const raw = localStorage.getItem('mpt_previous_plan_snapshot');
+                if (!raw) {
+                    showAppToast("No previous plan snapshot found to restore.", "fa-info-circle text-blue-400");
+                    return false;
+                }
+                const snapshot = JSON.parse(raw);
+                if (!snapshot || !snapshot.state || !Array.isArray(snapshot.state.plan)) {
+                    showAppToast("Previous plan snapshot is invalid.", "fa-triangle-exclamation text-amber-400");
+                    return false;
+                }
+
+                // Save current state as new snapshot so user can toggle / undo restore!
+                savePreviousPlanSnapshot();
+
+                appState = snapshot.state;
+                appState.lastModified = new Date().toISOString();
+                saveAppState();
+                renderApp();
+
+                const isML = (typeof getAppLanguage === 'function' && getAppLanguage() === 'ml');
+                showAppToast(
+                    isML ? "↺ മുൻപത്തെ ടൈംടേബിൾ തിരിച്ചെടുത്തു!" : "↺ Previous study plan successfully restored!",
+                    "fa-rotate-left text-emerald-400"
+                );
+                closeRegenerateModal();
+                closeSettingsModal();
+                return true;
+            } catch (err) {
+                console.error('Error restoring previous plan:', err);
+                showAppToast("Could not restore previous plan.", "fa-triangle-exclamation text-rose-400");
+                return false;
+            }
+        }
+
+        function compactPlanToToday() {
+            if (!appState || !appState.plan || appState.plan.length === 0) return;
+
+            // Check if there are any unfinished tasks
+            const hasUnfinished = appState.plan.some(d => d.tasks.some(t => !t.completed));
+            if (!hasUnfinished) {
+                const isML = (typeof getAppLanguage === 'function' && getAppLanguage() === 'ml');
+                showAppToast(
+                    isML ? "🎉 നിങ്ങൾ മുഴുവൻ സിലബസും പൂർത്തിയാക്കി കഴിഞ്ഞു!" : "🎉 You have completed all scheduled tasks!",
+                    "fa-trophy text-amber-400"
+                );
+                return;
+            }
+
+            // Save snapshot before compacting
+            savePreviousPlanSnapshot();
+
+            const todayStr = getLocalDateStr();
+            const todayDate = new Date(todayStr + 'T00:00:00');
+
+            // Find all days where all tasks are completed
+            // Completed days remain as attended historical record (Day 1..k)
+            const completedDays = [];
+            const upcomingDays = [];
+
+            appState.plan.forEach(day => {
+                const hasTasks = day.tasks && day.tasks.length > 0;
+                const allDone = hasTasks && day.tasks.every(t => t.completed);
+                if (allDone) {
+                    completedDays.push({ ...day });
+                } else {
+                    upcomingDays.push({ ...day });
+                }
+            });
+
+            // Ensure attended completed days have sequential numbering 1..completedDays.length
+            completedDays.forEach((d, idx) => {
+                d.dayNumber = idx + 1;
+            });
+
+            // Compact upcoming days starting consecutively from TODAY!
+            const startDayNum = completedDays.length + 1;
+            const compactedUpcoming = upcomingDays.map((d, idx) => {
+                const dayDate = new Date(todayDate);
+                dayDate.setDate(dayDate.getDate() + idx);
+                const dateStr = formatLocalDateStr(dayDate);
+                return {
+                    ...d,
+                    dayNumber: startDayNum + idx,
+                    date: dateStr,
+                    dayOfWeek: dayDate.getDay(),
+                };
+            });
+
+            appState.plan = [...completedDays, ...compactedUpcoming];
+
+            // Update deadline if shifted beyond
+            const lastDay = appState.plan[appState.plan.length - 1];
+            if (lastDay && lastDay.date > appState.deadlineDate) {
+                appState.deadlineDate = lastDay.date;
+            }
+
+            appState.lastModified = new Date().toISOString();
+            saveAppState();
+            renderApp();
+
+            const isML = (typeof getAppLanguage === 'function' && getAppLanguage() === 'ml');
+            showAppToast(
+                isML
+                    ? "🚀 ടൈംടേബിൾ ഇന്നത്തേക്ക് ക്രമീകരിച്ചു! അടുത്ത ഭാഗങ്ങൾ ഇന്ന് പഠിക്കാം."
+                    : "🚀 Schedule fast-tracked to Today! Next chapters are ready now.",
+                "fa-bolt text-amber-400"
+            );
+            closeRegenerateModal();
+            closeSettingsModal();
+        }
+
         function shiftPlanToToday() {
             if (!appState || !appState.plan || appState.plan.length === 0) return;
+            savePreviousPlanSnapshot();
             shiftPlanToStartDate(TODAY_STR);
         }
 
         function shiftPlanToStartDate(newStartDateStr = TODAY_STR) {
             if (!appState || !appState.plan || appState.plan.length === 0) return;
+            savePreviousPlanSnapshot();
             const s = new Date(newStartDateStr + 'T00:00:00');
             appState.startDate = newStartDateStr;
             appState.plan.forEach((day, idx) => {
@@ -2249,6 +2400,24 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 select.appendChild(opt);
             }
 
+            // Show restore snapshot box if available
+            const restoreBox = document.getElementById('regenerate-restore-box');
+            if (restoreBox) {
+                const snapshotRaw = localStorage.getItem('mpt_previous_plan_snapshot');
+                if (snapshotRaw) {
+                    try {
+                        const snap = JSON.parse(snapshotRaw);
+                        restoreBox.classList.remove('hidden');
+                        const sub = document.getElementById('regenerate-restore-sub');
+                        if (sub) sub.textContent = `Previous plan saved ${snap.formattedDate || ''} ${snap.formattedTime || ''}`;
+                    } catch (e) {
+                        restoreBox.classList.add('hidden');
+                    }
+                } else {
+                    restoreBox.classList.add('hidden');
+                }
+            }
+
             document.getElementById('regenerate-modal').classList.remove('hidden');
             document.getElementById('regenerate-modal').classList.add('flex');
         }
@@ -2259,6 +2428,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
         }
 
         function executeRegeneration() {
+            if (typeof savePreviousPlanSnapshot === 'function') savePreviousPlanSnapshot();
             const completedUpTo = parseInt(document.getElementById('completed-day-select').value);
 
             let keptDays = [];
@@ -2930,10 +3100,25 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 const tasks = todayPlan?.tasks ?? [];
                 const completedCount = tasks.filter(task => task.completed).length;
                 const orderedTasks = [...tasks.filter(task => !task.completed), ...tasks.filter(task => task.completed)];
+                const hasFutureTasks = appState.plan.some(d => d.date > localToday && d.tasks.some(t => !t.completed));
                 const todayTasksHTML = tasks.length ? `
                     ${appState.diagnostics?.isInfeasible ? `<p class="daily-advisory">${escapeStudyText(appState.diagnostics.warningMessage || (isML ? 'പഠന സമയം അല്ലെങ്കിൽ അവസാന തീയതി ക്രമീകരിക്കുക.' : 'This plan needs more study time. Adjust your hours or target date.'))}</p>` : ''}
                     ${todayPlan.isExamEve ? `<p class="daily-advisory">${isML ? 'നാളത്തെ പരീക്ഷ' : 'Exam tomorrow'}: ${escapeStudyText(todayPlan.exclusiveSubject)}</p>` : ''}
-                    ${completedCount === tasks.length ? `<div class="daily-finished" role="status"><strong>${isML ? 'ഇന്നത്തെ പഠനം പൂർത്തിയായി' : 'Today is complete'}</strong><p>${isML ? 'നാളത്തെ പ്ലാനും മുൻ ദിവസങ്ങളിലെ ബാക്കിയും താഴെയുണ്ട്.' : 'Tomorrow’s plan and any earlier pending work are below.'}</p></div>` : ''}
+                    ${completedCount === tasks.length ? `
+                        <div class="daily-finished" role="status">
+                            <div class="flex items-center justify-between flex-wrap gap-2.5">
+                                <div>
+                                    <strong class="text-emerald-700 dark:text-emerald-400 font-bold">${isML ? '🎉 ഇന്നത്തെ പഠനം പൂർത്തിയായി!' : '🎉 Today is complete! Great work!'}</strong>
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">${hasFutureTasks ? (isML ? 'മുൻകൂട്ടി പഠിക്കാൻ തയ്യാറാണോ? നാളത്തെ ഭാഗങ്ങൾ ഇന്നത്തേക്ക് കൊണ്ടുവരാം.' : 'Want to keep momentum going? Fast-forward next chapters to Today.') : (isML ? 'മുഴുവൻ സിലബസും പൂർത്തിയായി.' : 'All portions finished!')}</p>
+                                </div>
+                                ${hasFutureTasks ? `
+                                    <button type="button" onclick="compactPlanToToday()" class="py-2 px-3.5 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white text-xs font-bold rounded-xl shadow-md transition flex items-center gap-1.5 cursor-pointer">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                                        <span>${isML ? 'അടുത്ത ഭാഗങ്ങൾ ഇപ്പോൾ പഠിക്കാം' : 'Fast-Track Next Chapters to Today'}</span>
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>` : ''}
                     <ol class="daily-tasks" aria-label="${isML ? 'ഇന്നത്തെ പഠനം' : 'Today’s timetable'}">
                         ${orderedTasks.map(task => {
                             const key = encodeURIComponent(String(task.id));
@@ -2953,7 +3138,19 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                             </li>`;
                         }).join('')}
                     </ol>
-                ` : `<div class="daily-empty"><h3>${isML ? 'ഇന്നത്തേക്ക് പഠന ഭാഗങ്ങളില്ല' : 'No tasks scheduled today'}</h3><p>${todayPlan ? (isML ? 'ഇന്ന് വിശ്രമിക്കാം. നാളത്തെ പ്ലാൻ താഴെ കാണാം.' : 'Take a rest day. Tomorrow’s timetable is below.') : (isML ? 'മുഴുവൻ പ്ലാനിൽ നിങ്ങളുടെ പഠന തീയതികൾ കാണാം.' : 'Check Full Plan for your scheduled dates. Earlier unfinished work stays under Pending.')}</p><button type="button" onclick="goToPlan()">${isML ? 'മുഴുവൻ പ്ലാൻ' : 'View full plan'}</button></div>`;
+                ` : `<div class="daily-empty">
+                    <h3>${isML ? 'ഇന്നത്തേക്ക് പഠന ഭാഗങ്ങളില്ല' : 'No tasks scheduled today'}</h3>
+                    <p>${todayPlan ? (isML ? 'ഇന്ന് വിശ്രമിക്കാം. നാളത്തെ പ്ലാൻ താഴെ കാണാം.' : 'Take a rest day. Tomorrow’s timetable is below.') : (isML ? 'മുഴുവൻ പ്ലാനിൽ നിങ്ങളുടെ പഠന തീയതികൾ കാണാം.' : 'Check Full Plan for your scheduled dates. Earlier unfinished work stays under Pending.')}</p>
+                    <div class="flex items-center justify-center gap-2 mt-3 flex-wrap">
+                        <button type="button" onclick="goToPlan()">${isML ? 'മുഴുവൻ പ്ലാൻ' : 'View full plan'}</button>
+                        ${appState.plan.some(d => d.tasks.some(t => !t.completed)) ? `
+                            <button type="button" onclick="compactPlanToToday()" class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-3.5 rounded-xl text-xs transition active:scale-95 flex items-center gap-1.5 shadow-sm">
+                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                                <span>${isML ? 'അടുത്ത ഭാഗങ്ങൾ ഇന്നത്തേക്ക് കൊണ്ടുവരിക' : 'Pull Next Chapters to Today'}</span>
+                            </button>
+                        ` : ''}
+                    </div>
+                </div>`;
 
                 container.innerHTML = `
                     <section id="today-overview" class="study-overview" aria-labelledby="today-heading">
@@ -3068,30 +3265,31 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                         <div class="bg-white rounded-2xl border ${isToday ? 'border-blue-300 ring-2 ring-blue-100' : 'border-slate-200'} shadow-sm overflow-hidden mb-4 transition-all print-avoid-break" data-day-number="${day.dayNumber}">
                             <div class="p-3.5 sm:p-4 bg-slate-50/80 border-b border-slate-100 flex items-center justify-between">
                                 <div class="flex items-center gap-2">
-                                    <span class="text-xs font-extrabold text-slate-900">${isML ? `${ML_I18N.plan.day} ${day.dayNumber}` : `Day ${day.dayNumber}`}</span>
-                                    <span class="text-xs font-semibold text-slate-400">(${day.date})</span>
+                                    <span class="text-xs font-extrabold text-slate-900 dark:text-white">${isML ? `${ML_I18N.plan.day} ${day.dayNumber}` : `Day ${day.dayNumber}`}</span>
+                                    <span class="text-xs font-bold text-slate-500 dark:text-slate-400">(${day.date})</span>
                                     ${isToday ? `<span class="text-xs font-extrabold bg-blue-600 text-white px-2 py-0.5 rounded-full no-print">${isML ? ML_I18N.plan.todayBadge : 'TODAY'}</span>` : ''}
                                     ${day.isExamEve ? `<span class="text-xs font-black bg-rose-100 text-rose-900 border border-rose-300 dark:bg-rose-950/70 dark:text-rose-200 dark:border-rose-700 px-2 py-0.5 rounded-full flex items-center gap-1 animate-pulse"><i class="fa-solid fa-bolt text-rose-600 dark:text-rose-400"></i>${isML ? `പരീക്ഷത്തലേന്ന്: ${day.exclusiveSubject}` : `🔥 Exam Eve: ${day.exclusiveSubject} Only`}</span>` : ''}
                                     ${day.isExamDay ? `<span class="text-xs font-black bg-amber-100 text-amber-900 border border-amber-300 dark:bg-amber-950/70 dark:text-amber-200 dark:border-amber-700 px-2 py-0.5 rounded-full flex items-center gap-1"><i class="fa-solid fa-graduation-cap text-amber-600 dark:text-amber-400"></i>${isML ? `പരീക്ഷാദിനം: ${day.examSubject}` : `🎯 Exam Day: ${day.examSubject}`}</span>` : ''}
                                     ${day.isRevisionDay ? `<span class="text-xs font-bold bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full">${isML ? ML_I18N.plan.revisionDay : 'Revision Day'}</span>` : ''}
                                     ${day.isRestDay ? `<span class="text-xs font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full"><i class="fa-solid fa-mug-hot mr-1"></i>${isML ? ML_I18N.plan.restDay : 'Rest Day'}</span>` : ''}
                                 </div>
-                                <span class="day-card-counter text-xs font-bold text-slate-500">${displayedTasks.filter(t => t.completed).length}/${displayedTasks.length} ${isML ? ML_I18N.plan.done : 'Done'}</span>
+                                <span class="day-card-counter text-xs font-bold text-slate-600 dark:text-slate-400">${displayedTasks.filter(t => t.completed).length}/${displayedTasks.length} ${isML ? ML_I18N.plan.done : 'Done'}</span>
                             </div>
 
-                            <div class="p-3 sm:p-4 divide-y divide-slate-100">
+                            <div class="p-3 sm:p-4 divide-y divide-slate-100 dark:divide-slate-800">
                                 ${displayedTasks.length === 0 ? (day.isRestDay ? `<p class="text-xs text-emerald-700 font-semibold py-1.5 flex items-center gap-2"><i class="fa-solid fa-mug-hot text-emerald-600"></i><span>${isML ? ML_I18N.plan.restDayNotice : 'Personalized Rest & Recharge Day (0 new chapters)'}</span></p>` : `<p class="text-xs text-slate-400 italic py-1">${isML ? 'ഫ്രീ / ബഫർ ദിനം' : 'Free / Buffer Day'}</p>`) : ''}
                                 ${displayedTasks.map((task, taskIdx) => {
                                     const badgeColor = getSubjectColorBadge(task.subject);
+                                    const taskIdSafe = escapeStudyText(task.id);
                                     return `
                                         <div class="task-item-container py-2.5 first:pt-0 last:pb-0 flex items-start gap-3">
                                             <!-- Working Clickable Checkbox in Full Plan -->
-                                            <div class="task-checkbox ${task.completed ? 'checked' : ''} mt-0.5" data-task-id="${task.id}" onclick="toggleTaskDirect('${task.id}')">
+                                            <div class="task-checkbox ${task.completed ? 'checked' : ''} mt-0.5" role="checkbox" tabindex="0" aria-checked="${!!task.completed}" aria-label="${escapeStudyText(task.subject + ' - ' + getTaskChapterTitle(task))}" data-task-id="${taskIdSafe}" onclick="event.stopPropagation(); toggleTaskDirect('${taskIdSafe}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();toggleTaskDirect('${taskIdSafe}');}">
                                                 <svg class="svg-check" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                                     <polyline points="20 6 9 17 4 12"></polyline>
                                                 </svg>
                                             </div>
-                                            <div class="flex-1 cursor-pointer" onclick="toggleTaskDirect('${task.id}')">
+                                            <div class="flex-1 cursor-pointer" onclick="toggleTaskDirect('${taskIdSafe}')">
                                                 <div class="flex flex-wrap items-center gap-1.5 mb-1">
                                                     <span class="text-xs font-bold px-1.5 py-0.5 rounded ${badgeColor}">${task.subject}</span>
                                                     ${renderTaskDailySlotBadge(taskIdx, displayedTasks.length, isML)}
@@ -3891,6 +4089,24 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 paceBadge.textContent = paceNames[currentPace] || 'Standard';
             }
 
+            // Snapshot restore row in Settings
+            const restoreRow = document.getElementById('settings-restore-plan-row');
+            if (restoreRow) {
+                const snapshotRaw = localStorage.getItem('mpt_previous_plan_snapshot');
+                if (snapshotRaw) {
+                    try {
+                        const snap = JSON.parse(snapshotRaw);
+                        restoreRow.classList.remove('hidden');
+                        const hint = document.getElementById('settings-restore-plan-hint');
+                        if (hint) hint.textContent = `Saved from ${snap.formattedDate || ''} at ${snap.formattedTime || ''}`;
+                    } catch (e) {
+                        restoreRow.classList.add('hidden');
+                    }
+                } else {
+                    restoreRow.classList.add('hidden');
+                }
+            }
+
             updateThemeUI(getThemePreference());
             applyAppLanguage(getAppLanguage());
         }
@@ -4178,6 +4394,9 @@ if (typeof window !== 'undefined') {
         changeMissionDay,
         shiftPlanToToday,
         shiftPlanToStartDate,
+        compactPlanToToday,
+        restorePreviousPlan,
+        savePreviousPlanSnapshot,
         renderApp,
         getSubjectColorBadge,
         getTaskChapterTitle,
@@ -4216,4 +4435,14 @@ if (typeof window !== 'undefined') {
         calculateDaysBetween,
         TODAY_STR,
     });
+
+    try {
+        Object.defineProperty(window, 'appState', {
+            get: () => appState,
+            set: (val) => { appState = val; },
+            configurable: true
+        });
+    } catch(e) {
+        window.appState = appState;
+    }
 }

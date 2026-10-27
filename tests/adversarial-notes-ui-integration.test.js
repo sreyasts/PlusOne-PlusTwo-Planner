@@ -29,9 +29,9 @@ const handbooksDir = path.resolve(projectRoot, 'public', 'handbooks');
 describe('Adversarial Stress Test: Mission+1+2 Handbook & UI Invariants', () => {
 
   // =========================================================================
-  // 1. FULL CURRICULUM MATRIX (288 Unique Chapters × 4 Streams = 1,152 Lookups)
+  // 1. FULL CURRICULUM MATRIX (289 Unique Chapters × 4 Streams = 1,156 Lookups)
   // =========================================================================
-  describe('1. Full Curriculum Matrix (288 Unique Chapters × 4 Streams = 1,152 Lookups)', () => {
+  describe('1. Full Curriculum Matrix (289 Unique Chapters × 4 Streams = 1,156 Lookups)', () => {
     const allTasks = [...PLUS_ONE_SYLLABUS, ...PLUS_TWO_SYLLABUS];
     const uniqueChapters = new Map();
     for (const task of allTasks) {
@@ -42,8 +42,8 @@ describe('Adversarial Stress Test: Mission+1+2 Handbook & UI Invariants', () => 
 
     const STREAMS = ['cs', 'bio', 'commerce', 'humanities'];
 
-    it('identifies exactly 288 unique syllabus chapters (280 active, 8 rationalized)', () => {
-      expect(uniqueChapters.size).toBe(288);
+    it('identifies exactly 289 unique syllabus chapters (281 active, 8 rationalized)', () => {
+      expect(uniqueChapters.size).toBe(289);
       let activeCount = 0;
       let rationalizedCount = 0;
       for (const [chapId] of uniqueChapters) {
@@ -53,11 +53,11 @@ describe('Adversarial Stress Test: Mission+1+2 Handbook & UI Invariants', () => 
           activeCount++;
         }
       }
-      expect(activeCount).toBe(280);
+      expect(activeCount).toBe(281);
       expect(rationalizedCount).toBe(8);
     });
 
-    it('verifies 1,152 matrix lookups (288 × 4 streams): 100% of non-rationalized resolve to non-empty physical files with 0 broken links', () => {
+    it('verifies 1,156 matrix lookups (289 × 4 streams): 100% of non-rationalized resolve to non-empty physical files with 0 broken links', () => {
       let lookupsPerformed = 0;
       let diskFilesVerified = 0;
       let rationalizedLookupsVerified = 0;
@@ -119,8 +119,8 @@ describe('Adversarial Stress Test: Mission+1+2 Handbook & UI Invariants', () => 
       }
 
       expect(brokenLinks).toEqual([]);
-      expect(lookupsPerformed).toBe(1152);
-      expect(diskFilesVerified).toBe(280 * 4); // 1,120 active stream lookups
+      expect(lookupsPerformed).toBe(1156);
+      expect(diskFilesVerified).toBe(281 * 4); // 1,124 active stream lookups
       expect(rationalizedLookupsVerified).toBe(8 * 4); // 32 rationalized stream lookups
     });
 

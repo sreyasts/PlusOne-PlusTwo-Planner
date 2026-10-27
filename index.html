@@ -976,6 +976,22 @@
                     </div>
                 </div>
 
+                <!-- Schedule Acceleration / Finished Early -->
+                <div class="bg-amber-50/70 dark:bg-amber-950/20 p-3.5 rounded-2xl border border-amber-200 dark:border-amber-800/50">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <label class="text-xs font-bold text-amber-900 dark:text-amber-200 flex items-center gap-1.5">
+                            <svg class="w-4 h-4 text-amber-600 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                            <span>Fast-Track Schedule</span>
+                        </label>
+                        <span class="text-[10px] bg-amber-200/60 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200 font-bold px-2 py-0.5 rounded-full uppercase">Pacing Tool</span>
+                    </div>
+                    <p class="text-xs text-amber-800/80 dark:text-amber-300/80 mb-2.5">Finished your studies early? Pull upcoming chapters directly into Today without waiting for tomorrow's date!</p>
+                    <button type="button" onclick="compactPlanToToday()" class="w-full py-2 px-3 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white text-xs font-bold rounded-xl shadow-xs transition flex items-center justify-center gap-1.5 cursor-pointer">
+                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                        <span>Fast-Forward Next Chapters to Today</span>
+                    </button>
+                </div>
+
                 <!-- 4. Data Management: Backup & Restore -->
                 <div class="bg-slate-50 dark:bg-[#141d30] p-3.5 rounded-2xl border border-slate-100 dark:border-slate-800/80">
                     <label id="settings-backup-label" class="text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5 mb-1.5">
@@ -994,6 +1010,18 @@
                             <span id="settings-restore-text">Restore Backup</span>
                             <input type="file" id="settings-import-input" accept=".json" class="hidden" onchange="importStudyPlanJSON(event)">
                         </label>
+                    </div>
+
+                    <!-- Restore Previous Rebalanced Plan Snapshot -->
+                    <div id="settings-restore-plan-row" class="hidden mt-3 pt-3 border-t border-slate-200/60 dark:border-slate-800/80 flex items-center justify-between">
+                        <div>
+                            <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400 block">Undo Last Rebalance</span>
+                            <span id="settings-restore-plan-hint" class="text-xs text-slate-400">Restore previous timetable snapshot</span>
+                        </div>
+                        <button type="button" onclick="restorePreviousPlan()" class="py-1.5 px-3 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 text-xs font-bold rounded-xl border border-emerald-200 dark:border-emerald-800/60 transition flex items-center gap-1.5 cursor-pointer">
+                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
+                            <span>Restore Snapshot</span>
+                        </button>
                     </div>
 
                     <div class="mt-3 pt-3 border-t border-slate-200/60 dark:border-slate-800/80 flex items-center justify-between">
@@ -1072,11 +1100,23 @@
                     <svg class="w-4 h-4 inline-block text-blue-600 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                     <span id="regenerate-revision-note"><strong>Guaranteed Revision Days:</strong> Your target deadline will still maintain dedicated revision buffer days at the end!</span>
                 </div>
-                <div class="pt-2 border-t border-slate-100">
-                    <button type="button" onclick="closeRegenerateModal(); shiftPlanToToday();" class="w-full py-2.5 px-3 rounded-xl border border-blue-200 bg-blue-50/60 hover:bg-blue-100 text-blue-700 text-xs font-bold transition flex items-center justify-center gap-2">
+                <div class="pt-2 border-t border-slate-100 space-y-2">
+                    <button type="button" onclick="compactPlanToToday()" class="w-full py-2.5 px-3 rounded-xl border border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-900 text-xs font-bold transition flex items-center justify-center gap-2 shadow-xs cursor-pointer">
+                        <svg class="w-4 h-4 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                        <span>Finished Early? Fast-Forward Next Chapters to Today</span>
+                    </button>
+                    <button type="button" onclick="closeRegenerateModal(); shiftPlanToToday();" class="w-full py-2 px-3 rounded-xl border border-blue-200 bg-blue-50/60 hover:bg-blue-100 text-blue-700 text-xs font-bold transition flex items-center justify-center gap-2">
                         <svg class="w-4 h-4 inline-block text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                         <span>Reset Schedule: Make Today Day 1</span>
                     </button>
+                    <!-- Restore Previous Rebalanced Snapshot -->
+                    <div id="regenerate-restore-box" class="hidden pt-1">
+                        <button type="button" onclick="restorePreviousPlan()" class="w-full py-2 px-3 rounded-xl border border-emerald-300 bg-emerald-50/90 hover:bg-emerald-100 text-emerald-800 text-xs font-bold transition flex items-center justify-center gap-2 shadow-xs cursor-pointer">
+                            <svg class="w-4 h-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
+                            <span>↺ Restore Previous Timetable Snapshot</span>
+                        </button>
+                        <p id="regenerate-restore-sub" class="text-[10px] text-center text-slate-400 mt-1"></p>
+                    </div>
                 </div>
             </div>
             
