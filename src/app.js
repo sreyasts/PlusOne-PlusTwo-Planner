@@ -76,6 +76,7 @@ import { getDailyPlan } from './ui/daily-plan.js';
 import { MAX_BACKUP_BYTES, parseStudyBackup, validateStudyBackup, createStudyBackup, persistStudyBackup } from './utils/study-backup.js';
 import { persistTaskCompletion } from './utils/study-progress.js';
 import { getRemainingPlanTasks } from './utils/plan-scope.js';
+import { getHandbookUrl } from './utils/handbook-lookup.js';
 import appPackage from '../package.json' with { type: 'json' };
 const APP_VERSION = appPackage.version;
 
@@ -1132,6 +1133,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
         }
 
         let activeSyllabusStream = null;
+        let activeSyllabusGrade = null;
         function switchSyllabusStream(streamKey) {
             try {
                 if (typeof playTapSound === 'function' && (typeof getUserSetting !== 'function' || getUserSetting('sound', true))) {
@@ -1139,6 +1141,16 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 }
             } catch (_) {}
             activeSyllabusStream = streamKey;
+            renderApp();
+        }
+
+        function switchSyllabusGrade(gradeKey) {
+            try {
+                if (typeof playTapSound === 'function' && (typeof getUserSetting !== 'function' || getUserSetting('sound', true))) {
+                    playTapSound();
+                }
+            } catch (_) {}
+            activeSyllabusGrade = gradeKey;
             renderApp();
         }
 
@@ -1404,6 +1416,8 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
             // 3. Reset in-memory state and re-render setup screen
             appState = null;
             selectedStream = 'cs';
+            activeSyllabusStream = null;
+            activeSyllabusGrade = null;
             selectedCompletedChapters.clear();
             currentView = 'today';
             showAppToast("Study plan reset. Ready to start fresh!", "fa-rotate text-blue-400");
@@ -2924,11 +2938,13 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                     <ol class="daily-tasks" aria-label="${isML ? 'ഇന്നത്തെ പഠനം' : 'Today’s timetable'}">
                         ${orderedTasks.map(task => {
                             const key = encodeURIComponent(String(task.id));
+                            const handbookUrl = getHandbookUrl(task, appState);
                             return `<li class="daily-task ${task.completed ? 'is-complete' : ''}">
                                 <div class="daily-task-content">
                                     <div class="daily-task-meta"><span>${escapeStudyText(task.subject)}</span>${task.estimatedMinutes ? `<span>${escapeStudyText(task.estimatedMinutes)} min</span>` : ''}${task.completed ? `<span class="daily-done-label">${isML ? 'പൂർത്തിയായി' : 'Completed'}</span>` : ''}</div>
                                     <h3 id="task-${key}">${escapeStudyText(getTaskChapterTitle(task))}</h3>
                                     <p class="daily-topic">${escapeStudyText(formatTaskTopicTitle(task))}</p>
+                                    ${handbookUrl ? `<div class="daily-task-actions"><a href="${handbookUrl}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" class="daily-notes-btn" title="${isML ? 'ഹാൻഡ്ബുക്ക് / നോട്ട്സ് കാണുക' : 'Open chapter study notes (PDF)'}">📖 Notes</a></div>` : ''}
                                     <details id="resources-${key}" class="daily-resources" ${openSections.has('resources-' + key) ? 'open' : ''}>
                                         <summary>${isML ? 'പഠന സഹായികൾ' : 'Study resources'}</summary>
                                         <div>${getTaskDeepLinksHtml(task)}<button type="button" data-study-tutor="${escapeStudyText(task.id)}">${isML ? 'AI പഠന സഹായി' : 'AI study tutor'}</button></div>
@@ -2964,12 +2980,19 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                             ${daily.overdueDays.map(day => `
                                 <section class="pending-day">
                                     <h3>${day.date === daily.yesterdayDate ? (isML ? 'ഇന്നലെ' : 'Yesterday') : escapeStudyText(day.date)} · ${day.tasks.length} ${isML ? 'ബാക്കി' : 'pending'}</h3>
-                                    ${day.tasks.map(task => `
+                                    ${day.tasks.map(task => {
+                                        const pendingHandbookUrl = getHandbookUrl(task, appState);
+                                        return `
                                         <div class="pending-task">
-                                            <div><strong>${escapeStudyText(task.subject)}</strong><p>${escapeStudyText(getTaskChapterTitle(task))}</p><small>${escapeStudyText(formatTaskTopicTitle(task))}</small></div>
+                                            <div>
+                                                <strong>${escapeStudyText(task.subject)}</strong>
+                                                <p>${escapeStudyText(getTaskChapterTitle(task))}</p>
+                                                <small>${escapeStudyText(formatTaskTopicTitle(task))}</small>
+                                                ${pendingHandbookUrl ? `<div><a href="${pendingHandbookUrl}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" class="daily-notes-btn" style="margin-top: 4px; padding: 2px 8px; font-size: 11px;" title="${isML ? 'ഹാൻഡ്ബുക്ക് / നോട്ട്സ് കാണുക' : 'Open chapter study notes (PDF)'}">📖 Notes</a></div>` : ''}
+                                            </div>
                                             <button type="button" data-pending-task="${escapeStudyText(task.id)}">${isML ? 'പൂർത്തിയായി' : 'Mark done'}</button>
                                         </div>
-                                    `).join('')}
+                                    `;}).join('')}
                                 </section>
                             `).join('')}
                         </details>
@@ -3232,13 +3255,16 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
 
             // View 3: Official Syllabus Reference & Completed Chapters Overview (Interactive Stream Switcher)
             if (currentView === 'syllabus') {
+                if (!activeSyllabusGrade) {
+                    activeSyllabusGrade = appState?.grade || (typeof activeSetupGradeTab !== 'undefined' && activeSetupGradeTab === '+1' ? '+1' : '+2');
+                }
                 const userStream = activeSyllabusStream || appState?.stream || (appState?.plan?.some(d => d.tasks.some(t => t.subject === 'Botany' || t.subject === 'Zoology')) ? 'bio' : 'cs');
                 const subjects = userStream === 'imp_only'
                     ? Array.from(new Set((appState?.plan || []).flatMap(d => (d.tasks || []).map(t => t.subject))))
                     : getStreamSubjects(userStream);
 
                 let syllabusHTML = '';
-                const sourceSyllabus = (appState?.grade === '+1' || (typeof activeSetupGradeTab !== 'undefined' && activeSetupGradeTab === '+1')) ? PLUS_ONE_SYLLABUS : PLUS_TWO_SYLLABUS;
+                const sourceSyllabus = activeSyllabusGrade === '+1' ? PLUS_ONE_SYLLABUS : PLUS_TWO_SYLLABUS;
                 subjects.forEach(sub => {
                     const subChaps = sourceSyllabus.filter(t => t.subject === sub);
                     const uniqueChaps = [...new Map(subChaps.map(item => [item.chapId, item])).values()];
@@ -3282,16 +3308,25 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                                         }
                                     }
 
+                                    const handbookUrl = getHandbookUrl(ch, { grade: activeSyllabusGrade, stream: userStream });
+
                                     return `
                                         <div class="p-3 rounded-xl border ${isAllDone ? 'bg-emerald-50/70 border-emerald-200 dark:bg-emerald-950/40 dark:border-emerald-800/60' : 'bg-slate-50/70 border-slate-200/80 dark:bg-[#141d30]/60 dark:border-slate-800'} flex items-start gap-2.5 text-xs transition hover:border-blue-400">
                                             <div class="w-6 h-6 rounded-lg ${isAllDone ? 'bg-emerald-600 text-white' : 'bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300'} flex items-center justify-center shrink-0 mt-0.5 text-xs font-bold">
                                                 ${isAllDone ? '<i class="fa-solid fa-check"></i>' : ch.chapNumber}
                                             </div>
-                                            <div class="flex-1">
+                                            <div class="flex-1 min-w-0">
                                                 <span class="font-extrabold text-slate-800 dark:text-slate-100 block">Chapter ${ch.chapNumber}: ${ch.chapterName.replace(/^Chapter\s+\d+:\s*/i, '').replace(/^\d+\.\s*/, '')}</span>
-                                                <div class="flex items-center gap-2 mt-1">
-                                                    <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 bg-slate-200/60 dark:bg-slate-800 px-1.5 py-0.5 rounded">Term ${ch.term}</span>
-                                                    ${isAllDone ? `<span class="text-[10px] font-extrabold text-emerald-700 dark:text-emerald-400">${isML ? ML_I18N.syllabus.mastered : 'Mastered'}</span>` : ''}
+                                                <div class="flex items-center justify-between gap-2 mt-1.5 flex-wrap">
+                                                    <div class="flex items-center gap-2">
+                                                        <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 bg-slate-200/60 dark:bg-slate-800 px-1.5 py-0.5 rounded">Term ${ch.term}</span>
+                                                        ${isAllDone ? `<span class="text-[10px] font-extrabold text-emerald-700 dark:text-emerald-400">${isML ? ML_I18N.syllabus.mastered : 'Mastered'}</span>` : ''}
+                                                    </div>
+                                                    ${handbookUrl ? `
+                                                        <a href="${handbookUrl}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" class="syllabus-notes-btn" title="${isML ? 'ഹാൻഡ്ബുക്ക് / നോട്ട്സ് കാണുക' : 'Open chapter study notes (PDF)'}">
+                                                            📖 Notes
+                                                        </a>
+                                                    ` : ''}
                                                 </div>
                                             </div>
                                         </div>
@@ -3307,16 +3342,17 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                         <div>
                             <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white">${isML ? ML_I18N.syllabus.title : 'Official DHSE Scheme of Work'}</h2>
                             <p class="text-xs text-slate-500 dark:text-slate-400">${(function() {
+                                const gradePrefix = activeSyllabusGrade === '+1' ? 'Plus One (+1) ' : 'Plus Two (+2) ';
                                 if (isML) {
                                     if (userStream === 'bio') return ML_I18N.syllabus.subtitleBio;
                                     if (userStream === 'commerce') return ML_I18N.syllabus.subtitleCommerce;
                                     if (userStream === 'humanities') return ML_I18N.syllabus.subtitleHumanities;
                                     return ML_I18N.syllabus.subtitleCs;
                                 }
-                                if (userStream === 'bio') return 'Biology Science Stream (Botany & Zoology) • Rationalized Kerala Higher Secondary curriculum.';
-                                if (userStream === 'commerce') return 'Commerce Stream (Accountancy, Business Studies, Economics, Computer Applications) • Rationalized Kerala Higher Secondary curriculum.';
-                                if (userStream === 'humanities') return 'Humanities Stream (History, Political Science, Sociology, Economics) • Rationalized Kerala Higher Secondary curriculum.';
-                                return 'Computer Science Stream • Rationalized Kerala Higher Secondary curriculum.';
+                                if (userStream === 'bio') return `${gradePrefix}Biology Science Stream (Botany & Zoology) • Rationalized Kerala Higher Secondary curriculum.`;
+                                if (userStream === 'commerce') return `${gradePrefix}Commerce Stream (Accountancy, Business Studies, Economics, Computer Applications) • Rationalized Kerala Higher Secondary curriculum.`;
+                                if (userStream === 'humanities') return `${gradePrefix}Humanities Stream (History, Political Science, Sociology, Economics) • Rationalized Kerala Higher Secondary curriculum.`;
+                                return `${gradePrefix}Computer Science Stream • Rationalized Kerala Higher Secondary curriculum.`;
                             })()}</p>
                         </div>
                         <button onclick="goToDashboard()" class="text-xs font-bold bg-white dark:bg-[#0e1628] border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 px-3.5 py-2 rounded-xl text-slate-700 dark:text-slate-300 transition">
@@ -3324,24 +3360,40 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                         </button>
                     </div>
 
-                    <!-- Interactive Stream Switcher Pills Bar -->
-                    <div class="flex items-center gap-2 overflow-x-auto pb-3 mb-5 scrollbar-none">
-                        <button type="button" onclick="switchSyllabusStream('cs')" class="px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition active:scale-95 cursor-pointer ${userStream === 'cs' ? 'bg-blue-600 text-white shadow-xs font-black ring-2 ring-blue-500/20' : 'bg-white dark:bg-[#0e1628] border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50'}">
-                            <i class="fa-solid fa-laptop-code text-xs"></i>
-                            <span>Computer Science</span>
-                        </button>
-                        <button type="button" onclick="switchSyllabusStream('bio')" class="px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition active:scale-95 cursor-pointer ${userStream === 'bio' ? 'bg-emerald-600 text-white shadow-xs font-black ring-2 ring-emerald-500/20' : 'bg-white dark:bg-[#0e1628] border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50'}">
-                            <i class="fa-solid fa-seedling text-xs"></i>
-                            <span>Biology Science</span>
-                        </button>
-                        <button type="button" onclick="switchSyllabusStream('commerce')" class="px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition active:scale-95 cursor-pointer ${userStream === 'commerce' ? 'bg-purple-600 text-white shadow-xs font-black ring-2 ring-purple-500/20' : 'bg-white dark:bg-[#0e1628] border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50'}">
-                            <i class="fa-solid fa-chart-line text-xs"></i>
-                            <span>Commerce</span>
-                        </button>
-                        <button type="button" onclick="switchSyllabusStream('humanities')" class="px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition active:scale-95 cursor-pointer ${userStream === 'humanities' ? 'bg-rose-600 text-white shadow-xs font-black ring-2 ring-rose-500/20' : 'bg-white dark:bg-[#0e1628] border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50'}">
-                            <i class="fa-solid fa-landmark text-xs"></i>
-                            <span>Humanities</span>
-                        </button>
+                    <!-- Interactive Grade & Stream Switcher -->
+                    <div class="space-y-3 mb-5">
+                        <!-- Grade Switcher Pills Bar -->
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-bold text-slate-500 dark:text-slate-400 mr-1">${isML ? 'ക്ലാസ്:' : 'Grade:'}</span>
+                            <button type="button" onclick="switchSyllabusGrade('+2')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition active:scale-95 cursor-pointer ${activeSyllabusGrade === '+2' ? 'bg-blue-600 text-white shadow-xs font-black ring-2 ring-blue-500/20' : 'bg-white dark:bg-[#0e1628] border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50'}">
+                                <i class="fa-solid fa-graduation-cap text-xs"></i>
+                                <span>Plus Two (+2)</span>
+                            </button>
+                            <button type="button" onclick="switchSyllabusGrade('+1')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition active:scale-95 cursor-pointer ${activeSyllabusGrade === '+1' ? 'bg-amber-600 text-white shadow-xs font-black ring-2 ring-amber-500/20' : 'bg-white dark:bg-[#0e1628] border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50'}">
+                                <i class="fa-solid fa-book-bookmark text-xs"></i>
+                                <span>Plus One (+1)</span>
+                            </button>
+                        </div>
+
+                        <!-- Interactive Stream Switcher Pills Bar -->
+                        <div class="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+                            <button type="button" onclick="switchSyllabusStream('cs')" class="px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition active:scale-95 cursor-pointer ${userStream === 'cs' ? 'bg-blue-600 text-white shadow-xs font-black ring-2 ring-blue-500/20' : 'bg-white dark:bg-[#0e1628] border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50'}">
+                                <i class="fa-solid fa-laptop-code text-xs"></i>
+                                <span>Computer Science</span>
+                            </button>
+                            <button type="button" onclick="switchSyllabusStream('bio')" class="px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition active:scale-95 cursor-pointer ${userStream === 'bio' ? 'bg-emerald-600 text-white shadow-xs font-black ring-2 ring-emerald-500/20' : 'bg-white dark:bg-[#0e1628] border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50'}">
+                                <i class="fa-solid fa-seedling text-xs"></i>
+                                <span>Biology Science</span>
+                            </button>
+                            <button type="button" onclick="switchSyllabusStream('commerce')" class="px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition active:scale-95 cursor-pointer ${userStream === 'commerce' ? 'bg-purple-600 text-white shadow-xs font-black ring-2 ring-purple-500/20' : 'bg-white dark:bg-[#0e1628] border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50'}">
+                                <i class="fa-solid fa-chart-line text-xs"></i>
+                                <span>Commerce</span>
+                            </button>
+                            <button type="button" onclick="switchSyllabusStream('humanities')" class="px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition active:scale-95 cursor-pointer ${userStream === 'humanities' ? 'bg-rose-600 text-white shadow-xs font-black ring-2 ring-rose-500/20' : 'bg-white dark:bg-[#0e1628] border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50'}">
+                                <i class="fa-solid fa-landmark text-xs"></i>
+                                <span>Humanities</span>
+                            </button>
+                        </div>
                     </div>
 
                     <div class="space-y-4">
@@ -4072,6 +4124,7 @@ if (typeof window !== 'undefined') {
         goToPlan,
         goToSyllabusView,
         switchSyllabusStream,
+        switchSyllabusGrade,
         switchView: (view) => {
             if (view === 'today') goToDashboard();
             else if (view === 'plan') goToPlan();

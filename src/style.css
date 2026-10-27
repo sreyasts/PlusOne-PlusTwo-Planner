@@ -24,6 +24,61 @@ body.is-setting-up #mobile-nav { display: none; }
 .daily-resources > div { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 10px; }
 .daily-resources button, .daily-empty button { cursor: pointer; color: #2563eb; text-decoration: underline; text-underline-offset: 3px; }
 .daily-resources a, .daily-resources button { padding: 6px 0; }
+/* Chapter Study Notes Buttons (Mission+1+2 Handbooks) */
+.daily-task-actions { margin-top: 10px; margin-bottom: 4px; }
+.daily-notes-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 650;
+    line-height: 1.4;
+    text-decoration: none;
+    cursor: pointer;
+    background: #eff6ff;
+    color: #1d4ed8;
+    border: 1px solid #bfdbfe;
+    transition: all 0.15s ease-in-out;
+    width: fit-content;
+}
+.daily-notes-btn:hover {
+    background: #dbeafe;
+    color: #1e40af;
+    border-color: #93c5fd;
+    text-decoration: none;
+    transform: translateY(-0.5px);
+}
+.daily-notes-btn:focus-visible { outline: 2px solid #3b82f6; outline-offset: 2px; }
+
+.syllabus-notes-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 9px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.3;
+    text-decoration: none;
+    cursor: pointer;
+    background: #eff6ff;
+    color: #1d4ed8;
+    border: 1px solid #bfdbfe;
+    transition: all 0.15s ease-in-out;
+    white-space: nowrap;
+    margin-left: auto;
+}
+.syllabus-notes-btn:hover {
+    background: #dbeafe;
+    color: #1e40af;
+    border-color: #93c5fd;
+    text-decoration: none;
+    transform: translateY(-0.5px);
+}
+.syllabus-notes-btn:focus-visible { outline: 2px solid #3b82f6; outline-offset: 2px; }
+
 .daily-finished, .daily-advisory, .daily-empty { padding: 20px 24px; font-size: 14px; line-height: 1.6; }
 .daily-finished { background: #ecfdf5; color: #065f46; border-bottom: 1px solid #a7f3d0; }
 .daily-finished p, .daily-empty p { margin-top: 4px; }
@@ -41,6 +96,26 @@ html.dark .daily-toggle[aria-pressed="true"] { border-color: #475569; color: #cb
 html.dark .daily-done-label { color: #6ee7b7; }
 html.dark .daily-finished { background: #102b25; color: #a7f3d0; border-color: #235447; }
 html.dark .daily-advisory { background: #292213; color: #fde68a; border-color: #785820; }
+html.dark .daily-notes-btn {
+    background: rgba(30, 58, 138, 0.45);
+    color: #93c5fd;
+    border-color: rgba(59, 130, 246, 0.45);
+}
+html.dark .daily-notes-btn:hover {
+    background: rgba(30, 58, 138, 0.7);
+    color: #bfdbfe;
+    border-color: rgba(96, 165, 250, 0.7);
+}
+html.dark .syllabus-notes-btn {
+    background: rgba(30, 58, 138, 0.45);
+    color: #93c5fd;
+    border-color: rgba(59, 130, 246, 0.45);
+}
+html.dark .syllabus-notes-btn:hover {
+    background: rgba(30, 58, 138, 0.7);
+    color: #bfdbfe;
+    border-color: rgba(96, 165, 250, 0.7);
+}
 @media (max-width: 600px) {
     .daily-task { flex-direction: column; gap: 16px; padding: 20px; }
     .daily-toggle { align-self: flex-start; }
@@ -365,6 +440,26 @@ html.dark .study-capacity, html.dark .study-tools { border-color: #334155; }
         html:not(.dark) .border-emerald-100, html:not(.dark) .border-emerald-200 { border-color: #a7f3d0 !important; }
         html:not(.dark) .border-blue-100, html:not(.dark) .border-blue-200 { border-color: #bfdbfe !important; }
         html:not(.dark) .border-amber-100, html:not(.dark) .border-amber-200, html:not(.dark) .border-amber-200\/70 { border-color: #fde68a !important; }
+        html:not(.dark) .daily-notes-btn {
+            background-color: #eff6ff !important;
+            color: #1d4ed8 !important;
+            border-color: #bfdbfe !important;
+        }
+        html:not(.dark) .daily-notes-btn:hover {
+            background-color: #dbeafe !important;
+            color: #1e40af !important;
+            border-color: #93c5fd !important;
+        }
+        html:not(.dark) .syllabus-notes-btn {
+            background-color: #eff6ff !important;
+            color: #1d4ed8 !important;
+            border-color: #bfdbfe !important;
+        }
+        html:not(.dark) .syllabus-notes-btn:hover {
+            background-color: #dbeafe !important;
+            color: #1e40af !important;
+            border-color: #93c5fd !important;
+        }
         /* Modals & Dropdowns in Light Mode */
         html:not(.dark) #user-dropdown,
         html:not(.dark) #settings-modal > div,
@@ -645,6 +740,26 @@ html.dark .study-capacity, html.dark .study-tools { border-color: #334155; }
         html.dark .border-amber-200,
         html.dark .border-amber-200\/70 {
             border-color: rgba(245, 158, 11, 0.3) !important;
+        }
+        html.dark .daily-notes-btn {
+            background-color: rgba(30, 58, 138, 0.45) !important;
+            color: #93c5fd !important;
+            border-color: rgba(59, 130, 246, 0.45) !important;
+        }
+        html.dark .daily-notes-btn:hover {
+            background-color: rgba(30, 58, 138, 0.7) !important;
+            color: #bfdbfe !important;
+            border-color: rgba(96, 165, 250, 0.7) !important;
+        }
+        html.dark .syllabus-notes-btn {
+            background-color: rgba(30, 58, 138, 0.45) !important;
+            color: #93c5fd !important;
+            border-color: rgba(59, 130, 246, 0.45) !important;
+        }
+        html.dark .syllabus-notes-btn:hover {
+            background-color: rgba(30, 58, 138, 0.7) !important;
+            color: #bfdbfe !important;
+            border-color: rgba(96, 165, 250, 0.7) !important;
         }
         html.dark .bg-blue-100 {
             background-color: rgba(59, 130, 246, 0.18) !important;

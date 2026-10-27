@@ -11,6 +11,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:legacy": "node tests/engine_test.cjs",
+    "verify:handbooks": "node scripts/verify-handbook-links.js",
     "test:benchmark": "node scripts/benchmark-planner.js",
     "benchmark:planner": "node scripts/benchmark-planner.js",
     "test:e2e": "playwright test",
