@@ -92,13 +92,12 @@ function getTaskResourceBadge(task) {
 
 function getTaskDeepLinksHtml(task) {
     if (!task || (task.isRevision && !task.isSpacedRetrieval && !task.isExamEveTask)) return '';
-    const res = CHAPTER_RESOURCES?.subjects?.[task.subject] || CHAPTER_RESOURCES?.[task.subject];
-    if (!res) return '';
-    const pyq = res.pyqUrl || res.pyq;
-    if (!pyq) return '';
+    const handbookUrl = getHandbookUrl(task, appState);
+    if (!handbookUrl) return '';
+    const isMalayalam = typeof isML !== 'undefined' ? isML : (typeof currentLanguage !== 'undefined' && currentLanguage === 'ml');
     return `
-        <div class="flex flex-wrap items-center gap-2 mt-2 pt-2 border-t border-slate-100 dark:border-slate-800 text-xs">
-            <a href="${pyq}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-purple-600 dark:text-purple-400 hover:underline font-semibold" title="${res.pyqTitle || 'Previous Year Questions'}">${getSvgIcon('fileText', 'w-3.5 h-3.5')} PYQs</a>
+        <div class="daily-task-actions mt-1.5" onclick="event.stopPropagation()">
+            <a href="${handbookUrl}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" class="daily-notes-btn" title="${isMalayalam ? 'അധ്യായ നോട്ട്സും PYQ ചോദ്യങ്ങളും (PDF) കാണുക' : 'Open chapter study notes & PYQs (PDF)'}">📖 Notes</a>
         </div>
     `;
 }
@@ -2947,7 +2946,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                                     ${handbookUrl ? `<div class="daily-task-actions"><a href="${handbookUrl}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" class="daily-notes-btn" title="${isML ? 'ഹാൻഡ്ബുക്ക് / നോട്ട്സ് കാണുക' : 'Open chapter study notes (PDF)'}">📖 Notes</a></div>` : ''}
                                     <details id="resources-${key}" class="daily-resources" ${openSections.has('resources-' + key) ? 'open' : ''}>
                                         <summary>${isML ? 'പഠന സഹായികൾ' : 'Study resources'}</summary>
-                                        <div>${getTaskDeepLinksHtml(task)}<button type="button" data-study-tutor="${escapeStudyText(task.id)}">${isML ? 'AI പഠന സഹായി' : 'AI study tutor'}</button></div>
+                                        <div><button type="button" data-study-tutor="${escapeStudyText(task.id)}">${isML ? 'AI പഠന സഹായി' : 'AI study tutor'}</button></div>
                                     </details>
                                 </div>
                                 <button type="button" class="daily-toggle" data-study-task="${escapeStudyText(task.id)}" aria-pressed="${!!task.completed}" aria-describedby="task-${key}">${task.completed ? (isML ? 'തിരിച്ചെടുക്കുക' : 'Undo') : (isML ? 'പൂർത്തിയായി' : 'Mark done')}</button>
