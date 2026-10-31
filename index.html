@@ -1024,6 +1024,18 @@
                         </button>
                     </div>
 
+                    <!-- Restore Pre-Reset Snapshot Row -->
+                    <div id="settings-undo-reset-row" class="hidden mt-3 pt-3 border-t border-slate-200/60 dark:border-slate-800/80 flex items-center justify-between">
+                        <div>
+                            <span id="settings-undo-reset-title" class="text-xs font-bold text-amber-600 dark:text-amber-400 block">Undo Recent Reset</span>
+                            <span id="settings-undo-reset-hint" class="text-xs text-slate-400">Restore timetable from recent reset</span>
+                        </div>
+                        <button type="button" id="btn-settings-undo-reset" onclick="restorePreResetSnapshot()" class="py-1.5 px-3 bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/40 dark:hover:bg-amber-900/50 text-amber-700 dark:text-amber-300 text-xs font-bold rounded-xl border border-amber-200 dark:border-amber-800/60 transition flex items-center gap-1.5 cursor-pointer">
+                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
+                            <span id="settings-undo-reset-btn-text">Restore</span>
+                        </button>
+                    </div>
+
                     <div class="mt-3 pt-3 border-t border-slate-200/60 dark:border-slate-800/80 flex items-center justify-between">
                         <div>
                             <span id="settings-reset-title" class="text-xs font-bold text-rose-600 dark:text-rose-400 block">Reset Plan</span>
@@ -1116,6 +1128,14 @@
                             <span>↺ Restore Previous Timetable Snapshot</span>
                         </button>
                         <p id="regenerate-restore-sub" class="text-[10px] text-center text-slate-400 mt-1"></p>
+                    </div>
+                    <!-- Restore Pre-Reset Snapshot Box -->
+                    <div id="regenerate-undo-reset-box" class="hidden pt-1">
+                        <button type="button" id="btn-regenerate-undo-reset" onclick="restorePreResetSnapshot()" class="w-full py-2 px-3 rounded-xl border border-amber-300 bg-amber-50/90 hover:bg-amber-100 text-amber-800 text-xs font-bold transition flex items-center justify-center gap-2 shadow-xs cursor-pointer">
+                            <svg class="w-4 h-4 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
+                            <span id="regenerate-undo-reset-btn-text">↺ Undo Recent Reset / Restore Plan</span>
+                        </button>
+                        <p id="regenerate-undo-reset-sub" class="text-[10px] text-center text-slate-400 mt-1"></p>
                     </div>
                 </div>
             </div>

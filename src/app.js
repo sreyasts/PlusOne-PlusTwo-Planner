@@ -143,6 +143,7 @@ function processDomainBridgePayload() {
 processDomainBridgePayload();
 
 function loadInitialState() {
+            if (typeof localStorage === 'undefined') return null;
             let loaded = null;
             // 1. Check v2 state
             try {
@@ -213,10 +214,30 @@ function loadInitialState() {
         let authModalTimer = null;
         let authListenerAttached = false;
 
+        const currentSessionId = (function() {
+            if (typeof window === 'undefined') return 'server_' + Math.random().toString(36).substring(2, 9);
+            let sid = null;
+            try {
+                sid = sessionStorage.getItem('mpt_client_session_id');
+                if (!sid) {
+                    sid = 'sess_' + Date.now().toString(36) + '_' + Math.random().toString(36).substring(2, 9);
+                    sessionStorage.setItem('mpt_client_session_id', sid);
+                }
+            } catch (_) {
+                sid = 'sess_' + Date.now().toString(36) + '_' + Math.random().toString(36).substring(2, 9);
+            }
+            return sid;
+        })();
+
+        let isCloudSyncInProgress = false;
+
         function getFirestoreCleanData(state) {
             if (!state) return null;
             const clean = JSON.parse(JSON.stringify(state));
-            clean.lastSynced = new Date().toISOString();
+            const now = new Date().toISOString();
+            clean.lastSynced = state.lastSynced || now;
+            clean.lastModified = state.lastModified || now;
+            clean.clientSessionId = state.clientSessionId || currentSessionId;
             return clean;
         }
 
@@ -228,18 +249,38 @@ function loadInitialState() {
         // Save State helper - saves to local storage AND syncs to Firebase Cloud Firestore!
         async function saveAppState() {
             if (!appState) return;
+            const now = new Date().toISOString();
+            appState.lastModified = now;
+            appState.lastSynced = now;
             saveAppStateLocally();
             await syncAppStateToCloud(appState);
         }
 
         async function syncAppStateToCloud(state) {
+            const targetState = state || appState;
+            if (!targetState) return;
+
+            const now = new Date().toISOString();
+            targetState.lastSynced = now;
+            if (!targetState.lastModified) {
+                targetState.lastModified = now;
+            }
+            if (appState && appState !== targetState) {
+                appState.lastSynced = now;
+                if (!appState.lastModified) appState.lastModified = now;
+            }
+            saveAppStateLocally();
+
             if (currentUser && db) {
                 try {
                     const userDocRef = db.collection('users').doc(currentUser.uid);
                     const payload = getFirestoreCleanData({
-                        ...state,
+                        ...targetState,
                         userEmail: currentUser.email,
-                        displayName: currentUser.displayName || 'Student'
+                        displayName: currentUser.displayName || 'Student',
+                        lastSynced: now,
+                        lastModified: targetState.lastModified,
+                        clientSessionId: currentSessionId
                     });
                     await userDocRef.set(payload);
                 } catch(err) {
@@ -256,7 +297,8 @@ function loadInitialState() {
         }
 
         async function performCloudSync(user, explicitTrigger = false) {
-            if (!user || !db) return;
+            if (!user || !db || isCloudSyncInProgress) return;
+            isCloudSyncInProgress = true;
             try {
                 if (explicitTrigger) showToastMessage("Checking cloud sync...", "fa-rotate text-blue-400");
                 const userDocRef = db.collection('users').doc(user.uid);
@@ -287,9 +329,12 @@ function loadInitialState() {
                             });
                         });
 
-                        // Case A: Local device had no plan OR local has 0 completed tasks
-                        // NEVER overwrite cloud data with an empty/unstarted guest plan!
-                        if (!appState || !Array.isArray(appState.plan) || appState.plan.length === 0 || localCompletedTaskIds.size === 0) {
+                        const streamNamesMap = { cs: 'Computer Science', bio: 'Biology Science', commerce: 'Commerce', humanities: 'Humanities' };
+                        const cloudStreamName = streamNamesMap[cloudData.stream] || (cloudData.grade === '+1' ? 'Plus One' : 'Plus Two');
+                        const localStreamName = (appState && (streamNamesMap[appState.stream] || (appState.grade === '+1' ? 'Plus One' : 'Plus Two'))) || 'Current';
+
+                        // Case 1: Local device had no plan
+                        if (!appState || !Array.isArray(appState.plan) || appState.plan.length === 0) {
                             appState = cloudData;
                             saveAppStateLocally();
                             renderApp();
@@ -298,7 +343,47 @@ function loadInitialState() {
                             return;
                         }
 
-                        // Case B: Both have completed tasks and the same stream
+                        // Case 2: Freshly generated local plan (0 completed tasks)
+                        // Do NOT silently wipe it out with cloud plan! Prompt user to choose.
+                        if (localCompletedTaskIds.size === 0) {
+                            const chooseDevicePlan = await showAppConfirm({
+                                title: "Cloud Account Sync",
+                                message: `Your Google Account has a saved ${cloudStreamName} study plan (${cloudCompletedTaskIds.size} completed). You also have an active ${localStreamName} plan on this device.<br><br>Which plan would you like to keep active across your devices?`,
+                                icon: "fa-cloud-arrow-up text-blue-500",
+                                confirmText: "Use Device Plan & Update Account",
+                                cancelText: "Load Saved Cloud Plan"
+                            });
+
+                            if (chooseDevicePlan) {
+                                appState.userEmail = user.email;
+                                appState.ownerUid = user.uid;
+                                const now = new Date().toISOString();
+                                appState.lastSynced = now;
+                                appState.lastModified = appState.lastModified || now;
+                                saveAppStateLocally();
+                                const payload = getFirestoreCleanData({
+                                    ...appState,
+                                    userEmail: user.email,
+                                    displayName: user.displayName || 'Student',
+                                    lastSynced: now,
+                                    lastModified: appState.lastModified,
+                                    clientSessionId: currentSessionId
+                                });
+                                await userDocRef.set(payload);
+                                renderApp();
+                                updateAuthHeaderUI();
+                                showToastMessage(`Current ${localStreamName} plan saved to your Google Account!`, "fa-cloud-arrow-up text-emerald-400");
+                            } else {
+                                appState = cloudData;
+                                saveAppStateLocally();
+                                renderApp();
+                                updateAuthHeaderUI();
+                                showToastMessage(`Loaded saved ${cloudStreamName} plan from your account.`, "fa-cloud-arrow-down text-blue-400");
+                            }
+                            return;
+                        }
+
+                        // Case 3: Both have completed tasks and the same stream -> merge completed tasks
                         if (cloudData.stream === appState.stream) {
                             let targetPlan = (cloudCompletedTaskIds.size >= localCompletedTaskIds.size) ? cloudData : appState;
 
@@ -314,34 +399,53 @@ function loadInitialState() {
                             appState = targetPlan;
                             appState.userEmail = user.email;
                             appState.ownerUid = user.uid;
+                            const now = new Date().toISOString();
+                            appState.lastSynced = now;
+                            appState.lastModified = appState.lastModified || now;
                             saveAppStateLocally();
-                            await userDocRef.set(getFirestoreCleanData(appState));
+                            const payload = getFirestoreCleanData({
+                                ...appState,
+                                userEmail: user.email,
+                                displayName: user.displayName || 'Student',
+                                lastSynced: now,
+                                lastModified: appState.lastModified,
+                                clientSessionId: currentSessionId
+                            });
+                            await userDocRef.set(payload);
                             renderApp();
                             updateAuthHeaderUI();
                             showToastMessage("Signed in! Your progress has been synced to your Google Account.", "fa-circle-check text-emerald-400");
                         } else {
-                            // Different streams between cloud and local session (e.g. Bio vs CS)
-                            const streamNamesMap = { cs: 'Computer Science', bio: 'Biology Science', commerce: 'Commerce', humanities: 'Humanities' };
-                            const cloudStreamName = streamNamesMap[cloudData.stream] || (cloudData.grade === '+1' ? 'Plus One' : 'Plus Two');
-                            const localStreamName = streamNamesMap[appState.stream] || (appState.grade === '+1' ? 'Plus One' : 'Plus Two');
-                            const restoreCloud = await showAppConfirm({
-                                title: "Cloud Backup Found",
-                                message: `We found a saved <strong>${cloudStreamName}</strong> study plan in your Google Account.<br><br>Your current unsaved guest plan is for <strong>${localStreamName}</strong>.<br><br>Do you want to load your saved ${cloudStreamName} plan, or keep your current ${localStreamName} plan?`,
+                            // Different streams between cloud and local session (both having completed tasks)
+                            const chooseDevicePlan = await showAppConfirm({
+                                title: "Cloud Account Sync",
+                                message: `Your Google Account has a saved ${cloudStreamName} study plan (${cloudCompletedTaskIds.size} completed). You also have an active ${localStreamName} plan on this device.<br><br>Which plan would you like to keep active across your devices?`,
                                 icon: "fa-cloud-arrow-down text-blue-500",
-                                confirmText: `Load Saved ${cloudStreamName}`,
-                                cancelText: `Keep ${localStreamName}`
+                                confirmText: "Use Device Plan & Update Account",
+                                cancelText: "Load Saved Cloud Plan"
                             });
 
-                            if (restoreCloud) {
+                            if (chooseDevicePlan) {
+                                appState.userEmail = user.email;
+                                appState.ownerUid = user.uid;
+                                const now = new Date().toISOString();
+                                appState.lastSynced = now;
+                                appState.lastModified = appState.lastModified || now;
+                                saveAppStateLocally();
+                                const payload = getFirestoreCleanData({
+                                    ...appState,
+                                    userEmail: user.email,
+                                    displayName: user.displayName || 'Student',
+                                    lastSynced: now,
+                                    lastModified: appState.lastModified,
+                                    clientSessionId: currentSessionId
+                                });
+                                await userDocRef.set(payload);
+                                showToastMessage(`Current ${localStreamName} plan saved to your Google Account!`, "fa-cloud-arrow-up text-emerald-400");
+                            } else {
                                 appState = cloudData;
                                 saveAppStateLocally();
                                 showToastMessage(`Loaded saved ${cloudStreamName} plan from your account.`, "fa-cloud-arrow-down text-blue-400");
-                            } else {
-                                appState.userEmail = user.email;
-                                appState.ownerUid = user.uid;
-                                saveAppStateLocally();
-                                await userDocRef.set(getFirestoreCleanData(appState));
-                                showToastMessage(`Current ${localStreamName} plan saved to your Google Account!`, "fa-cloud-arrow-up text-emerald-400");
                             }
                             renderApp();
                             updateAuthHeaderUI();
@@ -351,7 +455,18 @@ function loadInitialState() {
                         if (appState && Array.isArray(appState.plan) && appState.plan.length > 0) {
                             appState.userEmail = user.email;
                             appState.ownerUid = user.uid;
-                            await userDocRef.set(getFirestoreCleanData(appState));
+                            const now = new Date().toISOString();
+                            appState.lastSynced = now;
+                            appState.lastModified = appState.lastModified || now;
+                            const payload = getFirestoreCleanData({
+                                ...appState,
+                                userEmail: user.email,
+                                displayName: user.displayName || 'Student',
+                                lastSynced: now,
+                                lastModified: appState.lastModified,
+                                clientSessionId: currentSessionId
+                            });
+                            await userDocRef.set(payload);
                             saveAppStateLocally();
                             renderApp();
                             updateAuthHeaderUI();
@@ -364,10 +479,16 @@ function loadInitialState() {
                     if (appState && Array.isArray(appState.plan) && appState.plan.length > 0) {
                         appState.userEmail = user.email;
                         appState.ownerUid = user.uid;
+                        const now = new Date().toISOString();
+                        appState.lastSynced = now;
+                        appState.lastModified = appState.lastModified || now;
                         const payload = getFirestoreCleanData({
                             ...appState,
                             userEmail: user.email,
-                            displayName: user.displayName || 'Student'
+                            displayName: user.displayName || 'Student',
+                            lastSynced: now,
+                            lastModified: appState.lastModified,
+                            clientSessionId: currentSessionId
                         });
                         await userDocRef.set(payload);
                         saveAppStateLocally();
@@ -385,6 +506,8 @@ function loadInitialState() {
                         icon: "fa-cloud text-amber-500"
                     });
                 }
+            } finally {
+                isCloudSyncInProgress = false;
             }
         }
 
@@ -405,9 +528,12 @@ function loadInitialState() {
             }
 
             let isInitialAuthCheck = true;
+            let previousUserUid = null;
             auth.onAuthStateChanged(async (user) => {
                 const wasSignedIn = !!currentUser;
+                const priorUid = previousUserUid || (currentUser ? currentUser.uid : null);
                 currentUser = user;
+                previousUserUid = user ? user.uid : null;
                 if (typeof window !== 'undefined') window.currentUser = user;
                 updateAuthHeaderUI();
 
@@ -417,6 +543,27 @@ function loadInitialState() {
                     localStorage.setItem('mpt_was_logged_in', 'true');
                     sessionStorage.removeItem('mpt_auto_auth_requested');
 
+                    // Multi-account isolation: if switching between different accounts or prior owner mismatch
+                    if (priorUid && priorUid !== user.uid) {
+                        if (cloudSyncUnsubscribe) {
+                            cloudSyncUnsubscribe();
+                            cloudSyncUnsubscribe = null;
+                        }
+                        localStorage.removeItem('plusTwoMissionState_v2');
+                        localStorage.removeItem('plusTwoPlanState');
+                        appState = null;
+                        selectedCompletedChapters.clear();
+                    } else if (appState && appState.ownerUid && appState.ownerUid !== user.uid) {
+                        if (cloudSyncUnsubscribe) {
+                            cloudSyncUnsubscribe();
+                            cloudSyncUnsubscribe = null;
+                        }
+                        localStorage.removeItem('plusTwoMissionState_v2');
+                        localStorage.removeItem('plusTwoPlanState');
+                        appState = null;
+                        selectedCompletedChapters.clear();
+                    }
+
                     // 1. Immediately perform initial cloud fetch/merge
                     await performCloudSync(user);
 
@@ -425,9 +572,15 @@ function loadInitialState() {
                     const userDocRef = db.collection('users').doc(user.uid);
 
                     cloudSyncUnsubscribe = userDocRef.onSnapshot((docSnap) => {
+                        if (docSnap.metadata && docSnap.metadata.hasPendingWrites) {
+                            return;
+                        }
                         if (docSnap.exists) {
                             let cloudData = docSnap.data();
                             if (cloudData && Array.isArray(cloudData.plan) && cloudData.plan.length > 0) {
+                                if (cloudData.clientSessionId && cloudData.clientSessionId === currentSessionId) {
+                                    return;
+                                }
                                 if (!cloudData.engineVersion || cloudData.engineVersion < PLANNER_ENGINE_VERSION) {
                                     cloudData = migrateLegacyUserPlan(cloudData);
                                 }
@@ -438,6 +591,7 @@ function loadInitialState() {
                                     saveAppStateLocally();
                                     renderApp();
                                     updateAuthHeaderUI();
+                                    showToastMessage("🔄 Synced from cloud", "fa-rotate text-blue-400");
                                 }
                             }
                         }
@@ -450,6 +604,8 @@ function loadInitialState() {
                         cloudSyncUnsubscribe();
                         cloudSyncUnsubscribe = null;
                     }
+                    currentUser = null;
+                    if (typeof window !== 'undefined') window.currentUser = null;
                     // If user was signed in and signed out externally (e.g. token revocation)
                     if (wasSignedIn && !isInitialAuthCheck) {
                         localStorage.removeItem('plusTwoMissionState_v2');
@@ -635,12 +791,14 @@ function loadInitialState() {
         }
 
         // Close dropdown when clicking outside
-        document.addEventListener('click', (e) => {
-            const container = document.getElementById('auth-container');
-            if (container && !container.contains(e.target)) {
-                closeUserDropdown();
-            }
-        });
+        if (typeof document !== 'undefined') {
+            document.addEventListener('click', (e) => {
+                const container = document.getElementById('auth-container');
+                if (container && !container.contains(e.target)) {
+                    closeUserDropdown();
+                }
+            });
+        }
 
         async function signInWithGoogle() {
             const modalBtn = document.getElementById('auth-modal-google-btn');
@@ -767,28 +925,28 @@ function loadInitialState() {
                 cloudSyncUnsubscribe = null;
             }
 
-            // 2. Sign out of Firebase Auth
-            try {
-                await auth.signOut();
-            } catch(e) {
-                console.warn("Sign-out note:", e);
-            }
-
-            // 3. Clear local storage so this device starts completely fresh
+            // 2. Clear user session, local storage and auth tracking
+            currentUser = null;
+            if (typeof window !== 'undefined') window.currentUser = null;
             localStorage.removeItem('plusTwoMissionState_v2');
             localStorage.removeItem('plusTwoPlanState');
             localStorage.removeItem('mpt_was_logged_in');
             sessionStorage.removeItem('mpt_auto_auth_requested');
 
-            // 4. Reset in-memory state variables to initial setup defaults
-            currentUser = null;
-            if (typeof window !== 'undefined') window.currentUser = null;
+            // 3. Reset in-memory state variables to initial setup defaults
             appState = null;
             selectedCompletedChapters.clear();
             currentView = 'today';
             selectedStream = 'cs';
             activeSetupSubjectTab = 'Physics';
             activeSetupGradeTab = '+2';
+
+            // 4. Sign out of Firebase Auth
+            try {
+                await auth.signOut();
+            } catch(e) {
+                console.warn("Sign-out note:", e);
+            }
 
             // 5. Update UI, close dropdown, and render the fresh Setup view (View 0)
             closeUserDropdown();
@@ -801,35 +959,149 @@ function loadInitialState() {
         // getLocalDateStr & TODAY_STR imported from ./engine/planner.js
 
         // Refresh at local midnight and immediately on return, including short screen locks.
-        (function setupAutoRefresh() {
-            let refreshing = false;
-            let midnightTimer;
-            const checkDate = () => {
-                if (!refreshing && getLocalDateStr() !== TODAY_STR) {
-                    refreshing = true;
-                    window.location.reload();
+        let activeTodayStr = getLocalDateStr();
+
+        function getActiveTodayStr() {
+            return activeTodayStr;
+        }
+
+        function setActiveTodayStr(val) {
+            activeTodayStr = val;
+        }
+
+        function getAppState() {
+            return appState;
+        }
+
+        function setAppState(val) {
+            appState = val;
+            if (typeof window !== "undefined") {
+                window.appState = val;
+            }
+        }
+
+        function getCurrentView() {
+            return currentView;
+        }
+
+        function setCurrentView(val) {
+            currentView = val;
+            if (typeof window !== "undefined") {
+                window.currentView = val;
+            }
+        }
+
+        function getCurrentUser() {
+            return currentUser;
+        }
+
+        function setCurrentUser(val) {
+            currentUser = val;
+            if (typeof window !== "undefined") {
+                window.currentUser = val;
+            }
+        }
+
+        function getFirebaseAuth() {
+            return auth;
+        }
+
+        function setFirebaseAuth(val) {
+            auth = val;
+        }
+
+        function getFirestoreDb() {
+            return db;
+        }
+
+        function setFirestoreDb(val) {
+            db = val;
+        }
+
+        function getCloudSyncUnsubscribe() {
+            return cloudSyncUnsubscribe;
+        }
+
+        function setCloudSyncUnsubscribe(val) {
+            cloudSyncUnsubscribe = val;
+        }
+
+        let refreshing = false;
+        let midnightTimer = null;
+
+        function checkDate() {
+            const currentToday = getLocalDateStr();
+            if (!refreshing && currentToday !== activeTodayStr) {
+                activeTodayStr = currentToday;
+
+                // Update date header
+                const dateDisplay = (typeof document !== "undefined") ? document.getElementById("date-display") : null;
+                if (dateDisplay) {
+                    const isML = (typeof getAppLanguage === "function" && getAppLanguage() === "ml");
+                    dateDisplay.innerText = new Date().toLocaleDateString(isML ? "ml-IN" : "en-US", {
+                        weekday: "short",
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric"
+                    });
                 }
-            };
-            const scheduleMidnight = () => {
-                clearTimeout(midnightTimer);
-                const now = new Date();
-                const next = new Date(now);
-                next.setHours(24, 0, 0, 250);
-                midnightTimer = setTimeout(() => { checkDate(); if (!refreshing) scheduleMidnight(); }, next - now);
-            };
-            const checkOnReturn = () => {
-                if (document.hidden) return;
+
+                // If appState exists, seamlessly re-render active view without hard reload
+                if (appState) {
+                    try {
+                        renderApp();
+                        const isML = (typeof getAppLanguage === "function" && getAppLanguage() === "ml");
+                        const toastMsg = isML
+                            ? "🌅 പുതിയ പഠനദിനം ആരംഭിച്ചു! ഇന്നത്തെ ടൈംടേബിൾ അപ്‌ഡേറ്റ് ചെയ്തു."
+                            : "🌅 A new study day has begun! Today's timetable has updated.";
+                        showToastMessage(toastMsg, "fa-sun text-amber-400");
+                    } catch (renderError) {
+                        console.error("Seamless date rollover failed, falling back to reload:", renderError);
+                        if (typeof window !== "undefined" && window.location && typeof window.location.reload === "function") {
+                            refreshing = true;
+                            window.location.reload();
+                        }
+                    }
+                }
+            }
+        }
+
+        function scheduleMidnight() {
+            if (midnightTimer) clearTimeout(midnightTimer);
+            const now = new Date();
+            const next = new Date(now);
+            next.setHours(24, 0, 0, 250);
+            const ms = Math.max(250, next.getTime() - now.getTime());
+            midnightTimer = setTimeout(() => {
                 checkDate();
                 if (!refreshing) scheduleMidnight();
-            };
-            document.addEventListener('visibilitychange', checkOnReturn);
-            window.addEventListener('focus', checkOnReturn);
-            window.addEventListener('pageshow', checkOnReturn);
-            scheduleMidnight();
-        })();
+            }, ms);
+        }
 
-        const getYesterdayStr = () => {
-            const d = new Date();
+        function checkOnReturn() {
+            if (typeof document !== "undefined" && document.hidden) return;
+            checkDate();
+            if (!refreshing) scheduleMidnight();
+        }
+
+        function setupAutoRefresh() {
+            refreshing = false;
+            if (typeof window !== "undefined") setupWindowBindings();
+            if (typeof window === "undefined" || typeof document === "undefined") return;
+            document.removeEventListener("visibilitychange", checkOnReturn);
+            document.addEventListener("visibilitychange", checkOnReturn);
+            window.removeEventListener("focus", checkOnReturn);
+            window.addEventListener("focus", checkOnReturn);
+            window.removeEventListener("pageshow", checkOnReturn);
+            window.addEventListener("pageshow", checkOnReturn);
+            scheduleMidnight();
+        }
+
+        // Initialize live lifecycle listeners
+        setupAutoRefresh();
+
+        const getYesterdayStr = (refDateStr = getActiveTodayStr()) => {
+            const d = new Date(refDateStr + "T00:00:00");
             d.setDate(d.getDate() - 1);
             return getLocalDateStr(d);
         };
@@ -840,8 +1112,8 @@ function loadInitialState() {
             const lastDate = appState.lastCompletedDate;
             if (!streak || !lastDate) return 0;
 
-            const today = TODAY_STR;
-            const yesterday = getYesterdayStr();
+            const today = getActiveTodayStr();
+            const yesterday = getYesterdayStr(today);
             if (lastDate === today || lastDate === yesterday) {
                 return streak;
             }
@@ -1061,7 +1333,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
 
                 // Calculate today's status
                 const activeDayNum = typeof getActiveMissionDayNumber === 'function' ? getActiveMissionDayNumber() : 1;
-                const todayPlan = appState.plan.find(d => d.dayNumber === activeDayNum) || appState.plan.find(d => d.date === TODAY_STR);
+                const todayPlan = appState.plan.find(d => d.dayNumber === activeDayNum) || appState.plan.find(d => d.date === getLocalDateStr());
                 if (todayPlan && targetDay?.date === getLocalDateStr()) {
                     const completedToday = todayPlan.tasks.filter(t => t.completed).length;
                     const totalToday = todayPlan.tasks.length;
@@ -1409,13 +1681,44 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
             });
             if (!confirmed) return;
 
+            // Generate immutable pre-reset archive before wiping appState & storage
+            let preResetSnapshot = null;
+            const hasPlanTasks = !!(
+                appState &&
+                Array.isArray(appState.plan) &&
+                appState.plan.some(d => Array.isArray(d.tasks) && d.tasks.length > 0)
+            );
+
+            if (hasPlanTasks) {
+                preResetSnapshot = {
+                    state: JSON.parse(JSON.stringify(appState)),
+                    resetAt: new Date().toISOString(),
+                    formattedTime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                    formattedDate: new Date().toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' }),
+                    stream: appState.stream,
+                    grade: appState.grade,
+                    completedCount: appState.plan.flatMap(d => d.tasks || []).filter(t => t.completed).length,
+                    totalCount: appState.plan.flatMap(d => d.tasks || []).filter(t => !t.isRevision && !t.isExamEveTask).length,
+                    userEmail: (typeof currentUser !== 'undefined' && currentUser?.email) || null,
+                    ownerUid: (typeof currentUser !== 'undefined' && currentUser?.uid) || null
+                };
+                try {
+                    localStorage.setItem('mpt_pre_reset_snapshot', JSON.stringify(preResetSnapshot));
+                } catch (storageErr) {
+                    console.warn("Could not write pre-reset snapshot to localStorage:", storageErr);
+                }
+            }
+
             try {
-                // 1. If signed in, delete the cloud document from Firestore so it doesn't restore!
-                if (currentUser && db) {
+                // 1. If signed in, archive to Firestore user_archives and clear active plan document
+                if (typeof currentUser !== 'undefined' && currentUser && typeof db !== 'undefined' && db) {
+                    if (preResetSnapshot) {
+                        await db.collection('user_archives').doc(currentUser.uid).set(getFirestoreCleanData(preResetSnapshot));
+                    }
                     await db.collection('users').doc(currentUser.uid).delete();
                 }
             } catch(e) {
-                console.warn("Cloud delete note:", e);
+                console.warn("Cloud reset archive note:", e);
             }
 
             // 2. Clear local storage
@@ -1437,7 +1740,9 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
             currentView = 'today';
             showAppToast("Study plan reset. Ready to start fresh!", "fa-rotate text-blue-400");
             renderApp();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            if (typeof window !== 'undefined' && typeof window.scrollTo === 'function') {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
         }
 
         let setupPersonalization = {
@@ -2270,6 +2575,90 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
             }
         }
 
+        async function restorePreResetSnapshot() {
+            try {
+                let snapshot = null;
+                const raw = localStorage.getItem('mpt_pre_reset_snapshot');
+                if (raw) {
+                    try {
+                        snapshot = JSON.parse(raw);
+                    } catch (e) {
+                        console.warn("Corrupt local pre-reset snapshot:", e);
+                    }
+                }
+
+                // Fallback to Firestore cloud archive if local snapshot is unavailable
+                if ((!snapshot || !snapshot.state) && typeof currentUser !== 'undefined' && currentUser && typeof db !== 'undefined' && db) {
+                    try {
+                        const archiveDoc = await db.collection('user_archives').doc(currentUser.uid).get();
+                        if (archiveDoc.exists) {
+                            snapshot = archiveDoc.data();
+                        }
+                    } catch (cloudErr) {
+                        console.warn("Cloud archive retrieval failed:", cloudErr);
+                    }
+                }
+
+                // Validate snapshot structure
+                if (!snapshot || !snapshot.state || !Array.isArray(snapshot.state.plan) || snapshot.state.plan.length === 0) {
+                    const isML = (typeof getAppLanguage === 'function' && getAppLanguage() === 'ml');
+                    showAppToast(
+                        isML ? "മുൻപത്തെ പ്ലാൻ വിവരങ്ങൾ കണ്ടെത്താനായില്ല." : "No valid previous study plan found to restore.",
+                        "fa-triangle-exclamation text-amber-400"
+                    );
+                    return false;
+                }
+
+                // Back up current state if user had any active plan in memory before restoring
+                if (appState && Array.isArray(appState.plan) && appState.plan.length > 0) {
+                    savePreviousPlanSnapshot();
+                }
+
+                // Restore appState
+                appState = snapshot.state;
+                appState.lastModified = new Date().toISOString();
+                if (snapshot.stream) {
+                    selectedStream = snapshot.stream;
+                }
+                if (snapshot.grade) {
+                    selectedGrade = snapshot.grade;
+                }
+
+                // Persist locally & sync to cloud
+                if (typeof saveAppState === 'function') {
+                    await saveAppState();
+                } else if (typeof saveAppStateLocally === 'function') {
+                    saveAppStateLocally();
+                }
+
+                // Cache snapshot back to localStorage
+                try {
+                    localStorage.setItem('mpt_pre_reset_snapshot', JSON.stringify(snapshot));
+                } catch (e) {
+                    // Ignore quota error
+                }
+
+                // Close modals if open
+                if (typeof closeSettingsModal === 'function') closeSettingsModal();
+                if (typeof closeRegenerateModal === 'function') closeRegenerateModal();
+
+                // Re-render views & update header
+                if (typeof renderApp === 'function') renderApp();
+                if (typeof updateAuthHeaderUI === 'function') updateAuthHeaderUI();
+
+                const isML = (typeof getAppLanguage === 'function' && getAppLanguage() === 'ml');
+                showAppToast(
+                    isML ? "↺ മുൻപത്തെ പഠന പ്ലാനും പുരോഗതിയും തിരിച്ചെടുത്തു!" : "↺ Previous study plan and progress successfully restored!",
+                    "fa-rotate-left text-emerald-400"
+                );
+                return true;
+            } catch (err) {
+                console.error("Error restoring pre-reset snapshot:", err);
+                showAppToast("Could not restore previous plan.", "fa-triangle-exclamation text-rose-400");
+                return false;
+            }
+        }
+
         function compactPlanToToday() {
             if (!appState || !appState.plan || appState.plan.length === 0) return;
 
@@ -2305,7 +2694,8 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 }
             });
 
-            // Ensure attended completed days have sequential numbering 1..completedDays.length
+            // Ensure attended completed days have sequential numbering 1..completedDays.length in chronological order
+            completedDays.sort((a, b) => (a.date > b.date ? 1 : a.date < b.date ? -1 : 0));
             completedDays.forEach((d, idx) => {
                 d.dayNumber = idx + 1;
             });
@@ -2350,10 +2740,10 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
         function shiftPlanToToday() {
             if (!appState || !appState.plan || appState.plan.length === 0) return;
             savePreviousPlanSnapshot();
-            shiftPlanToStartDate(TODAY_STR);
+            shiftPlanToStartDate(getLocalDateStr());
         }
 
-        function shiftPlanToStartDate(newStartDateStr = TODAY_STR) {
+        function shiftPlanToStartDate(newStartDateStr = getLocalDateStr()) {
             if (!appState || !appState.plan || appState.plan.length === 0) return;
             savePreviousPlanSnapshot();
             const s = new Date(newStartDateStr + 'T00:00:00');
@@ -2380,7 +2770,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
             const select = document.getElementById('completed-day-select');
             select.innerHTML = '';
 
-            const todayIdx = appState.plan.findIndex(d => d.date === TODAY_STR);
+            const todayIdx = appState.plan.findIndex(d => d.date === getLocalDateStr());
             const currentDayNumber = todayIdx !== -1 ? appState.plan[todayIdx].dayNumber : appState.plan.length;
             const maxChoice = Math.max(0, currentDayNumber - 1);
 
@@ -2418,13 +2808,38 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 }
             }
 
+            // Show pre-reset restore box if available
+            const undoResetBox = document.getElementById('regenerate-undo-reset-box');
+            if (undoResetBox) {
+                const preResetRaw = localStorage.getItem('mpt_pre_reset_snapshot');
+                if (preResetRaw) {
+                    try {
+                        const snap = JSON.parse(preResetRaw);
+                        if (snap && snap.state && Array.isArray(snap.state.plan)) {
+                            undoResetBox.classList.remove('hidden');
+                            const sub = document.getElementById('regenerate-undo-reset-sub');
+                            const dateStr = snap.formattedDate || (snap.resetAt ? new Date(snap.resetAt).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' }) : '');
+                            if (sub) sub.textContent = `Pre-reset timetable saved from ${dateStr} at ${snap.formattedTime || ''}`;
+                        } else {
+                            undoResetBox.classList.add('hidden');
+                        }
+                    } catch (e) {
+                        undoResetBox.classList.add('hidden');
+                    }
+                } else {
+                    undoResetBox.classList.add('hidden');
+                }
+            }
+
             document.getElementById('regenerate-modal').classList.remove('hidden');
             document.getElementById('regenerate-modal').classList.add('flex');
         }
 
         function closeRegenerateModal() {
-            document.getElementById('regenerate-modal').classList.add('hidden');
-            document.getElementById('regenerate-modal').classList.remove('flex');
+            const modal = document.getElementById('regenerate-modal');
+            if (!modal) return;
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
         }
 
         function executeRegeneration() {
@@ -2570,6 +2985,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
         let setupCurrentStep = 1;
 
         function goToSetupStep(stepNum) {
+            if (typeof document === "undefined") return;
             if (stepNum < 1 || stepNum > 4) return;
             setupCurrentStep = stepNum;
 
@@ -2672,7 +3088,50 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 defaultTarget.setDate(30);
                 if (new Date() > defaultTarget) defaultTarget.setFullYear(defaultTarget.getFullYear() + 1);
 
+                let preResetBannerHtml = '';
+                try {
+                    const rawSnapshot = localStorage.getItem('mpt_pre_reset_snapshot');
+                    if (rawSnapshot) {
+                        const snapshot = JSON.parse(rawSnapshot);
+                        if (snapshot && snapshot.state && Array.isArray(snapshot.state.plan) && snapshot.state.plan.length > 0) {
+                            const dateStr = snapshot.formattedDate || (snapshot.resetAt ? new Date(snapshot.resetAt).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' }) : 'recently');
+                            const completedCount = snapshot.completedCount ?? (snapshot.state.plan.flatMap(d => d.tasks || []).filter(t => t.completed).length);
+                            const totalCount = snapshot.totalCount ?? (snapshot.state.plan.flatMap(d => d.tasks || []).filter(t => !t.isRevision && !t.isExamEveTask).length);
+                            const title = isML ? 'പ്ലാൻ അബദ്ധത്തിൽ റീസെറ്റ് ചെയ്തോ?' : 'Accidentally reset your plan?';
+                            const desc = isML
+                                ? `${dateStr}-ലെ നിങ്ങളുടെ മുൻപത്തെ പഠന ടൈംടേബിൾ (${completedCount}/${totalCount} ടാസ്കുകൾ പൂർത്തിയായത്) സൂക്ഷിച്ചിട്ടുണ്ട്.`
+                                : `Your previous study timetable from ${dateStr} (${completedCount}/${totalCount} tasks completed) is saved.`;
+                            const btnText = isML ? '↺ മുൻപത്തെ പ്ലാൻ തിരിച്ചെടുക്കുക' : '↺ Restore Previous Plan';
+
+                            preResetBannerHtml = `
+                                <div id="pre-reset-restore-banner" class="max-w-2xl mx-auto mb-5 bg-amber-50 dark:bg-amber-950/40 border-2 border-amber-300 dark:border-amber-700/60 rounded-3xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-lg shadow-amber-500/5 animate-fade-in-up" role="alert" aria-live="polite">
+                                    <div class="flex items-start gap-3.5">
+                                        <div class="w-10 h-10 rounded-2xl bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-md shadow-amber-500/25">
+                                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
+                                        </div>
+                                        <div>
+                                            <h4 class="text-sm font-black text-slate-900 dark:text-amber-100 flex items-center gap-1.5">
+                                                <span>${title}</span>
+                                            </h4>
+                                            <p class="text-xs font-medium text-slate-600 dark:text-amber-200/90 mt-0.5">
+                                                ${desc}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <button type="button" id="btn-restore-pre-reset" onclick="restorePreResetSnapshot()" class="w-full sm:w-auto px-4 py-2.5 bg-amber-600 hover:bg-amber-700 active:scale-95 text-white text-xs font-black rounded-xl shadow-md shadow-amber-600/25 transition flex items-center justify-center gap-1.5 cursor-pointer shrink-0">
+                                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
+                                        <span>${btnText}</span>
+                                    </button>
+                                </div>
+                            `;
+                        }
+                    }
+                } catch(e) {
+                    console.warn("Pre-reset banner check note:", e);
+                }
+
                 container.innerHTML = `
+                    ${preResetBannerHtml}
                     <div id="setup-wizard-card" class="max-w-2xl mx-auto bg-white dark:bg-[#0e1422] rounded-3xl p-5 sm:p-8 shadow-xl border border-slate-100 dark:border-slate-800/80 animate-fade-in-up">
                         <!-- Stepper Indicator -->
                         <div class="mb-6">
@@ -3249,7 +3708,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 let planDaysHTML = '';
 
                 appState.plan.forEach(day => {
-                    const isToday = (day.date === TODAY_STR);
+                    const isToday = (day.date === getLocalDateStr());
 
                     let displayedTasks = day.tasks;
                     if (currentPlanSubjectFilter !== 'All') {
@@ -3975,6 +4434,8 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
             setText('settings-reset-title', isML ? ML_I18N.settingsModal.resetTitle : 'Reset Plan');
             setText('settings-reset-hint', isML ? ML_I18N.settingsModal.resetHint : 'Clear current timetable to start fresh');
             setText('settings-reset-btn-text', isML ? ML_I18N.settingsModal.resetBtn : 'Reset');
+            setText('settings-undo-reset-title', isML ? 'റീസെറ്റ് തിരിച്ചെടുക്കുക' : 'Undo Recent Reset');
+            setText('settings-undo-reset-btn-text', isML ? 'തിരിച്ചെടുക്കുക' : 'Restore');
             setText('settings-done-btn', isML ? ML_I18N.settingsModal.doneBtn : 'Done');
 
             // 7. Regenerate Modal Localization
@@ -3982,6 +4443,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
             setText('regenerate-modal-subtitle', isML ? ML_I18N.regenerateModal.subtitle : "Missed some days or fell behind? Don't stress. Select the last day you fully finished, and our intelligent pacing algorithm will recalculate and redistribute only the remaining unfinished syllabus evenly across your available time.");
             setText('regenerate-completed-label', isML ? ML_I18N.regenerateModal.completedUpTo : 'I have completed up to:');
             setText('regenerate-revision-note', isML ? ML_I18N.regenerateModal.guaranteedRevision : 'Guaranteed Revision Days: Your target deadline will still maintain dedicated revision buffer days at the end!');
+            setText('regenerate-undo-reset-btn-text', isML ? '↺ റീസെറ്റ് ചെയ്ത പ്ലാൻ തിരിച്ചെടുക്കുക' : '↺ Undo Recent Reset / Restore Plan');
             setText('regenerate-cancel-btn', isML ? ML_I18N.regenerateModal.cancelBtn : 'Cancel');
             setText('regenerate-confirm-btn', isML ? ML_I18N.regenerateModal.rebalanceBtn : 'Rebalance Now');
 
@@ -4107,6 +4569,31 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 }
             }
 
+            // Pre-reset undo row in Settings
+            const undoResetRow = document.getElementById('settings-undo-reset-row');
+            if (undoResetRow) {
+                const preResetRaw = localStorage.getItem('mpt_pre_reset_snapshot');
+                if (preResetRaw) {
+                    try {
+                        const snap = JSON.parse(preResetRaw);
+                        if (snap && snap.state && Array.isArray(snap.state.plan)) {
+                            undoResetRow.classList.remove('hidden');
+                            const hint = document.getElementById('settings-undo-reset-hint');
+                            const dateStr = snap.formattedDate || (snap.resetAt ? new Date(snap.resetAt).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' }) : '');
+                            if (hint) {
+                                hint.textContent = `Undo Recent Reset: Restore timetable from ${dateStr}`;
+                            }
+                        } else {
+                            undoResetRow.classList.add('hidden');
+                        }
+                    } catch (e) {
+                        undoResetRow.classList.add('hidden');
+                    }
+                } else {
+                    undoResetRow.classList.add('hidden');
+                }
+            }
+
             updateThemeUI(getThemePreference());
             applyAppLanguage(getAppLanguage());
         }
@@ -4209,7 +4696,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
            Handles 'beforeinstallprompt' with 1-click automatic trigger
            ========================================================================== */
         let deferredPWAInstallPrompt = null;
-        window.addEventListener('beforeinstallprompt', (e) => {
+        if (typeof window !== 'undefined') window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPWAInstallPrompt = e;
             const installBtn = document.getElementById('pwa-install-btn');
@@ -4241,7 +4728,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
         }
 
         // Register Service Worker for PWA
-        if ('serviceWorker' in navigator) {
+        if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator && typeof window !== 'undefined') {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js').then((reg) => {
                     if (reg && typeof reg.update === 'function') {
@@ -4254,9 +4741,11 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
         }
 
         // Initialize Theme, Language, Analytics & System Listener
-        applyTheme();
-        applyAppLanguage();
-        initAppAnalytics();
+        if (typeof document !== 'undefined') {
+            applyTheme();
+            applyAppLanguage();
+            initAppAnalytics();
+        }
 
         if (typeof window !== 'undefined' && window.matchMedia) {
             try {
@@ -4292,10 +4781,12 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
         }
 
         // Initialize App on DOM Load
-        renderApp();
+        if (typeof document !== 'undefined') {
+            renderApp();
+        }
 
         // If user already has a generated plan on this device and hasn't seen the sign-in modal, prompt after 8 seconds
-        if (typeof window !== 'undefined' && appState && !localStorage.getItem('has_seen_auth_modal')) {
+        if (typeof window !== 'undefined' && appState && typeof localStorage !== 'undefined' && !localStorage.getItem('has_seen_auth_modal')) {
             schedulePostPlanAuthModal(8000);
         }
     
@@ -4305,9 +4796,12 @@ if (typeof window !== 'undefined') {
     Object.assign(window, {
         appState,
         currentUser: typeof currentUser !== 'undefined' ? currentUser : null,
+        currentSessionId: typeof currentSessionId !== 'undefined' ? currentSessionId : null,
         loadInitialState,
         saveAppStateLocally,
         saveAppState,
+        syncAppStateToCloud,
+        getFirestoreCleanData,
         performCloudSync,
         schedulePostPlanAuthModal,
         scheduleFirstTimeAuthModal,
@@ -4396,8 +4890,20 @@ if (typeof window !== 'undefined') {
         shiftPlanToStartDate,
         compactPlanToToday,
         restorePreviousPlan,
+        restorePreResetSnapshot,
         savePreviousPlanSnapshot,
         renderApp,
+        getActiveTodayStr,
+        setActiveTodayStr,
+        getAppState,
+        setAppState,
+        getCurrentView,
+        setCurrentView,
+        setupWindowBindings,
+        getActiveStreak,
+        setupAutoRefresh,
+        checkDate,
+        checkDateRollover: checkDate,
         getSubjectColorBadge,
         getTaskChapterTitle,
         formatTaskTopicTitle,
@@ -4436,8 +4942,13 @@ if (typeof window !== 'undefined') {
         TODAY_STR,
     });
 
+    setupWindowBindings();
+}
+
+function setupWindowBindings() {
+    if (typeof window === "undefined") return;
     try {
-        Object.defineProperty(window, 'appState', {
+        Object.defineProperty(window, "appState", {
             get: () => appState,
             set: (val) => { appState = val; },
             configurable: true
@@ -4445,4 +4956,50 @@ if (typeof window !== 'undefined') {
     } catch(e) {
         window.appState = appState;
     }
+
+    try {
+        Object.defineProperty(window, "currentView", {
+            get: () => currentView,
+            set: (val) => { currentView = val; },
+            configurable: true
+        });
+    } catch(e) {
+        window.currentView = currentView;
+    }
 }
+
+export {
+    resetApp,
+    restorePreResetSnapshot,
+    renderApp,
+    saveAppState,
+    saveAppStateLocally,
+    getActiveTodayStr,
+    setActiveTodayStr,
+    getAppState,
+    setAppState,
+    getCurrentView,
+    setCurrentView,
+    setupWindowBindings,
+    setupAutoRefresh,
+    checkDate,
+    compactPlanToToday,
+    getActiveStreak,
+    getYesterdayStr,
+    signOutUser,
+    performCloudSync,
+    syncAppStateToCloud,
+    toggleTaskDirect,
+    getFirestoreCleanData,
+    initFirebaseAuth,
+    attachAuthListener,
+    getCurrentUser,
+    setCurrentUser,
+    getFirebaseAuth,
+    setFirebaseAuth,
+    getFirestoreDb,
+    setFirestoreDb,
+    getCloudSyncUnsubscribe,
+    setCloudSyncUnsubscribe,
+};
+

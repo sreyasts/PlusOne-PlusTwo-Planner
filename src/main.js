@@ -7,6 +7,14 @@
 import './style.css';
 import './app.js';
 
+export {
+  resetApp,
+  restorePreResetSnapshot,
+  getActiveTodayStr,
+  compactPlanToToday,
+  getActiveStreak,
+} from './app.js';
+
 // Planning Engine & Migration
 export {
   PLANNER_ENGINE_VERSION,

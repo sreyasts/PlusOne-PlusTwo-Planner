@@ -200,6 +200,16 @@ service cloud.firestore {
       allow delete: if isOwner(userId);
     }
 
+    // User Archives Collection: stores pre-reset snapshots for accidental reset restoration
+    match /user_archives/{userId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    // Optional user archives subcollection support
+    match /users/{userId}/archives/{archiveId} {
+      allow read, write: if isOwner(userId);
+    }
+
     // ===============================================================
     // Default Deny
     // ===============================================================
