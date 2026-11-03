@@ -80,7 +80,8 @@ service cloud.firestore {
         'issues', 'validationIssues', 'isLateEveningGenerated', 'createdAt', 'lastModified',
         'lastSynced', 'updatedAt', 'userEmail', 'displayName', 'ownerUid', 'uid',
         'bonusXP', 'xp', 'streakCount', 'lastCompletedDate', '_migratedFromV1',
-        'grade', 'clientSessionId'
+        'grade', 'clientSessionId',
+        'themeMode', 'chartViewMode', 'daysLoggedCount', 'TYMVERA_theme', 'TYMVERA_chart_mode'
       ];
       return data.keys().hasOnly(allowedKeys);
     }
@@ -111,6 +112,10 @@ service cloud.firestore {
              (!('updatedAt' in data) || (data.updatedAt is string && data.updatedAt.size() <= 50)) &&
              (!('displayName' in data) || data.displayName == null || (data.displayName is string && data.displayName.size() <= 150)) &&
              (!('userEmail' in data) || data.userEmail == null || data.userEmail == "" || (data.userEmail is string && data.userEmail.size() <= 200 && isValidEmail(data.userEmail))) &&
+             (!('themeMode' in data) || (data.themeMode is string && data.themeMode.size() <= 50)) &&
+             (!('chartViewMode' in data) || (data.chartViewMode is string && data.chartViewMode.size() <= 50)) &&
+             (!('TYMVERA_theme' in data) || (data.TYMVERA_theme is string && data.TYMVERA_theme.size() <= 50)) &&
+             (!('TYMVERA_chart_mode' in data) || (data.TYMVERA_chart_mode is string && data.TYMVERA_chart_mode.size() <= 50)) &&
              (!('studyIntensity' in data) || (data.studyIntensity is string && data.studyIntensity.size() <= 50) || (data.studyIntensity is map) || (data.studyIntensity is number));
     }
 
@@ -123,6 +128,7 @@ service cloud.firestore {
              (!('totalConfiguredTasks' in data) || (data.totalConfiguredTasks is number && data.totalConfiguredTasks >= 0 && data.totalConfiguredTasks <= 5000)) &&
              (!('bonusXP' in data) || (data.bonusXP is number && data.bonusXP >= 0 && data.bonusXP <= 10000000)) &&
              (!('xp' in data) || (data.xp is number && data.xp >= 0 && data.xp <= 10000000)) &&
+             (!('daysLoggedCount' in data) || (data.daysLoggedCount is number && data.daysLoggedCount >= 0 && data.daysLoggedCount <= 100000)) &&
              (!('streakCount' in data) || (data.streakCount is number && data.streakCount >= 0 && data.streakCount <= 100000));
     }
 
@@ -212,6 +218,17 @@ service cloud.firestore {
 
     // Optional user archives subcollection support
     match /users/{userId}/archives/{archiveId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    // Support all subcollections of user data (planner_v3, settings, days, etc.)
+    // strictly owned and accessible only by the authenticated user
+    match /users/{userId}/{document=**} {
+      allow read, write: if isOwner(userId);
+    }
+
+    // Support legacy focusos user migration data
+    match /focusos_users/{userId} {
       allow read, write: if isOwner(userId);
     }
 
