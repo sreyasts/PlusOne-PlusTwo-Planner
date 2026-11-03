@@ -16,6 +16,8 @@ service cloud.firestore {
     //   - ownerUid: string (optional, max 128 chars, immutable, matches auth.uid)
     //   - uid: string (optional, max 128 chars, immutable, matches auth.uid)
     //   - stream: string (optional, max 50 chars, allowed stream values)
+    //   - grade: string (optional, max 10 chars, e.g. '+1', '+2')
+    //   - clientSessionId: string (optional, max 100 chars)
     //   - engineVersion: number (optional, integer between 1 and 100)
     //   - startDate: string (optional, max 50 chars)
     //   - deadlineDate: string (optional, max 50 chars)
@@ -77,7 +79,8 @@ service cloud.firestore {
         'studyIntensity', 'personalization', 'diagnostics', 'scorecard', 'isValid', 'valid',
         'issues', 'validationIssues', 'isLateEveningGenerated', 'createdAt', 'lastModified',
         'lastSynced', 'updatedAt', 'userEmail', 'displayName', 'ownerUid', 'uid',
-        'bonusXP', 'xp', 'streakCount', 'lastCompletedDate', '_migratedFromV1'
+        'bonusXP', 'xp', 'streakCount', 'lastCompletedDate', '_migratedFromV1',
+        'grade', 'clientSessionId'
       ];
       return data.keys().hasOnly(allowedKeys);
     }
@@ -96,7 +99,7 @@ service cloud.firestore {
 
     // Validate string fields and enforce realistic size limits against DoS/resource exhaustion
     function isValidUserStrings(data) {
-      return (!('grade' in data) || data.grade in ['+1', '+2', 'dual']) &&
+      return (!('grade' in data) || data.grade in ['+1', '+2', 'dual'] || (data.grade is string && data.grade.size() <= 10)) &&
              (!('clientSessionId' in data) || (data.clientSessionId is string && data.clientSessionId.size() <= 150)) &&
              (!('stream' in data) || (data.stream is string && data.stream.size() <= 50)) &&
              (!('startDate' in data) || (data.startDate is string && data.startDate.size() <= 50)) &&

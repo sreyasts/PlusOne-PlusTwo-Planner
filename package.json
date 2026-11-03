@@ -18,7 +18,7 @@
     "test:e2e": "playwright test",
     "lint": "eslint src --ext .js",
     "format": "prettier --write \"src/**/*.{js,json,css,html}\"",
-    "deploy": "npm run build && npx -y firebase-tools@latest deploy --only hosting",
+    "deploy": "npm run build && npx -y firebase-tools@latest deploy --only firestore:rules,hosting",
     "deploy:ps": "powershell -ExecutionPolicy Bypass -File ./scripts/deploy.ps1",
     "deploy:all": "powershell -ExecutionPolicy Bypass -File ./scripts/deploy-all.ps1"
   },

@@ -38,9 +38,9 @@ if ($LASTEXITCODE -ne 0) {
     Exit 1
 }
 
-# Step 4A: Deploy to Firebase Hosting
-Write-Host "`n[4A/4] Deploying to Firebase Hosting (hss-planner.web.app)..." -ForegroundColor Yellow
-npx -y firebase-tools@latest deploy --only hosting
+# Step 4A: Deploy to Firebase (Firestore Rules + Hosting)
+Write-Host "`n[4A/4] Deploying to Firebase (Firestore Rules & Hosting - hss-planner.web.app)..." -ForegroundColor Yellow
+npx -y firebase-tools@latest deploy --only firestore:rules,hosting
 if ($LASTEXITCODE -ne 0) {
     Write-Host "`n⚠️ Firebase deploy warning or error. Ensure you are logged in via: npx -y firebase-tools@latest login" -ForegroundColor Red
 } else {

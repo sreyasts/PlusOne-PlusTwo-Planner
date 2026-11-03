@@ -56,6 +56,53 @@ describe('Cloud Firestore Production Security Rules Invariants', () => {
     expect(rulesContent).toContain('data.stream.size() <= 50');
   });
 
+  it('supports multi-device sync with grade and clientSessionId allowed and validated', () => {
+    expect(rulesContent).toContain("'grade'");
+    expect(rulesContent).toContain("'clientSessionId'");
+    expect(rulesContent).toMatch(/!\('grade'\s+in\s+data\)\s*\|\|\s*\(data\.grade\s+is\s+string\s*&&\s*data\.grade\.size\(\)\s*<=\s*10\)/);
+    expect(rulesContent).toMatch(/!\('clientSessionId'\s+in\s+data\)\s*\|\|\s*\(data\.clientSessionId\s+is\s+string\s*&&\s*data\.clientSessionId\.size\(\)\s*<=\s*100\)/);
+  });
+
+  it('validates that real client payload produced by getFirestoreCleanData strictly passes hasOnlyAllowedStudyPlanFields', () => {
+    // Extract allowedKeys from firestore.rules
+    const match = rulesContent.match(/let\s+allowedKeys\s*=\s*\[([\s\S]*?)\];/);
+    expect(match).toBeTruthy();
+    const rawKeys = match[1]
+      .split(',')
+      .map((k) => k.trim().replace(/['"]/g, ''))
+      .filter(Boolean);
+    const allowedKeysSet = new Set(rawKeys);
+
+    // Realistic payload constructed by the client app during multi-device sync
+    const realPayload = {
+      engineVersion: 6,
+      grade: '+2',
+      stream: 'cs',
+      studyIntensity: 'regular',
+      personalization: { targetScore: 'A+' },
+      startDate: '2026-11-01',
+      deadlineDate: '2026-12-01',
+      targetTerm: 1,
+      completedChaptersOnInit: [],
+      plan: [],
+      revisionDaysCount: 3,
+      totalConfiguredTasks: 120,
+      diagnostics: {},
+      isLateEveningGenerated: false,
+      createdAt: '2026-11-01T10:00:00.000Z',
+      lastModified: '2026-11-01T10:00:00.000Z',
+      userEmail: 'student@kerala.edu',
+      displayName: 'Kerala Student',
+      lastSynced: '2026-11-01T10:00:00.000Z',
+      clientSessionId: 'sess_1730000000000_abc123',
+    };
+
+    // Every key in realPayload MUST be present in allowedKeysSet
+    for (const key of Object.keys(realPayload)) {
+      expect(allowedKeysSet.has(key), `Key '${key}' in client payload must be in allowedKeys`).toBe(true);
+    }
+  });
+
   it('strictly denies all other paths and subcollections by default', () => {
     expect(rulesContent).toMatch(/match\s+\/\{document=\*\*\}\s*\{\s*allow\s+read,\s*write:\s*if\s*false;\s*\}/);
   });

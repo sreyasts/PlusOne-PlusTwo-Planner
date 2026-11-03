@@ -17,10 +17,10 @@ Build and synchronize the production distribution:
 npm run build
 ```
 
-### 3. Deploy to Firebase Hosting (Domain 1: hss-planner.web.app)
-Deploy the verified build to Firebase Hosting:
+### 3. Deploy to Firebase (Domain 1: hss-planner.web.app & Firestore Security Rules)
+Deploy the verified build and security rules to Firebase:
 ```powershell
-npx -y firebase-tools@latest deploy --only hosting
+npx -y firebase-tools@latest deploy --only firestore:rules,hosting
 ```
 
 ### 4. Deploy to GitHub Pages (Domain 2: sreyasts.github.io)

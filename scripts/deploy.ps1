@@ -20,9 +20,9 @@ if ($LASTEXITCODE -ne 0) {
     Exit 1
 }
 
-# 2. Deploy to Firebase Hosting
-Write-Host "`n[2/2] Deploying to Firebase Hosting..." -ForegroundColor Yellow
-npx -y firebase-tools@latest deploy --only hosting
+# 2. Deploy to Firebase (Firestore Rules + Hosting)
+Write-Host "`n[2/2] Deploying to Firebase (Firestore Rules & Hosting)..." -ForegroundColor Yellow
+npx -y firebase-tools@latest deploy --only firestore:rules,hosting
 
 if ($LASTEXITCODE -eq 0) {
     Write-Host "`n✅ Successfully deployed to:" -ForegroundColor Green

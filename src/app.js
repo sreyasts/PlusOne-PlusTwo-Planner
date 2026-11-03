@@ -434,7 +434,9 @@ function loadInitialState() {
                     }
                     auth = window.firebase.auth();
                     db = window.firebase.firestore();
-                    db.enablePersistence().catch(() => {});
+                    db.enablePersistence({ synchronizeTabs: true }).catch(() => {
+                        db.enablePersistence().catch(() => {});
+                    });
                     attachAuthListener();
                 }
             } catch(err) {
