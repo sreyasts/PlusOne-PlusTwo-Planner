@@ -59,8 +59,8 @@ describe('Cloud Firestore Production Security Rules Invariants', () => {
   it('supports multi-device sync with grade and clientSessionId allowed and validated', () => {
     expect(rulesContent).toContain("'grade'");
     expect(rulesContent).toContain("'clientSessionId'");
-    expect(rulesContent).toMatch(/!\('grade'\s+in\s+data\)\s*\|\|\s*\(data\.grade\s+is\s+string\s*&&\s*data\.grade\.size\(\)\s*<=\s*10\)/);
-    expect(rulesContent).toMatch(/!\('clientSessionId'\s+in\s+data\)\s*\|\|\s*\(data\.clientSessionId\s+is\s+string\s*&&\s*data\.clientSessionId\.size\(\)\s*<=\s*100\)/);
+    expect(rulesContent).toMatch(/!\('grade'\s+in\s+data\)\s*\|\|\s*data\.grade\s+in\s+\['\+1',\s*'\+2',\s*'dual'\]/);
+    expect(rulesContent).toMatch(/!\('clientSessionId'\s+in\s+data\)\s*\|\|\s*\(data\.clientSessionId\s+is\s+string\s*&&\s*data\.clientSessionId\.size\(\)\s*<=\s*150\)/);
   });
 
   it('validates that real client payload produced by getFirestoreCleanData strictly passes hasOnlyAllowedStudyPlanFields', () => {
