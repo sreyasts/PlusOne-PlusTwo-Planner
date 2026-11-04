@@ -5,8 +5,8 @@ const tasks = state => new Map((state?.plan || []).flatMap(day => day.tasks || [
 
 /** Capture edits made while Firebase is still restoring a remembered login. */
 export function queuePendingAccountState(storage, state) {
-  if (!state?.ownerUid || !hasPlan(state)) return;
-  const key = `mpt_account_sync_v1_${state.ownerUid}`;
+  if (!hasPlan(state)) return;
+  const key = state.ownerUid ? `mpt_account_sync_v1_${state.ownerUid}` : 'mpt_account_sync_pending_guest';
   let journal = {};
   try { journal = JSON.parse(storage.getItem(key) || '{}') || {}; } catch { /* Recover the device plan. */ }
   storage.setItem(key, JSON.stringify({ base: journal.base || null, pending: copy(state) }));
@@ -59,6 +59,19 @@ export function createAccountSync({ db, user, storage, sessionId, getLocal, appl
     const saved = JSON.parse(storage.getItem(key) || 'null');
     if (saved && typeof saved === 'object') journal = { base: saved.base || null, pending: saved.pending || null };
   } catch { /* The device plan remains available if an old journal is corrupt. */ }
+  try {
+    const guestKey = 'mpt_account_sync_pending_guest';
+    const guestRaw = storage.getItem(guestKey);
+    if (guestRaw) {
+      const guestJournal = JSON.parse(guestRaw);
+      const guestPending = guestJournal?.pending || guestJournal;
+      if (hasPlan(guestPending) && !journal.pending) {
+        journal.pending = copy({ ...guestPending, ownerUid: user.uid });
+        persist();
+      }
+      storage.removeItem(guestKey);
+    }
+  } catch { /* Recover device plan */ }
   let stopped = false;
   let initialized = false;
   let refreshing = null;
@@ -178,15 +191,33 @@ export function createAccountSync({ db, user, storage, sessionId, getLocal, appl
         const snapshot = await ref.get({ source: 'server' });
         if (stopped) return false;
         const remote = snapshot.exists ? snapshot.data() : null;
-        if (!initialized && !journal.pending && !journal.base) {
+        if (!initialized && !journal.pending) {
           const local = getLocal();
           if (hasPlan(local) && (!local.ownerUid || local.ownerUid === user.uid)) {
-            if (!hasPlan(remote) || sameStudyPlan(local, remote) || await chooseLocal(local, remote)) {
-              if (stopped) return false;
-              journal.pending = reconcileStudyPlan(null, local, remote);
-              // Legacy clients had no durable base: preserve ticks once during migration.
-              journal.base = copy(remote);
-              persist();
+            const localHasChanges = !journal.base || !equal(local, journal.base);
+            if (localHasChanges) {
+              const localTime = Date.parse(local.lastModified || local.updatedAt || local.lastSynced || local.createdAt || 0);
+              const remoteTime = Date.parse(remote?.lastModified || remote?.updatedAt || remote?.lastSynced || remote?.createdAt || 0);
+              const baseTime = Date.parse(journal.base?.lastModified || journal.base?.lastSynced || journal.base?.createdAt || 0);
+              const isNewerThanBase = !journal.base || (localTime > 0 && baseTime > 0 && localTime > baseTime) || !sameStudyPlan(local, journal.base);
+              const localIsNewerThanRemote = hasPlan(remote) && localTime > 0 && remoteTime > 0 && localTime > remoteTime;
+
+              if (!hasPlan(remote)) {
+                journal.pending = reconcileStudyPlan(journal.base, local, remote);
+                journal.base = copy(remote);
+                persist();
+              } else if (sameStudyPlan(local, remote)) {
+                if (isNewerThanBase || !journal.base) {
+                  journal.pending = reconcileStudyPlan(journal.base, local, remote);
+                  journal.base = copy(remote);
+                  persist();
+                }
+              } else if (localIsNewerThanRemote || await chooseLocal(local, remote)) {
+                if (stopped) return false;
+                journal.pending = reconcileStudyPlan(journal.base, local, remote);
+                journal.base = copy(remote);
+                persist();
+              }
             }
           }
         }

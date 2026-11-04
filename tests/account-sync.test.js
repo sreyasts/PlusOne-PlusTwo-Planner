@@ -273,4 +273,52 @@ describe('Durable account synchronization', () => {
     await restoredLogin.sync.refresh();
     expect(completed(server.read())).toEqual(['a', 'b']);
   });
+
+  it('retains a newly generated local plan created yesterday over a stale remote plan on next-day login', async () => {
+    const oldRemote = {
+      ...plan(['a']),
+      grade: '+2',
+      stream: 'cs',
+      createdAt: '2026-10-20T00:00:00.000Z',
+      lastModified: '2026-10-20T00:00:00.000Z',
+    };
+    const server = database(oldRemote);
+    const disk = storage();
+    disk.setItem('mpt_account_sync_v1_student', JSON.stringify({ base: oldRemote, pending: null }));
+    const yesterdayNewPlan = {
+      ...plan([]),
+      grade: '+2',
+      stream: 'bio',
+      createdAt: '2026-11-03T10:00:00.000Z',
+      lastModified: '2026-11-03T10:00:00.000Z',
+    };
+    const client = device(server, yesterdayNewPlan, disk);
+    await client.sync.refresh();
+    expect(client.read().stream).toBe('bio');
+    expect(server.read().stream).toBe('bio');
+  });
+
+  it('adopts guest pending plan created before authentication and saves it to user account', async () => {
+    const oldRemote = {
+      ...plan(['a']),
+      grade: '+2',
+      stream: 'cs',
+      createdAt: '2026-10-20T00:00:00.000Z',
+      lastModified: '2026-10-20T00:00:00.000Z',
+    };
+    const server = database(oldRemote);
+    const disk = storage();
+    const guestPlan = {
+      ...plan([]),
+      grade: '+2',
+      stream: 'commerce',
+      createdAt: '2026-11-04T10:00:00.000Z',
+      lastModified: '2026-11-04T10:00:00.000Z',
+    };
+    queuePendingAccountState(disk, guestPlan);
+    const client = device(server, guestPlan, disk);
+    await client.sync.refresh();
+    expect(client.read().stream).toBe('commerce');
+    expect(server.read().stream).toBe('commerce');
+  });
 });
