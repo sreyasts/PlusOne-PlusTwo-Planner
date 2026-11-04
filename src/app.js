@@ -2281,6 +2281,8 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                         totalConfiguredTasks: tasksToPlan.length,
                         diagnostics: planResult.diagnostics,
                         isLateEveningGenerated: smartStart.isLateEvening,
+                        ownerUid: (typeof currentUser !== 'undefined' && currentUser ? currentUser.uid : null),
+                        uid: (typeof currentUser !== 'undefined' && currentUser ? currentUser.uid : null),
                         createdAt: new Date().toISOString(),
                         lastModified: new Date().toISOString()
                     };

@@ -2,6 +2,11 @@ const copy = value => value == null ? null : JSON.parse(JSON.stringify(value));
 const hasPlan = state => Array.isArray(state?.plan) && state.plan.length > 0;
 const equal = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 const tasks = state => new Map((state?.plan || []).flatMap(day => day.tasks || []).map(task => [task.id, task]));
+const parseTimestamp = value => {
+  if (!value) return 0;
+  const parsed = typeof value === 'number' ? value : Date.parse(value);
+  return Number.isFinite(parsed) ? parsed : 0;
+};
 
 /** Capture edits made while Firebase is still restoring a remembered login. */
 export function queuePendingAccountState(storage, state) {
@@ -191,16 +196,16 @@ export function createAccountSync({ db, user, storage, sessionId, getLocal, appl
         const snapshot = await ref.get({ source: 'server' });
         if (stopped) return false;
         const remote = snapshot.exists ? snapshot.data() : null;
-        if (!initialized && !journal.pending) {
+        if (!journal.pending) {
           const local = getLocal();
           if (hasPlan(local) && (!local.ownerUid || local.ownerUid === user.uid)) {
             const localHasChanges = !journal.base || !equal(local, journal.base);
             if (localHasChanges) {
-              const localTime = Date.parse(local.lastModified || local.updatedAt || local.lastSynced || local.createdAt || 0);
-              const remoteTime = Date.parse(remote?.lastModified || remote?.updatedAt || remote?.lastSynced || remote?.createdAt || 0);
-              const baseTime = Date.parse(journal.base?.lastModified || journal.base?.lastSynced || journal.base?.createdAt || 0);
-              const isNewerThanBase = !journal.base || (localTime > 0 && baseTime > 0 && localTime > baseTime) || !sameStudyPlan(local, journal.base);
-              const localIsNewerThanRemote = hasPlan(remote) && localTime > 0 && remoteTime > 0 && localTime > remoteTime;
+              const localTime = parseTimestamp(local.lastModified || local.updatedAt || local.lastSynced || local.createdAt);
+              const remoteTime = parseTimestamp(remote?.lastModified || remote?.updatedAt || remote?.lastSynced || remote?.createdAt);
+              const baseTime = parseTimestamp(journal.base?.lastModified || journal.base?.lastSynced || journal.base?.createdAt);
+              const isNewerThanBase = !journal.base || (localTime > 0 && localTime > baseTime) || !sameStudyPlan(local, journal.base);
+              const localIsNewerThanRemote = hasPlan(remote) && localTime > 0 && (remoteTime === 0 || localTime > remoteTime);
 
               if (!hasPlan(remote)) {
                 journal.pending = reconcileStudyPlan(journal.base, local, remote);
@@ -254,7 +259,9 @@ export function createAccountSync({ db, user, storage, sessionId, getLocal, appl
       if (stopped || snapshot.metadata?.hasPendingWrites || snapshot.metadata?.fromCache) return;
       if (running) { receivedDuringWrite = true; return; }
       if (refreshing) return;
-      if (!initialized || journal.pending) {
+      const local = getLocal();
+      const localHasChanges = hasPlan(local) && (!journal.base || !equal(local, journal.base));
+      if (!initialized || journal.pending || localHasChanges) {
         void refresh();
         return;
       }
