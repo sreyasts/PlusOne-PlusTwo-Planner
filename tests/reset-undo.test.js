@@ -79,7 +79,8 @@ describe('Requirement R2: Non-Destructive Reset Plan with Hybrid Snapshot Restor
             },
             querySelectorAll: () => [],
             appendChild: vi.fn(),
-            setAttribute: vi.fn()
+            setAttribute: vi.fn(),
+            remove: vi.fn()
           });
         }
         return elements.get(id);
@@ -212,7 +213,10 @@ describe('Requirement R2: Non-Destructive Reset Plan with Hybrid Snapshot Restor
 
       // Inject implementation functions from app.js
       vm.runInContext(extractFunction('resetApp'), sandbox);
+      vm.runInContext(extractFunction('restorePreviousPlan'), sandbox);
       vm.runInContext(extractFunction('restorePreResetSnapshot'), sandbox);
+      vm.runInContext(extractFunction('dismissDashboardRestoreBanner'), sandbox);
+      vm.runInContext(extractFunction('renderDashboardRestoreBanner'), sandbox);
       vm.runInContext(extractFunction('renderApp'), sandbox);
       vm.runInContext(extractFunction('updateSettingsUI'), sandbox);
       vm.runInContext(extractFunction('openRegenerateModal'), sandbox);
@@ -436,6 +440,101 @@ describe('Requirement R2: Non-Destructive Reset Plan with Hybrid Snapshot Restor
       expect(undoBox.classList.contains('hidden')).toBe(false);
       const sub = sandbox.document.getElementById('regenerate-undo-reset-sub');
       expect(sub.textContent).toContain('Pre-reset timetable saved from Oct 25, 2026');
+    });
+
+    it('renders prominent restore banner on Dashboard when pre-reset snapshot exists', () => {
+      const sandbox = createSandboxEnvironment(sampleStudyPlan);
+      const preResetSnapshot = {
+        state: sampleStudyPlan,
+        resetAt: new Date().toISOString(),
+        formattedTime: '08:45 AM',
+        formattedDate: 'Oct 25, 2026',
+        stream: 'cs',
+        grade: '+2',
+        completedCount: 2,
+        totalCount: 4
+      };
+      sandbox.storage.set('mpt_pre_reset_snapshot', JSON.stringify(preResetSnapshot));
+
+      const bannerHtml = sandbox.renderDashboardRestoreBanner();
+      expect(bannerHtml).toContain('id="dashboard-restore-banner"');
+      expect(bannerHtml).toContain("Yesterday's Reset Timetable Available");
+      expect(bannerHtml).toContain('Restore Timetable');
+      expect(bannerHtml).toContain('restorePreResetSnapshot()');
+    });
+
+    it('dismissDashboardRestoreBanner marks session and removes banner element', () => {
+      const sandbox = createSandboxEnvironment(sampleStudyPlan);
+      sandbox.sessionStorage.setItem = vi.fn();
+
+      sandbox.dismissDashboardRestoreBanner();
+      expect(sandbox.sessionStorage.setItem).toHaveBeenCalledWith('mpt_dismissed_restore_banner', 'true');
+    });
+
+    it('restorePreviousPlan falls back to pre-reset snapshot when rebalance snapshot is absent', () => {
+      const sandbox = createSandboxEnvironment(sampleStudyPlan);
+      const preResetSnapshot = {
+        state: sampleStudyPlan,
+        resetAt: new Date().toISOString(),
+        formattedTime: '08:45 AM',
+        formattedDate: 'Oct 25, 2026',
+        stream: 'cs',
+        grade: '+2',
+        completedCount: 2,
+        totalCount: 4
+      };
+      sandbox.storage.set('mpt_pre_reset_snapshot', JSON.stringify(preResetSnapshot));
+      sandbox.appState = null;
+      sandbox.renderApp = vi.fn();
+
+      const restored = sandbox.restorePreviousPlan();
+      expect(restored).toBe(true);
+      expect(sandbox.appState).not.toBeNull();
+      expect(sandbox.appState.stream).toBe('cs');
+    });
+
+    it('openRegenerateModal unhides undo reset box from Firestore user_archives when localStorage is empty', async () => {
+      const sandbox = createSandboxEnvironment(sampleStudyPlan);
+      sandbox.storage.delete('mpt_pre_reset_snapshot');
+      sandbox.userArchivesDb.set('student_999', {
+        state: sampleStudyPlan,
+        resetAt: new Date().toISOString(),
+        formattedTime: '11:00 AM',
+        formattedDate: 'Nov 03, 2026',
+        stream: 'cs',
+        grade: '+2'
+      });
+
+      sandbox.openRegenerateModal();
+      // Allow async firestore promise to resolve
+      await new Promise(r => setTimeout(r, 10));
+
+      const undoBox = sandbox.document.getElementById('regenerate-undo-reset-box');
+      expect(undoBox.classList.contains('hidden')).toBe(false);
+      const sub = sandbox.document.getElementById('regenerate-undo-reset-sub');
+      expect(sub.textContent).toContain('Cloud pre-reset timetable saved');
+    });
+
+    it('updateSettingsUI unhides undo reset row from Firestore user_archives when localStorage is empty', async () => {
+      const sandbox = createSandboxEnvironment(null);
+      sandbox.storage.delete('mpt_pre_reset_snapshot');
+      sandbox.userArchivesDb.set('student_999', {
+        state: sampleStudyPlan,
+        resetAt: new Date().toISOString(),
+        formattedTime: '11:00 AM',
+        formattedDate: 'Nov 03, 2026',
+        stream: 'cs',
+        grade: '+2'
+      });
+
+      sandbox.updateSettingsUI();
+      // Allow async firestore promise to resolve
+      await new Promise(r => setTimeout(r, 10));
+
+      const undoRow = sandbox.document.getElementById('settings-undo-reset-row');
+      expect(undoRow.classList.contains('hidden')).toBe(false);
+      const hint = sandbox.document.getElementById('settings-undo-reset-hint');
+      expect(hint.textContent).toContain('Restore timetable from Nov 03, 2026');
     });
   });
 });

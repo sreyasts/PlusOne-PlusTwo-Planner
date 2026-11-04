@@ -251,6 +251,9 @@ function loadInitialState() {
                 getLocal: () => appState,
                 apply: state => {
                     if (currentUser?.uid !== user.uid) return;
+                    if (appState && Array.isArray(appState.plan) && appState.plan.length > 0 && typeof savePreviousPlanSnapshot === 'function') {
+                        savePreviousPlanSnapshot();
+                    }
                     appState = state;
                     if (appState && (!appState.engineVersion || appState.engineVersion < PLANNER_ENGINE_VERSION)) {
                         appState = migrateLegacyUserPlan(appState);
@@ -394,6 +397,7 @@ function loadInitialState() {
                     const sync = getAccountSync(user);
                     sync.listen();
                     cloudSyncUnsubscribe = () => { sync.stop(); if (accountSync === sync) accountSync = null; };
+                    if (typeof checkCloudArchiveForBanner === 'function') void checkCloudArchiveForBanner();
                 } else {
                     // User is not signed in (Guest or signed out)
                     if (cloudSyncUnsubscribe) {
@@ -2355,14 +2359,25 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
 
         function restorePreviousPlan() {
             try {
-                const raw = localStorage.getItem('mpt_previous_plan_snapshot');
-                if (!raw) {
-                    showAppToast("No previous plan snapshot found to restore.", "fa-info-circle text-blue-400");
-                    return false;
+                let raw = (typeof localStorage !== 'undefined') ? localStorage.getItem('mpt_previous_plan_snapshot') : null;
+                let snapshot = null;
+                if (raw) {
+                    try { snapshot = JSON.parse(raw); } catch (_) {}
                 }
-                const snapshot = JSON.parse(raw);
+                // Fallback to pre-reset snapshot if previous plan snapshot is not present
+                if (!snapshot || !snapshot.state) {
+                    const preResetRaw = (typeof localStorage !== 'undefined') ? localStorage.getItem('mpt_pre_reset_snapshot') : null;
+                    if (preResetRaw) {
+                        try { snapshot = JSON.parse(preResetRaw); } catch (_) {}
+                    }
+                }
                 if (!snapshot || !snapshot.state || !Array.isArray(snapshot.state.plan)) {
-                    showAppToast("Previous plan snapshot is invalid.", "fa-triangle-exclamation text-amber-400");
+                    // Try cloud archive
+                    if (typeof currentUser !== 'undefined' && currentUser && typeof db !== 'undefined' && db) {
+                        void restorePreResetSnapshot();
+                        return true;
+                    }
+                    showAppToast("No previous plan snapshot found to restore.", "fa-info-circle text-blue-400");
                     return false;
                 }
 
@@ -2371,6 +2386,12 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
 
                 appState = snapshot.state;
                 appState.lastModified = new Date().toISOString();
+                if (typeof currentUser !== 'undefined' && currentUser) {
+                    appState.ownerUid = currentUser.uid;
+                    appState.uid = currentUser.uid;
+                }
+                if (snapshot.stream) selectedStream = snapshot.stream;
+                if (snapshot.grade) selectedGrade = snapshot.grade;
                 saveAppState();
                 renderApp();
 
@@ -2392,7 +2413,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
         async function restorePreResetSnapshot() {
             try {
                 let snapshot = null;
-                const raw = localStorage.getItem('mpt_pre_reset_snapshot');
+                const raw = (typeof localStorage !== 'undefined') ? localStorage.getItem('mpt_pre_reset_snapshot') : null;
                 if (raw) {
                     try {
                         snapshot = JSON.parse(raw);
@@ -2410,6 +2431,28 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                         }
                     } catch (cloudErr) {
                         console.warn("Cloud archive retrieval failed:", cloudErr);
+                    }
+                }
+
+                // Fallback to previous plan snapshot if pre-reset was not found
+                if (!snapshot || !snapshot.state) {
+                    const prevRaw = (typeof localStorage !== 'undefined') ? localStorage.getItem('mpt_previous_plan_snapshot') : null;
+                    if (prevRaw) {
+                        try {
+                            const parsed = JSON.parse(prevRaw);
+                            if (parsed && parsed.state) snapshot = parsed;
+                        } catch (_) {}
+                    }
+                }
+
+                // Fallback to sync conflict snapshot if available
+                if ((!snapshot || !snapshot.state) && typeof currentUser !== 'undefined' && currentUser && typeof localStorage !== 'undefined') {
+                    const conflictRaw = localStorage.getItem(`mpt_sync_conflict_${currentUser.uid}`);
+                    if (conflictRaw) {
+                        try {
+                            const parsed = JSON.parse(conflictRaw);
+                            if (parsed && Array.isArray(parsed.plan)) snapshot = { state: parsed };
+                        } catch (_) {}
                     }
                 }
 
@@ -2431,6 +2474,10 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 // Restore appState
                 appState = snapshot.state;
                 appState.lastModified = new Date().toISOString();
+                if (typeof currentUser !== 'undefined' && currentUser) {
+                    appState.ownerUid = currentUser.uid;
+                    appState.uid = currentUser.uid;
+                }
                 if (snapshot.stream) {
                     selectedStream = snapshot.stream;
                 }
@@ -2470,6 +2517,122 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 console.error("Error restoring pre-reset snapshot:", err);
                 showAppToast("Could not restore previous plan.", "fa-triangle-exclamation text-rose-400");
                 return false;
+            }
+        }
+
+        function dismissDashboardRestoreBanner() {
+            try {
+                if (typeof sessionStorage !== 'undefined') {
+                    sessionStorage.setItem('mpt_dismissed_restore_banner', 'true');
+                }
+            } catch (_) {}
+            const banner = (typeof document !== 'undefined') ? document.getElementById('dashboard-restore-banner') : null;
+            if (banner && typeof banner.remove === 'function') banner.remove();
+        }
+
+        function renderDashboardRestoreBanner() {
+            try {
+                if (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('mpt_dismissed_restore_banner') === 'true') {
+                    return '';
+                }
+                const isML = (typeof getAppLanguage === 'function' && getAppLanguage() === 'ml');
+                let snap = null;
+                let isReset = false;
+
+                const preResetRaw = (typeof localStorage !== 'undefined') ? localStorage.getItem('mpt_pre_reset_snapshot') : null;
+                if (preResetRaw) {
+                    try {
+                        const parsed = JSON.parse(preResetRaw);
+                        if (parsed && parsed.state && Array.isArray(parsed.state.plan) && parsed.state.plan.length > 0) {
+                            snap = parsed;
+                            isReset = true;
+                        }
+                    } catch (_) {}
+                }
+
+                if (!snap) {
+                    const prevRaw = (typeof localStorage !== 'undefined') ? localStorage.getItem('mpt_previous_plan_snapshot') : null;
+                    if (prevRaw) {
+                        try {
+                            const parsed = JSON.parse(prevRaw);
+                            if (parsed && parsed.state && Array.isArray(parsed.state.plan) && parsed.state.plan.length > 0) {
+                                snap = parsed;
+                                isReset = false;
+                            }
+                        } catch (_) {}
+                    }
+                }
+
+                if (!snap) {
+                    if (typeof checkCloudArchiveForBanner === 'function') {
+                        setTimeout(checkCloudArchiveForBanner, 150);
+                    }
+                    return '';
+                }
+
+                const streamMap = { cs: 'Computer Science', bio: 'Biology Science', commerce: 'Commerce', humanities: 'Humanities' };
+                const streamLabel = snap.stream ? (streamMap[snap.stream] || snap.stream) : '';
+                const dateStr = snap.formattedDate || (snap.resetAt ? new Date(snap.resetAt).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' }) : '');
+                const timeStr = snap.formattedTime || '';
+                const details = [
+                    dateStr ? `${dateStr}${timeStr ? ' at ' + timeStr : ''}` : '',
+                    streamLabel,
+                    snap.completedCount !== undefined ? `${snap.completedCount} completed` : ''
+                ].filter(Boolean).join(' · ');
+
+                return `
+                    <div id="dashboard-restore-banner" class="max-w-4xl mx-auto my-3 p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-amber-500/15 border-2 border-amber-500/40 shadow-lg shadow-amber-500/10 text-left flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 animate-fade-in-up">
+                        <div class="flex items-start sm:items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center text-lg font-black shrink-0">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-2 flex-wrap">
+                                    <span>${isML ? 'മുൻപത്തെ ടൈംടേബിൾ തിരിച്ചെടുക്കാം' : "Yesterday's Reset Timetable Available"}</span>
+                                    <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/30">${isML ? 'ലഭ്യം' : 'Ready to Restore'}</span>
+                                </h4>
+                                <p class="text-xs text-slate-600 dark:text-slate-300 mt-0.5">
+                                    ${escapeStudyText(details || (isML ? 'മുൻപ് സേവ് ചെയ്ത ടൈംടേബിൾ' : 'Saved study plan and completed tasks ready to restore'))}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 w-full sm:w-auto shrink-0">
+                            <button type="button" onclick="${isReset ? 'restorePreResetSnapshot()' : 'restorePreviousPlan()'}" class="flex-1 sm:flex-none px-4 py-2 bg-amber-600 hover:bg-amber-700 active:scale-95 text-white text-xs font-black rounded-xl shadow-md shadow-amber-600/25 transition flex items-center justify-center gap-1.5 cursor-pointer">
+                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
+                                <span>${isML ? 'ടൈംടേബിൾ തിരിച്ചെടുക്കുക' : 'Restore Timetable'}</span>
+                            </button>
+                            <button type="button" onclick="dismissDashboardRestoreBanner()" class="px-2.5 py-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition text-xs rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800" title="Dismiss">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            } catch (_) {
+                return '';
+            }
+        }
+
+        async function checkCloudArchiveForBanner() {
+            if (typeof currentUser === 'undefined' || !currentUser || typeof db === 'undefined' || !db) return;
+            if (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('mpt_dismissed_restore_banner') === 'true') return;
+            if (typeof document === 'undefined') return;
+            const existingBanner = document.getElementById('dashboard-restore-banner');
+            if (existingBanner) return;
+            try {
+                const archiveDoc = await db.collection('user_archives').doc(currentUser.uid).get();
+                if (archiveDoc.exists) {
+                    const snap = archiveDoc.data();
+                    if (snap && snap.state && Array.isArray(snap.state.plan) && snap.state.plan.length > 0) {
+                        try {
+                            localStorage.setItem('mpt_pre_reset_snapshot', JSON.stringify(snap));
+                        } catch (_) {}
+                        if (currentView === 'today' && typeof renderApp === 'function') {
+                            renderApp();
+                        }
+                    }
+                }
+            } catch (err) {
+                console.warn("Cloud archive banner note:", err);
             }
         }
 
@@ -2625,21 +2788,34 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
             // Show pre-reset restore box if available
             const undoResetBox = document.getElementById('regenerate-undo-reset-box');
             if (undoResetBox) {
-                const preResetRaw = localStorage.getItem('mpt_pre_reset_snapshot');
+                let snap = null;
+                const preResetRaw = (typeof localStorage !== 'undefined') ? localStorage.getItem('mpt_pre_reset_snapshot') : null;
                 if (preResetRaw) {
                     try {
-                        const snap = JSON.parse(preResetRaw);
-                        if (snap && snap.state && Array.isArray(snap.state.plan)) {
-                            undoResetBox.classList.remove('hidden');
-                            const sub = document.getElementById('regenerate-undo-reset-sub');
-                            const dateStr = snap.formattedDate || (snap.resetAt ? new Date(snap.resetAt).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' }) : '');
-                            if (sub) sub.textContent = `Pre-reset timetable saved from ${dateStr} at ${snap.formattedTime || ''}`;
-                        } else {
-                            undoResetBox.classList.add('hidden');
-                        }
+                        snap = JSON.parse(preResetRaw);
                     } catch (e) {
-                        undoResetBox.classList.add('hidden');
+                        snap = null;
                     }
+                }
+                if (snap && snap.state && Array.isArray(snap.state.plan)) {
+                    undoResetBox.classList.remove('hidden');
+                    const sub = document.getElementById('regenerate-undo-reset-sub');
+                    const dateStr = snap.formattedDate || (snap.resetAt ? new Date(snap.resetAt).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' }) : '');
+                    if (sub) sub.textContent = `Pre-reset timetable saved from ${dateStr} at ${snap.formattedTime || ''}`;
+                } else if (typeof currentUser !== 'undefined' && currentUser && typeof db !== 'undefined' && db) {
+                    undoResetBox.classList.add('hidden');
+                    db.collection('user_archives').doc(currentUser.uid).get().then(doc => {
+                        if (doc && doc.exists) {
+                            const cloudSnap = doc.data();
+                            if (cloudSnap && cloudSnap.state && Array.isArray(cloudSnap.state.plan)) {
+                                try { localStorage.setItem('mpt_pre_reset_snapshot', JSON.stringify(cloudSnap)); } catch(_) {}
+                                undoResetBox.classList.remove('hidden');
+                                const sub = document.getElementById('regenerate-undo-reset-sub');
+                                const dateStr = cloudSnap.formattedDate || (cloudSnap.resetAt ? new Date(cloudSnap.resetAt).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' }) : '');
+                                if (sub) sub.textContent = `Cloud pre-reset timetable saved from ${dateStr} at ${cloudSnap.formattedTime || ''}`;
+                            }
+                        }
+                    }).catch(() => {});
                 } else {
                     undoResetBox.classList.add('hidden');
                 }
@@ -3434,6 +3610,8 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                         <button type="button" onclick="openRegenerateModal()" class="study-adjust">${isML ? 'പ്ലാൻ ക്രമീകരിക്കുക' : 'Adjust plan'}</button>
                     </section>
 
+                    ${typeof renderDashboardRestoreBanner === 'function' ? renderDashboardRestoreBanner() : ''}
+
                     <p class="study-date">${localToday}</p>
                     ${daily.overdueCount ? `<p class="pending-notice" role="status">${daily.overdueCount} ${isML ? 'മുൻ ദിവസങ്ങളിൽ ബാക്കിയുണ്ട്.' : 'unfinished from previous days.'} <a href="#pending-work">${isML ? 'കാണുക' : 'View pending'}</a></p>` : ''}
                     ${yesterdayPlan?.tasks.length ? `<p class="study-history">${isML ? 'ഇന്നലെ' : 'Yesterday'}: ${yesterdayPlan.tasks.filter(task => task.completed).length} / ${yesterdayPlan.tasks.length} ${isML ? 'പൂർത്തിയായി' : 'completed'}</p>` : ''}
@@ -3641,6 +3819,8 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                             </button>
                         </div>
                     </div>
+
+                    ${typeof renderDashboardRestoreBanner === 'function' ? renderDashboardRestoreBanner() : ''}
 
                     <!-- Subject Filter Tabs (Horizontal Scrollable Pills strictly stream-isolated) -->
                     <div class="no-print flex items-center gap-1.5 overflow-x-auto pb-2 mb-4 scrollbar-none text-xs">
@@ -4386,23 +4566,38 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
             // Pre-reset undo row in Settings
             const undoResetRow = document.getElementById('settings-undo-reset-row');
             if (undoResetRow) {
-                const preResetRaw = localStorage.getItem('mpt_pre_reset_snapshot');
+                let snap = null;
+                const preResetRaw = (typeof localStorage !== 'undefined') ? localStorage.getItem('mpt_pre_reset_snapshot') : null;
                 if (preResetRaw) {
                     try {
-                        const snap = JSON.parse(preResetRaw);
-                        if (snap && snap.state && Array.isArray(snap.state.plan)) {
-                            undoResetRow.classList.remove('hidden');
-                            const hint = document.getElementById('settings-undo-reset-hint');
-                            const dateStr = snap.formattedDate || (snap.resetAt ? new Date(snap.resetAt).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' }) : '');
-                            if (hint) {
-                                hint.textContent = `Undo Recent Reset: Restore timetable from ${dateStr}`;
-                            }
-                        } else {
-                            undoResetRow.classList.add('hidden');
-                        }
+                        snap = JSON.parse(preResetRaw);
                     } catch (e) {
-                        undoResetRow.classList.add('hidden');
+                        snap = null;
                     }
+                }
+                if (snap && snap.state && Array.isArray(snap.state.plan)) {
+                    undoResetRow.classList.remove('hidden');
+                    const hint = document.getElementById('settings-undo-reset-hint');
+                    const dateStr = snap.formattedDate || (snap.resetAt ? new Date(snap.resetAt).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' }) : '');
+                    if (hint) {
+                        hint.textContent = `Undo Recent Reset: Restore timetable from ${dateStr}`;
+                    }
+                } else if (typeof currentUser !== 'undefined' && currentUser && typeof db !== 'undefined' && db) {
+                    undoResetRow.classList.add('hidden');
+                    db.collection('user_archives').doc(currentUser.uid).get().then(doc => {
+                        if (doc && doc.exists) {
+                            const cloudSnap = doc.data();
+                            if (cloudSnap && cloudSnap.state && Array.isArray(cloudSnap.state.plan)) {
+                                try { localStorage.setItem('mpt_pre_reset_snapshot', JSON.stringify(cloudSnap)); } catch(_) {}
+                                undoResetRow.classList.remove('hidden');
+                                const hint = document.getElementById('settings-undo-reset-hint');
+                                const dateStr = cloudSnap.formattedDate || (cloudSnap.resetAt ? new Date(cloudSnap.resetAt).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' }) : '');
+                                if (hint) {
+                                    hint.textContent = `Undo Recent Reset: Restore timetable from ${dateStr}`;
+                                }
+                            }
+                        }
+                    }).catch(() => {});
                 } else {
                     undoResetRow.classList.add('hidden');
                 }
@@ -4705,6 +4900,9 @@ if (typeof window !== 'undefined') {
         compactPlanToToday,
         restorePreviousPlan,
         restorePreResetSnapshot,
+        dismissDashboardRestoreBanner,
+        renderDashboardRestoreBanner,
+        checkCloudArchiveForBanner,
         savePreviousPlanSnapshot,
         renderApp,
         getActiveTodayStr,
@@ -4785,6 +4983,10 @@ function setupWindowBindings() {
 export {
     resetApp,
     restorePreResetSnapshot,
+    restorePreviousPlan,
+    dismissDashboardRestoreBanner,
+    renderDashboardRestoreBanner,
+    checkCloudArchiveForBanner,
     renderApp,
     saveAppState,
     saveAppStateLocally,

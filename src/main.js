@@ -10,6 +10,8 @@ import './app.js';
 export {
   resetApp,
   restorePreResetSnapshot,
+  restorePreviousPlan,
+  dismissDashboardRestoreBanner,
   getActiveTodayStr,
   compactPlanToToday,
   getActiveStreak,
