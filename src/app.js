@@ -1447,6 +1447,133 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
         function closeShareModal() {}
         function executeShare() { shareApp(); }
 
+        let exportSheetEscHandler = null;
+        let exportSheetCloseTimer = null;
+
+        function openExportShareSheet() {
+            if (typeof document === 'undefined') return false;
+            const sheet = document.getElementById('export-share-sheet');
+            const panel = document.getElementById('export-sheet-panel');
+            if (!sheet || !panel) return false;
+
+            if (typeof exportSheetCloseTimer !== 'undefined' && exportSheetCloseTimer) {
+                clearTimeout(exportSheetCloseTimer);
+                exportSheetCloseTimer = null;
+            }
+            if (sheet && sheet._closeTimer) {
+                clearTimeout(sheet._closeTimer);
+                sheet._closeTimer = null;
+            }
+
+            const isML = (typeof getAppLanguage === 'function') ? (getAppLanguage() === 'ml') : false;
+            const setText = (id, text) => {
+                const el = document.getElementById(id);
+                if (el) el.textContent = text;
+            };
+            setText('export-sheet-title', isML ? 'ടൈംടേബിൾ എക്സ്പോർട്ട് & ഷെയർ' : 'Export & Share Timetable');
+            setText('export-sheet-subtitle', isML ? 'ഓഫ്‌ലൈനായി സൂക്ഷിക്കുക അല്ലെങ്കിൽ സുഹൃത്തുക്കളുമായി പങ്കുവെക്കുക' : 'Save offline or share your study pace with friends');
+            setText('export-sheet-cal-title', isML ? 'കലണ്ടറിൽ ചേർക്കുക (.ics)' : 'Add to Calendar (.ics)');
+            setText('export-sheet-cal-desc', isML ? 'Google, Apple, Outlook കലണ്ടറിലേക്ക് സ്റ്റഡി ബ്ലോക്കുകൾ ചേർക്കാം' : 'Sync study blocks into Google, Apple, or Outlook Calendar');
+            setText('export-sheet-csv-title', isML ? 'CSV സ്പ്രെഡ്ഷീറ്റ് ഡൗൺലോഡ് ചെയ്യുക' : 'Export CSV Spreadsheet');
+            setText('export-sheet-csv-desc', isML ? 'Excel അല്ലെങ്കിൽ Google Sheets-ൽ ഉപയോഗിക്കാൻ പൂർണ്ണ ഷെഡ്യൂൾ' : 'Download full schedule for Excel or Google Sheets');
+            setText('export-sheet-share-title', isML ? 'കൂട്ടുകാരുമായി പങ്കുവെക്കുക' : 'Share with Classmates');
+            setText('export-sheet-share-desc', isML ? 'WhatsApp, Telegram വഴി സുഹൃത്തുക്കൾക്ക് ഷെഡ്യൂൾ അയക്കാം' : 'Send timetable to friends via WhatsApp or Telegram');
+            setText('export-sheet-copy-title', isML ? 'ടൈംടേബിൾ ലിങ്ക് കോപ്പി ചെയ്യുക' : 'Copy Timetable Link');
+            setText('export-sheet-copy-desc', isML ? 'വെബ് ലിങ്ക് ക്ലിപ്പ്ബോർഡിലേക്ക് പകർത്തുക' : 'Copy direct web link to clipboard');
+            setText('export-sheet-cancel-btn', isML ? 'റദ്ദാക്കുക' : 'Cancel');
+
+            const triggerBtn = document.getElementById('plan-actions-overflow-btn');
+            if (triggerBtn && typeof triggerBtn.setAttribute === 'function') {
+                triggerBtn.setAttribute('aria-expanded', 'true');
+            }
+
+            sheet.classList.remove('hidden');
+            if (typeof sheet.setAttribute === 'function') {
+                sheet.setAttribute('aria-hidden', 'false');
+            }
+            // Force layout reflow for CSS transition
+            if (sheet.offsetWidth !== undefined) {
+                void sheet.offsetWidth;
+            }
+
+            sheet.classList.remove('opacity-0');
+            sheet.classList.add('opacity-100');
+            panel.classList.remove('translate-y-full');
+            panel.classList.add('translate-y-0');
+
+            if (document.body && document.body.style) {
+                document.body.style.overflow = 'hidden';
+            }
+
+            if (exportSheetEscHandler) {
+                document.removeEventListener('keydown', exportSheetEscHandler);
+            }
+            exportSheetEscHandler = (e) => {
+                if (e.key === 'Escape') {
+                    closeExportShareSheet();
+                }
+            };
+            document.addEventListener('keydown', exportSheetEscHandler);
+            return true;
+        }
+
+        function closeExportShareSheet() {
+            if (typeof document === 'undefined') return false;
+            const sheet = document.getElementById('export-share-sheet');
+            const panel = document.getElementById('export-sheet-panel');
+            if (!sheet || !panel) return false;
+
+            if (typeof exportSheetCloseTimer !== 'undefined' && exportSheetCloseTimer) {
+                clearTimeout(exportSheetCloseTimer);
+                exportSheetCloseTimer = null;
+            }
+            if (sheet && sheet._closeTimer) {
+                clearTimeout(sheet._closeTimer);
+                sheet._closeTimer = null;
+            }
+
+            const triggerBtn = document.getElementById('plan-actions-overflow-btn');
+            if (triggerBtn && typeof triggerBtn.setAttribute === 'function') {
+                triggerBtn.setAttribute('aria-expanded', 'false');
+            }
+
+            if (exportSheetEscHandler) {
+                document.removeEventListener('keydown', exportSheetEscHandler);
+                exportSheetEscHandler = null;
+            }
+
+            sheet.classList.remove('opacity-100');
+            sheet.classList.add('opacity-0');
+            panel.classList.remove('translate-y-0');
+            panel.classList.add('translate-y-full');
+            if (typeof sheet.setAttribute === 'function') {
+                sheet.setAttribute('aria-hidden', 'true');
+            }
+
+            if (document.body && document.body.style) {
+                document.body.style.overflow = '';
+            }
+
+            const closeTimer = setTimeout(() => {
+                sheet.classList.add('hidden');
+                if (typeof exportSheetCloseTimer !== 'undefined') {
+                    exportSheetCloseTimer = null;
+                }
+                sheet._closeTimer = null;
+            }, 300);
+
+            if (typeof exportSheetCloseTimer !== 'undefined') {
+                exportSheetCloseTimer = closeTimer;
+            }
+            sheet._closeTimer = closeTimer;
+
+            if (triggerBtn && typeof triggerBtn.focus === 'function') {
+                triggerBtn.focus();
+            }
+
+            return true;
+        }
+
         function updateActiveNavButtons() {
             const todayBtn = document.getElementById('nav-btn-today');
             const planBtn = document.getElementById('nav-btn-plan');
@@ -1653,9 +1780,9 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 const btn = document.getElementById(`hours-chip-${String(h).replace('.', '_')}`);
                 if (btn) {
                     if (h === hrs) {
-                        btn.className = 'flex-1 py-2 px-3 text-xs font-black rounded-xl bg-blue-600 text-white shadow-sm transition flex flex-col items-center';
+                        btn.className = 'min-h-[44px] flex-1 py-2.5 px-3 text-xs font-black rounded-xl bg-blue-600 text-white shadow-sm transition flex flex-col items-center justify-center';
                     } else {
-                        btn.className = 'flex-1 py-2 px-3 text-xs font-semibold rounded-xl bg-slate-100 dark:bg-[#141d30] text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-[#1a253c] transition flex flex-col items-center';
+                        btn.className = 'min-h-[44px] flex-1 py-2.5 px-3 text-xs font-semibold rounded-xl bg-slate-100 dark:bg-[#141d30] text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-[#1a253c] transition flex flex-col items-center justify-center';
                     }
                 }
             });
@@ -1754,7 +1881,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 activeSetupSubjectTab = subs[0];
             }
             return subs.map(sub => `
-                <button type="button" id="setup-tab-${sub.replace(/\s+/g, '-')}" onclick="switchSetupSubject('${sub}')" class="py-1.5 px-3 text-xs font-bold rounded-xl ${sub === activeSetupSubjectTab ? 'bg-slate-800 dark:bg-slate-700 text-white shadow-sm' : 'bg-slate-100 dark:bg-[#162137] text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-[#1e2d4a]'} transition">
+                <button type="button" id="setup-tab-${sub.replace(/\s+/g, '-')}" onclick="switchSetupSubject('${sub}')" class="min-h-[44px] py-2 px-3 text-xs font-bold rounded-xl ${sub === activeSetupSubjectTab ? 'bg-slate-800 dark:bg-slate-700 text-white shadow-sm' : 'bg-slate-100 dark:bg-[#162137] text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-[#1e2d4a]'} transition flex items-center justify-center">
                     ${sub}
                 </button>
             `).join('');
@@ -1783,11 +1910,11 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
             const btnP1 = document.getElementById('grade-tab-p1');
             if (btnP2 && btnP1) {
                 if (activeSetupGradeTab === '+2') {
-                    btnP2.className = 'flex-1 py-2 px-3 text-xs font-bold rounded-xl bg-blue-600 dark:bg-blue-500 text-white shadow-sm transition flex items-center justify-center gap-1.5';
-                    btnP1.className = 'flex-1 py-2 px-3 text-xs font-bold rounded-xl bg-slate-100 dark:bg-[#162137] text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-[#1e2d4a] transition flex items-center justify-center gap-1.5';
+                    btnP2.className = 'min-h-[44px] flex-1 py-2 px-3 text-xs font-bold rounded-xl bg-blue-600 dark:bg-blue-500 text-white shadow-sm transition flex items-center justify-center gap-1.5';
+                    btnP1.className = 'min-h-[44px] flex-1 py-2 px-3 text-xs font-bold rounded-xl bg-slate-100 dark:bg-[#162137] text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-[#1e2d4a] transition flex items-center justify-center gap-1.5';
                 } else {
-                    btnP1.className = 'flex-1 py-2 px-3 text-xs font-bold rounded-xl bg-amber-600 dark:bg-amber-500 text-white shadow-sm transition flex items-center justify-center gap-1.5';
-                    btnP2.className = 'flex-1 py-2 px-3 text-xs font-bold rounded-xl bg-slate-100 dark:bg-[#162137] text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-[#1e2d4a] transition flex items-center justify-center gap-1.5';
+                    btnP1.className = 'min-h-[44px] flex-1 py-2 px-3 text-xs font-bold rounded-xl bg-amber-600 dark:bg-amber-500 text-white shadow-sm transition flex items-center justify-center gap-1.5';
+                    btnP2.className = 'min-h-[44px] flex-1 py-2 px-3 text-xs font-bold rounded-xl bg-slate-100 dark:bg-[#162137] text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-[#1e2d4a] transition flex items-center justify-center gap-1.5';
                 }
             }
 
@@ -1795,9 +1922,9 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 const btn = document.getElementById(`setup-tab-${s.replace(/\s+/g, '-')}`);
                 if (btn) {
                     if (s === activeSetupSubjectTab) {
-                        btn.className = 'py-1.5 px-3 text-xs font-bold rounded-xl bg-slate-800 dark:bg-slate-700 text-white shadow-sm transition';
+                        btn.className = 'min-h-[44px] py-2 px-3 text-xs font-bold rounded-xl bg-slate-800 dark:bg-slate-700 text-white shadow-sm transition flex items-center justify-center';
                     } else {
-                        btn.className = 'py-1.5 px-3 text-xs font-bold rounded-xl bg-slate-100 dark:bg-[#162137] text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-[#1e2d4a] transition';
+                        btn.className = 'min-h-[44px] py-2 px-3 text-xs font-bold rounded-xl bg-slate-100 dark:bg-[#162137] text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-[#1e2d4a] transition flex items-center justify-center';
                     }
                 }
             });
@@ -1870,10 +1997,10 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                         </span>
                         <span class="text-xs text-slate-400 dark:text-slate-400 font-medium">${completedText}</span>
                     </div>
-                    <div class="flex gap-2">
-                        <button type="button" onclick="toggleAllSubjectChapters('${grade}', '${subject}', true)" class="text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline">${selectAllText}</button>
+                    <div class="flex items-center gap-2">
+                        <button type="button" onclick="toggleAllSubjectChapters('${grade}', '${subject}', true)" class="min-h-[44px] inline-flex items-center text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline px-1.5">${selectAllText}</button>
                         <span class="text-slate-300 dark:text-slate-600">|</span>
-                        <button type="button" onclick="toggleAllSubjectChapters('${grade}', '${subject}', false)" class="text-xs font-bold text-slate-500 dark:text-slate-300 hover:underline">${clearText}</button>
+                        <button type="button" onclick="toggleAllSubjectChapters('${grade}', '${subject}', false)" class="min-h-[44px] inline-flex items-center text-xs font-bold text-slate-500 dark:text-slate-300 hover:underline px-1.5">${clearText}</button>
                     </div>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-56 overflow-y-auto pr-1">
@@ -1882,7 +2009,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
             uniqueChaps.forEach(ch => {
                 const isChecked = selectedCompletedChapters.has(ch.chapId);
                 html += `
-                    <label class="flex items-start gap-2.5 p-2 rounded-xl ${isChecked ? 'bg-emerald-50/70 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-600/50' : 'hover:bg-slate-50 dark:hover:bg-[#141d30] border-slate-200/80 dark:border-slate-700/60'} border cursor-pointer transition text-xs select-none">
+                    <label class="min-h-[44px] flex items-center gap-2.5 p-2 rounded-xl ${isChecked ? 'bg-emerald-50/70 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-600/50' : 'hover:bg-slate-50 dark:hover:bg-[#141d30] border-slate-200/80 dark:border-slate-700/60'} border cursor-pointer transition text-xs select-none">
                         <input type="checkbox" data-grade="${grade}" data-subject="${subject}" value="${ch.chapId}" ${isChecked ? 'checked' : ''} onchange="toggleChapterSelection('${ch.chapId}', this.checked); this.closest('label').classList.toggle('bg-emerald-50/70', this.checked); this.closest('label').classList.toggle('dark:bg-emerald-950/40', this.checked); this.closest('label').classList.toggle('border-emerald-200', this.checked); this.closest('label').classList.toggle('dark:border-emerald-600/50', this.checked); this.closest('label').classList.toggle('border-slate-200/80', !this.checked); this.closest('label').classList.toggle('dark:border-slate-700/60', !this.checked);" class="completed-chapter-cb mt-0.5 rounded border-slate-300 dark:border-slate-600 text-emerald-600 focus:ring-emerald-500 w-4 h-4">
                         <div class="flex-1 truncate">
                             <span class="font-bold text-slate-800 dark:text-white block truncate" title="${ch.chapterName}">Chapter ${ch.chapNumber}: ${ch.chapterName.replace(/^Chapter\s+\d+:\s*/i, '').replace(/^\d+\.\s*/, '')}</span>
@@ -3131,7 +3258,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                                 </span>
                                 <div class="flex items-center gap-1.5">
                                     ${[1, 2, 3, 4].map(step => `
-                                        <button type="button" id="setup-step-pill-${step}" onclick="goToSetupStep(${step})" class="w-7 h-7 rounded-full ${step === setupCurrentStep ? 'bg-blue-600 text-white font-black scale-110 shadow-sm shadow-blue-500/30' : (step < setupCurrentStep ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-black border border-emerald-300/60' : 'bg-slate-100 dark:bg-slate-800 text-slate-400 font-bold')} text-xs flex items-center justify-center transition">
+                                        <button type="button" id="setup-step-pill-${step}" onclick="goToSetupStep(${step})" class="touch-target-44 w-11 h-11 rounded-full ${step === setupCurrentStep ? 'bg-blue-600 text-white font-black scale-105 shadow-sm shadow-blue-500/30' : (step < setupCurrentStep ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-black border border-emerald-300/60' : 'bg-slate-100 dark:bg-slate-800 text-slate-400 font-bold')} text-xs flex items-center justify-center transition active:scale-95">
                                             ${step < setupCurrentStep ? '<i class="fa-solid fa-check text-[10px]"></i>' : step}
                                         </button>
                                     `).join('')}
@@ -3330,11 +3457,11 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
 
                             <!-- Step 2 Navigation -->
                             <div class="pt-5 flex items-center justify-between gap-3">
-                                <button type="button" onclick="prevSetupStep()" class="py-2.5 px-5 rounded-2xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold text-xs hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-1.5 active:scale-95">
+                                <button type="button" onclick="prevSetupStep()" class="min-h-[44px] py-2.5 px-5 rounded-2xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold text-xs hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center justify-center gap-1.5 active:scale-95">
                                     <i class="fa-solid fa-arrow-left text-xs"></i>
                                     <span>${isML ? 'പിന്നോട്ട്' : 'Back'}</span>
                                 </button>
-                                <button type="button" onclick="nextSetupStep()" class="bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-sm py-2.5 px-8 rounded-2xl shadow-md shadow-blue-500/20 transition flex items-center gap-2 active:scale-95">
+                                <button type="button" onclick="nextSetupStep()" class="min-h-[44px] bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-sm py-2.5 px-8 rounded-2xl shadow-md shadow-blue-500/20 transition flex items-center justify-center gap-2 active:scale-95">
                                     <span>${isML ? 'തുടരുക' : 'Next'}</span>
                                     <i class="fa-solid fa-arrow-right text-xs"></i>
                                 </button>
@@ -3367,11 +3494,11 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
 
                             <!-- Step 3 Navigation -->
                             <div class="pt-5 flex items-center justify-between gap-3">
-                                <button type="button" onclick="prevSetupStep()" class="py-2.5 px-5 rounded-2xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold text-xs hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center gap-1.5 active:scale-95">
+                                <button type="button" onclick="prevSetupStep()" class="min-h-[44px] py-2.5 px-5 rounded-2xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold text-xs hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center justify-center gap-1.5 active:scale-95">
                                     <i class="fa-solid fa-arrow-left text-xs"></i>
                                     <span>${isML ? 'പിന്നോട്ട്' : 'Back'}</span>
                                 </button>
-                                <button type="button" onclick="nextSetupStep()" class="bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-sm py-2.5 px-8 rounded-2xl shadow-md shadow-blue-500/20 transition flex items-center gap-2 active:scale-95">
+                                <button type="button" onclick="nextSetupStep()" class="min-h-[44px] bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-sm py-2.5 px-8 rounded-2xl shadow-md shadow-blue-500/20 transition flex items-center justify-center gap-2 active:scale-95">
                                     <span>${isML ? 'തുടരുക' : 'Next'}</span>
                                     <i class="fa-solid fa-arrow-right text-xs"></i>
                                 </button>
@@ -3396,9 +3523,9 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                     ${isML ? ML_I18N.setup.hoursTitle : 'Daily Self-Study Hours'}
                                             </span>
                                             <div class="flex gap-2">
-                                                <button type="button" id="hours-chip-2" onclick="setDailyHoursSelection(2)" class="flex-1 py-1.5 px-2 text-xs font-semibold rounded-xl bg-slate-100 dark:bg-[#141d30] text-slate-600 dark:text-slate-300 transition">2 Hours</button>
-                                                <button type="button" id="hours-chip-3_5" onclick="setDailyHoursSelection(3.5)" class="flex-1 py-1.5 px-2 text-xs font-black rounded-xl bg-blue-600 text-white shadow-sm transition">3–4 Hours</button>
-                                                <button type="button" id="hours-chip-5" onclick="setDailyHoursSelection(5)" class="flex-1 py-1.5 px-2 text-xs font-semibold rounded-xl bg-slate-100 dark:bg-[#141d30] text-slate-600 dark:text-slate-300 transition">5+ Hours</button>
+                                                <button type="button" id="hours-chip-2" onclick="setDailyHoursSelection(2)" class="min-h-[44px] flex-1 py-2.5 px-2 text-xs font-semibold rounded-xl bg-slate-100 dark:bg-[#141d30] text-slate-600 dark:text-slate-300 transition flex items-center justify-center active:scale-95">2 Hours</button>
+                                                <button type="button" id="hours-chip-3_5" onclick="setDailyHoursSelection(3.5)" class="min-h-[44px] flex-1 py-2.5 px-2 text-xs font-black rounded-xl bg-blue-600 text-white shadow-sm transition flex items-center justify-center active:scale-95">3–4 Hours</button>
+                                                <button type="button" id="hours-chip-5" onclick="setDailyHoursSelection(5)" class="min-h-[44px] flex-1 py-2.5 px-2 text-xs font-semibold rounded-xl bg-slate-100 dark:bg-[#141d30] text-slate-600 dark:text-slate-300 transition flex items-center justify-center active:scale-95">5+ Hours</button>
                                             </div>
                                         </div>
 
@@ -3420,7 +3547,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                                     <span class="text-slate-500 dark:text-slate-400 font-medium">${isML ? 'പൂർത്തിയാക്കിയവ' : 'Completed Chapters'}</span>
                                     <div class="flex items-center gap-2">
                                         <span id="summary-completed-badge" class="font-bold text-emerald-600 dark:text-emerald-400"></span>
-                                        <button type="button" onclick="goToSetupStep(3)" class="text-[11px] text-blue-600 dark:text-blue-400 hover:underline font-bold">${isML ? 'മാറ്റുക' : 'Edit'}</button>
+                                        <button type="button" onclick="goToSetupStep(3)" class="min-h-[44px] inline-flex items-center text-xs text-blue-600 dark:text-blue-400 hover:underline font-bold px-2">${isML ? 'മാറ്റുക' : 'Edit'}</button>
                                     </div>
                                 </div>
                             </div>
@@ -3796,24 +3923,39 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                                 <span id="plan-progress-summary" class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200/60">${getOverallStats().percentage}% ${isML ? 'പൂർത്തിയായി' : 'Done'} (${getOverallStats().completedCount}/${getOverallStats().totalCount})</span>
                             </div>
                         </div>
+                        <!-- Screen Header Action Bar (Clean Mobile Overflow Sheet < 640px, Full Controls >= 640px) -->
                         <div class="flex items-center flex-wrap gap-2">
-                            <button onclick="exportTimetableIcs()" class="text-xs font-bold bg-white border border-slate-200 hover:bg-slate-50 px-3 py-2 rounded-xl text-slate-700 transition flex items-center gap-1.5 shadow-sm active:scale-95" title="Export to Google Calendar, Apple Calendar, or Outlook (.ics)">
-                                <i class="fa-regular fa-calendar-plus text-amber-500"></i>
-                                <span class="hidden sm:inline">${isML ? 'കലണ്ടർ (.ics)' : 'Add to Calendar'}</span>
-                            </button>
-                            <button onclick="exportTimetableCsv()" class="text-xs font-bold bg-white border border-slate-200 hover:bg-slate-50 px-3 py-2 rounded-xl text-slate-700 transition flex items-center gap-1.5 shadow-sm active:scale-95" title="Export as CSV spreadsheet">
-                                <i class="fa-solid fa-file-csv text-emerald-600"></i>
-                                <span class="hidden sm:inline">Export CSV</span>
-                            </button>
-                            <button onclick="shareApp()" class="text-xs font-bold bg-white border border-slate-200 hover:bg-slate-50 px-3 py-2 rounded-xl text-slate-700 transition flex items-center gap-1.5 shadow-sm active:scale-95" title="Share plan with friends">
-                                <i class="fa-solid fa-arrow-up-from-bracket text-indigo-600"></i>
-                                <span class="hidden sm:inline">Share</span>
-                            </button>
-                            <button onclick="printTimetable()" class="text-xs font-bold bg-white border border-slate-200 hover:bg-slate-50 px-3 sm:px-3.5 py-2 rounded-xl text-slate-700 transition flex items-center gap-1.5 shadow-sm active:scale-95" title="Print schedule or save as PDF">
+                            <!-- MOBILE VIEW (< 640px): Grouped Share & Export Bottom Sheet Trigger -->
+                            <div class="sm:hidden flex items-center gap-2">
+                                <button id="plan-actions-overflow-btn" type="button" onclick="openExportShareSheet()" class="min-h-[44px] min-w-[44px] text-xs font-bold bg-white dark:bg-[#101726] border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-[#141d30] px-3 py-2.5 rounded-xl text-slate-700 dark:text-slate-200 transition flex items-center gap-1.5 shadow-sm active:scale-95" title="Export & Share Options" aria-haspopup="dialog" aria-expanded="false">
+                                    <i class="fa-solid fa-arrow-up-from-bracket text-indigo-600 dark:text-indigo-400"></i>
+                                    <span>${isML ? 'ഷെയർ / എക്സ്പോർട്ട്' : 'Share / Export'}</span>
+                                    <i class="fa-solid fa-ellipsis-vertical text-slate-400 text-xs ml-0.5"></i>
+                                </button>
+                            </div>
+
+                            <!-- DESKTOP / TABLET VIEW (>= 640px): Full Accessible Inline Toolbar -->
+                            <div class="hidden sm:flex items-center gap-2">
+                                <button id="plan-desktop-ics-btn" type="button" onclick="exportTimetableIcs()" class="min-h-[44px] text-xs font-bold bg-white dark:bg-[#101726] border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-[#141d30] px-3.5 py-2.5 rounded-xl text-slate-700 dark:text-slate-200 transition flex items-center gap-1.5 shadow-sm active:scale-95" title="Export to Google Calendar, Apple Calendar, or Outlook (.ics)">
+                                    <i class="fa-regular fa-calendar-plus text-amber-500"></i>
+                                    <span>${isML ? 'കലണ്ടർ (.ics)' : 'Add to Calendar'}</span>
+                                </button>
+                                <button id="plan-desktop-csv-btn" type="button" onclick="exportTimetableCsv()" class="min-h-[44px] text-xs font-bold bg-white dark:bg-[#101726] border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-[#141d30] px-3.5 py-2.5 rounded-xl text-slate-700 dark:text-slate-200 transition flex items-center gap-1.5 shadow-sm active:scale-95" title="Export as CSV spreadsheet">
+                                    <i class="fa-solid fa-file-csv text-emerald-600"></i>
+                                    <span>${isML ? 'എക്സ്പോർട്ട് CSV' : 'Export CSV'}</span>
+                                </button>
+                                <button id="plan-desktop-share-btn" type="button" onclick="shareApp()" class="min-h-[44px] text-xs font-bold bg-white dark:bg-[#101726] border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-[#141d30] px-3.5 py-2.5 rounded-xl text-slate-700 dark:text-slate-200 transition flex items-center gap-1.5 shadow-sm active:scale-95" title="Share plan with friends">
+                                    <i class="fa-solid fa-arrow-up-from-bracket text-indigo-600 dark:text-indigo-400"></i>
+                                    <span>${isML ? 'പങ്കുവെക്കുക' : 'Share'}</span>
+                                </button>
+                            </div>
+
+                            <!-- ALWAYS VISIBLE: Print / PDF & Back to Today (Elevated to 44px) -->
+                            <button id="plan-print-btn" type="button" onclick="printTimetable()" class="min-h-[44px] text-xs font-bold bg-white dark:bg-[#101726] border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-[#141d30] px-3.5 py-2.5 rounded-xl text-slate-700 dark:text-slate-200 transition flex items-center gap-1.5 shadow-sm active:scale-95" title="Print schedule or save as PDF">
                                 <i class="fa-solid fa-print text-blue-600"></i>
                                 <span>${isML ? ML_I18N.plan.printPdf : 'Print / Save PDF'}</span>
                             </button>
-                            <button onclick="goToDashboard()" class="text-xs font-bold bg-blue-600 hover:bg-blue-700 px-3.5 py-2 rounded-xl text-white transition flex items-center gap-1.5 shadow-sm active:scale-95">
+                            <button id="plan-back-btn" type="button" onclick="goToDashboard()" class="min-h-[44px] text-xs font-bold bg-blue-600 hover:bg-blue-700 px-3.5 py-2.5 rounded-xl text-white transition flex items-center gap-1.5 shadow-sm active:scale-95">
                                 <i class="fa-solid fa-arrow-left"></i>
                                 <span>${isML ? ML_I18N.plan.backToToday : 'Back to Today'}</span>
                             </button>
@@ -3855,7 +3997,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                             return filters.map(f => {
                                 const isActive = (currentPlanSubjectFilter === f.id);
                                 return `
-                                    <button onclick="setPlanSubjectFilter('${f.id}')" class="py-1.5 px-3 rounded-xl font-bold transition-colors duration-150 active:scale-95 shrink-0 flex items-center gap-1.5 ${isActive ? 'bg-blue-600 text-white shadow-sm shadow-blue-500/20' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'}">
+                                    <button onclick="setPlanSubjectFilter('${f.id}')" class="min-h-[44px] py-2.5 px-3.5 rounded-xl font-bold transition-colors duration-150 active:scale-95 shrink-0 flex items-center gap-1.5 ${isActive ? 'bg-blue-600 text-white shadow-sm shadow-blue-500/20' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'}">
                                         <i class="fa-solid ${f.icon} text-xs"></i>
                                         <span>${f.label}</span>
                                     </button>
@@ -3935,7 +4077,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                                 </div>
                                 ${subRes && subPyq ? `
                                 <div class="flex items-center gap-2 text-xs">
-                                    <a href="${subPyq}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400 border border-purple-200/50 dark:border-purple-800/50 hover:bg-purple-100 dark:hover:bg-purple-900/50 font-bold text-xs transition">
+                                    <a href="${subPyq}" target="_blank" rel="noopener noreferrer" class="min-h-[44px] inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400 border border-purple-200/50 dark:border-purple-800/50 hover:bg-purple-100 dark:hover:bg-purple-900/50 font-bold text-xs transition">
                                         <i class="fa-solid fa-file-lines text-[11px]"></i>
                                         <span>Official PYQs</span>
                                     </a>
@@ -4005,7 +4147,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                                 return `${gradePrefix}Computer Science Stream • Rationalized Kerala Higher Secondary curriculum.`;
                             })()}</p>
                         </div>
-                        <button onclick="goToDashboard()" class="text-xs font-bold bg-white dark:bg-[#0e1628] border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 px-3.5 py-2 rounded-xl text-slate-700 dark:text-slate-300 transition">
+                        <button onclick="goToDashboard()" class="min-h-[44px] text-xs font-bold bg-white dark:bg-[#0e1628] border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 px-3.5 py-2.5 rounded-xl text-slate-700 dark:text-slate-300 inline-flex items-center justify-center transition active:scale-95">
                             <i class="fa-solid fa-arrow-left mr-1"></i> ${isML ? ML_I18N.syllabus.backToToday : 'Back to Today'}
                         </button>
                     </div>
@@ -4015,11 +4157,11 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                         <!-- Grade Switcher Pills Bar -->
                         <div class="flex items-center gap-2">
                             <span class="text-xs font-bold text-slate-500 dark:text-slate-400 mr-1">${isML ? 'ക്ലാസ്:' : 'Grade:'}</span>
-                            <button type="button" onclick="switchSyllabusGrade('+2')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition active:scale-95 cursor-pointer ${activeSyllabusGrade === '+2' ? 'bg-blue-600 text-white shadow-xs font-black ring-2 ring-blue-500/20' : 'bg-white dark:bg-[#0e1628] border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50'}">
+                            <button type="button" onclick="switchSyllabusGrade('+2')" class="min-h-[44px] px-3.5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition active:scale-95 cursor-pointer ${activeSyllabusGrade === '+2' ? 'bg-blue-600 text-white shadow-xs font-black ring-2 ring-blue-500/20' : 'bg-white dark:bg-[#0e1628] border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50'}">
                                 <i class="fa-solid fa-graduation-cap text-xs"></i>
                                 <span>Plus Two (+2)</span>
                             </button>
-                            <button type="button" onclick="switchSyllabusGrade('+1')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition active:scale-95 cursor-pointer ${activeSyllabusGrade === '+1' ? 'bg-amber-600 text-white shadow-xs font-black ring-2 ring-amber-500/20' : 'bg-white dark:bg-[#0e1628] border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50'}">
+                            <button type="button" onclick="switchSyllabusGrade('+1')" class="min-h-[44px] px-3.5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition active:scale-95 cursor-pointer ${activeSyllabusGrade === '+1' ? 'bg-amber-600 text-white shadow-xs font-black ring-2 ring-amber-500/20' : 'bg-white dark:bg-[#0e1628] border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50'}">
                                 <i class="fa-solid fa-book-bookmark text-xs"></i>
                                 <span>Plus One (+1)</span>
                             </button>
@@ -4027,19 +4169,19 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
 
                         <!-- Interactive Stream Switcher Pills Bar -->
                         <div class="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-                            <button type="button" onclick="switchSyllabusStream('cs')" class="px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition active:scale-95 cursor-pointer ${userStream === 'cs' ? 'bg-blue-600 text-white shadow-xs font-black ring-2 ring-blue-500/20' : 'bg-white dark:bg-[#0e1628] border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50'}">
+                            <button type="button" onclick="switchSyllabusStream('cs')" class="min-h-[44px] px-3.5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition active:scale-95 cursor-pointer ${userStream === 'cs' ? 'bg-blue-600 text-white shadow-xs font-black ring-2 ring-blue-500/20' : 'bg-white dark:bg-[#0e1628] border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50'}">
                                 <i class="fa-solid fa-laptop-code text-xs"></i>
                                 <span>Computer Science</span>
                             </button>
-                            <button type="button" onclick="switchSyllabusStream('bio')" class="px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition active:scale-95 cursor-pointer ${userStream === 'bio' ? 'bg-emerald-600 text-white shadow-xs font-black ring-2 ring-emerald-500/20' : 'bg-white dark:bg-[#0e1628] border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50'}">
+                            <button type="button" onclick="switchSyllabusStream('bio')" class="min-h-[44px] px-3.5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition active:scale-95 cursor-pointer ${userStream === 'bio' ? 'bg-emerald-600 text-white shadow-xs font-black ring-2 ring-emerald-500/20' : 'bg-white dark:bg-[#0e1628] border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50'}">
                                 <i class="fa-solid fa-seedling text-xs"></i>
                                 <span>Biology Science</span>
                             </button>
-                            <button type="button" onclick="switchSyllabusStream('commerce')" class="px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition active:scale-95 cursor-pointer ${userStream === 'commerce' ? 'bg-purple-600 text-white shadow-xs font-black ring-2 ring-purple-500/20' : 'bg-white dark:bg-[#0e1628] border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50'}">
+                            <button type="button" onclick="switchSyllabusStream('commerce')" class="min-h-[44px] px-3.5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition active:scale-95 cursor-pointer ${userStream === 'commerce' ? 'bg-purple-600 text-white shadow-xs font-black ring-2 ring-purple-500/20' : 'bg-white dark:bg-[#0e1628] border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50'}">
                                 <i class="fa-solid fa-chart-line text-xs"></i>
                                 <span>Commerce</span>
                             </button>
-                            <button type="button" onclick="switchSyllabusStream('humanities')" class="px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition active:scale-95 cursor-pointer ${userStream === 'humanities' ? 'bg-rose-600 text-white shadow-xs font-black ring-2 ring-rose-500/20' : 'bg-white dark:bg-[#0e1628] border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50'}">
+                            <button type="button" onclick="switchSyllabusStream('humanities')" class="min-h-[44px] px-3.5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition active:scale-95 cursor-pointer ${userStream === 'humanities' ? 'bg-rose-600 text-white shadow-xs font-black ring-2 ring-rose-500/20' : 'bg-white dark:bg-[#0e1628] border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50'}">
                                 <i class="fa-solid fa-landmark text-xs"></i>
                                 <span>Humanities</span>
                             </button>
@@ -4440,6 +4582,19 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
             setText('regenerate-undo-reset-btn-text', isML ? '↺ റീസെറ്റ് ചെയ്ത പ്ലാൻ തിരിച്ചെടുക്കുക' : '↺ Undo Recent Reset / Restore Plan');
             setText('regenerate-cancel-btn', isML ? ML_I18N.regenerateModal.cancelBtn : 'Cancel');
             setText('regenerate-confirm-btn', isML ? ML_I18N.regenerateModal.rebalanceBtn : 'Rebalance Now');
+
+            // 8. Mobile Export & Share Sheet Localization
+            setText('export-sheet-title', isML ? 'ടൈംടേബിൾ എക്സ്പോർട്ട് & ഷെയർ' : 'Export & Share Timetable');
+            setText('export-sheet-subtitle', isML ? 'ഓഫ്‌ലൈനായി സൂക്ഷിക്കുക അല്ലെങ്കിൽ സുഹൃത്തുക്കളുമായി പങ്കുവെക്കുക' : 'Save offline or share your study pace with friends');
+            setText('export-sheet-cal-title', isML ? 'കലണ്ടറിൽ ചേർക്കുക (.ics)' : 'Add to Calendar (.ics)');
+            setText('export-sheet-cal-desc', isML ? 'Google, Apple, Outlook കലണ്ടറിലേക്ക് സ്റ്റഡി ബ്ലോക്കുകൾ ചേർക്കാം' : 'Sync study blocks into Google, Apple, or Outlook Calendar');
+            setText('export-sheet-csv-title', isML ? 'CSV സ്പ്രെഡ്ഷീറ്റ് ഡൗൺലോഡ് ചെയ്യുക' : 'Export CSV Spreadsheet');
+            setText('export-sheet-csv-desc', isML ? 'Excel അല്ലെങ്കിൽ Google Sheets-ൽ ഉപയോഗിക്കാൻ പൂർണ്ണ ഷെഡ്യൂൾ' : 'Download full schedule for Excel or Google Sheets');
+            setText('export-sheet-share-title', isML ? 'കൂട്ടുകാരുമായി പങ്കുവെക്കുക' : 'Share with Classmates');
+            setText('export-sheet-share-desc', isML ? 'WhatsApp, Telegram വഴി സുഹൃത്തുക്കൾക്ക് ഷെഡ്യൂൾ അയക്കാം' : 'Send timetable to friends via WhatsApp or Telegram');
+            setText('export-sheet-copy-title', isML ? 'ടൈംടേബിൾ ലിങ്ക് കോപ്പി ചെയ്യുക' : 'Copy Timetable Link');
+            setText('export-sheet-copy-desc', isML ? 'വെബ് ലിങ്ക് ക്ലിപ്പ്ബോർഡിലേക്ക് പകർത്തുക' : 'Copy direct web link to clipboard');
+            setText('export-sheet-cancel-btn', isML ? 'റദ്ദാക്കുക' : 'Cancel');
 
             // Update html lang attribute
             document.documentElement.lang = isML ? 'ml' : 'en';
@@ -4855,6 +5010,8 @@ if (typeof window !== 'undefined') {
         printTimetable,
         exportTimetableCsv,
         exportTimetableIcs,
+        openExportShareSheet,
+        closeExportShareSheet,
         openAiTutorModal,
         closeAiTutorModal,
         copyAiTutorPrompt,
@@ -5017,5 +5174,7 @@ export {
     setFirestoreDb,
     getCloudSyncUnsubscribe,
     setCloudSyncUnsubscribe,
+    openExportShareSheet,
+    closeExportShareSheet,
 };
 

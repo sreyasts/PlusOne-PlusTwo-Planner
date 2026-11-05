@@ -1,63 +1,52 @@
-# Project: HSS Planner Simulation, Stress-Testing & Defect Resolution
+# Project: HSS Study Planner Mobile & Cross-Device Optimization
 
 ## Architecture
-- **Application Type**: Zero-runtime-dependency Vanilla JavaScript (ESM) Single Page Application (SPA), served by Vite.
-- **Core Scheduler** (`src/core/scheduler.js`): Framework-agnostic scheduling engine, Ebbinghaus forgetting curve spaced retrieval, prerequisite chaining, revision buffer allocation (0–10 days), exam eve quarantine.
-- **Web Planner Bridge** (`src/engine/planner.js`): Integration layer normalizing state formats, schema migration (`src/engine/migration.js`), plan validation invariants (`validatePlan`).
-- **UI Controller** (`src/app.js`): Central state machine (`appState`), dynamic view renderer (`renderApp()`), event handlers for task toggling, setup wizard, plan adjustments, backup export/import.
-- **Data Layer** (`src/data/`): Kerala SCERT Scheme of Work for +1 (`syllabus-plus-one.js`) and +2 (`syllabus-plus-two.js`) across 13 subjects and 575 atomic task units.
-- **Persistence Layer** (`src/utils/study-backup.js`, `src/utils/study-progress.js`): LocalStorage dual-key atomic persistence (`plusTwoMissionState_v2`, `plusTwoPlanState`) with rollback protection and sanitized JSON export/import.
+- **Tech Stack**: Vanilla JavaScript (ESM Single Page Application), Vite 8.3.0, Tailwind CSS v4.3.3.
+- **State & Persistence**: Dual-key atomic LocalStorage persistence (`plusTwoMissionState_v2` and `plusTwoPlanState`).
+- **View Hierarchy**: Single-page container `#app-container` dynamically rendering views:
+  - `today`: Daily study board, overdue tasks, tomorrow preview, quick tools.
+  - `plan`: Full syllabus plan, subject filters, day cards, header action toolbar.
+  - `syllabus`: Official DHSE Scheme of Work, chapter mastery, PYQ links.
+  - `setup`: 4-step personalized study plan onboarding wizard.
+  - Modals: `#auth-modal`, `#settings-modal`, `#regenerate-modal`, `#ai-tutor-modal`.
+- **Navigation**: Desktop header navigation (`#nav-btn-*`) and Mobile fixed bottom navigation (`#mobile-nav`).
+- **Shared Interfaces**: Global export handlers (`exportTimetableIcs`, `exportTimetableCsv`, `shareApp`, `copyShareLink`, `printTimetable`) and sheet controllers (`openExportShareSheet`, `closeExportShareSheet`).
 
 ## Feature Inventory
 | # | Feature | Description | Milestone | Source |
 |---|---------|-------------|-----------|--------|
-| F1 | 8-Combination Full Simulation | Multi-day programmatic simulation (Day 1 -> 100% completion) across +1/+2 CS, Bio, Commerce, Humanities | M1 | ORIGINAL_REQUEST §R1 |
-| F2 | Pacing Presets Verification | Verify zero dropped, skipped, duplicated or orphaned chapters across 30d, 60d, Christmas, Board presets | M1 | ORIGINAL_REQUEST §R1 |
-| F3 | Missed Days Disruption (1-14d) | Verify pending drawer segregation, overdue tasks handling, and plan rebalancing under 1-14 missed days | M2 | ORIGINAL_REQUEST §R2 |
-| F4 | "Adjust Plan" Rebalance Resilience | Freeze completed days and rebalance remaining work smoothly to target deadline | M2 | ORIGINAL_REQUEST §R2 |
-| F5 | Past-Deadline Rebalance Guard | Gracefully handle rebalancing when rebuild start date >= target deadline without throwing uncaught errors | M2, M4 | Survey E1, E3 / §R2 |
-| F6 | Calendar & Timezone Boundaries | Verify leap years (2028-02-29 vs 2026/2027), negative UTC timezone offsets in countdown, month boundaries | M2, M4 | Survey E3 / §R2 |
-| F7 | Mid-Journey Reconfiguration | Safe handling of grade switch (+1 <-> +2), stream switch, study hours change, and rest day adjustments | M2 | ORIGINAL_REQUEST §R2 |
-| F8 | Plan View Task Toggle Sync | Update day card completion counts and overall progress dynamically when checking tasks in 'plan' view | M3, M4 | Survey E3 / §R3 |
-| F9 | Plus One Syllabus View Fix | Dynamically select PLUS_ONE_SYLLABUS or PLUS_TWO_SYLLABUS in syllabus reference view based on user grade | M3, M4 | Survey E2 / §R3 |
-| F10 | Engine Version Harmonization | Harmonize PLANNER_ENGINE_VERSION (5 -> 6) so v6 migrated states import cleanly without TypeError | M3, M4 | Survey E3 / §R3 |
-| F11 | 100% Syllabus Mastery Celebration | Trigger full celebration banner, achievement state, and zero-dependency confetti fallback on 100% syllabus mastery | M3, M4 | Survey E3 / §R3 |
-| F12 | Offline PWA Storage & Export/Import | LocalStorage dual-key rollback resilience and bit-for-bit JSON backup/restore roundtrip fidelity | M3 | ORIGINAL_REQUEST §R3 |
-| F13 | Automated Defect Resolution | Fix all identified defects directly in src/ and ensure zero regressions across existing test invariants | M4 | ORIGINAL_REQUEST §R4 |
-| F14 | Comprehensive E2E Testing Suite | Multi-tier test suite (Tiers 1-4) verifying all user requirements and system behavior | E2E Track | ORIGINAL_REQUEST §Criteria |
-| F15 | Adversarial Coverage Hardening | White-box stress testing and gap discovery (Tier 5) ensuring high robustness and resilience | Final Milestone | Project Pattern |
+| 1 | Mobile Bottom Action Sheet | Grouped bottom action sheet (<640px) with 56px rows, distinct colored icons, and descriptive text labels for Calendar, CSV, Share, and Copy Link | M1 | ORIGINAL_REQUEST §R1 |
+| 2 | Responsive Header Action Toolbar | Full Plan header toolbar rendering Mobile Action Trigger (<640px) and accessible inline buttons (>=640px) | M1 | ORIGINAL_REQUEST §R1 |
+| 3 | Export Execution Parity | Identical invocation of Calendar (.ics RFC 5545), CSV (RFC 4180), and Share (navigator.share / WhatsApp fallback) from mobile sheet and desktop toolbar | M1 | ORIGINAL_REQUEST §R1 |
+| 4 | Bilingual Labeling Support | Full English and Malayalam localization for action controls and sheet options | M1 | Explorer 1 & 2 Survey |
+| 5 | Cross-View Responsive Layout | Layout optimization on 360px–414px viewports across Full Plan, Today, Syllabus, Setup Wizard, and Modals without clipping or overflow | M2 | ORIGINAL_REQUEST §R2 |
+| 6 | Touch Target Elevation (>=44x44px) | All interactive controls, buttons, pills, modal close targets, and task checkboxes (via tap expanders) meet minimum 44x44px tap boundaries | M2 | ORIGINAL_REQUEST §R2 |
+| 7 | Mobile Interactivity & Tactile Feedback | Active press scaling (`active:scale-[0.97]`), smooth transitions, safe-area inset protection (`env(safe-area-inset-bottom)`), and sticky hover mitigation | M2 | ORIGINAL_REQUEST §R3 |
+| 8 | E2E Mobile & Responsive Test Suite | Dedicated Vitest test suite (`tests/mobile-responsive-actions.test.js`) covering Tiers 1-4 for mobile overflow, execution parity, CSV/Share, touch targets, and layout invariants | E2E Testing Track | ORIGINAL_REQUEST §R4 |
+| 9 | Clean Build & Regression Verification | 100% pass on all existing Vitest suites (441+ tests), 553 legacy checks, clean ESLint, and zero-error production build (`npm run build`) | M3 (Final) | ORIGINAL_REQUEST §R4 |
 
 ## Milestones
 | # | Name | Scope | Dependencies | Status |
 |---|------|-------|-------------|--------|
-| E2E | E2E Testing Track | Requirement-driven Opaque-Box Test Harness & Tiers 1-4 Suites (TEST_READY.md) | none | IN_PROGRESS |
-| M1 | Lifecycle Simulation (R1) | Multi-day daily simulation from Day 1 to 100% across all 8 combinations & pacing presets | none | IN_PROGRESS |
-| M2 | Edge-Case & Disruption Stress (R2) | 1-14 missed days, Adjust Plan, past deadline guard, calendar boundaries, mid-plan switches | M1 | PLANNED |
-| M3 | UI State Sync & Storage Integrity (R3) | Day counter sync, +1 syllabus view, v6 version harmonization, 100% celebration & confetti | none | IN_PROGRESS |
-| M4 | Invariant Hardening & Defect Fixes (R4) | Implement code fixes in src/, maintain compatibility with 15 Vitest suites & 553 legacy checks | M2, M3 | PLANNED |
-| M5 | Final Milestone & Adversarial Hardening | Phase 1: 100% E2E tests pass (Tiers 1-4); Phase 2: Tier 5 Adversarial Coverage Hardening | M1, M2, M3, M4, E2E | PLANNED |
+| E2E | E2E Testing Track | Design test infrastructure (`TEST_INFRA.md`) and author 4-tier comprehensive test suite (`tests/mobile-responsive-actions.test.js`) deriving from requirements; publish `TEST_READY.md` | Survey | IN_PROGRESS |
+| 1 | Mobile Action Controls (R1) | Implement Mobile Bottom Action Sheet (`#export-share-sheet`), update Full Plan header toolbar in `src/app.js` and `index.html`, ensure execution parity and bilingual labels | Survey | IN_PROGRESS |
+| 2 | Responsive Layout & Touch Ergonomics (R2, R3) | Implement universal 44px touch targets, safe area insets, tactile active states, sticky hover mitigation in `src/style.css`, and cross-view layout hardening | M1 | PLANNED |
+| 3 | Final Milestone: E2E Test Pass & Coverage Hardening (R4) | Phase 1: Pass 100% of E2E test suite from `TEST_READY.md`, all Vitest suites, legacy engine checks, and production build. Phase 2: Adversarial coverage hardening via Challenger | M1, M2, E2E | PLANNED |
 
 ## Interface Contracts
-### Scheduler & Planner Core ↔ UI Controller
-- `buildIntelligentPlan(options)`:
-  - Input: `{ stream, deadlineDateStr, startDateStr, dailyHours, restDay, targetTerm, completedChapterIds, completedTaskIds, ... }`
-  - Output: `{ planDays, warnings, stats, syllabusRunwayDays, revisionBufferDays, isInfeasible }`
-  - Error Contract: Throws validation error if dates invalid; must be guarded when `startDateStr >= deadlineDateStr`.
-- `getRemainingPlanTasks(options)`:
-  - Input: `{ grade, stream, targetTerm, completedChapterIds, completedTaskIds }`
-  - Output: Array of uncompleted canonical atomic tasks.
-- `persistStudyBackup(state, storage)`:
-  - Atomic write to `plusTwoMissionState_v2` and `plusTwoPlanState`.
-  - On error: Rollback to previous values.
+### Export & Sheet Action Controller ↔ Application Views
+- `window.openExportShareSheet()`: Opens `#export-share-sheet`, transitions opacity and translate-y, locks background scroll, binds Escape key dismiss.
+- `window.closeExportShareSheet()`: Reverses transition, hides sheet after 300ms, restores background scroll.
+- `window.exportTimetableIcs()`: Generates and downloads RFC 5545 `.ics` file; identical behavior on mobile and desktop.
+- `window.exportTimetableCsv()`: Generates and downloads RFC 4180 `.csv` spreadsheet; identical behavior on mobile and desktop.
+- `window.shareApp()`: Triggers `navigator.share` on mobile or falls back to WhatsApp share link; identical behavior on mobile and desktop.
+- `window.copyShareLink()`: Copies canonical URL to clipboard with confirmation toast.
+- `window.printTimetable()`: Triggers `window.print()` for print/PDF export.
 
 ## Code Layout
-- `src/core/scheduler.js`: Framework-agnostic mathematical scheduler and constraint propagation.
-- `src/engine/planner.js`: Legacy-compatible scheduler interface and options normalizer.
-- `src/engine/migration.js`: State schema migrations across versions.
-- `src/app.js`: Application UI lifecycle, event wiring, and view rendering.
-- `src/ui/daily-plan.js`: Daily view calculation and overdue tasks partition.
-- `src/utils/confetti.js`: Zero-dependency HTML5 canvas confetti particle generator.
-- `src/utils/study-backup.js`: Storage persistence, validation, and JSON serialization.
-- `src/data/syllabus-plus-one.js`: Canonical Class 11 Kerala SCERT curriculum data.
-- `src/data/syllabus-plus-two.js`: Canonical Class 12 Kerala SCERT curriculum data.
-- `tests/`: Vitest test suites.
+- `src/app.js`: Main SPA controller, view renderers (`renderPlanView`, `renderTodayView`, `renderSyllabusView`, `renderSetupWizard`), export handlers, and sheet controllers.
+- `src/style.css`: Foundational Tailwind CSS v4 styles, safe-area variables, `.touch-target-44`, `.task-checkbox::after` expander, active states, and print media rules.
+- `index.html`: Shell markup, desktop header navigation, mobile fixed bottom bar (`#mobile-nav`), modal dialogs, and `#export-share-sheet`.
+- `src/ui/icons.js` & `src/ui/illustrations.js`: Inline SVG definitions.
+- `tests/mobile-responsive-actions.test.js`: Comprehensive automated test suite for R1–R4.
+- `tests/engine_test.cjs`: Legacy engine validation test suite.

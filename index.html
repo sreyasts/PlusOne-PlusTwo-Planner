@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     
     <!-- Canonical Domain Bridge: Unify multiple domains into one seamless application -->
     <script id="canonical-domain-bridge">
@@ -406,7 +406,7 @@
 
                 <!-- Unified Profile & Settings Avatar Control (Single clean entry point) -->
                 <div id="auth-container" class="relative">
-                    <button id="auth-avatar-btn" onclick="toggleUserDropdown()" class="flex items-center gap-1.5 p-1 sm:px-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 transition active:scale-95 group" title="Profile, Theme & Settings">
+                    <button id="auth-avatar-btn" onclick="toggleUserDropdown()" class="min-h-[44px] min-w-[44px] flex items-center justify-center gap-1.5 p-1.5 sm:px-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 transition active:scale-95 group" title="Profile, Theme & Settings">
                         <!-- Guest Avatar (Shown when logged out) -->
                         <div id="guest-avatar-icon" class="w-7 h-7 rounded-lg bg-blue-600 text-white flex items-center justify-center text-xs font-bold shadow-xs">
                             <svg class="w-4 h-4 inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -766,19 +766,19 @@
 
     <!-- Mobile Bottom Navigation Bar (Clean 4 tabs) -->
     <div id="mobile-nav" class="sm:hidden fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-[#0e1422]/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800/80 z-30 px-3 py-2 flex justify-around items-center">
-        <button onclick="goToDashboard()" id="mob-btn-today" class="flex flex-col items-center text-blue-600 dark:text-blue-400 font-bold text-xs transition">
+        <button onclick="goToDashboard()" id="mob-btn-today" class="min-h-[44px] min-w-[44px] flex flex-col items-center justify-center text-blue-600 dark:text-blue-400 font-bold text-xs transition active:scale-95">
             <svg class="w-5 h-5 inline-block text-lg mb-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
             <span id="mob-text-today">Today</span>
         </button>
-        <button onclick="goToPlan()" id="mob-btn-plan" class="flex flex-col items-center text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 font-semibold text-xs transition">
+        <button onclick="goToPlan()" id="mob-btn-plan" class="min-h-[44px] min-w-[44px] flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 font-semibold text-xs transition active:scale-95">
             <svg class="w-5 h-5 inline-block text-lg mb-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="10" x2="21" y1="6" y2="6"/><line x1="10" x2="21" y1="12" y2="12"/><line x1="10" x2="21" y1="18" y2="18"/><path d="m3 6 1.5 1.5L7 4"/><path d="m3 12 1.5 1.5L7 10"/><path d="m3 18 1.5 1.5L7 16"/></svg>
             <span id="mob-text-plan">Full Plan</span>
         </button>
-        <button onclick="goToSyllabusView()" id="mob-btn-syllabus" class="flex flex-col items-center text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 font-semibold text-xs transition">
+        <button onclick="goToSyllabusView()" id="mob-btn-syllabus" class="min-h-[44px] min-w-[44px] flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 font-semibold text-xs transition active:scale-95">
             <svg class="w-5 h-5 inline-block text-lg mb-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
             <span id="mob-text-syllabus">Syllabus</span>
         </button>
-        <button onclick="shareApp()" class="flex flex-col items-center text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 font-semibold text-xs transition">
+        <button onclick="shareApp()" class="min-h-[44px] min-w-[44px] flex flex-col items-center justify-center text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 font-semibold text-xs transition active:scale-95">
             <svg class="w-5 h-5 inline-block text-lg mb-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg>
             <span id="mob-text-share">Share</span>
         </button>
@@ -789,7 +789,7 @@
     <div id="auth-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4" onclick="if(event.target === this) continueAsGuest()">
         <div class="bg-white dark:bg-[#0e1526] rounded-3xl shadow-2xl max-w-sm w-full p-6 sm:p-7 border border-slate-100 dark:border-slate-800 animate-fade-in-up relative text-center my-auto">
             <!-- Close 'X' button -->
-            <button onclick="continueAsGuest()" class="absolute top-4 right-4 w-8 h-8 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 flex items-center justify-center transition active:scale-95" title="Close">
+            <button onclick="continueAsGuest()" class="absolute top-4 right-4 w-11 h-11 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 flex items-center justify-center transition active:scale-95" title="Close" aria-label="Close">
                 <svg class="w-4 h-4 inline-block text-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
 
@@ -852,7 +852,7 @@
                         <p id="settings-modal-subtitle" class="text-xs text-slate-500 dark:text-slate-400 font-medium">Personalize your HSS Planner workspace</p>
                     </div>
                 </div>
-                <button onclick="closeSettingsModal()" class="w-8 h-8 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 flex items-center justify-center transition active:scale-95" title="Close">
+                <button onclick="closeSettingsModal()" class="w-11 h-11 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 flex items-center justify-center transition active:scale-95" title="Close" aria-label="Close">
                     <svg class="w-4 h-4 inline-block text-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                 </button>
             </div>
@@ -1092,7 +1092,7 @@
                     </div>
                     <h3 id="regenerate-modal-title" class="text-lg font-bold text-slate-900">Adjust & Rebalance Plan</h3>
                 </div>
-                <button onclick="closeRegenerateModal()" class="w-8 h-8 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-600 flex items-center justify-center transition">
+                <button onclick="closeRegenerateModal()" class="w-11 h-11 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-600 flex items-center justify-center transition active:scale-95" title="Close" aria-label="Close">
                     <svg class="w-4 h-4 inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                 </button>
             </div>
@@ -1168,7 +1168,7 @@
                         <p class="text-xs text-slate-500 dark:text-slate-400" id="ai-tutor-subtitle">Pedagogical Active Recall Prompt for ChatGPT & Gemini</p>
                     </div>
                 </div>
-                <button type="button" onclick="closeAiTutorModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 flex items-center justify-center transition" aria-label="Close Modal">
+                <button type="button" onclick="closeAiTutorModal()" class="w-11 h-11 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 flex items-center justify-center transition active:scale-95" aria-label="Close Modal">
                     <i class="fa-solid fa-xmark text-sm"></i>
                 </button>
             </div>
@@ -1220,6 +1220,85 @@
                     <span class="hidden sm:inline">Gemini</span>
                 </a>
             </div>
+        </div>
+    </div>
+
+    <!-- Mobile Export & Share Bottom Action Sheet (< 640px) -->
+    <div id="export-share-sheet" class="fixed inset-0 z-50 hidden flex flex-col justify-end bg-slate-950/60 backdrop-blur-sm transition-opacity duration-300 opacity-0 no-print cursor-pointer" onclick="if(event.target === this) closeExportShareSheet()" role="dialog" aria-modal="true" aria-labelledby="export-sheet-title" aria-hidden="true">
+        <div id="export-sheet-panel" class="w-full max-w-lg mx-auto bg-white dark:bg-[#0e1422] rounded-t-3xl border-t border-slate-200/80 dark:border-slate-800 shadow-2xl p-5 sm:p-6 transform translate-y-full transition-transform duration-300 ease-out pb-[calc(1.5rem+env(safe-area-inset-bottom,0px))] cursor-default">
+            <!-- Drag Handle / Grab Pill -->
+            <div class="w-12 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mb-4 cursor-pointer" onclick="closeExportShareSheet()" title="Dismiss"></div>
+
+            <!-- Header -->
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800 mb-3">
+                <div>
+                    <h3 id="export-sheet-title" class="text-base font-extrabold text-slate-900 dark:text-white">
+                        Export &amp; Share Timetable
+                    </h3>
+                    <p id="export-sheet-subtitle" class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                        Save offline or share your study pace with friends
+                    </p>
+                </div>
+                <button type="button" onclick="closeExportShareSheet()" class="w-11 h-11 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 flex items-center justify-center transition active:scale-95" aria-label="Close export menu">
+                    <i class="fa-solid fa-xmark text-base"></i>
+                </button>
+            </div>
+
+            <!-- Action Rows -->
+            <div class="space-y-2.5">
+                <!-- 1. Calendar Export -->
+                <button id="action-sheet-ics-btn" type="button" onclick="exportTimetableIcs(); closeExportShareSheet();" class="mobile-action-sheet-item w-full min-h-[56px] p-3 rounded-2xl border border-slate-200/80 dark:border-slate-800 hover:bg-amber-50/60 dark:hover:bg-amber-950/30 flex items-center gap-3.5 transition active:scale-[0.98] text-left group">
+                    <div class="w-11 h-11 rounded-xl bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center text-lg shrink-0">
+                        <i class="fa-regular fa-calendar-plus"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <span id="export-sheet-cal-title" class="font-bold text-slate-900 dark:text-white text-xs sm:text-sm block truncate group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">Add to Calendar (.ics)</span>
+                        <span id="export-sheet-cal-desc" class="text-[11px] text-slate-500 dark:text-slate-400 block truncate">Sync study blocks into Google, Apple, or Outlook Calendar</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-slate-300 dark:text-slate-600 text-xs"></i>
+                </button>
+
+                <!-- 2. CSV Export -->
+                <button id="action-sheet-csv-btn" type="button" onclick="exportTimetableCsv(); closeExportShareSheet();" class="mobile-action-sheet-item w-full min-h-[56px] p-3 rounded-2xl border border-slate-200/80 dark:border-slate-800 hover:bg-emerald-50/60 dark:hover:bg-emerald-950/30 flex items-center gap-3.5 transition active:scale-[0.98] text-left group">
+                    <div class="w-11 h-11 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-lg shrink-0">
+                        <i class="fa-solid fa-file-csv"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <span id="export-sheet-csv-title" class="font-bold text-slate-900 dark:text-white text-xs sm:text-sm block truncate group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">Export CSV Spreadsheet</span>
+                        <span id="export-sheet-csv-desc" class="text-[11px] text-slate-500 dark:text-slate-400 block truncate">Download full schedule for Excel or Google Sheets</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-slate-300 dark:text-slate-600 text-xs"></i>
+                </button>
+
+                <!-- 3. Share Plan -->
+                <button id="action-sheet-share-btn" type="button" onclick="shareApp(); closeExportShareSheet();" class="mobile-action-sheet-item w-full min-h-[56px] p-3 rounded-2xl border border-slate-200/80 dark:border-slate-800 hover:bg-indigo-50/60 dark:hover:bg-indigo-950/30 flex items-center gap-3.5 transition active:scale-[0.98] text-left group">
+                    <div class="w-11 h-11 rounded-xl bg-indigo-100 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-lg shrink-0">
+                        <i class="fa-solid fa-arrow-up-from-bracket"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <span id="export-sheet-share-title" class="font-bold text-slate-900 dark:text-white text-xs sm:text-sm block truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">Share with Classmates</span>
+                        <span id="export-sheet-share-desc" class="text-[11px] text-slate-500 dark:text-slate-400 block truncate">Send timetable to friends via WhatsApp or Telegram</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-slate-300 dark:text-slate-600 text-xs"></i>
+                </button>
+
+                <!-- 4. Copy Direct Link -->
+                <button id="action-sheet-copy-btn" type="button" onclick="copyShareLink(); closeExportShareSheet();" class="mobile-action-sheet-item w-full min-h-[56px] p-3 rounded-2xl border border-slate-200/80 dark:border-slate-800 hover:bg-blue-50/60 dark:hover:bg-blue-950/30 flex items-center gap-3.5 transition active:scale-[0.98] text-left group">
+                    <div class="w-11 h-11 rounded-xl bg-blue-100 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center text-lg shrink-0">
+                        <i class="fa-regular fa-copy"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <span id="export-sheet-copy-title" class="font-bold text-slate-900 dark:text-white text-xs sm:text-sm block truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">Copy Timetable Link</span>
+                        <span id="export-sheet-copy-desc" class="text-[11px] text-slate-500 dark:text-slate-400 block truncate">Copy direct web link to clipboard</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-slate-300 dark:text-slate-600 text-xs"></i>
+                </button>
+            </div>
+
+            <!-- Cancel / Dismiss Button -->
+            <button id="export-sheet-cancel-btn" type="button" onclick="closeExportShareSheet()" class="w-full min-h-[48px] py-3 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs rounded-xl mt-3 transition active:scale-95">
+                Cancel
+            </button>
         </div>
     </div>
 
