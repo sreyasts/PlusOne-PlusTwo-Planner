@@ -182,11 +182,11 @@
         },
         {
           "source": "/pages/syllabus-plus-one",
-          "destination": "/pages/syllabus-plus-two.html"
+          "destination": "/pages/syllabus-plus-one.html"
         },
         {
           "source": "/syllabus-plus-one",
-          "destination": "/pages/syllabus-plus-two.html"
+          "destination": "/pages/syllabus-plus-one.html"
         },
         {
           "source": "/pages/hss-syllabus",
@@ -437,11 +437,11 @@
         },
         {
           "source": "/pages/syllabus-plus-one",
-          "destination": "/pages/syllabus-plus-two.html"
+          "destination": "/pages/syllabus-plus-one.html"
         },
         {
           "source": "/syllabus-plus-one",
-          "destination": "/pages/syllabus-plus-two.html"
+          "destination": "/pages/syllabus-plus-one.html"
         },
         {
           "source": "/pages/hss-syllabus",
