@@ -12,6 +12,7 @@ export {
   restorePreResetSnapshot,
   restorePreviousPlan,
   dismissDashboardRestoreBanner,
+  openPendingWork,
   getActiveTodayStr,
   compactPlanToToday,
   getActiveStreak,

@@ -895,6 +895,12 @@ function loadInitialState() {
             if (!refreshing) scheduleMidnight();
         }
 
+        function handlePendingHash() {
+            if (typeof window !== 'undefined' && window.location && window.location.hash === '#pending-work') {
+                if (typeof openPendingWork === 'function') openPendingWork();
+            }
+        }
+
         function setupAutoRefresh() {
             refreshing = false;
             if (typeof window !== "undefined") setupWindowBindings();
@@ -905,6 +911,8 @@ function loadInitialState() {
             window.addEventListener("focus", checkOnReturn);
             window.removeEventListener("pageshow", checkOnReturn);
             window.addEventListener("pageshow", checkOnReturn);
+            window.removeEventListener("hashchange", handlePendingHash);
+            window.addEventListener("hashchange", handlePendingHash);
             scheduleMidnight();
         }
 
@@ -2922,6 +2930,64 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
             showAppToast("📅 Schedule synchronized! Day 1 starts today.", "fa-calendar-check text-blue-400");
         }
 
+        function openPendingWork(event) {
+            if (event) {
+                if (typeof event.preventDefault === 'function') event.preventDefault();
+                if (typeof event.stopPropagation === 'function') event.stopPropagation();
+            }
+
+            if (currentView !== 'today') {
+                goToDashboard();
+            }
+
+            const performOpenAndScroll = () => {
+                const pendingDetails = document.getElementById('pending-work');
+                if (!pendingDetails) return;
+
+                // 1. Expand the details element immediately
+                pendingDetails.open = true;
+
+                // 2. Smoothly scroll down so the pending section is clearly visible
+                const header = document.querySelector('header');
+                const headerOffset = header ? header.offsetHeight : 70;
+                const rect = pendingDetails.getBoundingClientRect();
+                const currentY = (typeof window !== 'undefined' && (window.pageYOffset || window.scrollY)) || 0;
+                const targetScrollY = currentY + rect.top - headerOffset - 16;
+
+                if (typeof window !== 'undefined' && typeof window.scrollTo === 'function') {
+                    window.scrollTo({
+                        top: Math.max(0, targetScrollY),
+                        behavior: 'smooth'
+                    });
+                }
+
+                // 3. Highlight / pulse effect for visual feedback
+                pendingDetails.classList.remove('pending-highlight-pulse');
+                void pendingDetails.offsetWidth; // Force DOM reflow
+                pendingDetails.classList.add('pending-highlight-pulse');
+
+                // Focus summary for keyboard accessibility
+                const summary = pendingDetails.querySelector('summary');
+                if (summary && typeof summary.focus === 'function') {
+                    try {
+                        summary.focus({ preventScroll: true });
+                    } catch (_) {
+                        summary.focus();
+                    }
+                }
+
+                setTimeout(() => {
+                    pendingDetails.classList.remove('pending-highlight-pulse');
+                }, 2200);
+            };
+
+            if (typeof requestAnimationFrame === 'function') {
+                requestAnimationFrame(() => performOpenAndScroll());
+            } else {
+                performOpenAndScroll();
+            }
+        }
+
         function openRegenerateModal() {
             if (!appState || !appState.plan) return;
 
@@ -3993,7 +4059,14 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                     ${typeof renderDashboardRestoreBanner === 'function' ? renderDashboardRestoreBanner() : ''}
 
                     <p class="study-date">${localToday}</p>
-                    ${daily.overdueCount ? `<p class="pending-notice" role="status">${daily.overdueCount} ${isML ? 'മുൻ ദിവസങ്ങളിൽ ബാക്കിയുണ്ട്.' : 'unfinished from previous days.'} <a href="#pending-work">${isML ? 'കാണുക' : 'View pending'}</a></p>` : ''}
+                    ${daily.overdueCount ? `
+                        <p class="pending-notice" role="status" onclick="openPendingWork(event)">
+                            <i class="fa-solid fa-clock-rotate-left mr-1 opacity-80" aria-hidden="true"></i>
+                            <span>${daily.overdueCount} ${isML ? 'മുൻ ദിവസങ്ങളിൽ ബാക്കിയുണ്ട്.' : 'unfinished from previous days.'}</span>
+                            <a href="#pending-work" onclick="openPendingWork(event)" class="pending-link font-bold underline ml-1" aria-label="${isML ? 'മുൻ ദിവസങ്ങളിലെ ബാക്കി പഠനം കാണുക' : 'View pending tasks from previous days'}">
+                                ${isML ? 'കാണുക' : 'View pending'}
+                            </a>
+                        </p>` : ''}
                     ${yesterdayPlan?.tasks.length ? `<p class="study-history">${isML ? 'ഇന്നലെ' : 'Yesterday'}: ${yesterdayPlan.tasks.filter(task => task.completed).length} / ${yesterdayPlan.tasks.length} ${isML ? 'പൂർത്തിയായി' : 'completed'}</p>` : ''}
 
                     <!-- Main Section: Today's Targets -->
@@ -4002,7 +4075,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                     </div>
 
                     ${daily.overdueCount ? `
-                        <details id="pending-work" class="study-pending" ${openSections.has('pending-work') ? 'open' : ''}>
+                        <details id="pending-work" class="study-pending" ${openSections.has('pending-work') || (typeof window !== 'undefined' && window.location && window.location.hash === '#pending-work') ? 'open' : ''}>
                             <summary>${isML ? 'മുൻ ദിവസങ്ങളിലെ ബാക്കി പഠനം' : 'Pending from previous days'} (${daily.overdueCount})</summary>
                             ${daily.overdueDays.map(day => `
                                 <section class="pending-day">
@@ -5305,6 +5378,7 @@ if (typeof window !== 'undefined') {
         prevSetupStep,
         handleInitialSetup,
         openRegenerateModal,
+        openPendingWork,
         closeRegenerateModal,
         openSettingsModal,
         closeSettingsModal,
@@ -5436,6 +5510,7 @@ export {
     openExportShareSheet,
     closeExportShareSheet,
     openRegenerateModal,
+    openPendingWork,
     executeRegeneration,
     autoDetectAndRebalance,
 };

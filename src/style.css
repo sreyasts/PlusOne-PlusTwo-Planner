@@ -142,10 +142,63 @@ html.dark .syllabus-notes-btn:hover {
 .study-tool-recovery > button:first-child span { overflow-wrap: anywhere; }
 .study-tool-recovery > button:last-child { flex-shrink: 0; }
 .study-date, .study-history { font-size: 13px; color: #64748b; margin: 0 0 12px; }
-.pending-notice { font-size: 14px; padding: 12px 16px; margin-bottom: 12px; border: 1px solid #fcd34d; background: #fffbeb; color: #854d0e; border-radius: 12px; }
-.pending-notice a { text-decoration: underline; font-weight: 650; margin-left: 6px; }
-.study-pending, .study-tomorrow { border: 1px solid #cbd5e1; border-radius: 14px; padding: 16px; margin-bottom: 16px; }
+.pending-notice {
+    font-size: 14px;
+    padding: 12px 16px;
+    margin-bottom: 12px;
+    border: 1px solid #fcd34d;
+    background: #fffbeb;
+    color: #854d0e;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: transform 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+.pending-notice:hover {
+    background: #fef3c7;
+    border-color: #f59e0b;
+}
+.pending-notice a, .pending-notice .pending-link {
+    text-decoration: underline;
+    font-weight: 650;
+    margin-left: 6px;
+    color: inherit;
+    cursor: pointer;
+    transition: color 0.15s ease;
+}
+.pending-notice a:hover, .pending-notice .pending-link:hover {
+    color: #b45309;
+}
+.study-pending {
+    border: 1px solid #cbd5e1;
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 16px;
+    scroll-margin-top: 85px;
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.study-tomorrow { border: 1px solid #cbd5e1; border-radius: 14px; padding: 16px; margin-bottom: 16px; }
 .study-pending summary, .study-tomorrow summary { cursor: pointer; font-weight: 650; font-size: 14px; }
+@keyframes pendingSectionGlow {
+    0% {
+        box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7);
+        border-color: #f59e0b;
+    }
+    40% {
+        box-shadow: 0 0 0 6px rgba(245, 158, 11, 0.35);
+        border-color: #f59e0b;
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
+    }
+}
+.pending-highlight-pulse {
+    animation: pendingSectionGlow 1.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
 .pending-day { margin-top: 16px; }
 .pending-day h3 { font-weight: 650; font-size: 13px; }
 .pending-task { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 14px 0; border-bottom: 1px solid #e2e8f0; font-size: 13px; }
@@ -155,6 +208,8 @@ html.dark .syllabus-notes-btn:hover {
 .study-tomorrow ul { padding-left: 20px; }
 .study-tomorrow li, .study-tomorrow > p { margin-top: 12px; font-size: 13px; }
 html.dark .pending-notice { color: #fde68a; background: #292213; border-color: #785820; }
+html.dark .pending-notice:hover { background: #382c16; border-color: #b45309; }
+html.dark .pending-notice a:hover, html.dark .pending-notice .pending-link:hover { color: #fef08a; }
 html.dark .study-pending, html.dark .study-tomorrow, html.dark .pending-task { border-color: #334155; }
 html.dark .study-date, html.dark .study-history, html.dark .pending-task small { color: #94a3b8; }
 html.dark .pending-task button { color: #6ee7b7; }

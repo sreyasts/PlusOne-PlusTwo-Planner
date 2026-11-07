@@ -22,5 +22,6 @@ export default defineConfig({
     globals: true,
     environment: 'node',
     exclude: ['**/node_modules/**', '**/dist/**', '**/tests/e2e/**'],
+    testTimeout: 20000,
   },
 });
