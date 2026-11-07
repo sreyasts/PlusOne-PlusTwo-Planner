@@ -155,13 +155,16 @@
         <!-- Target Milestone Selector Tabs -->
         <div class="flex justify-center mb-6">
             <div class="inline-flex p-1 bg-slate-200/80 rounded-2xl gap-1 flex-wrap justify-center" id="milestoneTabs">
-                <button type="button" data-date="2027-03-01T09:30:00" data-label="DHSE Board Exam (Theory)" class="milestone-btn active px-4 py-2 text-xs font-bold rounded-xl transition-colors duration-150 bg-white text-blue-700 shadow-xs">
-                    <i class="fa-solid fa-file-signature mr-1.5"></i> Board Exams (March 1)
+                <button type="button" data-date="2027-03-01T09:30:00" data-label="DHSE Plus Two Board Exam (Theory)" class="milestone-btn active px-4 py-2 text-xs font-bold rounded-xl transition-colors duration-150 bg-white text-blue-700 shadow-xs">
+                    <i class="fa-solid fa-file-signature mr-1.5"></i> +2 Board Exams (March 1)
                 </button>
-                <button type="button" data-date="2027-02-15T09:30:00" data-label="DHSE Model Exams" class="milestone-btn px-4 py-2 text-xs font-bold rounded-xl transition-colors duration-150 text-slate-600 hover:text-slate-900">
+                <button type="button" data-date="2027-03-15T09:30:00" data-label="DHSE Plus One Board Exam (Theory)" class="milestone-btn px-4 py-2 text-xs font-bold rounded-xl transition-colors duration-150 text-slate-600 hover:text-slate-900">
+                    <i class="fa-solid fa-file-signature mr-1.5"></i> +1 Board Exams (March 15)
+                </button>
+                <button type="button" data-date="2027-02-15T09:30:00" data-label="DHSE Model Exams (+1 & +2)" class="milestone-btn px-4 py-2 text-xs font-bold rounded-xl transition-colors duration-150 text-slate-600 hover:text-slate-900">
                     <i class="fa-solid fa-clipboard-check mr-1.5"></i> Model Exams (Feb 15)
                 </button>
-                <button type="button" data-date="2027-01-22T09:30:00" data-label="DHSE Practical Exams" class="milestone-btn px-4 py-2 text-xs font-bold rounded-xl transition-colors duration-150 text-slate-600 hover:text-slate-900">
+                <button type="button" data-date="2027-01-22T09:30:00" data-label="DHSE Practical Exams (+2)" class="milestone-btn px-4 py-2 text-xs font-bold rounded-xl transition-colors duration-150 text-slate-600 hover:text-slate-900">
                     <i class="fa-solid fa-flask-vial mr-1.5"></i> Practicals (Jan 22)
                 </button>
             </div>
@@ -222,17 +225,36 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Inputs Column -->
                 <div class="space-y-4">
+                    <!-- Grade Selector -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Academic Level</label>
+                        <div class="grid grid-cols-3 gap-2" id="gradeSelector">
+                            <button type="button" data-grade="+2" class="grade-btn active px-3 py-2 rounded-xl text-xs font-bold border border-blue-600 bg-blue-50 text-blue-700 transition-colors duration-150 text-center">
+                                Plus Two (+2)
+                            </button>
+                            <button type="button" data-grade="+1" class="grade-btn px-3 py-2 rounded-xl text-xs font-bold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition-colors duration-150 text-center">
+                                Plus One (+1)
+                            </button>
+                            <button type="button" data-grade="both" class="grade-btn px-3 py-2 rounded-xl text-xs font-bold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition-colors duration-150 text-center">
+                                Both (+1 & +2)
+                            </button>
+                        </div>
+                    </div>
+
                     <!-- Stream Preset -->
                     <div>
                         <label class="block text-xs font-bold text-slate-700 mb-1.5">Higher Secondary Stream</label>
-                        <div class="grid grid-cols-3 gap-2" id="streamSelector">
-                            <button type="button" data-stream="science" data-chapters="54" class="stream-btn active px-3 py-2 rounded-xl text-xs font-bold border border-blue-600 bg-blue-50 text-blue-700 transition-colors duration-150 text-center">
-                                Science (Bio/CS)
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2" id="streamSelector">
+                            <button type="button" data-stream="science_cs" class="stream-btn active px-3 py-2 rounded-xl text-xs font-bold border border-blue-600 bg-blue-50 text-blue-700 transition-colors duration-150 text-center">
+                                Science (CS)
                             </button>
-                            <button type="button" data-stream="commerce" data-chapters="42" class="stream-btn px-3 py-2 rounded-xl text-xs font-bold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition-colors duration-150 text-center">
+                            <button type="button" data-stream="science_bio" class="stream-btn px-3 py-2 rounded-xl text-xs font-bold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition-colors duration-150 text-center">
+                                Science (Bio)
+                            </button>
+                            <button type="button" data-stream="commerce" class="stream-btn px-3 py-2 rounded-xl text-xs font-bold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition-colors duration-150 text-center">
                                 Commerce
                             </button>
-                            <button type="button" data-stream="humanities" data-chapters="38" class="stream-btn px-3 py-2 rounded-xl text-xs font-bold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition-colors duration-150 text-center">
+                            <button type="button" data-stream="humanities" class="stream-btn px-3 py-2 rounded-xl text-xs font-bold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition-colors duration-150 text-center">
                                 Humanities
                             </button>
                         </div>
@@ -242,13 +264,13 @@
                     <div>
                         <div class="flex items-center justify-between mb-1">
                             <label for="chaptersSlider" class="text-xs font-bold text-slate-700">Chapters Left to Cover / Revise</label>
-                            <span id="chaptersDisplay" class="text-sm font-extrabold text-blue-700 font-mono-num">54 Chapters</span>
+                            <span id="chaptersDisplay" class="text-sm font-extrabold text-blue-700 font-mono-num">49 Chapters</span>
                         </div>
-                        <input type="range" id="chaptersSlider" min="5" max="75" value="54" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600">
+                        <input type="range" id="chaptersSlider" min="5" max="110" value="49" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600">
                         <div class="flex justify-between text-[10px] text-slate-400 mt-1 font-mono-num">
                             <span>5 Chapters</span>
-                            <span>Full Syllabus (~54)</span>
-                            <span>75 Chapters</span>
+                            <span id="sliderMidLabel">Full Syllabus (~49)</span>
+                            <span id="sliderMaxLabel">110 Chapters</span>
                         </div>
                     </div>
 
@@ -466,7 +488,8 @@
             var deadlineIso = targetDate.getFullYear() + '-' +
                 String(targetDate.getMonth() + 1).padStart(2, '0') + '-' +
                 String(targetDate.getDate()).padStart(2, '0');
-            btnAutoPlan.href = '/?stream=' + encodeURIComponent(stream) + '&deadline=' + encodeURIComponent(deadlineIso);
+            var cleanStream = selectedStream.indexOf('science') !== -1 ? (selectedStream === 'science_bio' ? 'bio' : 'cs') : selectedStream;
+            btnAutoPlan.href = '/?grade=' + encodeURIComponent(selectedGrade) + '&stream=' + encodeURIComponent(cleanStream) + '&deadline=' + encodeURIComponent(deadlineIso);
         }
 
         // Milestone tabs handler
@@ -509,6 +532,56 @@
             calculateLoad();
         });
 
+        // Grade and Stream Matrix
+        var selectedGrade = '+2';
+        var selectedStream = 'science_cs';
+        var CHAPTER_MATRIX = {
+            '+1': {
+                'science_cs': 50,
+                'science_bio': 42,
+                'commerce': 42,
+                'humanities': 47
+            },
+            '+2': {
+                'science_cs': 49,
+                'science_bio': 41,
+                'commerce': 44,
+                'humanities': 52
+            },
+            'both': {
+                'science_cs': 99,
+                'science_bio': 83,
+                'commerce': 86,
+                'humanities': 99
+            }
+        };
+
+        function syncChaptersFromMatrix() {
+            var matrixGrade = CHAPTER_MATRIX[selectedGrade] || CHAPTER_MATRIX['+2'];
+            var defChapters = matrixGrade[selectedStream] || 49;
+            chaptersSlider.value = defChapters;
+            chaptersDisplay.textContent = defChapters + ' Chapters';
+            var midLabel = document.getElementById('sliderMidLabel');
+            if (midLabel) midLabel.textContent = 'Full Syllabus (~' + defChapters + ')';
+            calculateLoad();
+        }
+
+        // Grade buttons handler
+        var gradeButtons = document.querySelectorAll('.grade-btn');
+        gradeButtons.forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                gradeButtons.forEach(function(b) {
+                    b.classList.remove('active', 'border-blue-600', 'bg-blue-50', 'text-blue-700');
+                    b.classList.add('border-slate-200', 'bg-white', 'text-slate-700');
+                });
+                btn.classList.add('active', 'border-blue-600', 'bg-blue-50', 'text-blue-700');
+                btn.classList.remove('border-slate-200', 'bg-white', 'text-slate-700');
+
+                selectedGrade = btn.getAttribute('data-grade');
+                syncChaptersFromMatrix();
+            });
+        });
+
         // Stream buttons handler
         var streamButtons = document.querySelectorAll('.stream-btn');
         streamButtons.forEach(function(btn) {
@@ -520,11 +593,9 @@
                 btn.classList.add('active', 'border-blue-600', 'bg-blue-50', 'text-blue-700');
                 btn.classList.remove('border-slate-200', 'bg-white', 'text-slate-700');
 
-                stream = btn.getAttribute('data-stream');
-                var defChapters = btn.getAttribute('data-chapters');
-                chaptersSlider.value = defChapters;
-                chaptersDisplay.textContent = defChapters + ' Chapters';
-                calculateLoad();
+                selectedStream = btn.getAttribute('data-stream');
+                stream = selectedStream;
+                syncChaptersFromMatrix();
             });
         });
 

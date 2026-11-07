@@ -1,0 +1,1792 @@
+{
+  "plusOne": {
+    "Physics": [
+      {
+        "num": 1,
+        "name": "Units and Measurements",
+        "term": 1,
+        "mins": 55
+      },
+      {
+        "num": 2,
+        "name": "Motion in a Straight Line",
+        "term": 1,
+        "mins": 60
+      },
+      {
+        "num": 3,
+        "name": "Motion in a Plane",
+        "term": 1,
+        "mins": 60
+      },
+      {
+        "num": 4,
+        "name": "Laws of Motion",
+        "term": 1,
+        "mins": 65
+      },
+      {
+        "num": 5,
+        "name": "Work, Energy and Power",
+        "term": 2,
+        "mins": 65
+      },
+      {
+        "num": 6,
+        "name": "System of Particles and Rotational Motion",
+        "term": 2,
+        "mins": 70
+      },
+      {
+        "num": 7,
+        "name": "Gravitation",
+        "term": 2,
+        "mins": 60
+      },
+      {
+        "num": 8,
+        "name": "Mechanical Properties of Solids",
+        "term": 2,
+        "mins": 55
+      },
+      {
+        "num": 9,
+        "name": "Mechanical Properties of Fluids",
+        "term": 2,
+        "mins": 65
+      },
+      {
+        "num": 10,
+        "name": "Thermal Properties of Matter",
+        "term": 2,
+        "mins": 60
+      },
+      {
+        "num": 11,
+        "name": "Thermodynamics",
+        "term": 3,
+        "mins": 65
+      },
+      {
+        "num": 12,
+        "name": "Kinetic Theory",
+        "term": 3,
+        "mins": 55
+      },
+      {
+        "num": 13,
+        "name": "Oscillations",
+        "term": 3,
+        "mins": 65
+      },
+      {
+        "num": 14,
+        "name": "Waves",
+        "term": 3,
+        "mins": 65
+      }
+    ],
+    "Chemistry": [
+      {
+        "num": 1,
+        "name": "Some Basic Concepts of Chemistry",
+        "term": 1,
+        "mins": 65
+      },
+      {
+        "num": 2,
+        "name": "Structure of Atom",
+        "term": 1,
+        "mins": 65
+      },
+      {
+        "num": 3,
+        "name": "Classification of Elements & Periodicity",
+        "term": 1,
+        "mins": 55
+      },
+      {
+        "num": 4,
+        "name": "Chemical Bonding and Molecular Structure",
+        "term": 2,
+        "mins": 65
+      },
+      {
+        "num": 5,
+        "name": "Chemical Thermodynamics",
+        "term": 2,
+        "mins": 65
+      },
+      {
+        "num": 6,
+        "name": "Equilibrium",
+        "term": 2,
+        "mins": 70
+      },
+      {
+        "num": 7,
+        "name": "Redox Reactions",
+        "term": 2,
+        "mins": 55
+      },
+      {
+        "num": 8,
+        "name": "Organic Chemistry: Basic Principles & Techniques",
+        "term": 3,
+        "mins": 70
+      },
+      {
+        "num": 9,
+        "name": "Hydrocarbons",
+        "term": 3,
+        "mins": 65
+      }
+    ],
+    "Mathematics": [
+      {
+        "num": 1,
+        "name": "Sets",
+        "term": 1,
+        "mins": 55
+      },
+      {
+        "num": 2,
+        "name": "Relations and Functions",
+        "term": 1,
+        "mins": 60
+      },
+      {
+        "num": 3,
+        "name": "Trigonometric Functions",
+        "term": 1,
+        "mins": 65
+      },
+      {
+        "num": 4,
+        "name": "Complex Numbers and Quadratic Equations",
+        "term": 1,
+        "mins": 60
+      },
+      {
+        "num": 5,
+        "name": "Linear Inequalities",
+        "term": 2,
+        "mins": 55
+      },
+      {
+        "num": 6,
+        "name": "Permutations and Combinations",
+        "term": 2,
+        "mins": 65
+      },
+      {
+        "num": 7,
+        "name": "Binomial Theorem",
+        "term": 2,
+        "mins": 60
+      },
+      {
+        "num": 8,
+        "name": "Sequences and Series",
+        "term": 2,
+        "mins": 60
+      },
+      {
+        "num": 9,
+        "name": "Straight Lines",
+        "term": 2,
+        "mins": 65
+      },
+      {
+        "num": 10,
+        "name": "Conic Sections",
+        "term": 2,
+        "mins": 65
+      },
+      {
+        "num": 11,
+        "name": "Introduction to Three Dimensional Geometry",
+        "term": 3,
+        "mins": 55
+      },
+      {
+        "num": 12,
+        "name": "Limits and Derivatives",
+        "term": 3,
+        "mins": 65
+      },
+      {
+        "num": 13,
+        "name": "Statistics",
+        "term": 3,
+        "mins": 60
+      },
+      {
+        "num": 14,
+        "name": "Probability",
+        "term": 3,
+        "mins": 60
+      }
+    ],
+    "Computer Science": [
+      {
+        "num": 1,
+        "name": "Introduction to Computing",
+        "term": 1,
+        "mins": 50
+      },
+      {
+        "num": 2,
+        "name": "Data Representation and Boolean Algebra",
+        "term": 1,
+        "mins": 60
+      },
+      {
+        "num": 3,
+        "name": "Computer System Organisation",
+        "term": 1,
+        "mins": 50
+      },
+      {
+        "num": 4,
+        "name": "Getting Started with Python",
+        "term": 1,
+        "mins": 50
+      },
+      {
+        "num": 5,
+        "name": "Python Fundamentals",
+        "term": 1,
+        "mins": 55
+      },
+      {
+        "num": 6,
+        "name": "Control Statements",
+        "term": 2,
+        "mins": 65
+      },
+      {
+        "num": 7,
+        "name": "Functions and Modules",
+        "term": 2,
+        "mins": 60
+      },
+      {
+        "num": 8,
+        "name": "Strings in Python",
+        "term": 2,
+        "mins": 55
+      },
+      {
+        "num": 9,
+        "name": "Lists",
+        "term": 2,
+        "mins": 60
+      },
+      {
+        "num": 10,
+        "name": "Tuples",
+        "term": 2,
+        "mins": 55
+      },
+      {
+        "num": 11,
+        "name": "Dictionaries and Sets",
+        "term": 3,
+        "mins": 65
+      },
+      {
+        "num": 12,
+        "name": "Sorting and Searching",
+        "term": 3,
+        "mins": 65
+      },
+      {
+        "num": 13,
+        "name": "Computers and Society",
+        "term": 3,
+        "mins": 50
+      }
+    ],
+    "Botany": [
+      {
+        "num": 1,
+        "name": "Biological Classification",
+        "term": 1,
+        "mins": 60
+      },
+      {
+        "num": 2,
+        "name": "Plant Kingdom",
+        "term": 1,
+        "mins": 65
+      },
+      {
+        "num": 3,
+        "name": "Morphology of Flowering Plants",
+        "term": 1,
+        "mins": 60
+      },
+      {
+        "num": 4,
+        "name": "Anatomy of Flowering Plants",
+        "term": 2,
+        "mins": 60
+      },
+      {
+        "num": 5,
+        "name": "Cell: The Unit of Life",
+        "term": 2,
+        "mins": 60
+      },
+      {
+        "num": 6,
+        "name": "Cell Cycle and Cell Division",
+        "term": 2,
+        "mins": 60
+      },
+      {
+        "num": 7,
+        "name": "Photosynthesis in Higher Plants",
+        "term": 2,
+        "mins": 70
+      },
+      {
+        "num": 8,
+        "name": "Respiration in Plants",
+        "term": 3,
+        "mins": 65
+      },
+      {
+        "num": 9,
+        "name": "Plant Growth and Development",
+        "term": 3,
+        "mins": 55
+      }
+    ],
+    "Zoology": [
+      {
+        "num": 1,
+        "name": "The Living World",
+        "term": 1,
+        "mins": 50
+      },
+      {
+        "num": 2,
+        "name": "Animal Kingdom",
+        "term": 1,
+        "mins": 70
+      },
+      {
+        "num": 3,
+        "name": "Structural Organisation in Animals",
+        "term": 1,
+        "mins": 60
+      },
+      {
+        "num": 4,
+        "name": "Biomolecules",
+        "term": 2,
+        "mins": 65
+      },
+      {
+        "num": 5,
+        "name": "Breathing and Exchange of Gases",
+        "term": 2,
+        "mins": 60
+      },
+      {
+        "num": 6,
+        "name": "Body Fluids and Circulation",
+        "term": 2,
+        "mins": 60
+      },
+      {
+        "num": 7,
+        "name": "Excretory Products and their Elimination",
+        "term": 2,
+        "mins": 65
+      },
+      {
+        "num": 8,
+        "name": "Locomotion and Movement",
+        "term": 3,
+        "mins": 65
+      },
+      {
+        "num": 9,
+        "name": "Neural Control and Coordination",
+        "term": 3,
+        "mins": 65
+      },
+      {
+        "num": 10,
+        "name": "Chemical Coordination and Integration",
+        "term": 3,
+        "mins": 65
+      }
+    ],
+    "Accountancy": [
+      {
+        "num": 1,
+        "name": "Introduction to Accounting",
+        "term": 1,
+        "mins": 55
+      },
+      {
+        "num": 2,
+        "name": "Theory Base of Accounting",
+        "term": 1,
+        "mins": 60
+      },
+      {
+        "num": 3,
+        "name": "Recording of Transactions - I",
+        "term": 1,
+        "mins": 65
+      },
+      {
+        "num": 4,
+        "name": "Recording of Transactions - II",
+        "term": 2,
+        "mins": 70
+      },
+      {
+        "num": 5,
+        "name": "Bank Reconciliation Statement",
+        "term": 2,
+        "mins": 60
+      },
+      {
+        "num": 6,
+        "name": "Trial Balance and Rectification of Errors",
+        "term": 2,
+        "mins": 60
+      },
+      {
+        "num": 7,
+        "name": "Depreciation, Provisions and Reserves",
+        "term": 2,
+        "mins": 65
+      },
+      {
+        "num": 8,
+        "name": "Financial Statements - I",
+        "term": 3,
+        "mins": 55
+      },
+      {
+        "num": 9,
+        "name": "Financial Statements - II",
+        "term": 3,
+        "mins": 70
+      }
+    ],
+    "Business Studies": [
+      {
+        "num": 1,
+        "name": "Business, Trade and Commerce",
+        "term": 1,
+        "mins": 60
+      },
+      {
+        "num": 2,
+        "name": "Forms of Business Organisations",
+        "term": 1,
+        "mins": 65
+      },
+      {
+        "num": 3,
+        "name": "Private, Public and Global Enterprises",
+        "term": 1,
+        "mins": 65
+      },
+      {
+        "num": 4,
+        "name": "Business Services",
+        "term": 2,
+        "mins": 65
+      },
+      {
+        "num": 5,
+        "name": "Emerging Modes of Business",
+        "term": 2,
+        "mins": 60
+      },
+      {
+        "num": 6,
+        "name": "Social Responsibilities of Business and Business Ethics",
+        "term": 2,
+        "mins": 55
+      },
+      {
+        "num": 7,
+        "name": "Sources of Business Finance",
+        "term": 2,
+        "mins": 60
+      },
+      {
+        "num": 8,
+        "name": "Small Business and Enterprises",
+        "term": 3,
+        "mins": 60
+      },
+      {
+        "num": 9,
+        "name": "Internal Trade",
+        "term": 3,
+        "mins": 60
+      },
+      {
+        "num": 10,
+        "name": "International Business",
+        "term": 3,
+        "mins": 65
+      }
+    ],
+    "Economics": [
+      {
+        "num": 1,
+        "name": "Introduction to Statistics",
+        "term": 1,
+        "mins": 50
+      },
+      {
+        "num": 2,
+        "name": "Collection of Data",
+        "term": 1,
+        "mins": 55
+      },
+      {
+        "num": 3,
+        "name": "Organisation of Data",
+        "term": 1,
+        "mins": 55
+      },
+      {
+        "num": 4,
+        "name": "Presentation of Data",
+        "term": 2,
+        "mins": 60
+      },
+      {
+        "num": 5,
+        "name": "Measures of Central Tendency",
+        "term": 2,
+        "mins": 75
+      },
+      {
+        "num": 6,
+        "name": "Correlation",
+        "term": 2,
+        "mins": 55
+      },
+      {
+        "num": 7,
+        "name": "Index Numbers",
+        "term": 3,
+        "mins": 60
+      },
+      {
+        "num": 8,
+        "name": "Indian Economy on the Eve of Independence",
+        "term": 1,
+        "mins": 60
+      },
+      {
+        "num": 9,
+        "name": "Indian Economy (1950-1990)",
+        "term": 1,
+        "mins": 65
+      },
+      {
+        "num": 10,
+        "name": "Liberalisation, Privatisation and Globalisation: An Appraisal",
+        "term": 2,
+        "mins": 70
+      },
+      {
+        "num": 11,
+        "name": "Human Capital Formation in India",
+        "term": 2,
+        "mins": 60
+      },
+      {
+        "num": 12,
+        "name": "Rural Development",
+        "term": 2,
+        "mins": 60
+      },
+      {
+        "num": 13,
+        "name": "Employment: Growth, Informalisation and Other Issues",
+        "term": 3,
+        "mins": 65
+      },
+      {
+        "num": 14,
+        "name": "Environment and Sustainable Development",
+        "term": 3,
+        "mins": 60
+      },
+      {
+        "num": 15,
+        "name": "Comparative Development Experiences of India and its Neighbours",
+        "term": 3,
+        "mins": 60
+      }
+    ],
+    "Computer Applications": [
+      {
+        "num": 1,
+        "name": "Computing System",
+        "term": 1,
+        "mins": 50
+      },
+      {
+        "num": 2,
+        "name": "Data Representation",
+        "term": 1,
+        "mins": 60
+      },
+      {
+        "num": 3,
+        "name": "Programming Concepts",
+        "term": 1,
+        "mins": 55
+      },
+      {
+        "num": 4,
+        "name": "Elements of Python",
+        "term": 2,
+        "mins": 55
+      },
+      {
+        "num": 5,
+        "name": "Python Control Structures and Data Handling",
+        "term": 2,
+        "mins": 65
+      },
+      {
+        "num": 6,
+        "name": "Computer Networks",
+        "term": 2,
+        "mins": 55
+      },
+      {
+        "num": 7,
+        "name": "Cyber Security",
+        "term": 3,
+        "mins": 50
+      },
+      {
+        "num": 8,
+        "name": "AI and its Applications",
+        "term": 3,
+        "mins": 50
+      }
+    ],
+    "History": [
+      {
+        "num": 1,
+        "name": "Writing and City Life",
+        "term": 1,
+        "mins": 60
+      },
+      {
+        "num": 2,
+        "name": "An Empire Across Three Continents",
+        "term": 1,
+        "mins": 65
+      },
+      {
+        "num": 3,
+        "name": "Nomadic Empires",
+        "term": 2,
+        "mins": 60
+      },
+      {
+        "num": 4,
+        "name": "The Three Orders",
+        "term": 2,
+        "mins": 65
+      },
+      {
+        "num": 5,
+        "name": "Changing Cultural Traditions",
+        "term": 2,
+        "mins": 65
+      },
+      {
+        "num": 6,
+        "name": "Displacing Indigenous Peoples",
+        "term": 3,
+        "mins": 60
+      },
+      {
+        "num": 7,
+        "name": "Paths to Modernisation",
+        "term": 3,
+        "mins": 70
+      }
+    ],
+    "Political Science": [
+      {
+        "num": 1,
+        "name": "Constitution: Why and How?",
+        "term": 1,
+        "mins": 60
+      },
+      {
+        "num": 2,
+        "name": "Rights in the Indian Constitution",
+        "term": 1,
+        "mins": 65
+      },
+      {
+        "num": 3,
+        "name": "Election and Representation",
+        "term": 1,
+        "mins": 60
+      },
+      {
+        "num": 4,
+        "name": "Executive",
+        "term": 2,
+        "mins": 60
+      },
+      {
+        "num": 5,
+        "name": "Legislature",
+        "term": 2,
+        "mins": 60
+      },
+      {
+        "num": 6,
+        "name": "Judiciary",
+        "term": 2,
+        "mins": 65
+      },
+      {
+        "num": 7,
+        "name": "Federalism",
+        "term": 2,
+        "mins": 60
+      },
+      {
+        "num": 8,
+        "name": "Local Governments",
+        "term": 3,
+        "mins": 60
+      },
+      {
+        "num": 9,
+        "name": "Constitution as a Living Document",
+        "term": 3,
+        "mins": 55
+      },
+      {
+        "num": 10,
+        "name": "The Philosophy of the Constitution",
+        "term": 3,
+        "mins": 50
+      },
+      {
+        "num": 11,
+        "name": "Political Theory: An Introduction",
+        "term": 1,
+        "mins": 50
+      },
+      {
+        "num": 12,
+        "name": "Freedom",
+        "term": 1,
+        "mins": 55
+      },
+      {
+        "num": 13,
+        "name": "Equality",
+        "term": 2,
+        "mins": 55
+      },
+      {
+        "num": 14,
+        "name": "Social Justice",
+        "term": 2,
+        "mins": 60
+      },
+      {
+        "num": 15,
+        "name": "Rights",
+        "term": 2,
+        "mins": 55
+      },
+      {
+        "num": 16,
+        "name": "Development",
+        "term": 3,
+        "mins": 55
+      }
+    ],
+    "Sociology": [
+      {
+        "num": 1,
+        "name": "Sociology and Society",
+        "term": 1,
+        "mins": 55
+      },
+      {
+        "num": 2,
+        "name": "Terms, Concepts and their use in Sociology",
+        "term": 1,
+        "mins": 60
+      },
+      {
+        "num": 3,
+        "name": "Understanding Social Institutions",
+        "term": 1,
+        "mins": 60
+      },
+      {
+        "num": 4,
+        "name": "Culture and Socialisation",
+        "term": 2,
+        "mins": 55
+      },
+      {
+        "num": 5,
+        "name": "Social Structure, Stratification and Social Processes in Society",
+        "term": 2,
+        "mins": 60
+      },
+      {
+        "num": 6,
+        "name": "Social Order, Social Change and Social Processes in Rural and Urban Society",
+        "term": 2,
+        "mins": 60
+      },
+      {
+        "num": 7,
+        "name": "Environment and Society",
+        "term": 2,
+        "mins": 55
+      },
+      {
+        "num": 8,
+        "name": "Introducing Western Sociologists",
+        "term": 3,
+        "mins": 60
+      },
+      {
+        "num": 9,
+        "name": "Indian Sociologists",
+        "term": 3,
+        "mins": 65
+      }
+    ]
+  },
+  "plusTwo": {
+    "Physics": [
+      {
+        "num": 1,
+        "name": "Electric Charges and Fields",
+        "term": 1,
+        "mins": 65
+      },
+      {
+        "num": 2,
+        "name": "Electrostatic Potential and Capacitance",
+        "term": 1,
+        "mins": 60
+      },
+      {
+        "num": 3,
+        "name": "Current Electricity",
+        "term": 1,
+        "mins": 60
+      },
+      {
+        "num": 4,
+        "name": "Moving Charges and Magnetism",
+        "term": 1,
+        "mins": 70
+      },
+      {
+        "num": 5,
+        "name": "Magnetism and Matter",
+        "term": 1,
+        "mins": 55
+      },
+      {
+        "num": 6,
+        "name": "Electromagnetic Induction",
+        "term": 2,
+        "mins": 60
+      },
+      {
+        "num": 7,
+        "name": "Alternating Current",
+        "term": 2,
+        "mins": 65
+      },
+      {
+        "num": 8,
+        "name": "Electromagnetic Waves",
+        "term": 2,
+        "mins": 50
+      },
+      {
+        "num": 9,
+        "name": "Ray Optics and Optical Instruments",
+        "term": 2,
+        "mins": 70
+      },
+      {
+        "num": 10,
+        "name": "Wave Optics",
+        "term": 2,
+        "mins": 65
+      },
+      {
+        "num": 11,
+        "name": "Dual Nature of Radiation and Matter",
+        "term": 3,
+        "mins": 60
+      },
+      {
+        "num": 12,
+        "name": "Atoms",
+        "term": 3,
+        "mins": 65
+      },
+      {
+        "num": 13,
+        "name": "Nuclei",
+        "term": 3,
+        "mins": 55
+      },
+      {
+        "num": 14,
+        "name": "Semiconductor Electronics: Materials, Devices and Simple Circuits",
+        "term": 3,
+        "mins": 60
+      }
+    ],
+    "Chemistry": [
+      {
+        "num": 1,
+        "name": "Solutions",
+        "term": 1,
+        "mins": 60
+      },
+      {
+        "num": 2,
+        "name": "Electrochemistry",
+        "term": 1,
+        "mins": 70
+      },
+      {
+        "num": 3,
+        "name": "Chemical Kinetics",
+        "term": 1,
+        "mins": 60
+      },
+      {
+        "num": 4,
+        "name": "The d- and f-Block Elements",
+        "term": 2,
+        "mins": 65
+      },
+      {
+        "num": 5,
+        "name": "Coordination Compounds",
+        "term": 2,
+        "mins": 65
+      },
+      {
+        "num": 6,
+        "name": "Haloalkanes and Haloarenes",
+        "term": 2,
+        "mins": 60
+      },
+      {
+        "num": 7,
+        "name": "Alcohols, Phenols and Ethers",
+        "term": 2,
+        "mins": 60
+      },
+      {
+        "num": 8,
+        "name": "Aldehydes, Ketones and Carboxylic Acids",
+        "term": 2,
+        "mins": 70
+      },
+      {
+        "num": 9,
+        "name": "Amines",
+        "term": 3,
+        "mins": 65
+      },
+      {
+        "num": 10,
+        "name": "Biomolecules",
+        "term": 3,
+        "mins": 60
+      }
+    ],
+    "Mathematics": [
+      {
+        "num": 1,
+        "name": "Relations and Functions",
+        "term": 1,
+        "mins": 60
+      },
+      {
+        "num": 2,
+        "name": "Inverse Trigonometric Functions",
+        "term": 1,
+        "mins": 55
+      },
+      {
+        "num": 3,
+        "name": "Matrices",
+        "term": 1,
+        "mins": 60
+      },
+      {
+        "num": 4,
+        "name": "Determinants",
+        "term": 1,
+        "mins": 60
+      },
+      {
+        "num": 5,
+        "name": "Continuity and Differentiability",
+        "term": 1,
+        "mins": 65
+      },
+      {
+        "num": 6,
+        "name": "Application of Derivatives",
+        "term": 2,
+        "mins": 65
+      },
+      {
+        "num": 7,
+        "name": "Integrals",
+        "term": 2,
+        "mins": 75
+      },
+      {
+        "num": 8,
+        "name": "Application of Integrals",
+        "term": 2,
+        "mins": 65
+      },
+      {
+        "num": 9,
+        "name": "Differential Equations",
+        "term": 2,
+        "mins": 60
+      },
+      {
+        "num": 10,
+        "name": "Vector Algebra",
+        "term": 2,
+        "mins": 60
+      },
+      {
+        "num": 11,
+        "name": "Three Dimensional Geometry",
+        "term": 2,
+        "mins": 65
+      },
+      {
+        "num": 12,
+        "name": "Linear Programming",
+        "term": 3,
+        "mins": 60
+      },
+      {
+        "num": 13,
+        "name": "Probability",
+        "term": 3,
+        "mins": 65
+      }
+    ],
+    "Computer Science": [
+      {
+        "num": 1,
+        "name": "Structures and Pointers",
+        "term": 1,
+        "mins": 55
+      },
+      {
+        "num": 2,
+        "name": "Concepts of Object-Oriented Programming",
+        "term": 1,
+        "mins": 50
+      },
+      {
+        "num": 3,
+        "name": "Data Structures and Operations",
+        "term": 1,
+        "mins": 55
+      },
+      {
+        "num": 4,
+        "name": "Web Technology",
+        "term": 1,
+        "mins": 50
+      },
+      {
+        "num": 5,
+        "name": "Web Designing using HTML",
+        "term": 2,
+        "mins": 55
+      },
+      {
+        "num": 6,
+        "name": "Client Side Scripting using JavaScript",
+        "term": 2,
+        "mins": 60
+      },
+      {
+        "num": 7,
+        "name": "Web Hosting",
+        "term": 2,
+        "mins": 50
+      },
+      {
+        "num": 8,
+        "name": "Database Management System",
+        "term": 2,
+        "mins": 55
+      },
+      {
+        "num": 9,
+        "name": "Structured Query Language (SQL)",
+        "term": 2,
+        "mins": 65
+      },
+      {
+        "num": 10,
+        "name": "Server Side Scripting using PHP",
+        "term": 2,
+        "mins": 60
+      },
+      {
+        "num": 11,
+        "name": "Advances in Computing",
+        "term": 3,
+        "mins": 50
+      },
+      {
+        "num": 12,
+        "name": "ICT and Society",
+        "term": 3,
+        "mins": 50
+      }
+    ],
+    "Botany": [
+      {
+        "num": 1,
+        "name": "Sexual Reproduction in Flowering Plants",
+        "term": 1,
+        "mins": 60
+      },
+      {
+        "num": 2,
+        "name": "Biotechnology: Principles and Processes",
+        "term": 1,
+        "mins": 65
+      },
+      {
+        "num": 3,
+        "name": "Biotechnology and its Applications",
+        "term": 2,
+        "mins": 60
+      },
+      {
+        "num": 4,
+        "name": "Organisms and Populations",
+        "term": 2,
+        "mins": 60
+      },
+      {
+        "num": 5,
+        "name": "Ecosystem",
+        "term": 3,
+        "mins": 55
+      }
+    ],
+    "Zoology": [
+      {
+        "num": 1,
+        "name": "Human Reproduction",
+        "term": 1,
+        "mins": 65
+      },
+      {
+        "num": 2,
+        "name": "Reproductive Health",
+        "term": 1,
+        "mins": 50
+      },
+      {
+        "num": 3,
+        "name": "Principles of Inheritance and Variation",
+        "term": 1,
+        "mins": 70
+      },
+      {
+        "num": 4,
+        "name": "Molecular Basis of Inheritance",
+        "term": 2,
+        "mins": 70
+      },
+      {
+        "num": 5,
+        "name": "Evolution",
+        "term": 2,
+        "mins": 60
+      },
+      {
+        "num": 6,
+        "name": "Human Health and Disease",
+        "term": 2,
+        "mins": 65
+      },
+      {
+        "num": 7,
+        "name": "Microbes in Human Welfare",
+        "term": 3,
+        "mins": 55
+      },
+      {
+        "num": 8,
+        "name": "Biodiversity and Conservation",
+        "term": 3,
+        "mins": 55
+      }
+    ],
+    "Accountancy": [
+      {
+        "num": 1,
+        "name": "Accounting for Partnership: Basic Concepts",
+        "term": 1,
+        "mins": 65
+      },
+      {
+        "num": 2,
+        "name": "Reconstitution of a Partnership Firm: Admission of a Partner",
+        "term": 1,
+        "mins": 70
+      },
+      {
+        "num": 3,
+        "name": "Reconstitution: Retirement/Death of a Partner",
+        "term": 1,
+        "mins": 65
+      },
+      {
+        "num": 4,
+        "name": "Dissolution of a Partnership Firm",
+        "term": 2,
+        "mins": 70
+      },
+      {
+        "num": 5,
+        "name": "Accounting for Share Capital",
+        "term": 2,
+        "mins": 70
+      },
+      {
+        "num": 6,
+        "name": "Issue and Redemption of Debentures",
+        "term": 2,
+        "mins": 65
+      },
+      {
+        "num": 7,
+        "name": "Financial Statements of a Company",
+        "term": 2,
+        "mins": 65
+      },
+      {
+        "num": 8,
+        "name": "Analysis of Financial Statements",
+        "term": 3,
+        "mins": 55
+      },
+      {
+        "num": 9,
+        "name": "Accounting Ratios",
+        "term": 3,
+        "mins": 65
+      },
+      {
+        "num": 10,
+        "name": "Cash Flow Statement",
+        "term": 3,
+        "mins": 75
+      }
+    ],
+    "Business Studies": [
+      {
+        "num": 1,
+        "name": "Nature and Significance of Management",
+        "term": 1,
+        "mins": 60
+      },
+      {
+        "num": 2,
+        "name": "Principles of Management",
+        "term": 1,
+        "mins": 65
+      },
+      {
+        "num": 3,
+        "name": "Business Environment",
+        "term": 1,
+        "mins": 55
+      },
+      {
+        "num": 4,
+        "name": "Planning",
+        "term": 1,
+        "mins": 60
+      },
+      {
+        "num": 5,
+        "name": "Organising",
+        "term": 2,
+        "mins": 65
+      },
+      {
+        "num": 6,
+        "name": "Staffing",
+        "term": 2,
+        "mins": 60
+      },
+      {
+        "num": 7,
+        "name": "Directing",
+        "term": 2,
+        "mins": 65
+      },
+      {
+        "num": 8,
+        "name": "Controlling",
+        "term": 2,
+        "mins": 55
+      },
+      {
+        "num": 9,
+        "name": "Financial Management",
+        "term": 3,
+        "mins": 65
+      },
+      {
+        "num": 10,
+        "name": "Financial Markets",
+        "term": 3,
+        "mins": 65
+      },
+      {
+        "num": 11,
+        "name": "Marketing",
+        "term": 3,
+        "mins": 65
+      },
+      {
+        "num": 12,
+        "name": "Consumer Protection",
+        "term": 3,
+        "mins": 55
+      }
+    ],
+    "Economics": [
+      {
+        "num": 1,
+        "name": "Introduction to Microeconomics",
+        "term": 1,
+        "mins": 55
+      },
+      {
+        "num": 2,
+        "name": "Theory of Consumer Behaviour",
+        "term": 1,
+        "mins": 65
+      },
+      {
+        "num": 3,
+        "name": "Production and Costs",
+        "term": 1,
+        "mins": 65
+      },
+      {
+        "num": 4,
+        "name": "Theory of the Firm Under Perfect Competition",
+        "term": 2,
+        "mins": 60
+      },
+      {
+        "num": 5,
+        "name": "Market Equilibrium",
+        "term": 2,
+        "mins": 65
+      },
+      {
+        "num": 6,
+        "name": "Non-Competitive Markets",
+        "term": 2,
+        "mins": 55
+      },
+      {
+        "num": 7,
+        "name": "Introduction to Macroeconomics",
+        "term": 2,
+        "mins": 55
+      },
+      {
+        "num": 8,
+        "name": "National Income Accounting",
+        "term": 2,
+        "mins": 70
+      },
+      {
+        "num": 9,
+        "name": "Money and Banking",
+        "term": 3,
+        "mins": 60
+      },
+      {
+        "num": 10,
+        "name": "Determination of Income and Employment",
+        "term": 3,
+        "mins": 65
+      },
+      {
+        "num": 11,
+        "name": "Government Budget and the Economy",
+        "term": 3,
+        "mins": 60
+      },
+      {
+        "num": 12,
+        "name": "Open Economy Macroeconomics",
+        "term": 3,
+        "mins": 65
+      }
+    ],
+    "Computer Applications": [
+      {
+        "num": 1,
+        "name": "Review of C++ Programming",
+        "term": 1,
+        "mins": 60
+      },
+      {
+        "num": 2,
+        "name": "Arrays and Strings",
+        "term": 1,
+        "mins": 65
+      },
+      {
+        "num": 3,
+        "name": "Functions",
+        "term": 1,
+        "mins": 60
+      },
+      {
+        "num": 4,
+        "name": "Web Technology",
+        "term": 1,
+        "mins": 60
+      },
+      {
+        "num": 5,
+        "name": "Web Designing using HTML",
+        "term": 2,
+        "mins": 65
+      },
+      {
+        "num": 6,
+        "name": "Client Side Scripting using JavaScript",
+        "term": 2,
+        "mins": 65
+      },
+      {
+        "num": 7,
+        "name": "Web Hosting",
+        "term": 2,
+        "mins": 55
+      },
+      {
+        "num": 8,
+        "name": "Database Management System",
+        "term": 2,
+        "mins": 65
+      },
+      {
+        "num": 9,
+        "name": "Structured Query Language (SQL)",
+        "term": 3,
+        "mins": 65
+      },
+      {
+        "num": 10,
+        "name": "Enterprise Resource Planning (ERP)",
+        "term": 3,
+        "mins": 55
+      }
+    ],
+    "History": [
+      {
+        "num": 1,
+        "name": "Bricks, Beads and Bones",
+        "term": 1,
+        "mins": 65
+      },
+      {
+        "num": 2,
+        "name": "Kings, Farmers and Towns",
+        "term": 1,
+        "mins": 65
+      },
+      {
+        "num": 3,
+        "name": "Kinship, Caste and Class",
+        "term": 1,
+        "mins": 60
+      },
+      {
+        "num": 4,
+        "name": "Thinkers, Beliefs and Buildings",
+        "term": 1,
+        "mins": 65
+      },
+      {
+        "num": 5,
+        "name": "Through the Eyes of Travellers",
+        "term": 2,
+        "mins": 65
+      },
+      {
+        "num": 6,
+        "name": "Bhakti-Sufi Traditions",
+        "term": 2,
+        "mins": 65
+      },
+      {
+        "num": 7,
+        "name": "An Imperial Capital: Vijayanagara",
+        "term": 2,
+        "mins": 65
+      },
+      {
+        "num": 8,
+        "name": "Peasants, Zamindars and the State",
+        "term": 2,
+        "mins": 60
+      },
+      {
+        "num": 9,
+        "name": "Colonialism and the Countryside",
+        "term": 3,
+        "mins": 65
+      },
+      {
+        "num": 10,
+        "name": "Rebels and the Raj",
+        "term": 3,
+        "mins": 65
+      },
+      {
+        "num": 11,
+        "name": "Mahatma Gandhi and the Nationalist Movement",
+        "term": 3,
+        "mins": 65
+      },
+      {
+        "num": 12,
+        "name": "Framing the Constitution",
+        "term": 3,
+        "mins": 65
+      }
+    ],
+    "Political Science": [
+      {
+        "num": 1,
+        "name": "The End of Bipolarity",
+        "term": 1,
+        "mins": 65
+      },
+      {
+        "num": 2,
+        "name": "Contemporary Centres of Power",
+        "term": 1,
+        "mins": 65
+      },
+      {
+        "num": 3,
+        "name": "Contemporary South Asia",
+        "term": 1,
+        "mins": 65
+      },
+      {
+        "num": 4,
+        "name": "International Organisations",
+        "term": 2,
+        "mins": 65
+      },
+      {
+        "num": 5,
+        "name": "Security in the Contemporary World",
+        "term": 2,
+        "mins": 60
+      },
+      {
+        "num": 6,
+        "name": "Environment and Natural Resources",
+        "term": 2,
+        "mins": 55
+      },
+      {
+        "num": 7,
+        "name": "Globalisation",
+        "term": 2,
+        "mins": 55
+      },
+      {
+        "num": 8,
+        "name": "Challenges of Nation-Building",
+        "term": 1,
+        "mins": 65
+      },
+      {
+        "num": 9,
+        "name": "Era of One-Party Dominance",
+        "term": 1,
+        "mins": 65
+      },
+      {
+        "num": 10,
+        "name": "Politics of Planned Development",
+        "term": 2,
+        "mins": 65
+      },
+      {
+        "num": 11,
+        "name": "India's External Relations",
+        "term": 2,
+        "mins": 65
+      },
+      {
+        "num": 12,
+        "name": "Challenges to and Restoration of the Congress System",
+        "term": 2,
+        "mins": 65
+      },
+      {
+        "num": 13,
+        "name": "The Crisis of Democratic Order",
+        "term": 3,
+        "mins": 65
+      },
+      {
+        "num": 14,
+        "name": "Regional Aspirations",
+        "term": 3,
+        "mins": 65
+      },
+      {
+        "num": 15,
+        "name": "Recent Developments in Indian Politics",
+        "term": 3,
+        "mins": 65
+      }
+    ],
+    "Sociology": [
+      {
+        "num": 1,
+        "name": "Introducing Indian Society",
+        "term": 1,
+        "mins": 55
+      },
+      {
+        "num": 2,
+        "name": "The Demographic Structure of Indian Society",
+        "term": 1,
+        "mins": 65
+      },
+      {
+        "num": 3,
+        "name": "Social Institutions: Continuity and Change",
+        "term": 1,
+        "mins": 65
+      },
+      {
+        "num": 4,
+        "name": "The Market as a Social Institution",
+        "term": 2,
+        "mins": 60
+      },
+      {
+        "num": 5,
+        "name": "Patterns of Social Inequality and Exclusion",
+        "term": 2,
+        "mins": 65
+      },
+      {
+        "num": 6,
+        "name": "The Challenges of Cultural Diversity",
+        "term": 2,
+        "mins": 65
+      },
+      {
+        "num": 7,
+        "name": "Structural Change",
+        "term": 2,
+        "mins": 55
+      },
+      {
+        "num": 8,
+        "name": "Cultural Change",
+        "term": 2,
+        "mins": 65
+      },
+      {
+        "num": 9,
+        "name": "The Story of Indian Democracy",
+        "term": 3,
+        "mins": 65
+      },
+      {
+        "num": 10,
+        "name": "Change and Development in Rural Society",
+        "term": 3,
+        "mins": 65
+      },
+      {
+        "num": 11,
+        "name": "Change and Development in Industrial Society",
+        "term": 3,
+        "mins": 60
+      },
+      {
+        "num": 12,
+        "name": "Globalisation and Social Change",
+        "term": 3,
+        "mins": 55
+      },
+      {
+        "num": 13,
+        "name": "Social Movements",
+        "term": 3,
+        "mins": 65
+      }
+    ]
+  }
+}

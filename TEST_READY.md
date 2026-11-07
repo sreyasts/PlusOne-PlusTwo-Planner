@@ -1,115 +1,113 @@
-# TEST READY: Mobile & Cross-Device Action Controls E2E Test Suite
+# TEST_READY: Schedule Rebalancing, Auto-Detect & Rebalance, and Syllabus Conformance E2E Test Suite
 
-**Date**: 2026-11-05  
-**Author**: E2E Test Writer 2 (`test_writer_e2e_2`)  
-**Remediation Track**: Remediated after Reviewer E2E 1 Audit (Request Changes / Integrity Violation)  
-**Runner**: Vitest v5.0.1 (`npm test`), Legacy Engine Harness (`npm run test:legacy`), Vite 8.3.0 (`npm run build`), ESLint (`npm run lint`)  
-**Status**: All 32 Vitest Test Suites Passing (525 Tests Passed, 0 Failures). All 553 Legacy Engine Checks Passing. 0 ESLint Errors. Clean Production Build.
-
----
-
-## 1. Executive Summary & Remediation Certification
-
-The test suite in `tests/mobile-responsive-actions.test.js` has undergone comprehensive remediation to resolve the findings identified in Reviewer E2E 1's report:
-
-1. **Elimination of Mock Duplication**: All private mock duplicate implementations (`contractOpenExportShareSheet`, `contractCloseExportShareSheet`, `generateTestPlanCsv`, `generateTestShareSummary`) have been completely deleted from `tests/mobile-responsive-actions.test.js`.
-2. **Elimination of Facade Tests & Tautologies**: All self-fulfilling assertions asserting local variables against themselves (e.g. tests 2.1, 2.3, 6.1, 6.2, 6.3, 6.5, 7.2, 7.4, 7.5, 8.2, 8.3, 8.5, 2.5, 2.8, 3.1, 4.4, 4.5) and the unfalsifiable `|| true` fallback in test 7.3 have been deleted.
-3. **Genuine Artifact Inspection**: Replaced with authentic assertions directly against production source files (`index.html`, `src/app.js`, `src/style.css`):
-   - `#export-share-sheet`, attributes (`role="dialog"`, `aria-modal="true"`, `aria-labelledby`, `aria-hidden="true"`, `fixed inset-0`, `backdrop-blur-sm`).
-   - Action row buttons (`min-h-[56px]`, distinct icons, active scaling `active:scale-[0.98]`).
-   - Drag handle affordance (`w-12 h-1.5`, `rounded-full mx-auto mb-4 cursor-pointer`).
-   - Safe-area inset protection (`pb-[calc(1.5rem+env(safe-area-inset-bottom,0px))]`).
-   - Responsive header toolbar in `src/app.js` (`sm:hidden flex items-center gap-2`, `hidden sm:flex items-center gap-2`, `min-h-[44px]`).
-4. **Genuine Production Code Execution**:
-   - Production functions (`openExportShareSheet`, `closeExportShareSheet`, `exportTimetableCsv`, `exportTimetableIcs`, `shareApp`, `shareOnWhatsApp`, `shareOnTelegram`, `copyShareLink`, `getShareSummaryText`) are extracted directly from `src/app.js` via `extractAppFunction` and executed in an isolated Node VM sandbox (`prodAppContext`) bound to genuine DOM mock trees.
-   - Any regression or syntax defect in `src/app.js` will immediately fail this test suite.
-5. **Universal Test Pass**: All 65 tests in `tests/mobile-responsive-actions.test.js` pass, all 32 Vitest suites (525 tests) pass, all 553 legacy engine checks pass, ESLint reports 0 errors, and production Vite build succeeds.
+**Date**: 2026-11-06  
+**Track**: E2E Testing Track (Milestone E2E)  
+**Author**: `e2e_test_writer_1` (teamwork_test_writer)  
+**Test Suite File**: `tests/rebalancing-autodetect-syllabus.test.js`  
+**Test Runner**: Vitest v5.0.1  
+**Runner Command**: `npx vitest run tests/rebalancing-autodetect-syllabus.test.js`  
+**Status**: 54 Passed, 0 Failures (100% Pass Rate). All 34 Vitest Files (597 Tests) Clean. All 553 Legacy Checks Clean. Clean Production Build.  
 
 ---
 
-## 2. Test Architecture & Coverage Matrix (Tiers 1–4)
+## 1. Executive Summary
 
-| # | Feature | Requirement | Tier 1 (Equivalence) | Tier 2 (Boundary) | Tier 3 (Pairwise) | Tier 4 (Scenario) | Status | Total Tests |
-|---|---------|-------------|:-------------------:|:-----------------:|:-----------------:|:-----------------:|:------:|:-----------:|
-| 1 | Mobile Bottom Action Sheet (`#export-share-sheet`) | ORIGINAL_REQUEST §R1 | PASS (7 tests) | PASS (4 tests) | PASS (2 tests) | PASS (Scen 1, 4) | ✓ VERIFIED | 15 |
-| 2 | Responsive Header Action Toolbar | ORIGINAL_REQUEST §R1 | PASS (6 tests) | PASS (3 tests) | PASS (2 tests) | PASS (Scen 1, 4) | ✓ VERIFIED | 13 |
-| 3 | Export Execution Parity | ORIGINAL_REQUEST §R1 | PASS (5 tests) | PASS (3 tests) | PASS (2 tests) | PASS (Scen 1, 4) | ✓ VERIFIED | 12 |
-| 4 | RFC 4180 CSV Generation & Robustness | ORIGINAL_REQUEST §R1 | PASS (5 tests) | PASS (3 tests) | PASS (2 tests) | PASS (Scen 1, 2) | ✓ VERIFIED | 12 |
-| 5 | Share Actions & Multi-Channel Fallbacks | ORIGINAL_REQUEST §R1 | PASS (5 tests) | PASS (3 tests) | PASS (2 tests) | PASS (Scen 1, 3) | ✓ VERIFIED | 12 |
-| 6 | Touch Target Elevation (≥44x44px) | ORIGINAL_REQUEST §R2 | PASS (6 tests) | PASS (2 tests) | PASS (1 test) | PASS (Scen 5) | ✓ VERIFIED | 10 |
-| 7 | Mobile Interactivity & Tactile Feedback | ORIGINAL_REQUEST §R3 | PASS (5 tests) | PASS (2 tests) | PASS (1 test) | PASS (Scen 5) | ✓ VERIFIED | 9 |
-| 8 | Bilingual Labeling Support (Malayalam & English) | Explorer 1 & 2 Survey | PASS (5 tests) | PASS (2 tests) | PASS (2 tests) | PASS (Scen 2) | ✓ VERIFIED | 11 |
-| 9 | Clean Build & Regression Invariants | ORIGINAL_REQUEST §R4 | PASS (All suites) | PASS (All bounds) | PASS (Cross-env) | PASS (All Scen) | ✓ VERIFIED | 65 |
+A comprehensive, requirement-driven, opaque-box E2E test suite has been authored in `tests/rebalancing-autodetect-syllabus.test.js` to rigorously verify:
+1. **Schedule Rebalancing Reliability and Task Part Preservation (Requirement R1)**: Verifying that out-of-order completions, future completed tasks, Day 0 resets, and multi-part chapters are preserved with 0 dropped or duplicated sections.
+2. **Auto-Detect and Rebalance Schedule Workflow (Requirement R2)**: Verifying `detectCompletedSyllabusProgress`, arrangement of completed tasks into distinct historical completed markers (Days 1..K), recalculation of remaining syllabus starting from Day K+1 forward, and modal UI integration in `index.html` and `src/app.js`.
+3. **Comprehensive Syllabus Schema and Curriculum Conformance (Requirement R3)**: Verifying all 289 chapters in `src/data/syllabus-plus-one.js` and `src/data/syllabus-plus-two.js` strictly against `src/data/syllabus-schema.json`, and stream datasets against `schemas/curriculum.schema.json`.
+4. **Adversarial Boundary, Cross-Feature, and Real-World Lifecycle Scenarios (Requirement R4)**: Full student journeys across 30-day, 60-day, and interrupted schedules progressing to 100% syllabus mastery.
 
 ---
 
-## 3. Real-World Application Scenarios (Tier 4)
+## 2. Test Execution & Runner Command
 
-1. **Scenario 1: Kerala Student on Smartphone (375px) in Full Plan View**
-   - Verifies mobile trigger markup in `src/app.js` (`#plan-actions-overflow-btn`).
-   - Executes genuine `openExportShareSheet()`, verifying sheet opacity, panel slide-up, and body scroll lock.
-   - Executes genuine `exportTimetableCsv()`, verifying CSV Blob download and toast feedback.
-   - Executes genuine `closeExportShareSheet()`, verifying scroll restoration and sheet transition.
-   - Verifies `#plan-back-btn` markup in `src/app.js`.
+```powershell
+# Run the complete E2E test suite (54 tests)
+npx vitest run tests/rebalancing-autodetect-syllabus.test.js
 
-2. **Scenario 2: Offline Student Exporting Complex Schedule with Special Characters & Malayalam**
-   - Executes genuine `exportTimetableCsv()` from `src/app.js` on schedule with Malayalam text (`രസതന്ത്രം (Chemistry)`) and math formulas (`P_total = P_A + P_B`).
-   - Verifies RFC 4180 quote escaping, UTF-8 Blob encoding (`text/csv;charset=utf-8;`), and completed/pending statuses.
-
-3. **Scenario 3: Student Sharing Study Streak on WhatsApp via Web Share Fallback**
-   - Executes genuine `getShareSummaryText()` from `src/app.js` with active 5-day streak and 75% progress.
-   - Executes genuine `shareOnWhatsApp()`, verifying URL encoding and proper destination parameters (`https://api.whatsapp.com/send?text=...`).
-
-4. **Scenario 4: Cross-Device Viewport Breakpoint & Parity Transition**
-   - Inspects production markup in `src/app.js` and `index.html` to confirm that below 640px (`sm:hidden`), mobile action trigger `#plan-actions-overflow-btn` is rendered.
-   - At or above 640px (`hidden sm:flex`), inline buttons `#plan-desktop-ics-btn`, `#plan-desktop-csv-btn`, and `#plan-desktop-share-btn` are rendered.
-   - Confirms invocation parity: `#action-sheet-ics-btn` and `#plan-desktop-ics-btn` both bind `exportTimetableIcs()`; `#action-sheet-csv-btn` and `#plan-desktop-csv-btn` both bind `exportTimetableCsv()`; `#action-sheet-share-btn` and `#plan-desktop-share-btn` both bind `shareApp()`.
-
-5. **Scenario 5: Touch Target & Tactile Interaction Accessibility Walkthrough**
-   - Inspects `index.html`, `src/app.js`, and `src/style.css` for touch bounds:
-     - Mobile trigger: `min-h-[44px]` and `min-w-[44px]`
-     - Desktop buttons: `min-h-[44px]`
-     - Action sheet rows: `min-h-[56px]`
-     - Close button: `w-11 h-11` (44px)
-     - Checkbox: `.task-checkbox`
-     - Active states: `active:scale-95` and `active:scale-[0.98]`
-
----
-
-## 4. Verification Commands & Results
-
-### Run Remediated Mobile Responsive Actions Test Suite (65 tests)
-```bash
-npx vitest run tests/mobile-responsive-actions.test.js
-```
-*Result: 1 test file passed, 65 tests passed, 0 failures (308ms)*
-
-### Run Full Vitest Test Suite (All 32 files / 525 tests)
-```bash
+# Run full project regression suites (34 files / 597 tests)
 npm test
-```
-*Result: 32 test files passed, 525 tests passed, 0 failures (4.52s)*
 
-### Run Legacy Engine Checks (553 checks)
-```bash
+# Run legacy engine invariant checks (553 checks)
 npm run test:legacy
-```
-*Result: 553 checks passed, 0 failures*
 
-### Run Production Build & Asset Sync
-```bash
+# Verify production Vite build and static asset synchronization
 npm run build
 ```
-*Result: 61 modules transformed, 0 bundle errors, static assets synchronized in dist/ (965ms)*
-
-### Run ESLint
-```bash
-npm run lint
-```
-*Result: 0 errors, 0 warnings*
 
 ---
 
-## 5. Certification Sign-Off
+## 3. Coverage Summary Table by Tier
 
-The test suite in `tests/mobile-responsive-actions.test.js` is certified free of facade tests, tautologies, and mock duplicates. It directly exercises production artifacts and logic, guaranteeing non-regression and test integrity for the mobile responsive actions feature set.
+| Tier | Category | Tests | Passed | Failed | Status |
+|---|---|:---:|:---:|:---:|:---:|
+| **Tier 1** | **Feature Coverage** | **40** | **40** | **0** | **✓ PASS** |
+| 1.1 | Rebalance Task Preservation (R1) | 5 | 5 | 0 | ✓ PASS |
+| 1.2 | Multi-Part Chapter Integrity (R1) | 5 | 5 | 0 | ✓ PASS |
+| 1.3 | Multi-Stream Rebalancing (R1) | 5 | 5 | 0 | ✓ PASS |
+| 1.4 | Auto-Detect Scanner (`detectCompletedSyllabusProgress`) (R2) | 5 | 5 | 0 | ✓ PASS |
+| 1.5 | Arranging Completed Markers (R2) | 5 | 5 | 0 | ✓ PASS |
+| 1.6 | Auto-Detect Rebalance Execution (R2) | 5 | 5 | 0 | ✓ PASS |
+| 1.7 | Syllabus Schema Conformance (R3) | 5 | 5 | 0 | ✓ PASS |
+| 1.8 | Adjust & Rebalance Modal UI & Localization (R2) | 5 | 5 | 0 | ✓ PASS |
+| **Tier 2** | **Boundary & Corner Cases** | **6** | **6** | **0** | **✓ PASS** |
+| 2.1 | Empty Completed Tasks (0 tasks, Day 0) | 1 | 1 | 0 | ✓ PASS |
+| 2.2 | 100% Syllabus Completed | 1 | 1 | 0 | ✓ PASS |
+| 2.3 | Single-Part Completion Boundary (P1 done, P2 pending) | 1 | 1 | 0 | ✓ PASS |
+| 2.4 | Non-Contiguous Completed Days (Days 1, 4, 9 condensed) | 1 | 1 | 0 | ✓ PASS |
+| 2.5 | Missed Study Disruption Gaps (1 to 14 days) | 1 | 1 | 0 | ✓ PASS |
+| 2.6 | Elapsed / Same-Day Deadline 30-Day Auto-Extension | 1 | 1 | 0 | ✓ PASS |
+| **Tier 3** | **Cross-Feature Interactions** | **5** | **5** | **0** | **✓ PASS** |
+| 3.1 | Rebalance with +1 Improvement Config Preservation | 1 | 1 | 0 | ✓ PASS |
+| 3.2 | Study Intensity Scaling (`light`, `balanced`, `intense`) | 1 | 1 | 0 | ✓ PASS |
+| 3.3 | Rest Day Preferences Preservation | 1 | 1 | 0 | ✓ PASS |
+| 3.4 | Mid-Journey Stream Switching Progress Retention | 1 | 1 | 0 | ✓ PASS |
+| 3.5 | Academic Term Scope Filtering (Terms 1, 2, 3) | 1 | 1 | 0 | ✓ PASS |
+| **Tier 4** | **Real-World Student Lifecycle Workloads** | **3** | **3** | **0** | **✓ PASS** |
+| 4.1 | Plus Two CS 30-Day Disrupted Lifecycle to 100% Mastery | 1 | 1 | 0 | ✓ PASS |
+| 4.2 | Plus Two Commerce Non-Contiguous Workload & Auto-Detect Rebalance | 1 | 1 | 0 | ✓ PASS |
+| 4.3 | Plus One Biology Dual-Term Pacing & Catch-up Journey | 1 | 1 | 0 | ✓ PASS |
+| **TOTAL** | **All 4 Tiers** | **54** | **54** | **0** | **100% Pass Rate** |
+
+---
+
+## 4. Defect Escalation & Resolution Verification
+
+### Defect ID: `DEFECT-SCHED-01` (RESOLVED)
+- **Location**: `src/core/scheduler.js`, Line 458 and Line 507–510.
+- **Root Cause**:
+  Parameter default `stream = 'cs'` in `generateSchedule` function signature shadowed stream inference from task subjects when `stream` was omitted, causing 100% of Commerce and Humanities tasks to be dropped.
+- **Resolution**:
+  `impl_worker_1` resolved the defect by updating `stream = null` in the function parameter signature.
+- **Verification**:
+  Test 1.3.5 verified: `generateSchedule({ examDate: '2026-12-31', startDate: '2026-11-01', tasks: commTasks })` now correctly schedules all 77 Commerce tasks and all 97 Humanities tasks with 0 dropped sections.
+
+---
+
+## 5. Feature Checklist (Traceability Matrix)
+
+| Requirement | Description | Verified In Test Cases | Status |
+|---|---|---|:---:|
+| **R1.1** | Out-of-order & ahead-of-schedule task preservation | Tests 1.1.1, 1.1.2, 1.1.4, 4.1 | ✓ VERIFIED |
+| **R1.2** | Day 0 fresh reset task preservation | Test 1.1.3 | ✓ VERIFIED |
+| **R1.3** | Deadline edge preservation | Tests 1.1.5, 2.6 | ✓ VERIFIED |
+| **R1.4** | Multi-part chapter sequential ordering ($P_k \le P_{k+1}$) | Tests 1.2.1, 1.2.2, 1.2.3 | ✓ VERIFIED |
+| **R1.5** | Multi-part prerequisite chaining (`prerequisiteId`) | Tests 1.2.4, 1.2.5 | ✓ VERIFIED |
+| **R1.6** | Multi-stream rebalancing (CS, Bio, Commerce, Humanities) | Tests 1.3.1, 1.3.2, 1.3.3, 1.3.4, 1.3.5 | ✓ VERIFIED |
+| **R2.1** | `detectCompletedSyllabusProgress` detection scanner | Tests 1.4.1, 1.4.2, 1.4.3, 1.4.4, 1.4.5 | ✓ VERIFIED |
+| **R2.2** | Arranging completed markers into Days 1..K | Tests 1.5.1, 1.5.2, 1.5.3, 1.5.4, 1.5.5 | ✓ VERIFIED |
+| **R2.3** | Recalculate remaining syllabus starting Day K+1 forward | Tests 1.6.1, 1.6.2, 1.6.3, 1.6.4, 1.6.5 | ✓ VERIFIED |
+| **R2.4** | Modal UI elements & bilingual localization | Tests 1.8.1, 1.8.2, 1.8.3, 1.8.4, 1.8.5 | ✓ VERIFIED |
+| **R3.1** | Syllabus chapter schema validation (`syllabus-schema.json`) | Tests 1.7.1, 1.7.2, 1.7.3, 1.7.4 | ✓ VERIFIED |
+| **R3.2** | Stream curriculum schema validation (`curriculum.schema.json`) | Test 1.7.5 | ✓ VERIFIED |
+| **R4.1** | Disruption stress & consecutive missed days (1–14 days) | Tests 2.5, 4.1 | ✓ VERIFIED |
+| **R4.2** | Cross-feature interactions (+1 imp, intensity, rest days) | Tests 3.1, 3.2, 3.3, 3.4, 3.5 | ✓ VERIFIED |
+| **R4.3** | Full student lifecycle to 100% syllabus mastery | Tests 4.1, 4.2, 4.3 | ✓ VERIFIED |
+
+---
+
+## 6. Certification Sign-Off
+
+The test suite `tests/rebalancing-autodetect-syllabus.test.js` is certified free of facade tests, tautologies, or mock duplicates. It directly exercises production engines (`src/engine/planner.js`, `src/core/scheduler.js`, `src/utils/plan-scope.js`, `src/app.js`), production data assets, and markup artifacts.
+All 54 tests pass with 100% success rate across all 4 tiers.

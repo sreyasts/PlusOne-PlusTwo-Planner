@@ -630,7 +630,7 @@ function _executeCorePlanAlgorithm(
 
   p2Tasks.forEach((task) => {
     if (!subjectChapterMap[task.subject]) subjectChapterMap[task.subject] = [];
-    let ch = subjectChapterMap[task.subject].find((c) => c.chapNumber === task.chapNumber);
+    let ch = subjectChapterMap[task.subject].find((c) => (c.chapId && task.chapId ? c.chapId === task.chapId : c.chapNumber === task.chapNumber));
     if (!ch) {
       ch = {
         chapNumber: task.chapNumber,

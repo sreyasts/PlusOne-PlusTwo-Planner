@@ -833,6 +833,80 @@ html.dark .study-capacity, html.dark .study-tools { border-color: #334155; }
             backdrop-filter: blur(8px) !important;
             -webkit-backdrop-filter: blur(8px) !important;
         }
+        /* Regenerate / Rebalance Plan Modal - High Contrast Dark Mode */
+        html.dark #regenerate-modal > div {
+            background-color: #0e1526 !important;
+            border: 1px solid #23314d !important;
+            color: #f8fafc !important;
+            box-shadow: 0 25px 65px -10px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+        }
+        html.dark #regenerate-modal h3 {
+            color: #ffffff !important;
+        }
+        html.dark #regenerate-modal p#regenerate-modal-subtitle {
+            color: #cbd5e1 !important;
+        }
+        html.dark #regenerate-modal label {
+            color: #e2e8f0 !important;
+        }
+        html.dark #regenerate-modal select {
+            background-color: #141e33 !important;
+            border-color: #2b3b59 !important;
+            color: #ffffff !important;
+        }
+        html.dark #regenerate-modal select option {
+            background-color: #0e1526 !important;
+            color: #ffffff !important;
+        }
+        html.dark #regenerate-modal .bg-blue-50,
+        html.dark #regenerate-modal .bg-blue-50\/70 {
+            background-color: rgba(30, 58, 138, 0.35) !important;
+            border-color: rgba(59, 130, 246, 0.4) !important;
+            color: #bfdbfe !important;
+        }
+        html.dark #regenerate-modal button.border-amber-300,
+        html.dark #regenerate-modal button.bg-amber-50,
+        html.dark #regenerate-modal button.bg-amber-50\/90 {
+            background-color: rgba(120, 53, 15, 0.35) !important;
+            border-color: rgba(245, 158, 11, 0.6) !important;
+            color: #fef08a !important;
+        }
+        html.dark #regenerate-modal button.border-blue-200,
+        html.dark #regenerate-modal button.border-blue-300,
+        html.dark #regenerate-modal button.bg-blue-50,
+        html.dark #regenerate-modal button.bg-blue-50\/60 {
+            background-color: rgba(30, 58, 138, 0.35) !important;
+            border-color: rgba(59, 130, 246, 0.6) !important;
+            color: #bfdbfe !important;
+        }
+        html.dark #regenerate-modal button.border-emerald-300,
+        html.dark #regenerate-modal button.bg-emerald-50,
+        html.dark #regenerate-modal button.bg-emerald-50\/90 {
+            background-color: rgba(6, 78, 59, 0.35) !important;
+            border-color: rgba(16, 185, 129, 0.6) !important;
+            color: #a7f3d0 !important;
+        }
+        html.dark #regenerate-modal button.border-rose-200,
+        html.dark #regenerate-modal button.border-rose-300,
+        html.dark #regenerate-modal button.bg-rose-50,
+        html.dark #regenerate-modal button.bg-rose-50\/60 {
+            background-color: rgba(136, 19, 55, 0.35) !important;
+            border-color: rgba(244, 63, 94, 0.6) !important;
+            color: #fecdd3 !important;
+        }
+        html.dark #regenerate-modal p#regenerate-restore-sub,
+        html.dark #regenerate-modal p#regenerate-undo-reset-sub {
+            color: #94a3b8 !important;
+        }
+        html.dark #regenerate-cancel-btn {
+            background-color: #1a2438 !important;
+            border-color: #2b3b59 !important;
+            color: #e2e8f0 !important;
+        }
+        html.dark #regenerate-cancel-btn:hover {
+            background-color: #24324d !important;
+            color: #ffffff !important;
+        }
         /* Google Auth & Sign-in Modal - High Visibility Dark Mode */
         html.dark #auth-modal > div {
             background: #0e1526 !important;

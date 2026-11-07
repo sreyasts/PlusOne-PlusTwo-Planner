@@ -1073,180 +1073,136 @@
       "chapters": [
         {
           "chapterNumber": 1,
-          "title": "Fundamentals of Computers",
-          "weightageScore": 4,
+          "title": "Computing System",
+          "weightageScore": 3,
           "recommendedRevisionHours": 0.8,
           "term": 1,
           "effort": "LOW",
           "parts": [
             {
-              "title": "Evolution of Computers, Functional Units & Von Neumann Architecture",
+              "title": "Functional Units, Von Neumann Architecture, Memory Hierarchy & OS Concepts",
               "minutes": 50
             }
           ]
         },
         {
           "chapterNumber": 2,
-          "title": "Components of the Computer System",
-          "weightageScore": 5,
-          "recommendedRevisionHours": 1.9,
+          "title": "Data Representation",
+          "weightageScore": 8,
+          "recommendedRevisionHours": 2,
           "term": 1,
           "effort": "MEDIUM",
           "parts": [
             {
-              "title": "Hardware: Processor, Memory (RAM, ROM, Cache), Secondary Storage Devices & I/O Ports",
+              "title": "Number Systems: Binary, Octal, Decimal, Hexadecimal & Base Conversions",
               "minutes": 60
             },
             {
-              "title": "Software: System vs Application Software, OS Functions & Open Source Concepts",
-              "minutes": 55
+              "title": "Character Encoding (ASCII, Unicode), Boolean Logic, Truth Tables & Logic Gates",
+              "minutes": 60
             }
           ]
         },
         {
           "chapterNumber": 3,
-          "title": "Principles of Programming and Problem Solving",
-          "weightageScore": 5,
-          "recommendedRevisionHours": 1.8,
+          "title": "Programming Concepts",
+          "weightageScore": 4,
+          "recommendedRevisionHours": 0.9,
           "term": 1,
           "effort": "MEDIUM",
           "parts": [
             {
-              "title": "Problem Solving Phases, Algorithm Representation & Flowchart Symbols",
-              "minutes": 55
-            },
-            {
-              "title": "Structured Programming Concepts, Debugging Techniques & Program Documentation",
+              "title": "Problem Solving Phases, Algorithms Conception, Flowcharts & Program Design",
               "minutes": 55
             }
           ]
         },
         {
           "chapterNumber": 4,
-          "title": "Getting Started with C++",
-          "weightageScore": 5,
+          "title": "Elements of Python",
+          "weightageScore": 8,
           "recommendedRevisionHours": 1.9,
           "term": 2,
           "effort": "MEDIUM",
           "parts": [
             {
-              "title": "Character Set, Tokens (Keywords, Identifiers, Literals, Operators, Punctuators)",
+              "title": "Python Basics, Interactive vs Script Mode, Tokens, Keywords, Identifiers & Variables",
               "minutes": 55
             },
             {
-              "title": "Structure of a C++ Program, Header Files, Compilation & Basic I/O (cin, cout)",
+              "title": "Fundamental Data Types, Operators, Expressions & Input/Output Operations",
               "minutes": 60
             }
           ]
         },
         {
           "chapterNumber": 5,
-          "title": "Data Types and Operators",
-          "weightageScore": 6,
-          "recommendedRevisionHours": 2,
+          "title": "Python Control Structures and Data Handling",
+          "weightageScore": 9,
+          "recommendedRevisionHours": 2.3,
           "term": 2,
           "effort": "HIGH",
           "parts": [
             {
-              "title": "Fundamental Data Types, Variables, Constants & Type Modifiers in C++",
-              "minutes": 55
+              "title": "Decision Making: if, if-else, if-elif-else statements in Python",
+              "minutes": 65
             },
             {
-              "title": "Operators (Arithmetic, Relational, Logical, Assignment, Conditional) & Type Conversion",
-              "minutes": 65
+              "title": "Looping Constructs (while, for, range()), Strings, Lists and Basic Data Handling",
+              "minutes": 70
             }
           ]
         },
         {
           "chapterNumber": 6,
-          "title": "Introduction to Programming (Control Statements)",
+          "title": "Computer Networks",
           "weightageScore": 8,
-          "recommendedRevisionHours": 3.6,
+          "recommendedRevisionHours": 1.9,
           "term": 2,
-          "effort": "VERY_HIGH",
+          "effort": "MEDIUM",
           "parts": [
             {
-              "title": "Conditional Branching: if, if-else, nested if & switch-case Statements",
-              "minutes": 70
+              "title": "Network Concepts, Topologies (Star, Bus, Ring, Mesh) & Network Categories (LAN, MAN, WAN)",
+              "minutes": 55
             },
             {
-              "title": "Iteration Statements: while, do-while & for loops with break and continue",
-              "minutes": 75
-            },
-            {
-              "title": "Nested Loops, Programming Patterns & Dry Run Tracing",
-              "minutes": 70
+              "title": "Transmission Media, Network Devices (Hub, Switch, Router) & IP Address / DNS",
+              "minutes": 60
             }
           ]
         },
         {
           "chapterNumber": 7,
-          "title": "Arrays",
-          "weightageScore": 6,
-          "recommendedRevisionHours": 2.3,
-          "term": 2,
-          "effort": "HIGH",
+          "title": "Cyber Security",
+          "weightageScore": 7,
+          "recommendedRevisionHours": 1.7,
+          "term": 3,
+          "effort": "LOW",
           "parts": [
             {
-              "title": "Array Concept, Declaration, Initialization & One-Dimensional Array Traversal",
-              "minutes": 65
+              "title": "Cyber Security Threats (Malware, Phishing, Hacking), Digital Footprints & Safety Measures",
+              "minutes": 50
             },
             {
-              "title": "Linear Search, Finding Maximum/Minimum & Character Arrays (Strings) in C++",
-              "minutes": 70
+              "title": "Cyber Laws, IT Act, Intellectual Property Rights (IPR) & Cyber Ethics",
+              "minutes": 50
             }
           ]
         },
         {
           "chapterNumber": 8,
-          "title": "Functions",
-          "weightageScore": 6,
-          "recommendedRevisionHours": 2.3,
-          "term": 3,
-          "effort": "HIGH",
-          "parts": [
-            {
-              "title": "Built-in Library Functions (cmath, cctype, cstring) & User-Defined Function Prototypes",
-              "minutes": 65
-            },
-            {
-              "title": "Function Arguments: Call by Value vs Call by Reference & Scope of Variables",
-              "minutes": 70
-            }
-          ]
-        },
-        {
-          "chapterNumber": 9,
-          "title": "Computer Networks",
-          "weightageScore": 5,
-          "recommendedRevisionHours": 2,
-          "term": 3,
-          "effort": "MEDIUM",
-          "parts": [
-            {
-              "title": "Network Benefits, Transmission Media (Guided vs Unguided) & Network Topologies",
-              "minutes": 60
-            },
-            {
-              "title": "Network Types (LAN, MAN, WAN), Devices (Switch, Router, Gateway) & Protocols (TCP/IP)",
-              "minutes": 60
-            }
-          ]
-        },
-        {
-          "chapterNumber": 10,
-          "title": "Internet and Mobile Computing",
-          "weightageScore": 4,
-          "recommendedRevisionHours": 1.8,
+          "title": "AI and its Applications",
+          "weightageScore": 7,
+          "recommendedRevisionHours": 1.7,
           "term": 3,
           "effort": "LOW",
           "parts": [
             {
-              "title": "Internet Architecture, IP Addressing, DNS, WWW, Email Services & Cloud Computing",
-              "minutes": 55
+              "title": "Introduction to Artificial Intelligence, Machine Learning Concepts & Real-World Applications",
+              "minutes": 50
             },
             {
-              "title": "Mobile Computing Technologies: Cellular Generations (4G/5G), Wi-Fi & Cyber Security",
+              "title": "Societal Impacts of AI, Future Trends & Ethical Considerations",
               "minutes": 50
             }
           ]

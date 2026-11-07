@@ -72,7 +72,7 @@ import {
 import { getDailyPlan } from './ui/daily-plan.js';
 import { MAX_BACKUP_BYTES, parseStudyBackup, validateStudyBackup, createStudyBackup, persistStudyBackup } from './utils/study-backup.js';
 import { persistTaskCompletion } from './utils/study-progress.js';
-import { getRemainingPlanTasks } from './utils/plan-scope.js';
+import { getRemainingPlanTasks, detectCompletedSyllabusProgress } from './utils/plan-scope.js';
 import { getHandbookUrl } from './utils/handbook-lookup.js';
 import { createAccountSync, queuePendingAccountState } from './auth/account-sync.js';
 import appPackage from '../package.json' with { type: 'json' };
@@ -2202,7 +2202,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 const checkEl = document.getElementById(`plan-gen-check-${i}`);
                 if (checkEl) {
                     checkEl.className = "flex items-center gap-2.5 text-xs text-slate-400 dark:text-slate-500 transition-colors duration-300";
-                    const badge = checkEl.querySelector('span');
+                    const badge = (typeof checkEl.querySelector === 'function') ? checkEl.querySelector('span') : null;
                     if (badge) {
                         badge.className = "w-5 h-5 rounded-full flex items-center justify-center bg-slate-100 dark:bg-slate-800 text-slate-400 text-[10px] shrink-0 font-bold";
                         badge.innerHTML = `${i}`;
@@ -2300,7 +2300,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                         checkEl.className = isCurrent 
                             ? "flex items-center gap-2.5 text-xs text-blue-600 dark:text-blue-400 font-bold transition-colors duration-300"
                             : "flex items-center gap-2.5 text-xs text-emerald-600 dark:text-emerald-400 font-semibold transition-colors duration-300";
-                        const badge = checkEl.querySelector('span');
+                        const badge = (typeof checkEl.querySelector === 'function') ? checkEl.querySelector('span') : null;
                         if (badge) {
                             if (isCurrent) {
                                 badge.className = "w-5 h-5 rounded-full flex items-center justify-center bg-blue-100 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 text-[10px] shrink-0 font-bold";
@@ -2649,6 +2649,17 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
 
         function dismissDashboardRestoreBanner() {
             try {
+                if (typeof localStorage !== 'undefined') {
+                    const preResetRaw = localStorage.getItem('mpt_pre_reset_snapshot');
+                    const prevRaw = localStorage.getItem('mpt_previous_plan_snapshot');
+                    let snapKey = 'general';
+                    try {
+                        const parsed = JSON.parse(preResetRaw || prevRaw || '{}');
+                        snapKey = String(parsed.resetAt || parsed.timestamp || parsed.formattedDate || 'general');
+                    } catch (_) {}
+                    localStorage.setItem('mpt_restore_banner_dismissed_' + snapKey, 'true');
+                    localStorage.setItem('mpt_restore_banner_dismissed', 'true');
+                }
                 if (typeof sessionStorage !== 'undefined') {
                     sessionStorage.setItem('mpt_dismissed_restore_banner', 'true');
                 }
@@ -2659,9 +2670,6 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
 
         function renderDashboardRestoreBanner() {
             try {
-                if (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('mpt_dismissed_restore_banner') === 'true') {
-                    return '';
-                }
                 const isML = (typeof getAppLanguage === 'function' && getAppLanguage() === 'ml');
                 let snap = null;
                 let isReset = false;
@@ -2697,6 +2705,18 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                     return '';
                 }
 
+                const snapKey = String(snap.resetAt || snap.timestamp || snap.formattedDate || 'general');
+
+                // Check persistent dismissal
+                if (typeof localStorage !== 'undefined') {
+                    if (localStorage.getItem('mpt_restore_banner_dismissed_' + snapKey) === 'true') {
+                        return '';
+                    }
+                }
+                if (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('mpt_dismissed_restore_banner') === 'true') {
+                    return '';
+                }
+
                 const streamMap = { cs: 'Computer Science', bio: 'Biology Science', commerce: 'Commerce', humanities: 'Humanities' };
                 const streamLabel = snap.stream ? (streamMap[snap.stream] || snap.stream) : '';
                 const dateStr = snap.formattedDate || (snap.resetAt ? new Date(snap.resetAt).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' }) : '');
@@ -2706,6 +2726,36 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                     streamLabel,
                     snap.completedCount !== undefined ? `${snap.completedCount} completed` : ''
                 ].filter(Boolean).join(' · ');
+
+                // Check if this banner has already been shown for the first time
+                const seenKey = 'mpt_restore_banner_seen_' + snapKey;
+                const hasBeenSeenOnce = (typeof localStorage !== 'undefined' && localStorage.getItem(seenKey) === 'true');
+
+                if (hasBeenSeenOnce) {
+                    // Subsequent visits: Transition from intrusive reset pop-up to Settings button / quiet link
+                    return `
+                        <div id="dashboard-restore-banner" class="max-w-4xl mx-auto my-2.5 px-3.5 py-2 rounded-xl bg-slate-100/90 dark:bg-[#111827]/90 border border-slate-200/90 dark:border-slate-800/90 text-left flex items-center justify-between gap-3 text-xs animate-fade-in">
+                            <div class="flex items-center gap-2 text-slate-600 dark:text-slate-300">
+                                <svg class="w-4 h-4 text-blue-600 dark:text-blue-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                <span class="truncate">${isML ? 'മുൻപത്തെ ടൈംടേബിൾ ക്രമീകരണങ്ങളിൽ (Settings) ലഭ്യമാണ്.' : 'Previous timetable is saved. View or restore anytime in Settings.'}</span>
+                            </div>
+                            <div class="flex items-center gap-2 shrink-0">
+                                <button type="button" onclick="openSettingsModal()" class="px-3 py-1 bg-white dark:bg-[#1a233a] hover:bg-slate-50 dark:hover:bg-[#222f4c] text-blue-600 dark:text-blue-400 font-bold rounded-lg border border-slate-200 dark:border-slate-700 transition flex items-center gap-1 shadow-xs cursor-pointer">
+                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                                    <span>${isML ? 'Settings' : 'Settings'}</span>
+                                </button>
+                                <button type="button" onclick="dismissDashboardRestoreBanner()" class="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200" title="Dismiss">
+                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // First time display: Mark as seen in localStorage immediately so subsequent page opens switch to Settings
+                if (typeof localStorage !== 'undefined') {
+                    try { localStorage.setItem(seenKey, 'true'); } catch (_) {}
+                }
 
                 return `
                     <div id="dashboard-restore-banner" class="max-w-4xl mx-auto my-3 p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-amber-500/15 border-2 border-amber-500/40 shadow-lg shadow-amber-500/10 text-left flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 animate-fade-in-up">
@@ -2727,6 +2777,9 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                             <button type="button" onclick="${isReset ? 'restorePreResetSnapshot()' : 'restorePreviousPlan()'}" class="flex-1 sm:flex-none px-4 py-2 bg-amber-600 hover:bg-amber-700 active:scale-95 text-white text-xs font-black rounded-xl shadow-md shadow-amber-600/25 transition flex items-center justify-center gap-1.5 cursor-pointer">
                                 <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
                                 <span>${isML ? 'ടൈംടേബിൾ തിരിച്ചെടുക്കുക' : 'Restore Timetable'}</span>
+                            </button>
+                            <button type="button" onclick="openSettingsModal()" class="px-3 py-2 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white text-xs font-bold rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#141d30] transition flex items-center gap-1 cursor-pointer" title="Settings">
+                                <span>Settings</span>
                             </button>
                             <button type="button" onclick="dismissDashboardRestoreBanner()" class="px-2.5 py-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition text-xs rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800" title="Dismiss">
                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
@@ -2871,6 +2924,19 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
 
         function openRegenerateModal() {
             if (!appState || !appState.plan) return;
+
+            // Run intelligent completion scan
+            const detection = (typeof detectCompletedSyllabusProgress === 'function')
+                ? detectCompletedSyllabusProgress(appState)
+                : { anchorDayNumber: 0, totalCompletedTasks: 0, totalCompletedChapters: 0, completedTaskIds: new Set(), completedChapterIds: new Set(), completedDayMarkers: [] };
+
+            // Populate detected progress summary badge
+            const summaryBadge = document.getElementById('auto-detect-summary-badge');
+            if (summaryBadge) {
+                const isML = typeof getAppLanguage === 'function' && getAppLanguage() === 'ml';
+                summaryBadge.textContent = `${detection.totalCompletedTasks} ${isML ? 'പൂർത്തിയായി' : 'Done'}`;
+            }
+
             const select = document.getElementById('completed-day-select');
             select.innerHTML = '';
 
@@ -2881,7 +2947,6 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
             const opt0 = document.createElement('option');
             opt0.value = 0;
             opt0.text = "Day 0 (Start fresh from Day 1 today)";
-            if (maxChoice === 0) opt0.selected = true;
             select.appendChild(opt0);
 
             for (let i = 1; i <= maxChoice; i++) {
@@ -2890,9 +2955,14 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 const opt = document.createElement('option');
                 opt.value = i;
                 opt.text = `Day ${i}${dateNote}`;
-                if (i === maxChoice && maxChoice > 0) opt.selected = true;
                 select.appendChild(opt);
             }
+
+            // Pre-select detected anchor day if valid, otherwise maxChoice
+            const preferredSelection = (detection.anchorDayNumber > 0 && detection.anchorDayNumber <= maxChoice)
+                ? detection.anchorDayNumber
+                : maxChoice;
+            select.value = preferredSelection;
 
             // Show restore snapshot box if available
             const restoreBox = document.getElementById('regenerate-restore-box');
@@ -2964,10 +3034,11 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
             const completedUpTo = parseInt(document.getElementById('completed-day-select').value);
 
             let keptDays = [];
-            const completedTaskIds = new Set();
+            const completedTaskIds = new Set(appState.completedTasks || []);
             const completedChapterIds = new Set(appState.completedChaptersOnInit || []);
 
             if (completedUpTo > 0) {
+                // Keep days 1..completedUpTo with tasks marked completed
                 appState.plan.forEach(day => {
                     if (day.dayNumber <= completedUpTo) {
                         day.tasks.forEach(t => {
@@ -2975,26 +3046,46 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                             completedTaskIds.add(t.id);
                         });
                         keptDays.push(day);
-                    } else {
-                        // Preserve tasks completed ahead of schedule in future days!
-                        day.tasks.forEach(t => {
-                            if (t.completed) {
-                                completedTaskIds.add(t.id);
-                            }
-                        });
+                    }
+                });
+
+                // Preserve tasks completed ahead of schedule in days beyond completedUpTo
+                appState.plan.forEach(day => {
+                    if (day.dayNumber > completedUpTo) {
+                        const futureDone = (day.tasks || []).filter(t => t.completed);
+                        if (futureDone.length > 0) {
+                            futureDone.forEach(t => completedTaskIds.add(t.id));
+                            keptDays.push({
+                                ...day,
+                                isCompletedMarker: true,
+                                tasks: futureDone.map(t => ({ ...t, completed: true }))
+                            });
+                        }
                     }
                 });
             } else {
-                // If starting fresh from Day 1 today, preserve checkmarks for previously completed tasks
+                // Fresh reset (completedUpTo === 0):
+                // Preserve previously completed tasks as historical completed markers (Days 1..K)
                 appState.plan.forEach(day => {
-                    day.tasks.forEach(t => {
-                        if (t.completed) completedTaskIds.add(t.id);
-                    });
+                    const doneTasks = (day.tasks || []).filter(t => t.completed);
+                    if (doneTasks.length > 0) {
+                        doneTasks.forEach(t => completedTaskIds.add(t.id));
+                        keptDays.push({
+                            ...day,
+                            isCompletedMarker: true,
+                            tasks: doneTasks.map(t => ({ ...t, completed: true }))
+                        });
+                    }
                 });
             }
 
+            // Re-index keptDays sequentially 1..K
+            keptDays.forEach((d, idx) => {
+                d.dayNumber = idx + 1;
+            });
+
             const smartStart = typeof getSmartStartDate === 'function' ? getSmartStartDate() : { startDate: TODAY_STR, isLateEvening: false };
-            let rebuildStartDate = (completedUpTo === 0) ? smartStart.startDate : getLocalDateStr();
+            let rebuildStartDate = (completedUpTo === 0 && keptDays.length === 0) ? smartStart.startDate : getLocalDateStr();
 
             // If we kept days, ensure rebuildStartDate starts strictly after the last kept day if that date is on or after rebuildStartDate
             if (keptDays.length > 0) {
@@ -3009,7 +3100,17 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 }
             }
 
-            const userStream = appState.stream || (appState.plan.some(d => d.tasks.some(t => t.subject === 'Botany' || t.subject === 'Zoology')) ? 'bio' : 'cs');
+            // Infer user stream reliably across science (bio/cs), commerce, and humanities
+            let userStream = appState.stream;
+            if (!userStream && appState.plan) {
+                const subs = new Set(appState.plan.flatMap(d => (d.tasks || []).map(t => t.subject)));
+                if (subs.has('Accountancy') || subs.has('Business Studies')) userStream = 'commerce';
+                else if (subs.has('History') || subs.has('Political Science') || subs.has('Sociology')) userStream = 'humanities';
+                else if (subs.has('Botany') || subs.has('Zoology')) userStream = 'bio';
+                else userStream = 'cs';
+            }
+            if (!userStream) userStream = 'cs';
+
             const targetTerm = appState.targetTerm || 3;
             const userGrade = appState.grade || (typeof selectedGrade !== 'undefined' ? selectedGrade : '+2');
             const uncompletedTasks = getRemainingPlanTasks({
@@ -3036,10 +3137,17 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                         );
                     }
 
-                    result = buildIntelligentPlan(appState.deadlineDate, uncompletedTasks, rebuildStartDate, [], userStream, {
-                        intensity: appState.studyIntensity || 'balanced',
-                        personalization: appState.personalization || {}
-                    });
+                    result = buildIntelligentPlan(
+                        appState.deadlineDate,
+                        uncompletedTasks,
+                        rebuildStartDate,
+                        appState.improvementConfig || [],
+                        userStream,
+                        {
+                            intensity: appState.studyIntensity || 'balanced',
+                            personalization: appState.personalization || {}
+                        }
+                    );
                 } catch (err) {
                     console.error('Plan regeneration error:', err);
                     const isML = (typeof getAppLanguage === 'function' && getAppLanguage() === 'ml');
@@ -3052,13 +3160,14 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 }
 
                 if (result && result.planDays) {
-                    // Adjust day numbering seamlessly following keptDays
+                    // Adjust day numbering seamlessly following keptDays (Days K+1..N)
+                    const keptCount = keptDays.length;
                     result.planDays.forEach((d, idx) => {
-                        d.dayNumber = completedUpTo + idx + 1;
+                        d.dayNumber = keptCount + idx + 1;
                     });
 
                     appState.plan = [...keptDays, ...result.planDays];
-                    if (completedUpTo === 0) {
+                    if (keptCount === 0) {
                         appState.startDate = rebuildStartDate;
                     }
 
@@ -3080,6 +3189,150 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                             : "Schedule rebalanced with dependency tracking!",
                             "fa-wand-magic-sparkles text-blue-400");
                     }
+                    renderApp();
+
+                    if (typeof sessionStorage !== 'undefined') {
+                        sessionStorage.removeItem('auth_modal_dismissed');
+                    }
+                    if (typeof localStorage !== 'undefined') {
+                        localStorage.removeItem('has_seen_auth_modal');
+                        localStorage.removeItem('has_dismissed_milestone_auth');
+                    }
+                    if (typeof schedulePostPlanAuthModal === 'function') {
+                        schedulePostPlanAuthModal(8000);
+                    }
+                }
+            });
+        }
+
+        function autoDetectAndRebalance() {
+            if (!appState || !appState.plan || appState.plan.length === 0) return;
+
+            // 1. Scan user's current progress
+            const detection = (typeof detectCompletedSyllabusProgress === 'function')
+                ? detectCompletedSyllabusProgress(appState)
+                : { anchorDayNumber: 0, totalCompletedTasks: 0, totalCompletedChapters: 0, completedTaskIds: new Set(), completedChapterIds: new Set(), completedDayMarkers: [] };
+
+            // Guard: If everything is completed, celebrate and stop
+            const allDone = appState.plan.every(d => d.tasks && d.tasks.every(t => t.completed));
+            if (allDone) {
+                const isML = (typeof getAppLanguage === 'function' && getAppLanguage() === 'ml');
+                showAppToast(
+                    isML ? "🎉 നിങ്ങൾ മുഴുവൻ സിലബസും പൂർത്തിയാക്കി കഴിഞ്ഞു!" : "🎉 You have completed all scheduled tasks!",
+                    "fa-trophy text-amber-400"
+                );
+                closeRegenerateModal();
+                return;
+            }
+
+            // Save previous snapshot for undo/restore
+            if (typeof savePreviousPlanSnapshot === 'function') savePreviousPlanSnapshot();
+
+            const smartStart = typeof getSmartStartDate === 'function' ? getSmartStartDate() : { startDate: TODAY_STR, isLateEvening: false };
+            let rebuildStartDate = (detection.anchorDayNumber === 0) ? smartStart.startDate : getLocalDateStr();
+
+            // If completed markers exist, ensure rebuild starts strictly after the last marker
+            if (detection.completedDayMarkers.length > 0) {
+                const lastMarkerDate = detection.completedDayMarkers[detection.completedDayMarkers.length - 1].date;
+                if (lastMarkerDate >= rebuildStartDate) {
+                    const nextDate = new Date(lastMarkerDate + 'T00:00:00');
+                    nextDate.setDate(nextDate.getDate() + 1);
+                    rebuildStartDate = formatLocalDateStr(nextDate);
+                } else if (smartStart.isLateEvening && lastMarkerDate < smartStart.startDate) {
+                    rebuildStartDate = smartStart.startDate;
+                }
+            }
+
+            // Infer user stream reliably across science (bio/cs), commerce, and humanities
+            let userStream = appState.stream;
+            if (!userStream && appState.plan) {
+                const subs = new Set(appState.plan.flatMap(d => (d.tasks || []).map(t => t.subject)));
+                if (subs.has('Accountancy') || subs.has('Business Studies')) userStream = 'commerce';
+                else if (subs.has('History') || subs.has('Political Science') || subs.has('Sociology')) userStream = 'humanities';
+                else if (subs.has('Botany') || subs.has('Zoology')) userStream = 'bio';
+                else userStream = 'cs';
+            }
+            if (!userStream) userStream = 'cs';
+
+            const targetTerm = appState.targetTerm || 3;
+            const userGrade = appState.grade || (typeof selectedGrade !== 'undefined' ? selectedGrade : '+2');
+
+            // Retrieve all remaining uncompleted tasks (excluding completed tasks and completed chapters)
+            const uncompletedTasks = getRemainingPlanTasks({
+                grade: userGrade,
+                stream: userStream,
+                targetTerm,
+                completedChapterIds: detection.completedChapterIds,
+                completedTaskIds: detection.completedTaskIds,
+            });
+
+            closeRegenerateModal();
+
+            animatePlanGeneration({ mode: 'rebalance', isLateEvening: (detection.anchorDayNumber === 0 && smartStart.isLateEvening) }, () => {
+                let result;
+                try {
+                    if (rebuildStartDate >= appState.deadlineDate) {
+                        const [ry, rm, rd] = rebuildStartDate.split('-').map(Number);
+                        const newDeadlineDate = new Date(ry, rm - 1, rd + 30);
+                        appState.deadlineDate = formatLocalDateStr(newDeadlineDate);
+                        const isML = (typeof getAppLanguage === 'function' && getAppLanguage() === 'ml');
+                        showAppToast(
+                            isML
+                                ? "പഴയ പരീക്ഷാ തീയതി കഴിഞ്ഞതിനാൽ അവസാന തീയതി 30 ദിവസം നീട്ടി നൽകി."
+                                : "Target deadline has elapsed. Deadline auto-extended by 30 days for remaining portions.",
+                            "fa-clock-rotate-left text-amber-400"
+                        );
+                    }
+
+                    result = buildIntelligentPlan(
+                        appState.deadlineDate,
+                        uncompletedTasks,
+                        rebuildStartDate,
+                        appState.improvementConfig || [],
+                        userStream,
+                        {
+                            intensity: appState.studyIntensity || 'balanced',
+                            personalization: appState.personalization || {}
+                        }
+                    );
+                } catch (err) {
+                    console.error('Auto-detect plan regeneration error:', err);
+                    const isML = (typeof getAppLanguage === 'function' && getAppLanguage() === 'ml');
+                    showAppAlert({
+                        title: isML ? 'പ്ലാൻ ക്രമീകരണം' : 'Plan Adjustment Notice',
+                        message: isML ? 'ടൈംടേബിൾ ക്രമീകരിക്കാനായില്ല. ക്രമീകരണങ്ങളിൽ അവസാന തീയതി പരിശോധിക്കുക.' : 'Could not rebalance remaining tasks. Please check your target deadline date.',
+                        icon: 'fa-triangle-exclamation text-amber-500'
+                    });
+                    return;
+                }
+
+                if (result && result.planDays) {
+                    // Number new days consecutively starting after completed markers: (K + 1)..
+                    const markerCount = detection.completedDayMarkers.length;
+                    result.planDays.forEach((d, idx) => {
+                        d.dayNumber = markerCount + idx + 1;
+                    });
+
+                    // Combine completed markers and newly rebalanced days
+                    appState.plan = [...detection.completedDayMarkers, ...result.planDays];
+                    if (markerCount === 0) {
+                        appState.startDate = rebuildStartDate;
+                    }
+
+                    appState.revisionDaysCount = result.revisionDaysCount;
+                    appState.diagnostics = result.diagnostics;
+                    appState.engineVersion = PLANNER_ENGINE_VERSION;
+                    appState.lastModified = new Date().toISOString();
+                    saveAppState();
+
+                    const isML = typeof getAppLanguage === 'function' && getAppLanguage() === 'ml';
+                    const countMsg = `${detection.totalCompletedTasks} tasks locked as completed markers.`;
+                    showAppToast(
+                        isML
+                            ? "⚡ പൂർത്തിയായവ ഓട്ടോ-ഡിറ്റക്റ്റ് ചെയ്ത് ടൈംടേബിൾ പുനഃക്രമീകരിച്ചു!"
+                            : `⚡ Auto-detected and rebalanced! ${countMsg}`,
+                        "fa-wand-magic-sparkles text-blue-400"
+                    );
                     renderApp();
 
                     if (typeof sessionStorage !== 'undefined') {
@@ -3846,6 +4099,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                                     <span class="text-xs font-extrabold text-slate-900 dark:text-white">${isML ? `${ML_I18N.plan.day} ${day.dayNumber}` : `Day ${day.dayNumber}`}</span>
                                     <span class="text-xs font-bold text-slate-500 dark:text-slate-400">(${day.date})</span>
                                     ${isToday ? `<span class="text-xs font-extrabold bg-blue-600 text-white px-2 py-0.5 rounded-full no-print">${isML ? ML_I18N.plan.todayBadge : 'TODAY'}</span>` : ''}
+                                    ${day.isCompletedMarker ? `<span class="text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950/70 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700 px-2 py-0.5 rounded-full flex items-center gap-1"><svg class="w-3 h-3 text-emerald-600 dark:text-emerald-400 inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>${isML ? 'പൂർത്തിയായി' : 'Completed'}</span>` : ''}
                                     ${day.isExamEve ? `<span class="text-xs font-black bg-rose-100 text-rose-900 border border-rose-300 dark:bg-rose-950/70 dark:text-rose-200 dark:border-rose-700 px-2 py-0.5 rounded-full flex items-center gap-1 animate-pulse"><i class="fa-solid fa-bolt text-rose-600 dark:text-rose-400"></i>${isML ? `പരീക്ഷത്തലേന്ന്: ${day.exclusiveSubject}` : `🔥 Exam Eve: ${day.exclusiveSubject} Only`}</span>` : ''}
                                     ${day.isExamDay ? `<span class="text-xs font-black bg-amber-100 text-amber-900 border border-amber-300 dark:bg-amber-950/70 dark:text-amber-200 dark:border-amber-700 px-2 py-0.5 rounded-full flex items-center gap-1"><i class="fa-solid fa-graduation-cap text-amber-600 dark:text-amber-400"></i>${isML ? `പരീക്ഷാദിനം: ${day.examSubject}` : `🎯 Exam Day: ${day.examSubject}`}</span>` : ''}
                                     ${day.isRevisionDay ? `<span class="text-xs font-bold bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full">${isML ? ML_I18N.plan.revisionDay : 'Revision Day'}</span>` : ''}
@@ -4575,6 +4829,10 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
             setText('settings-done-btn', isML ? ML_I18N.settingsModal.doneBtn : 'Done');
 
             // 7. Regenerate Modal Localization
+            setText('auto-detect-card-title', isML ? (ML_I18N.regenerateModal.autoDetectTitle || 'പൂർത്തിയായവ ഓട്ടോ-ഡിറ്റക്റ്റ് ചെയ്യുക') : 'Auto-Detect Completed Tasks');
+            setText('auto-detect-card-sub', isML ? (ML_I18N.regenerateModal.autoDetectSub || 'നിങ്ങൾ ടിക്ക് ചെയ്ത അധ്യായങ്ങളും ഭാഗങ്ങളും സ്വയം കണ്ടെത്തി നിലനിർത്തുകയും ബാക്കിയുള്ളവ പുതിയ ദിവസങ്ങളിലേക്ക് പുനഃക്രമീകരിക്കുകയും ചെയ്യുന്നു.') : 'Automatically scans all chapters and sections you have checked off, locks them as completed markers, and redistributes remaining portions starting today.');
+            setText('btn-auto-rebalance-label', isML ? (ML_I18N.regenerateModal.autoDetectBtn || 'ഓട്ടോ-ഡിറ്റക്റ്റ് & പുനഃക്രമീകരണം') : 'Auto-Detect & Rebalance Schedule');
+            setText('regenerate-or-manual-label', isML ? (ML_I18N.regenerateModal.orManual || 'അല്ലെങ്കിൽ ദിവസം നേരിട്ട് തിരഞ്ഞെടുക്കുക') : 'Or Select Day Manually');
             setText('regenerate-modal-title', isML ? ML_I18N.regenerateModal.title : 'Adjust & Rebalance Plan');
             setText('regenerate-modal-subtitle', isML ? ML_I18N.regenerateModal.subtitle : "Missed some days or fell behind? Don't stress. Select the last day you fully finished, and our intelligent pacing algorithm will recalculate and redistribute only the remaining unfinished syllabus evenly across your available time.");
             setText('regenerate-completed-label', isML ? ML_I18N.regenerateModal.completedUpTo : 'I have completed up to:');
@@ -5051,6 +5309,7 @@ if (typeof window !== 'undefined') {
         openSettingsModal,
         closeSettingsModal,
         executeRegeneration,
+        autoDetectAndRebalance,
         changeMissionDay,
         shiftPlanToToday,
         shiftPlanToStartDate,
@@ -5176,5 +5435,8 @@ export {
     setCloudSyncUnsubscribe,
     openExportShareSheet,
     closeExportShareSheet,
+    openRegenerateModal,
+    executeRegeneration,
+    autoDetectAndRebalance,
 };
 

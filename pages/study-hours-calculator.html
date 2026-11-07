@@ -124,6 +124,41 @@
 
         <!-- Calculator Card -->
         <div class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm mb-8">
+            <!-- Grade & Stream Quick Presets -->
+            <div class="mb-6 pb-6 border-b border-slate-100 space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">1. Select Academic Level</label>
+                    <div class="grid grid-cols-3 gap-2" id="calcGradeSelector">
+                        <button type="button" onclick="setCalcPresetGrade('+2')" id="btn-calc-p2" class="calc-grade-btn py-2 px-3 rounded-xl text-xs font-bold border border-blue-600 bg-blue-50 text-blue-700 transition">
+                            Plus Two (+2)
+                        </button>
+                        <button type="button" onclick="setCalcPresetGrade('+1')" id="btn-calc-p1" class="calc-grade-btn py-2 px-3 rounded-xl text-xs font-bold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition">
+                            Plus One (+1)
+                        </button>
+                        <button type="button" onclick="setCalcPresetGrade('both')" id="btn-calc-both" class="calc-grade-btn py-2 px-3 rounded-xl text-xs font-bold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition">
+                            Both (+1 & +2)
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">2. Select Stream</label>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2" id="calcStreamSelector">
+                        <button type="button" onclick="setCalcPresetStream('science_cs')" id="btn-calc-scics" class="calc-stream-btn py-2 px-3 rounded-xl text-xs font-bold border border-blue-600 bg-blue-50 text-blue-700 transition text-center">
+                            Science (CS)
+                        </button>
+                        <button type="button" onclick="setCalcPresetStream('science_bio')" id="btn-calc-scibio" class="calc-stream-btn py-2 px-3 rounded-xl text-xs font-bold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition text-center">
+                            Science (Bio)
+                        </button>
+                        <button type="button" onclick="setCalcPresetStream('commerce')" id="btn-calc-comm" class="calc-stream-btn py-2 px-3 rounded-xl text-xs font-bold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition text-center">
+                            Commerce
+                        </button>
+                        <button type="button" onclick="setCalcPresetStream('humanities')" id="btn-calc-hum" class="calc-stream-btn py-2 px-3 rounded-xl text-xs font-bold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition text-center">
+                            Humanities
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             <div class="space-y-6">
                 <!-- Days to Exam -->
                 <div>
@@ -143,13 +178,13 @@
                 <div>
                     <div class="flex justify-between items-center mb-2">
                         <label class="text-xs font-bold text-slate-700 uppercase tracking-wider">Unfinished / Weak Chapters to Cover</label>
-                        <span id="chapters-val" class="text-sm font-extrabold text-blue-600 font-mono">35 Chapters</span>
+                        <span id="chapters-val" class="text-sm font-extrabold text-blue-600 font-mono">49 Chapters</span>
                     </div>
-                    <input type="range" id="chapters-input" min="5" max="65" value="35" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600" oninput="calculate()">
+                    <input type="range" id="chapters-input" min="5" max="110" value="49" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600" oninput="calculate()">
                     <div class="flex justify-between text-[11px] text-slate-400 mt-1">
                         <span>5 Chapters</span>
-                        <span>35 Chapters (Average)</span>
-                        <span>65 Chapters (Full Syllabus)</span>
+                        <span id="calcSliderMid">49 Chapters (Full Syllabus)</span>
+                        <span>110 Chapters</span>
                     </div>
                 </div>
 
@@ -231,6 +266,58 @@
     </footer>
 
     <script>
+    let calcGrade = '+2';
+    let calcStream = 'science_cs';
+    const CALC_CHAPTERS = {
+        '+1': { 'science_cs': 50, 'science_bio': 42, 'commerce': 42, 'humanities': 47 },
+        '+2': { 'science_cs': 49, 'science_bio': 41, 'commerce': 44, 'humanities': 52 },
+        'both': { 'science_cs': 99, 'science_bio': 83, 'commerce': 86, 'humanities': 99 }
+    };
+
+    function updateCalcPresets() {
+        // Update grade buttons
+        const gradeMap = { '+2': 'btn-calc-p2', '+1': 'btn-calc-p1', 'both': 'btn-calc-both' };
+        for (const g in gradeMap) {
+            const btn = document.getElementById(gradeMap[g]);
+            if (btn) {
+                if (g === calcGrade) {
+                    btn.className = 'calc-grade-btn py-2 px-3 rounded-xl text-xs font-bold border border-blue-600 bg-blue-50 text-blue-700 transition';
+                } else {
+                    btn.className = 'calc-grade-btn py-2 px-3 rounded-xl text-xs font-bold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition';
+                }
+            }
+        }
+        // Update stream buttons
+        const streamMap = { 'science_cs': 'btn-calc-scics', 'science_bio': 'btn-calc-scibio', 'commerce': 'btn-calc-comm', 'humanities': 'btn-calc-hum' };
+        for (const s in streamMap) {
+            const btn = document.getElementById(streamMap[s]);
+            if (btn) {
+                if (s === calcStream) {
+                    btn.className = 'calc-stream-btn py-2 px-3 rounded-xl text-xs font-bold border border-blue-600 bg-blue-50 text-blue-700 transition text-center';
+                } else {
+                    btn.className = 'calc-stream-btn py-2 px-3 rounded-xl text-xs font-bold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition text-center';
+                }
+            }
+        }
+        const matrix = CALC_CHAPTERS[calcGrade] || CALC_CHAPTERS['+2'];
+        const chaps = matrix[calcStream] || 49;
+        const chapInput = document.getElementById('chapters-input');
+        if (chapInput) chapInput.value = chaps;
+        const midSpan = document.getElementById('calcSliderMid');
+        if (midSpan) midSpan.textContent = chaps + ' Chapters (Full Syllabus)';
+        calculate();
+    }
+
+    function setCalcPresetGrade(g) {
+        calcGrade = g;
+        updateCalcPresets();
+    }
+
+    function setCalcPresetStream(s) {
+        calcStream = s;
+        updateCalcPresets();
+    }
+
     function calculate() {
         const days = parseInt(document.getElementById('days-input').value, 10);
         const chapters = parseInt(document.getElementById('chapters-input').value, 10);

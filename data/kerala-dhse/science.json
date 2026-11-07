@@ -1218,1502 +1218,6 @@
       ]
     },
     {
-      "subjectId": "accountancy-plus-two",
-      "subjectName": "Accountancy",
-      "stream": "science",
-      "grade": 12,
-      "chapters": [
-        {
-          "chapterNumber": 1,
-          "title": "Accounting for Partnership: Basic Concepts",
-          "weightageScore": 6,
-          "recommendedRevisionHours": 2.3,
-          "term": 1,
-          "effort": "HIGH",
-          "parts": [
-            {
-              "title": "Partnership Deed, Provisions Affecting Accounting & Capital Accounts (Fixed vs Fluctuating)",
-              "minutes": 65
-            },
-            {
-              "title": "Distribution of Profit, P&L Appropriation Account & Past Adjustments",
-              "minutes": 75
-            }
-          ]
-        },
-        {
-          "chapterNumber": 2,
-          "title": "Reconstitution of a Partnership Firm: Admission of a Partner",
-          "weightageScore": 6,
-          "recommendedRevisionHours": 2.4,
-          "term": 1,
-          "effort": "HIGH",
-          "parts": [
-            {
-              "title": "New Profit Sharing Ratio, Sacrificing Ratio & Goodwill Valuation/Accounting",
-              "minutes": 70
-            },
-            {
-              "title": "Revaluation of Assets, Liabilities & Adjustment of Capitals",
-              "minutes": 75
-            }
-          ]
-        },
-        {
-          "chapterNumber": 3,
-          "title": "Reconstitution: Retirement/Death of a Partner",
-          "weightageScore": 6,
-          "recommendedRevisionHours": 2.3,
-          "term": 1,
-          "effort": "HIGH",
-          "parts": [
-            {
-              "title": "Gaining Ratio, Goodwill Treatment & Revaluation upon Retirement",
-              "minutes": 65
-            },
-            {
-              "title": "Settlement of Amount Due to Retiring Partner & Deceased Partner Profit Calculation",
-              "minutes": 70
-            }
-          ]
-        },
-        {
-          "chapterNumber": 4,
-          "title": "Dissolution of a Partnership Firm",
-          "weightageScore": 6,
-          "recommendedRevisionHours": 2.4,
-          "term": 2,
-          "effort": "HIGH",
-          "parts": [
-            {
-              "title": "Modes of Dissolution, Settlement of Accounts & Realisation Account",
-              "minutes": 70
-            },
-            {
-              "title": "Partners Loan, Capital Accounts & Cash/Bank Account on Dissolution",
-              "minutes": 75
-            }
-          ]
-        },
-        {
-          "chapterNumber": 5,
-          "title": "Accounting for Share Capital",
-          "weightageScore": 6,
-          "recommendedRevisionHours": 3.6,
-          "term": 2,
-          "effort": "HIGH",
-          "parts": [
-            {
-              "title": "Issue of Shares at Par/Premium, Calls in Arrear & Calls in Advance",
-              "minutes": 70
-            },
-            {
-              "title": "Forfeiture of Shares Issued at Par & Premium",
-              "minutes": 75
-            },
-            {
-              "title": "Reissue of Forfeited Shares & Capital Reserve Transfer",
-              "minutes": 70
-            }
-          ]
-        },
-        {
-          "chapterNumber": 6,
-          "title": "Issue and Redemption of Debentures",
-          "weightageScore": 5,
-          "recommendedRevisionHours": 2.2,
-          "term": 2,
-          "effort": "MEDIUM",
-          "parts": [
-            {
-              "title": "Issue of Debentures for Cash, Consideration Other Than Cash & Collateral Security",
-              "minutes": 65
-            },
-            {
-              "title": "Terms of Issue & Redemption, Interest on Debentures & Writing off Loss",
-              "minutes": 65
-            }
-          ]
-        },
-        {
-          "chapterNumber": 7,
-          "title": "Financial Statements of a Company",
-          "weightageScore": 5,
-          "recommendedRevisionHours": 2.1,
-          "term": 2,
-          "effort": "MEDIUM",
-          "parts": [
-            {
-              "title": "Balance Sheet of a Company as per Schedule III Part I",
-              "minutes": 65
-            },
-            {
-              "title": "Statement of Profit and Loss as per Schedule III Part II",
-              "minutes": 60
-            }
-          ]
-        },
-        {
-          "chapterNumber": 8,
-          "title": "Analysis of Financial Statements",
-          "weightageScore": 3,
-          "recommendedRevisionHours": 0.9,
-          "term": 3,
-          "effort": "LOW",
-          "parts": [
-            {
-              "title": "Meaning, Significance & Tools: Comparative & Common Size Statements",
-              "minutes": 55
-            }
-          ]
-        },
-        {
-          "chapterNumber": 9,
-          "title": "Accounting Ratios",
-          "weightageScore": 6,
-          "recommendedRevisionHours": 2.3,
-          "term": 3,
-          "effort": "HIGH",
-          "parts": [
-            {
-              "title": "Liquidity Ratios (Current, Quick) & Solvency Ratios (Debt-Equity, Total Assets to Debt)",
-              "minutes": 65
-            },
-            {
-              "title": "Activity/Turnover Ratios (Inventory, Trade Receivables/Payables) & Profitability Ratios (Gross, Net, ROI)",
-              "minutes": 75
-            }
-          ]
-        },
-        {
-          "chapterNumber": 10,
-          "title": "Cash Flow Statement",
-          "weightageScore": 6,
-          "recommendedRevisionHours": 2.4,
-          "term": 3,
-          "effort": "HIGH",
-          "parts": [
-            {
-              "title": "Operating Activities: Calculation of Cash from Operations under Indirect Method",
-              "minutes": 75
-            },
-            {
-              "title": "Investing & Financing Activities, Final Cash & Cash Equivalents Reconciliation",
-              "minutes": 70
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "subjectId": "business-studies-plus-two",
-      "subjectName": "Business Studies",
-      "stream": "science",
-      "grade": 12,
-      "chapters": [
-        {
-          "chapterNumber": 1,
-          "title": "Nature and Significance of Management",
-          "weightageScore": 5,
-          "recommendedRevisionHours": 2,
-          "term": 1,
-          "effort": "MEDIUM",
-          "parts": [
-            {
-              "title": "Concept, Objectives, Importance & Management as Art, Science, Profession",
-              "minutes": 60
-            },
-            {
-              "title": "Levels of Management, Functions & Coordination Nature and Importance",
-              "minutes": 60
-            }
-          ]
-        },
-        {
-          "chapterNumber": 2,
-          "title": "Principles of Management",
-          "weightageScore": 6,
-          "recommendedRevisionHours": 2.2,
-          "term": 1,
-          "effort": "HIGH",
-          "parts": [
-            {
-              "title": "Fayol's 14 Principles of General Management",
-              "minutes": 65
-            },
-            {
-              "title": "Taylor's Scientific Management: Principles and Techniques",
-              "minutes": 65
-            }
-          ]
-        },
-        {
-          "chapterNumber": 3,
-          "title": "Business Environment",
-          "weightageScore": 3,
-          "recommendedRevisionHours": 0.9,
-          "term": 1,
-          "effort": "LOW",
-          "parts": [
-            {
-              "title": "Meaning, Dimensions (Economic, Social, Tech, Political, Legal) & Demonetization",
-              "minutes": 55
-            }
-          ]
-        },
-        {
-          "chapterNumber": 4,
-          "title": "Planning",
-          "weightageScore": 5,
-          "recommendedRevisionHours": 1,
-          "term": 1,
-          "effort": "MEDIUM",
-          "parts": [
-            {
-              "title": "Concept, Importance, Limitations & Planning Process Steps",
-              "minutes": 60
-            }
-          ]
-        },
-        {
-          "chapterNumber": 5,
-          "title": "Organising",
-          "weightageScore": 6,
-          "recommendedRevisionHours": 2.2,
-          "term": 2,
-          "effort": "HIGH",
-          "parts": [
-            {
-              "title": "Concept, Organising Process & Organizational Structure (Functional vs Divisional)",
-              "minutes": 65
-            },
-            {
-              "title": "Formal vs Informal Organization, Delegation & Decentralization",
-              "minutes": 65
-            }
-          ]
-        },
-        {
-          "chapterNumber": 6,
-          "title": "Staffing",
-          "weightageScore": 5,
-          "recommendedRevisionHours": 2.1,
-          "term": 2,
-          "effort": "MEDIUM",
-          "parts": [
-            {
-              "title": "Concept, Importance, Staffing as Part of HRM & Staffing Process",
-              "minutes": 60
-            },
-            {
-              "title": "Recruitment Sources (Internal/External), Selection Process & Training Methods",
-              "minutes": 65
-            }
-          ]
-        },
-        {
-          "chapterNumber": 7,
-          "title": "Directing",
-          "weightageScore": 6,
-          "recommendedRevisionHours": 2.2,
-          "term": 2,
-          "effort": "HIGH",
-          "parts": [
-            {
-              "title": "Concept, Supervision, Motivation (Maslow Hierarchy, Financial/Non-Financial)",
-              "minutes": 65
-            },
-            {
-              "title": "Leadership Styles (Autocratic, Democratic, Laissez-faire) & Communication Barriers",
-              "minutes": 65
-            }
-          ]
-        },
-        {
-          "chapterNumber": 8,
-          "title": "Controlling",
-          "weightageScore": 3,
-          "recommendedRevisionHours": 0.9,
-          "term": 2,
-          "effort": "LOW",
-          "parts": [
-            {
-              "title": "Concept, Importance, Relationship with Planning & Controlling Process Steps",
-              "minutes": 55
-            }
-          ]
-        },
-        {
-          "chapterNumber": 9,
-          "title": "Financial Management",
-          "weightageScore": 6,
-          "recommendedRevisionHours": 2.3,
-          "term": 3,
-          "effort": "HIGH",
-          "parts": [
-            {
-              "title": "Meaning, Objectives, Financial Decisions (Investment, Financing, Dividend)",
-              "minutes": 65
-            },
-            {
-              "title": "Financial Planning, Capital Structure Factors & Fixed/Working Capital Requirements",
-              "minutes": 70
-            }
-          ]
-        },
-        {
-          "chapterNumber": 10,
-          "title": "Financial Markets",
-          "weightageScore": 5,
-          "recommendedRevisionHours": 2.2,
-          "term": 3,
-          "effort": "MEDIUM",
-          "parts": [
-            {
-              "title": "Money Market Instruments & Capital Market (Primary vs Secondary)",
-              "minutes": 65
-            },
-            {
-              "title": "Stock Exchange Functions, Trading Procedure & SEBI Objectives/Functions",
-              "minutes": 65
-            }
-          ]
-        },
-        {
-          "chapterNumber": 11,
-          "title": "Marketing",
-          "weightageScore": 6,
-          "recommendedRevisionHours": 2.3,
-          "term": 3,
-          "effort": "HIGH",
-          "parts": [
-            {
-              "title": "Marketing Philosophies & Marketing Mix: Product (Branding, Packaging, Labelling)",
-              "minutes": 65
-            },
-            {
-              "title": "Price Determination, Physical Distribution Channels & Promotion Mix (Advertising, Sales, PR)",
-              "minutes": 70
-            }
-          ]
-        },
-        {
-          "chapterNumber": 12,
-          "title": "Consumer Protection",
-          "weightageScore": 3,
-          "recommendedRevisionHours": 0.9,
-          "term": 3,
-          "effort": "LOW",
-          "parts": [
-            {
-              "title": "Importance, Consumer Rights, Responsibilities & Redressal Agencies under CPA 2019",
-              "minutes": 55
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "subjectId": "economics-plus-two",
-      "subjectName": "Economics",
-      "stream": "science",
-      "grade": 12,
-      "chapters": [
-        {
-          "chapterNumber": 1,
-          "title": "Introduction to Microeconomics",
-          "weightageScore": 3,
-          "recommendedRevisionHours": 0.9,
-          "term": 1,
-          "effort": "LOW",
-          "parts": [
-            {
-              "title": "Central Problems of an Economy, Production Possibility Frontier & Opportunity Cost",
-              "minutes": 55
-            }
-          ]
-        },
-        {
-          "chapterNumber": 2,
-          "title": "Theory of Consumer Behaviour",
-          "weightageScore": 6,
-          "recommendedRevisionHours": 3.3,
-          "term": 1,
-          "effort": "HIGH",
-          "parts": [
-            {
-              "title": "Utility Analysis (Total vs Marginal, Law of Diminishing Marginal Utility)",
-              "minutes": 65
-            },
-            {
-              "title": "Indifference Curve Analysis, Budget Set/Line & Consumer Equilibrium",
-              "minutes": 70
-            },
-            {
-              "title": "Demand Curve, Law of Demand, Elasticity of Demand & Determinants",
-              "minutes": 65
-            }
-          ]
-        },
-        {
-          "chapterNumber": 3,
-          "title": "Production and Costs",
-          "weightageScore": 6,
-          "recommendedRevisionHours": 2.3,
-          "term": 1,
-          "effort": "HIGH",
-          "parts": [
-            {
-              "title": "Production Function, TP, MP, AP & Law of Variable Proportions / Returns to Scale",
-              "minutes": 65
-            },
-            {
-              "title": "Short Run Costs (TFC, TVC, TC, AFC, AVC, AC, MC) & Long Run Cost Curves",
-              "minutes": 70
-            }
-          ]
-        },
-        {
-          "chapterNumber": 4,
-          "title": "Theory of the Firm Under Perfect Competition",
-          "weightageScore": 5,
-          "recommendedRevisionHours": 2.1,
-          "term": 2,
-          "effort": "MEDIUM",
-          "parts": [
-            {
-              "title": "Features of Perfect Competition, Total, Average & Marginal Revenue",
-              "minutes": 60
-            },
-            {
-              "title": "Profit Maximisation Conditions & Short Run/Long Run Supply Curve of a Firm",
-              "minutes": 65
-            }
-          ]
-        },
-        {
-          "chapterNumber": 5,
-          "title": "Market Equilibrium",
-          "weightageScore": 5,
-          "recommendedRevisionHours": 2.1,
-          "term": 2,
-          "effort": "MEDIUM",
-          "parts": [
-            {
-              "title": "Equilibrium Price and Quantity Determination & Shift in Demand/Supply",
-              "minutes": 65
-            },
-            {
-              "title": "Applications of Demand-Supply: Price Ceiling and Price Floor",
-              "minutes": 60
-            }
-          ]
-        },
-        {
-          "chapterNumber": 6,
-          "title": "Non-Competitive Markets",
-          "weightageScore": 3,
-          "recommendedRevisionHours": 0.9,
-          "term": 2,
-          "effort": "LOW",
-          "parts": [
-            {
-              "title": "Simple Monopoly, Monopolistic Competition & Oligopoly Key Characteristics",
-              "minutes": 55
-            }
-          ]
-        },
-        {
-          "chapterNumber": 7,
-          "title": "Introduction to Macroeconomics",
-          "weightageScore": 3,
-          "recommendedRevisionHours": 0.9,
-          "term": 2,
-          "effort": "LOW",
-          "parts": [
-            {
-              "title": "Emergence of Macroeconomics, Context & Circular Flow of Income in a 2-Sector Economy",
-              "minutes": 55
-            }
-          ]
-        },
-        {
-          "chapterNumber": 8,
-          "title": "National Income Accounting",
-          "weightageScore": 6,
-          "recommendedRevisionHours": 3.4,
-          "term": 2,
-          "effort": "HIGH",
-          "parts": [
-            {
-              "title": "Basic Aggregates: GDP, GNP, NDP, NNP at Market Price and Factor Cost",
-              "minutes": 70
-            },
-            {
-              "title": "Measurement of National Income: Value Added, Income & Expenditure Methods",
-              "minutes": 75
-            },
-            {
-              "title": "Nominal vs Real GDP, GDP Deflator & GDP as Welfare Indicator Limitations",
-              "minutes": 60
-            }
-          ]
-        },
-        {
-          "chapterNumber": 9,
-          "title": "Money and Banking",
-          "weightageScore": 6,
-          "recommendedRevisionHours": 3.2,
-          "term": 3,
-          "effort": "HIGH",
-          "parts": [
-            {
-              "title": "Functions of Money, Demand for Money & Motives for Holding Cash",
-              "minutes": 60
-            },
-            {
-              "title": "Commercial Banks Credit Creation Process & Money Multiplier",
-              "minutes": 65
-            },
-            {
-              "title": "Central Bank (RBI) Functions & Quantitative/Qualitative Credit Control Tools",
-              "minutes": 65
-            }
-          ]
-        },
-        {
-          "chapterNumber": 10,
-          "title": "Determination of Income and Employment",
-          "weightageScore": 6,
-          "recommendedRevisionHours": 2.3,
-          "term": 3,
-          "effort": "HIGH",
-          "parts": [
-            {
-              "title": "Aggregate Demand, Aggregate Supply, Propensity to Consume (APC, MPC, APS, MPS)",
-              "minutes": 65
-            },
-            {
-              "title": "Short Run Equilibrium Output, Investment Multiplier & Deficient/Excess Demand",
-              "minutes": 75
-            }
-          ]
-        },
-        {
-          "chapterNumber": 11,
-          "title": "Government Budget and the Economy",
-          "weightageScore": 5,
-          "recommendedRevisionHours": 2.1,
-          "term": 3,
-          "effort": "MEDIUM",
-          "parts": [
-            {
-              "title": "Meaning, Objectives, Revenue vs Capital Receipts & Expenditure Classification",
-              "minutes": 60
-            },
-            {
-              "title": "Measures of Government Deficit: Revenue, Fiscal, Primary Deficit & Implications",
-              "minutes": 65
-            }
-          ]
-        },
-        {
-          "chapterNumber": 12,
-          "title": "Open Economy Macroeconomics",
-          "weightageScore": 5,
-          "recommendedRevisionHours": 2.1,
-          "term": 3,
-          "effort": "MEDIUM",
-          "parts": [
-            {
-              "title": "Balance of Payments (Current vs Capital Account) & Autonomous/Accommodating Items",
-              "minutes": 65
-            },
-            {
-              "title": "Foreign Exchange Rate (Fixed vs Flexible) & Determination in Open Markets",
-              "minutes": 60
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "subjectId": "computer-applications-plus-two",
-      "subjectName": "Computer Applications",
-      "stream": "science",
-      "grade": 12,
-      "chapters": [
-        {
-          "chapterNumber": 1,
-          "title": "Review of C++ Programming",
-          "weightageScore": 5,
-          "recommendedRevisionHours": 1,
-          "term": 1,
-          "effort": "MEDIUM",
-          "parts": [
-            {
-              "title": "Data Types, Operators, Expressions & Control Structures Review",
-              "minutes": 60
-            }
-          ]
-        },
-        {
-          "chapterNumber": 2,
-          "title": "Arrays and Strings",
-          "weightageScore": 5,
-          "recommendedRevisionHours": 1.1,
-          "term": 1,
-          "effort": "MEDIUM",
-          "parts": [
-            {
-              "title": "Single & Multidimensional Arrays, String Manipulation & Applications in Business",
-              "minutes": 65
-            }
-          ]
-        },
-        {
-          "chapterNumber": 3,
-          "title": "Functions",
-          "weightageScore": 5,
-          "recommendedRevisionHours": 1,
-          "term": 1,
-          "effort": "MEDIUM",
-          "parts": [
-            {
-              "title": "Function Declaration, Parameter Passing (Value vs Reference) & Scope Rules",
-              "minutes": 60
-            }
-          ]
-        },
-        {
-          "chapterNumber": 4,
-          "title": "Web Technology",
-          "weightageScore": 5,
-          "recommendedRevisionHours": 1,
-          "term": 1,
-          "effort": "MEDIUM",
-          "parts": [
-            {
-              "title": "Client-Server Architecture, Web Servers, Browsers & Communication Protocols",
-              "minutes": 60
-            }
-          ]
-        },
-        {
-          "chapterNumber": 5,
-          "title": "Web Designing using HTML",
-          "weightageScore": 6,
-          "recommendedRevisionHours": 2.3,
-          "term": 2,
-          "effort": "HIGH",
-          "parts": [
-            {
-              "title": "HTML Structural Tags, Text Formatting, Lists & Hyperlinks",
-              "minutes": 65
-            },
-            {
-              "title": "Tables, Forms, Input Controls & Multimedia Embedding",
-              "minutes": 70
-            }
-          ]
-        },
-        {
-          "chapterNumber": 6,
-          "title": "Client Side Scripting using JavaScript",
-          "weightageScore": 6,
-          "recommendedRevisionHours": 2.3,
-          "term": 2,
-          "effort": "HIGH",
-          "parts": [
-            {
-              "title": "JavaScript Syntax, Variables, Operators & Control Structures",
-              "minutes": 65
-            },
-            {
-              "title": "DOM Manipulation, Event Handling & Client-Side Form Validation",
-              "minutes": 70
-            }
-          ]
-        },
-        {
-          "chapterNumber": 7,
-          "title": "Web Hosting",
-          "weightageScore": 3,
-          "recommendedRevisionHours": 0.9,
-          "term": 2,
-          "effort": "LOW",
-          "parts": [
-            {
-              "title": "Domain Registration, DNS, Hosting Types & FTP Publishing",
-              "minutes": 55
-            }
-          ]
-        },
-        {
-          "chapterNumber": 8,
-          "title": "Database Management System",
-          "weightageScore": 5,
-          "recommendedRevisionHours": 1.1,
-          "term": 2,
-          "effort": "MEDIUM",
-          "parts": [
-            {
-              "title": "Database Concepts, Relational Data Model, Keys & Normalization Fundamentals",
-              "minutes": 65
-            }
-          ]
-        },
-        {
-          "chapterNumber": 9,
-          "title": "Structured Query Language (SQL)",
-          "weightageScore": 6,
-          "recommendedRevisionHours": 2.3,
-          "term": 3,
-          "effort": "HIGH",
-          "parts": [
-            {
-              "title": "DDL Commands (CREATE, ALTER, DROP) & Table Constraints",
-              "minutes": 65
-            },
-            {
-              "title": "DML Commands (INSERT, UPDATE, DELETE) & Queries (SELECT, WHERE, GROUP BY, ORDER BY)",
-              "minutes": 70
-            }
-          ]
-        },
-        {
-          "chapterNumber": 10,
-          "title": "Enterprise Resource Planning (ERP)",
-          "weightageScore": 3,
-          "recommendedRevisionHours": 0.9,
-          "term": 3,
-          "effort": "LOW",
-          "parts": [
-            {
-              "title": "Concept, Modules of ERP, Benefits & ERP Implementation in Modern Business",
-              "minutes": 55
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "subjectId": "history-plus-two",
-      "subjectName": "History",
-      "stream": "science",
-      "grade": 12,
-      "chapters": [
-        {
-          "chapterNumber": 1,
-          "title": "Bricks, Beads and Bones",
-          "weightageScore": 6,
-          "recommendedRevisionHours": 2.2,
-          "term": 1,
-          "effort": "HIGH",
-          "parts": [
-            {
-              "title": "Harappan Civilisation: Urban Planning, Craft Production & Trade Networks",
-              "minutes": 65
-            },
-            {
-              "title": "Social Differences, Harappan Script, Weights & Causes of Decline",
-              "minutes": 65
-            }
-          ]
-        },
-        {
-          "chapterNumber": 2,
-          "title": "Kings, Farmers and Towns",
-          "weightageScore": 6,
-          "recommendedRevisionHours": 2.2,
-          "term": 1,
-          "effort": "HIGH",
-          "parts": [
-            {
-              "title": "Sixteen Mahajanapadas, Magadha Rise & Mauryan Administration",
-              "minutes": 65
-            },
-            {
-              "title": "Inscriptions Decipherment (Ashokan Edicts) & Post-Mauryan Kingdoms",
-              "minutes": 65
-            }
-          ]
-        },
-        {
-          "chapterNumber": 3,
-          "title": "Kinship, Caste and Class",
-          "weightageScore": 5,
-          "recommendedRevisionHours": 2,
-          "term": 1,
-          "effort": "MEDIUM",
-          "parts": [
-            {
-              "title": "Social Stratification, Varna/Jati Rules & Gender Access to Property in Mahabharata Period",
-              "minutes": 60
-            },
-            {
-              "title": "The Critical Edition of the Mahabharata & Social Differences Beyond Caste",
-              "minutes": 60
-            }
-          ]
-        },
-        {
-          "chapterNumber": 4,
-          "title": "Thinkers, Beliefs and Buildings",
-          "weightageScore": 6,
-          "recommendedRevisionHours": 2.2,
-          "term": 1,
-          "effort": "HIGH",
-          "parts": [
-            {
-              "title": "Philosophical Currents, Jainism Philosophy & Early Buddhist Teachings",
-              "minutes": 65
-            },
-            {
-              "title": "Buddhist Stupas (Sanchi Architecture), Mahayana Growth & Early Hindu Temples",
-              "minutes": 65
-            }
-          ]
-        },
-        {
-          "chapterNumber": 5,
-          "title": "Through the Eyes of Travellers",
-          "weightageScore": 5,
-          "recommendedRevisionHours": 2.1,
-          "term": 2,
-          "effort": "MEDIUM",
-          "parts": [
-            {
-              "title": "Al-Biruni (Kitab-ul-Hind) on Caste System & Ibn Battuta (Rihla) on Indian Cities",
-              "minutes": 65
-            },
-            {
-              "title": "Francois Bernier on Mughal Ownership of Land & Eastern Despotism Comparison",
-              "minutes": 60
-            }
-          ]
-        },
-        {
-          "chapterNumber": 6,
-          "title": "Bhakti-Sufi Traditions",
-          "weightageScore": 6,
-          "recommendedRevisionHours": 3.2,
-          "term": 2,
-          "effort": "HIGH",
-          "parts": [
-            {
-              "title": "Early Traditions in South India (Alvars & Nayanars), Virashaiva Movement",
-              "minutes": 65
-            },
-            {
-              "title": "Sufism Principles, Khanqah Life & Popular Silsilas in India",
-              "minutes": 65
-            },
-            {
-              "title": "Voices of Rejection: Kabir, Guru Nanak & Mirabai Composites",
-              "minutes": 60
-            }
-          ]
-        },
-        {
-          "chapterNumber": 7,
-          "title": "An Imperial Capital: Vijayanagara",
-          "weightageScore": 6,
-          "recommendedRevisionHours": 2.3,
-          "term": 2,
-          "effort": "HIGH",
-          "parts": [
-            {
-              "title": "Discovery of Hampi, Water Resources, Fortifications & Royal Centre",
-              "minutes": 65
-            },
-            {
-              "title": "Mahanavami Dibba, Sacred Centre Temples (Virupaksha, Vittala) & Amara-Nayaka System",
-              "minutes": 70
-            }
-          ]
-        },
-        {
-          "chapterNumber": 8,
-          "title": "Peasants, Zamindars and the State",
-          "weightageScore": 5,
-          "recommendedRevisionHours": 2.1,
-          "term": 2,
-          "effort": "MEDIUM",
-          "parts": [
-            {
-              "title": "Agrarian Society in 16th-17th Centuries, Village Community & Role of Women",
-              "minutes": 60
-            },
-            {
-              "title": "Zamindari Power, Ain-i-Akbari of Abul Fazl & Revenue System",
-              "minutes": 65
-            }
-          ]
-        },
-        {
-          "chapterNumber": 9,
-          "title": "Colonialism and the Countryside",
-          "weightageScore": 6,
-          "recommendedRevisionHours": 2.2,
-          "term": 3,
-          "effort": "HIGH",
-          "parts": [
-            {
-              "title": "Permanent Settlement in Bengal, Jotedars Rise & Fifth Report",
-              "minutes": 65
-            },
-            {
-              "title": "The Ryotwari System, Deccan Riots of 1875 & Cotton Boom Repercussions",
-              "minutes": 65
-            }
-          ]
-        },
-        {
-          "chapterNumber": 10,
-          "title": "Rebels and the Raj",
-          "weightageScore": 6,
-          "recommendedRevisionHours": 2.2,
-          "term": 3,
-          "effort": "HIGH",
-          "parts": [
-            {
-              "title": "1857 Revolt Outbreak, Pattern of Rebellion, Leaders & Causes",
-              "minutes": 65
-            },
-            {
-              "title": "British Repression, Visual Images of 1857 & Nationalist Hero Representation",
-              "minutes": 65
-            }
-          ]
-        },
-        {
-          "chapterNumber": 11,
-          "title": "Mahatma Gandhi and the Nationalist Movement",
-          "weightageScore": 6,
-          "recommendedRevisionHours": 2.3,
-          "term": 3,
-          "effort": "HIGH",
-          "parts": [
-            {
-              "title": "Champaran to Non-Cooperation Movement, Khilafat Movement & Satyagraha Technique",
-              "minutes": 65
-            },
-            {
-              "title": "Salt March (Dandi), Round Table Conferences & Quit India Movement",
-              "minutes": 70
-            }
-          ]
-        },
-        {
-          "chapterNumber": 12,
-          "title": "Framing the Constitution",
-          "weightageScore": 5,
-          "recommendedRevisionHours": 2.2,
-          "term": 3,
-          "effort": "MEDIUM",
-          "parts": [
-            {
-              "title": "Constituent Assembly Composition, Vision of the Constitution & Objectives Resolution",
-              "minutes": 65
-            },
-            {
-              "title": "Debates on Rights, Federal Powers, Language Question & Dr. Ambedkar Draft",
-              "minutes": 65
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "subjectId": "political-science-plus-two",
-      "subjectName": "Political Science",
-      "stream": "science",
-      "grade": 12,
-      "chapters": [
-        {
-          "chapterNumber": 1,
-          "title": "The End of Bipolarity",
-          "weightageScore": 6,
-          "recommendedRevisionHours": 2.2,
-          "term": 1,
-          "effort": "HIGH",
-          "parts": [
-            {
-              "title": "Soviet System Features, Gorbachev Reforms & Disintegration Causes/Consequences",
-              "minutes": 65
-            },
-            {
-              "title": "Shock Therapy and Its Consequences, Post-Communist Regimes & India-Russia Relations",
-              "minutes": 65
-            }
-          ]
-        },
-        {
-          "chapterNumber": 2,
-          "title": "Contemporary Centres of Power",
-          "weightageScore": 5,
-          "recommendedRevisionHours": 2.2,
-          "term": 1,
-          "effort": "MEDIUM",
-          "parts": [
-            {
-              "title": "European Union Political/Economic Influence & ASEAN Economic Community",
-              "minutes": 65
-            },
-            {
-              "title": "Rise of Chinese Economy, Market Reforms & Sino-Indian Relations",
-              "minutes": 65
-            }
-          ]
-        },
-        {
-          "chapterNumber": 3,
-          "title": "Contemporary South Asia",
-          "weightageScore": 6,
-          "recommendedRevisionHours": 2.2,
-          "term": 1,
-          "effort": "HIGH",
-          "parts": [
-            {
-              "title": "Democracy in Pakistan and Bangladesh & Monarchy to Democracy in Nepal",
-              "minutes": 65
-            },
-            {
-              "title": "Ethnic Conflict in Sri Lanka, India-Pakistan Conflicts & SAARC / SAFTA",
-              "minutes": 65
-            }
-          ]
-        },
-        {
-          "chapterNumber": 4,
-          "title": "International Organisations",
-          "weightageScore": 5,
-          "recommendedRevisionHours": 2.2,
-          "term": 2,
-          "effort": "MEDIUM",
-          "parts": [
-            {
-              "title": "Need for International Organisations, UN Evolution, Principal Organs & Agencies",
-              "minutes": 65
-            },
-            {
-              "title": "UN Security Council Reform Debates, Jurisdiction & Unipolar World Context",
-              "minutes": 65
-            }
-          ]
-        },
-        {
-          "chapterNumber": 5,
-          "title": "Security in the Contemporary World",
-          "weightageScore": 3,
-          "recommendedRevisionHours": 1,
-          "term": 2,
-          "effort": "LOW",
-          "parts": [
-            {
-              "title": "Traditional Security Notions (Internal/External) vs Non-Traditional (Human & Global Security)",
-              "minutes": 60
-            }
-          ]
-        },
-        {
-          "chapterNumber": 6,
-          "title": "Environment and Natural Resources",
-          "weightageScore": 3,
-          "recommendedRevisionHours": 0.9,
-          "term": 2,
-          "effort": "LOW",
-          "parts": [
-            {
-              "title": "Global Commons, Common But Differentiated Responsibilities & Indigenous Peoples Rights",
-              "minutes": 55
-            }
-          ]
-        },
-        {
-          "chapterNumber": 7,
-          "title": "Globalisation",
-          "weightageScore": 3,
-          "recommendedRevisionHours": 0.9,
-          "term": 2,
-          "effort": "LOW",
-          "parts": [
-            {
-              "title": "Concept, Causes & Political, Economic, Cultural Consequences of Globalisation",
-              "minutes": 55
-            }
-          ]
-        },
-        {
-          "chapterNumber": 8,
-          "title": "Challenges of Nation-Building",
-          "weightageScore": 6,
-          "recommendedRevisionHours": 2.3,
-          "term": 1,
-          "effort": "HIGH",
-          "parts": [
-            {
-              "title": "Three Challenges of Independent India & Partition: Legacy, Process, Consequences",
-              "minutes": 65
-            },
-            {
-              "title": "Integration of Princely States (Sardar Patel, Hyderabad, Kashmir) & States Reorganisation",
-              "minutes": 70
-            }
-          ]
-        },
-        {
-          "chapterNumber": 9,
-          "title": "Era of One-Party Dominance",
-          "weightageScore": 5,
-          "recommendedRevisionHours": 2.1,
-          "term": 1,
-          "effort": "MEDIUM",
-          "parts": [
-            {
-              "title": "First Three General Elections, Nature of Congress Dominance & Social/Ideological Coalition",
-              "minutes": 65
-            },
-            {
-              "title": "Opposition Parties Emergence: Socialist, BJS, CPI, Swatantra Party",
-              "minutes": 60
-            }
-          ]
-        },
-        {
-          "chapterNumber": 10,
-          "title": "Politics of Planned Development",
-          "weightageScore": 5,
-          "recommendedRevisionHours": 1.1,
-          "term": 2,
-          "effort": "MEDIUM",
-          "parts": [
-            {
-              "title": "Planning Commission, First vs Second Five Year Plans & Agricultural vs Industrial Debate",
-              "minutes": 65
-            }
-          ]
-        },
-        {
-          "chapterNumber": 11,
-          "title": "India's External Relations",
-          "weightageScore": 6,
-          "recommendedRevisionHours": 2.3,
-          "term": 2,
-          "effort": "HIGH",
-          "parts": [
-            {
-              "title": "Nehru Foreign Policy Principles, Non-Aligned Movement & Panchsheel Framework",
-              "minutes": 65
-            },
-            {
-              "title": "Wars with China (1962) and Pakistan (1965, 1971), Nuclear Policy Evolution",
-              "minutes": 70
-            }
-          ]
-        },
-        {
-          "chapterNumber": 12,
-          "title": "Challenges to and Restoration of the Congress System",
-          "weightageScore": 5,
-          "recommendedRevisionHours": 2.2,
-          "term": 2,
-          "effort": "MEDIUM",
-          "parts": [
-            {
-              "title": "Political Succession (Shastri, Indira Gandhi), 1967 General Elections & Non-Congressism",
-              "minutes": 65
-            },
-            {
-              "title": "Congress Split 1969, Abolition of Privy Purses & 1971 Election Restoration",
-              "minutes": 65
-            }
-          ]
-        },
-        {
-          "chapterNumber": 13,
-          "title": "The Crisis of Democratic Order",
-          "weightageScore": 6,
-          "recommendedRevisionHours": 2.2,
-          "term": 3,
-          "effort": "HIGH",
-          "parts": [
-            {
-              "title": "Economic Context, Gujarat & Bihar Movements, Railway Strike & Declaration of Emergency",
-              "minutes": 65
-            },
-            {
-              "title": "Controversies Regarding Emergency, Shah Commission & 1977 Lok Sabha Elections",
-              "minutes": 65
-            }
-          ]
-        },
-        {
-          "chapterNumber": 14,
-          "title": "Regional Aspirations",
-          "weightageScore": 5,
-          "recommendedRevisionHours": 2.2,
-          "term": 3,
-          "effort": "MEDIUM",
-          "parts": [
-            {
-              "title": "Jammu and Kashmir Issue, Punjab Crisis & Anandpur Sahib Resolution",
-              "minutes": 65
-            },
-            {
-              "title": "North-East Demands for Autonomy, Secessionist Movements & Assam Accord",
-              "minutes": 65
-            }
-          ]
-        },
-        {
-          "chapterNumber": 15,
-          "title": "Recent Developments in Indian Politics",
-          "weightageScore": 6,
-          "recommendedRevisionHours": 2.3,
-          "term": 3,
-          "effort": "HIGH",
-          "parts": [
-            {
-              "title": "Era of Coalitions, Mandal Commission Recommendations & Implementation Politics",
-              "minutes": 65
-            },
-            {
-              "title": "New Economic Policy Consensus, Ayodhya Dispute & Contemporary Coalition Governance",
-              "minutes": 70
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "subjectId": "sociology-plus-two",
-      "subjectName": "Sociology",
-      "stream": "science",
-      "grade": 12,
-      "chapters": [
-        {
-          "chapterNumber": 1,
-          "title": "Introducing Indian Society",
-          "weightageScore": 3,
-          "recommendedRevisionHours": 0.9,
-          "term": 1,
-          "effort": "LOW",
-          "parts": [
-            {
-              "title": "Colonialism, Nationalism, Class and Community & Sociological Perspective",
-              "minutes": 55
-            }
-          ]
-        },
-        {
-          "chapterNumber": 2,
-          "title": "The Demographic Structure of Indian Society",
-          "weightageScore": 6,
-          "recommendedRevisionHours": 2.2,
-          "term": 1,
-          "effort": "HIGH",
-          "parts": [
-            {
-              "title": "Theories of Demography (Malthus, Demographic Transition) & Common Concepts",
-              "minutes": 65
-            },
-            {
-              "title": "Size and Growth of India Population, Age Structure, Declining Sex Ratio & Literacy",
-              "minutes": 65
-            }
-          ]
-        },
-        {
-          "chapterNumber": 3,
-          "title": "Social Institutions: Continuity and Change",
-          "weightageScore": 6,
-          "recommendedRevisionHours": 2.2,
-          "term": 1,
-          "effort": "HIGH",
-          "parts": [
-            {
-              "title": "Caste and Caste System: Traditional Characteristics & Colonial/Modern Transformations",
-              "minutes": 65
-            },
-            {
-              "title": "Tribal Communities Classification, Integration vs Isolation & Family and Kinship Types",
-              "minutes": 65
-            }
-          ]
-        },
-        {
-          "chapterNumber": 4,
-          "title": "The Market as a Social Institution",
-          "weightageScore": 5,
-          "recommendedRevisionHours": 2,
-          "term": 2,
-          "effort": "MEDIUM",
-          "parts": [
-            {
-              "title": "Sociological Perspectives on Markets, Weekly Tribal Markets (Dhorai) & Caste Capitalists",
-              "minutes": 60
-            },
-            {
-              "title": "Commoditisation and Consumption in the Age of Globalisation",
-              "minutes": 60
-            }
-          ]
-        },
-        {
-          "chapterNumber": 5,
-          "title": "Patterns of Social Inequality and Exclusion",
-          "weightageScore": 6,
-          "recommendedRevisionHours": 2.2,
-          "term": 2,
-          "effort": "HIGH",
-          "parts": [
-            {
-              "title": "Social Stratification Concepts, Untouchability Prejudices & Dalit/Adivasi Struggles",
-              "minutes": 65
-            },
-            {
-              "title": "Other Backward Classes (OBC), Adivasi Struggles & Women Equality Movements",
-              "minutes": 65
-            }
-          ]
-        },
-        {
-          "chapterNumber": 6,
-          "title": "The Challenges of Cultural Diversity",
-          "weightageScore": 6,
-          "recommendedRevisionHours": 2.2,
-          "term": 2,
-          "effort": "HIGH",
-          "parts": [
-            {
-              "title": "Cultural Diversity in India, Cultural Communities, Nation-State & Assimilation/Integration",
-              "minutes": 65
-            },
-            {
-              "title": "Communalism, Secularism, Nation-State Minorities & Civil Society Initiatives",
-              "minutes": 65
-            }
-          ]
-        },
-        {
-          "chapterNumber": 7,
-          "title": "Structural Change",
-          "weightageScore": 3,
-          "recommendedRevisionHours": 0.9,
-          "term": 2,
-          "effort": "LOW",
-          "parts": [
-            {
-              "title": "Colonialism Impact, Urbanisation and Industrialisation Patterns in Independent India",
-              "minutes": 55
-            }
-          ]
-        },
-        {
-          "chapterNumber": 8,
-          "title": "Cultural Change",
-          "weightageScore": 6,
-          "recommendedRevisionHours": 2.1,
-          "term": 2,
-          "effort": "HIGH",
-          "parts": [
-            {
-              "title": "Social Reform Movements in 19th & 20th Centuries, Sanskritisation & Westernisation",
-              "minutes": 65
-            },
-            {
-              "title": "Modernisation and Secularisation Dynamics in Contemporary India",
-              "minutes": 60
-            }
-          ]
-        },
-        {
-          "chapterNumber": 9,
-          "title": "The Story of Indian Democracy",
-          "weightageScore": 5,
-          "recommendedRevisionHours": 1.1,
-          "term": 3,
-          "effort": "MEDIUM",
-          "parts": [
-            {
-              "title": "Constitutional Values, Grassroots Democracy & 73rd/74th Constitutional Amendments",
-              "minutes": 65
-            }
-          ]
-        },
-        {
-          "chapterNumber": 10,
-          "title": "Change and Development in Rural Society",
-          "weightageScore": 6,
-          "recommendedRevisionHours": 2.2,
-          "term": 3,
-          "effort": "HIGH",
-          "parts": [
-            {
-              "title": "Agrarian Structure, Land Reforms in Kerala and India & Green Revolution Social Consequences",
-              "minutes": 65
-            },
-            {
-              "title": "Commercialisation of Agriculture, Rural Indebtedness & Farmers Suicide Issues",
-              "minutes": 65
-            }
-          ]
-        },
-        {
-          "chapterNumber": 11,
-          "title": "Change and Development in Industrial Society",
-          "weightageScore": 5,
-          "recommendedRevisionHours": 2,
-          "term": 3,
-          "effort": "MEDIUM",
-          "parts": [
-            {
-              "title": "Industrialisation in India, Working Conditions in Organised vs Unorganised Sectors",
-              "minutes": 60
-            },
-            {
-              "title": "Strike Actions, Trade Unions & Globalisation and Disinvestment Impacts",
-              "minutes": 60
-            }
-          ]
-        },
-        {
-          "chapterNumber": 12,
-          "title": "Globalisation and Social Change",
-          "weightageScore": 3,
-          "recommendedRevisionHours": 0.9,
-          "term": 3,
-          "effort": "LOW",
-          "parts": [
-            {
-              "title": "Dimensions of Globalisation (Economic, Electronic, Cultural) & Corporate Media Impacts",
-              "minutes": 55
-            }
-          ]
-        },
-        {
-          "chapterNumber": 13,
-          "title": "Social Movements",
-          "weightageScore": 6,
-          "recommendedRevisionHours": 2.3,
-          "term": 3,
-          "effort": "HIGH",
-          "parts": [
-            {
-              "title": "Features and Theories of Social Movements (Resource Mobilisation, Relative Deprivation)",
-              "minutes": 65
-            },
-            {
-              "title": "Peasant Movements, Workers Movements, Tribal Movements & Women Movements in India",
-              "minutes": 70
-            }
-          ]
-        }
-      ]
-    },
-    {
       "subjectId": "physics-plus-one",
       "subjectName": "Physics",
       "stream": "science",
@@ -3407,22 +1911,22 @@
       "chapters": [
         {
           "chapterNumber": 1,
-          "title": "The Discipline of Computing",
-          "weightageScore": 4,
+          "title": "Introduction to Computing",
+          "weightageScore": 3,
           "recommendedRevisionHours": 0.8,
           "term": 1,
           "effort": "LOW",
           "parts": [
             {
-              "title": "History of Computing, Von Neumann Architecture, Generation of Computers & Software Types",
+              "title": "History & Generation of Computers, Von Neumann Architecture, Memory Hierarchy & Software Types",
               "minutes": 50
             }
           ]
         },
         {
           "chapterNumber": 2,
-          "title": "Data Representation and Boolean Logic",
-          "weightageScore": 5,
+          "title": "Data Representation and Boolean Algebra",
+          "weightageScore": 6,
           "recommendedRevisionHours": 2.1,
           "term": 1,
           "effort": "MEDIUM",
@@ -3432,152 +1936,206 @@
               "minutes": 60
             },
             {
-              "title": "Character Representation (ASCII, Unicode), Boolean Operators, Truth Tables & Logic Gates",
+              "title": "Encoding Schemes (ASCII, Unicode), Boolean Logic, Truth Tables & Logic Gates",
               "minutes": 65
             }
           ]
         },
         {
           "chapterNumber": 3,
-          "title": "Components of the Computer System",
-          "weightageScore": 4,
-          "recommendedRevisionHours": 1.7,
+          "title": "Computer System Organisation",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 1.8,
           "term": 1,
-          "effort": "LOW",
+          "effort": "MEDIUM",
           "parts": [
             {
-              "title": "Hardware Components: CPU Registers, ALU, Control Unit & Memory Hierarchy (RAM, ROM, Cache)",
+              "title": "CPU Architecture (ALU, CU, Registers), System Bus & Instruction Cycle",
               "minutes": 50
             },
             {
-              "title": "Input/Output Devices, Motherboard Ports & Operating System Functions",
-              "minutes": 50
+              "title": "Memory Hierarchy (RAM, ROM, Cache, Storage), OS Functions & Device Drivers",
+              "minutes": 55
             }
           ]
         },
         {
           "chapterNumber": 4,
-          "title": "Principles of Programming & Problem Solving",
+          "title": "Getting Started with Python",
           "weightageScore": 6,
-          "recommendedRevisionHours": 1.9,
+          "recommendedRevisionHours": 1.8,
           "term": 1,
-          "effort": "HIGH",
+          "effort": "MEDIUM",
           "parts": [
             {
-              "title": "Problem Solving Cycle, Algorithms Conception & Flowcharting Symbols",
-              "minutes": 55
+              "title": "Python Features, Interactive vs Script Mode & Python Character Set",
+              "minutes": 50
             },
             {
-              "title": "Translators: Assemblers, Compilers, Interpreters, IDEs & Programming Paradigms",
+              "title": "Tokens: Keywords, Identifiers, Literals, Operators, Variables & Basic I/O (input, print)",
               "minutes": 60
             }
           ]
         },
         {
           "chapterNumber": 5,
-          "title": "Introduction to C++ Programming",
-          "weightageScore": 5,
+          "title": "Python Fundamentals",
+          "weightageScore": 6,
           "recommendedRevisionHours": 1.9,
-          "term": 2,
+          "term": 1,
           "effort": "MEDIUM",
           "parts": [
             {
-              "title": "C++ Tokens, Keywords, Identifiers, Literals & Basic C++ Program Structure",
+              "title": "Data Types (Numbers, String, List, Tuple, Dict, Set, None, Bool) & Mutability",
               "minutes": 55
             },
             {
-              "title": "Input/Output Streams (cin, cout), Cascading Operators & Header Files",
+              "title": "Expressions, Operator Precedence, Type Conversion (Implicit/Explicit) & Comments",
               "minutes": 60
             }
           ]
         },
         {
           "chapterNumber": 6,
-          "title": "Data Types and Operators",
-          "weightageScore": 5,
-          "recommendedRevisionHours": 2,
-          "term": 2,
-          "effort": "MEDIUM",
-          "parts": [
-            {
-              "title": "Fundamental Data Types, Modifiers, Variable Declaration & Initialization",
-              "minutes": 55
-            },
-            {
-              "title": "Arithmetic, Relational, Logical, Assignment Operators & Type Conversions (Implicit/Explicit)",
-              "minutes": 65
-            }
-          ]
-        },
-        {
-          "chapterNumber": 7,
           "title": "Control Statements",
-          "weightageScore": 6,
+          "weightageScore": 7,
           "recommendedRevisionHours": 2.3,
           "term": 2,
           "effort": "HIGH",
           "parts": [
             {
-              "title": "Decision Statements: if, if-else, nested if & switch-case with break",
+              "title": "Decision Statements: if, if-else, if-elif-else & Nested Conditionals",
               "minutes": 65
             },
             {
-              "title": "Iteration Statements: for loop, while loop, do-while loop & Jump Statements (break, continue)",
+              "title": "Iteration: while loop, for loop with range(), Nested Loops & Jump Statements (break, continue, pass)",
+              "minutes": 70
+            }
+          ]
+        },
+        {
+          "chapterNumber": 7,
+          "title": "Functions and Modules",
+          "weightageScore": 7,
+          "recommendedRevisionHours": 2.2,
+          "term": 2,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Built-in Functions, Standard Library Modules (math, random) & Module Imports",
+              "minutes": 60
+            },
+            {
+              "title": "User-Defined Functions (def, parameters, return), Default Arguments & Scope of Variables (Local/Global)",
               "minutes": 70
             }
           ]
         },
         {
           "chapterNumber": 8,
-          "title": "Arrays",
+          "title": "Strings in Python",
           "weightageScore": 6,
-          "recommendedRevisionHours": 2.3,
+          "recommendedRevisionHours": 2,
           "term": 2,
-          "effort": "HIGH",
+          "effort": "MEDIUM",
           "parts": [
             {
-              "title": "1D Array Declaration, Memory Allocation, Traversing & Linear Search Algorithm",
-              "minutes": 65
+              "title": "String Creation, Indexing, Slicing, Traversal & Immutability",
+              "minutes": 55
             },
             {
-              "title": "Bubble Sort Algorithm, 2D Arrays Declaration & Matrix Input/Output Operations",
-              "minutes": 70
+              "title": "String Operators (+, *), Membership & Built-in Methods (len, lower, upper, find, replace, split, join)",
+              "minutes": 65
             }
           ]
         },
         {
           "chapterNumber": 9,
-          "title": "Functions",
-          "weightageScore": 6,
-          "recommendedRevisionHours": 2.3,
-          "term": 3,
+          "title": "Lists",
+          "weightageScore": 7,
+          "recommendedRevisionHours": 2.2,
+          "term": 2,
           "effort": "HIGH",
           "parts": [
             {
-              "title": "Built-in String/Math Functions, User Defined Functions Prototype & Definitions",
-              "minutes": 65
+              "title": "List Creation, Indexing, Slicing, Traversal & Mutability",
+              "minutes": 60
             },
             {
-              "title": "Function Arguments: Call by Value vs Call by Reference, Scope of Variables & Recursion",
+              "title": "List Operations & Methods (append, extend, insert, pop, remove, sort, reverse, count)",
               "minutes": 70
             }
           ]
         },
         {
           "chapterNumber": 10,
-          "title": "Computer Networks",
-          "weightageScore": 5,
+          "title": "Tuples",
+          "weightageScore": 6,
           "recommendedRevisionHours": 1.9,
-          "term": 3,
+          "term": 2,
           "effort": "MEDIUM",
           "parts": [
             {
-              "title": "Network Topologies (Star, Bus, Ring, Mesh) & Network Categories (LAN, MAN, WAN)",
+              "title": "Tuple Creation, Immutability, Indexing, Slicing & Tuple Operations",
               "minutes": 55
             },
             {
-              "title": "Guided/Unguided Media, Network Devices (Hub, Switch, Router, Gateway) & IP Address",
+              "title": "Tuple Assignment, Unpacking, Methods (count, index) & Comparison with Lists",
               "minutes": 60
+            }
+          ]
+        },
+        {
+          "chapterNumber": 11,
+          "title": "Dictionaries and Sets",
+          "weightageScore": 7,
+          "recommendedRevisionHours": 2.2,
+          "term": 3,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Dictionaries: Key-Value Pairs, Accessing Values & Methods (keys, values, items, get, update)",
+              "minutes": 65
+            },
+            {
+              "title": "Sets: Set Creation, Uniqueness, Set Operations (Union, Intersection, Difference) & Methods",
+              "minutes": 65
+            }
+          ]
+        },
+        {
+          "chapterNumber": 12,
+          "title": "Sorting and Searching",
+          "weightageScore": 7,
+          "recommendedRevisionHours": 2.3,
+          "term": 3,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Linear Search and Binary Search Algorithms with Python Implementation",
+              "minutes": 65
+            },
+            {
+              "title": "Bubble Sort, Selection Sort, Insertion Sort Algorithms & Tracing",
+              "minutes": 70
+            }
+          ]
+        },
+        {
+          "chapterNumber": 13,
+          "title": "Computers and Society",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 1.8,
+          "term": 3,
+          "effort": "LOW",
+          "parts": [
+            {
+              "title": "Digital Footprints, Cyber Safety, Netiquettes & Social Media Impact",
+              "minutes": 50
+            },
+            {
+              "title": "Cyber Crimes, IT Act, Intellectual Property Rights (IPR), Open Source & E-Waste Management",
+              "minutes": 55
             }
           ]
         }

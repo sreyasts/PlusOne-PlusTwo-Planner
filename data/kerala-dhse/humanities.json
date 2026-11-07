@@ -99,6 +99,24 @@
           "recommendedRevisionHours": 6,
           "term": 3,
           "effort": "VERY_HIGH"
+        },
+        {
+          "chapterNumber": 12,
+          "title": "Framing the Constitution",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 2.2,
+          "term": 3,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Constituent Assembly Composition, Vision of the Constitution & Objectives Resolution",
+              "minutes": 65
+            },
+            {
+              "title": "Debates on Rights, Federal Powers, Language Question & Dr. Ambedkar Draft",
+              "minutes": 65
+            }
+          ]
         }
       ]
     },
@@ -199,11 +217,75 @@
         },
         {
           "chapterNumber": 12,
-          "title": "Democratic Resurgence & Recent Developments in Indian Politics",
-          "weightageScore": 9,
-          "recommendedRevisionHours": 5.5,
+          "title": "Challenges to and Restoration of the Congress System",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 2.2,
+          "term": 2,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Political Succession (Shastri, Indira Gandhi), 1967 General Elections & Non-Congressism",
+              "minutes": 65
+            },
+            {
+              "title": "Congress Split 1969, Abolition of Privy Purses & 1971 Election Restoration",
+              "minutes": 65
+            }
+          ]
+        },
+        {
+          "chapterNumber": 13,
+          "title": "The Crisis of Democratic Order",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 2.2,
           "term": 3,
-          "effort": "VERY_HIGH"
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Economic Context, Gujarat & Bihar Movements, Railway Strike & Declaration of Emergency",
+              "minutes": 65
+            },
+            {
+              "title": "Controversies Regarding Emergency, Shah Commission & 1977 Lok Sabha Elections",
+              "minutes": 65
+            }
+          ]
+        },
+        {
+          "chapterNumber": 14,
+          "title": "Regional Aspirations",
+          "weightageScore": 5,
+          "recommendedRevisionHours": 2.2,
+          "term": 3,
+          "effort": "MEDIUM",
+          "parts": [
+            {
+              "title": "Jammu and Kashmir Issue, Punjab Crisis & Anandpur Sahib Resolution",
+              "minutes": 65
+            },
+            {
+              "title": "North-East Demands for Autonomy, Secessionist Movements & Assam Accord",
+              "minutes": 65
+            }
+          ]
+        },
+        {
+          "chapterNumber": 15,
+          "title": "Recent Developments in Indian Politics",
+          "weightageScore": 6,
+          "recommendedRevisionHours": 2.3,
+          "term": 3,
+          "effort": "HIGH",
+          "parts": [
+            {
+              "title": "Era of Coalitions, Mandal Commission Recommendations & Implementation Politics",
+              "minutes": 65
+            },
+            {
+              "title": "New Economic Policy Consensus, Ayodhya Dispute & Contemporary Coalition Governance",
+              "minutes": 70
+            }
+          ]
         }
       ]
     },

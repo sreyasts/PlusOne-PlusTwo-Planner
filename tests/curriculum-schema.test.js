@@ -65,4 +65,58 @@ describe('Curriculum Schema & Data Validation (data/kerala-dhse/)', () => {
       });
     });
   });
+
+  it('enforces stream purity and updated chapter counts across Science, Commerce, and Humanities', () => {
+    const sci = JSON.parse(fs.readFileSync(path.join(dataDir, 'science.json'), 'utf8'));
+    const com = JSON.parse(fs.readFileSync(path.join(dataDir, 'commerce.json'), 'utf8'));
+    const hum = JSON.parse(fs.readFileSync(path.join(dataDir, 'humanities.json'), 'utf8'));
+
+    // Science stream: 12 subjects (6 in Class 12, 6 in Class 11) - Zero Commerce/Humanities subjects
+    expect(sci.subjects.length).toBe(12);
+    const contaminatedIds = [
+      'accountancy-plus-two',
+      'business-studies-plus-two',
+      'economics-plus-two',
+      'computer-applications-plus-two',
+      'history-plus-two',
+      'political-science-plus-two',
+      'sociology-plus-two'
+    ];
+    contaminatedIds.forEach(id => {
+      expect(sci.subjects.some(s => s.subjectId === id)).toBe(false);
+    });
+
+    // Class 11 Computer Science: 13-chapter official Python curriculum
+    const cs11 = sci.subjects.find(s => s.subjectId === 'computer-science-plus-one');
+    expect(cs11).toBeDefined();
+    expect(cs11.chapters.length).toBe(13);
+    expect(cs11.chapters[0].title).toBe('Introduction to Computing');
+    expect(cs11.chapters[12].title).toBe('Computers and Society');
+
+    // Commerce stream: 8 subjects (4 in Class 12, 4 in Class 11)
+    expect(com.subjects.length).toBe(8);
+    // Class 11 Computer Applications: 8-chapter official Python/AI curriculum
+    const ca11 = com.subjects.find(s => s.subjectId === 'computer-applications-plus-one');
+    expect(ca11).toBeDefined();
+    expect(ca11.chapters.length).toBe(8);
+    expect(ca11.chapters[0].title).toBe('Computing System');
+    expect(ca11.chapters[7].title).toBe('AI and its Applications');
+
+    // Humanities stream: 8 subjects (4 in Class 12, 4 in Class 11)
+    expect(hum.subjects.length).toBe(8);
+    // Class 12 History: 12 chapters including Chapter 12 Framing the Constitution
+    const hist2 = hum.subjects.find(s => s.subjectId === 'history-plus-two');
+    expect(hist2).toBeDefined();
+    expect(hist2.chapters.length).toBe(12);
+    expect(hist2.chapters[11].chapterNumber).toBe(12);
+    expect(hist2.chapters[11].title).toBe('Framing the Constitution');
+
+    // Class 12 Political Science: 15 chapters
+    const pol2 = hum.subjects.find(s => s.subjectId === 'political-science-plus-two');
+    expect(pol2).toBeDefined();
+    expect(pol2.chapters.length).toBe(15);
+    expect(pol2.chapters[11].chapterNumber).toBe(12);
+    expect(pol2.chapters[14].chapterNumber).toBe(15);
+    expect(pol2.chapters[14].title).toBe('Recent Developments in Indian Politics');
+  });
 });

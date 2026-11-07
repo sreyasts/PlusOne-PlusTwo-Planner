@@ -122,7 +122,7 @@ export function getStreamSubjects(stream = 'cs') {
     return ['Physics', 'Chemistry', 'Mathematics', 'Botany', 'Zoology'];
   }
   if (stream === 'commerce') {
-    return ['Accountancy', 'Business Studies', 'Economics', 'Computer Applications (Commerce)'];
+    return ['Accountancy', 'Business Studies', 'Economics', 'Computer Applications', 'Computer Applications (Commerce)'];
   }
   if (stream === 'humanities') {
     return ['History', 'Political Science', 'Sociology', 'Economics'];
@@ -455,7 +455,7 @@ export function validateSchedule(planOrDays, originalTasks = [], options = {}) {
  */
 export function generateSchedule({
   grade = '+2',
-  stream = 'cs',
+  stream = null,
   examDate,
   deadlineDate,
   deadline,
@@ -497,12 +497,16 @@ export function generateSchedule({
 
   // 3. Resolve subjects and tasks
   const isImpOnly = stream === 'imp_only' || (tasks && tasks.length > 0 && tasks.every((t) => t.grade === '+1'));
+  const taskSubjects = tasks && tasks.length > 0 ? new Set(tasks.map((t) => t.subject)) : new Set();
+  const allSubList = [...(plusOneSubjects || []), ...Array.from(taskSubjects)];
+  const hasCommerce = allSubList.some((s) => s === 'Accountancy' || s === 'Business Studies');
+  const hasHumanities = allSubList.some((s) => s === 'History' || s === 'Political Science' || s === 'Sociology');
   const hasBio = (plusOneSubjects || []).some((s) => s === 'Botany' || s === 'Zoology') ||
-    (tasks && tasks.some((t) => t.subject === 'Botany' || t.subject === 'Zoology'));
+    taskSubjects.has('Botany') || taskSubjects.has('Zoology');
 
   const effectiveStream = isImpOnly
     ? 'imp_only'
-    : (stream || (hasBio ? 'bio' : 'cs'));
+    : (stream || (hasCommerce ? 'commerce' : (hasHumanities ? 'humanities' : (hasBio ? 'bio' : 'cs'))));
 
   const defaultStreamSubjects = getStreamSubjects(effectiveStream);
   const streamSubjects = subjects && Array.isArray(subjects) && subjects.length > 0
@@ -862,7 +866,7 @@ export function generateSchedule({
 
   p2Tasks.forEach((task) => {
     if (!subjectChapterMap[task.subject]) subjectChapterMap[task.subject] = [];
-    let ch = subjectChapterMap[task.subject].find((c) => c.chapNumber === task.chapNumber);
+    let ch = subjectChapterMap[task.subject].find((c) => (c.chapId && task.chapId ? c.chapId === task.chapId : c.chapNumber === task.chapNumber));
     if (!ch) {
       ch = {
         chapNumber: task.chapNumber,
