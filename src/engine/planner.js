@@ -6,6 +6,7 @@
 
 import { PLUS_TWO_SYLLABUS, PLUS_TWO_CHAPTERS } from '../data/syllabus-plus-two.js';
 import { PLUS_ONE_SYLLABUS, PLUS_ONE_CHAPTERS } from '../data/syllabus-plus-one.js';
+import { groupStudyBlocks, MAX_DAILY_BLOCKS, scheduleChapterBlocks, studyBlockKey, studyMinutes } from './chapter-blocks.js';
 
 export { PLUS_TWO_CHAPTERS, PLUS_ONE_CHAPTERS };
 
@@ -269,7 +270,7 @@ function _executeCorePlanAlgorithm(
 
   if (totalDaysCount <= 5) revisionDaysCount = 0;
 
-  const syllabusStudyDays = Math.max(1, totalDaysCount - revisionDaysCount);
+  let syllabusStudyDays = Math.max(1, totalDaysCount - revisionDaysCount);
 
   // Personalization configuration extraction
   const pers = capacityOptions.personalization || capacityOptions || {};
@@ -338,6 +339,18 @@ function _executeCorePlanAlgorithm(
       ? 4.5
       : 3.5;
 
+  function dayMinutes(day) {
+    const weekend = day.dayOfWeek === 0 || day.dayOfWeek === 6;
+    const base = dailyHours ?? (weekend ? baseWeekendCapacity : baseWeekdayCapacity);
+    const rhythm = weeklyRhythm === 'weekend_booster' ? (weekend ? (dailyHours ? 1 : 1.4) : 0.85) : 1;
+    return Math.floor(60 * base * rhythm);
+  }
+
+  function canAddReview(day, minutes) {
+    return minutes > 0 && groupStudyBlocks(day.tasks).length < MAX_DAILY_BLOCKS &&
+      day.tasks.reduce((sum, task) => sum + studyMinutes(task), minutes) <= dayMinutes(day);
+  }
+
   let totalStandardCapacity = 0;
   for (let i = 0; i < syllabusStudyDays; i++) {
     const day = planDays[i];
@@ -352,20 +365,15 @@ function _executeCorePlanAlgorithm(
   }
 
   const totalTasksCount = applicableTasks.length;
-  const isInfeasible = totalTasksCount > totalStandardCapacity * 1.25;
   const overloadFactor = totalStandardCapacity > 0 ? totalTasksCount / totalStandardCapacity : 1;
 
   const diagnostics = {
-    isInfeasible,
     totalDaysAvailable: totalDaysCount,
     syllabusStudyDays,
     revisionDaysCount,
     totalTasksCount,
     standardCapacity: Math.round(totalStandardCapacity),
     overloadFactor: Number(overloadFactor.toFixed(2)),
-    warningMessage: isInfeasible
-      ? `The current deadline requires more study capacity (${totalTasksCount} units) than standard availability (~${Math.round(totalStandardCapacity)} units). The plan prioritizes the nearest exam and preserves the final revision buffer.`
-      : null,
     personalization: {
       weeklyRhythm,
       restDayOfWeek,
@@ -448,75 +456,35 @@ function _executeCorePlanAlgorithm(
         eveIdx = daysUntilExam - 1;
       }
 
-      const maxStudyDayIdx = eveIdx >= 0
-        ? eveIdx
-        : Math.max(0, Math.min(daysUntilExam > 1 ? daysUntilExam - 2 : 0, syllabusStudyDays - 1));
+      const availableDays = planDays.flatMap((day, index) =>
+        day.date < examDate && !day.isRestDay && (!day.isExamEve || day.exclusiveSubject === cfg.subject)
+          ? [index]
+          : []
+      );
 
-      // Available days for this subject:
-      // Must not be an Exam Eve for ANOTHER subject whose exam is on a different date!
-      const availableDays = [];
-      for (let d = 0; d <= maxStudyDayIdx; d++) {
-        const day = planDays[d];
-        if (day.isRestDay) continue;
-        if (day.isExamEve && day.exclusiveSubject !== cfg.subject) continue;
-        availableDays.push(d);
+      const uniqueChapters = [...new Map(subTasks.map(task => [studyBlockKey(task), task])).values()];
+      const runwayRatio = availableDays.length / subTasks.length;
+      const hasAmpleRunway = availableDays.length >= 6 &&
+        (runwayRatio >= 1 || availableDays.length / uniqueChapters.length >= 1.2);
+
+      const studyDays = availableDays.filter(index => index !== eveIdx);
+      const phaseOneDays = hasAmpleRunway
+        ? studyDays.slice(0, Math.max(uniqueChapters.length, Math.floor(studyDays.length * 0.6)))
+        : studyDays;
+      const improvementTasks = subTasks.map(task => ({ ...task, isImprovement: true }));
+      let pending = scheduleChapterBlocks(phaseOneDays.map(index => planDays[index]), improvementTasks, dayMinutes, subjectWeights);
+      pending = scheduleChapterBlocks(studyDays.slice(phaseOneDays.length).map(index => planDays[index]), pending, dayMinutes, subjectWeights);
+      if (availableDays.includes(eveIdx)) {
+        scheduleChapterBlocks([planDays[eveIdx]], pending, dayMinutes, subjectWeights);
       }
-      if (availableDays.length === 0) {
-        for (let d = 0; d <= maxStudyDayIdx; d++) availableDays.push(d);
-      }
-
-      const partsCount = subTasks.length;
-      const uniqueChapters = [...new Map(subTasks.map(t => [t.chapId, t])).values()];
-      const isFocus = (subjectWeights[cfg.subject] || 1.0) >= 1.1;
-      const runwayRatio = availableDays.length / Math.max(1, partsCount);
-      const chapterRunwayRatio = availableDays.length / Math.max(1, uniqueChapters.length);
-      const hasAmpleRunway = (runwayRatio >= 1.0 || chapterRunwayRatio >= 1.2) && availableDays.length >= 6;
-
-      // --- Pass 1: Foundational Syllabus Coverage ---
-      // If we have ample days (hasAmpleRunway):
-      // Group Pass 1 into the first ~60% of available days, leaving remaining days for Ebbinghaus Spaced Retrieval.
-      const pass1Days = hasAmpleRunway
-        ? availableDays.slice(0, Math.max(uniqueChapters.length, Math.floor(availableDays.length * 0.6)))
-        : (availableDays.length > 1 && eveIdx >= 0)
-        ? availableDays.filter(d => d < eveIdx)
-        : availableDays;
-
-      const targetPass1Days = pass1Days.length > 0 ? pass1Days : availableDays;
 
       const chapterInitialStudyDay = new Map();
-
-      subTasks.forEach((task, tIdx) => {
-        let targetDayIndex;
-        if (targetPass1Days.length <= 1) {
-          targetDayIndex = targetPass1Days[0] || 0;
-        } else {
-          const stepIdx = Math.min(
-            targetPass1Days.length - 1,
-            Math.floor((tIdx / partsCount) * targetPass1Days.length)
-          );
-          targetDayIndex = targetPass1Days[stepIdx];
+      const improvementIds = new Set(subTasks.map(task => task.id));
+      for (const index of availableDays) {
+        for (const task of planDays[index].tasks) {
+          if (improvementIds.has(task.id)) chapterInitialStudyDay.set(studyBlockKey(task), index);
         }
-
-        if (tIdx > 0) {
-          const prevTaskId = subTasks[tIdx - 1].id;
-          const prevDayIndex = planDays.findIndex((d) => d.tasks.some((pt) => pt.id === prevTaskId));
-          if (prevDayIndex !== -1 && targetDayIndex < prevDayIndex) {
-            targetDayIndex = prevDayIndex;
-          }
-        }
-
-        chapterInitialStudyDay.set(task.chapId, targetDayIndex);
-
-        planDays[targetDayIndex].tasks.push({
-          ...task,
-          completed: false,
-          isImprovement: true,
-          isFocusSubject: isFocus,
-          pedagogyNote: runwayRatio > 1.4
-            ? 'Pass 1 (Concept Mastery): Theory understanding, textbook illustrations, and key derivations.'
-            : 'Core Syllabus Pacing: High-priority improvement preparation.'
-        });
-      });
+      }
 
       // --- Pass 2: Ebbinghaus Forgetting Curve Spaced Retrieval (If Ample Runway) ---
       if (hasAmpleRunway) {
@@ -528,15 +496,15 @@ function _executeCorePlanAlgorithm(
         const baseInterval = Math.max(2, Math.min(6, Math.floor(availableDays.length / Math.max(1, uniqueChapters.length * 1.5)) || 2));
 
         uniqueChapters.forEach((chTask) => {
-          const initialDay = chapterInitialStudyDay.get(chTask.chapId) ?? availableDays[0];
+          const key = studyBlockKey(chTask);
+          const initialDay = chapterInitialStudyDay.get(key);
+          const lastPart = subTasks.findLast(task => studyBlockKey(task) === key);
+          if (initialDay === undefined || !planDays[initialDay].tasks.some(task => task.id === lastPart.id)) return;
           
           // Ebbinghaus Review 1: First spaced retrieval interval (T + baseInterval)
           const targetRevDay = initialDay + baseInterval;
-          let bestRevDay = availableDays.find(d => d >= targetRevDay && d < eveDayLimit);
-          if (bestRevDay === undefined) {
-            const priorDays = availableDays.filter(d => d < eveDayLimit);
-            bestRevDay = priorDays.length > 0 ? priorDays[priorDays.length - 1] : initialDay;
-          }
+          const bestRevDay = availableDays.find(d => d >= targetRevDay && d < eveDayLimit && canAddReview(planDays[d], 50));
+          if (bestRevDay === undefined) return;
 
           const spacingDays = Math.max(1, bestRevDay - initialDay);
 
@@ -565,7 +533,7 @@ function _executeCorePlanAlgorithm(
           // Ebbinghaus Review 2: Secondary consolidation interval for generous runways (availableDays >= 14 & runwayRatio >= 2.0)
           if (availableDays.length >= 14 && runwayRatio >= 2.0) {
             const secondaryTarget = Math.max(bestRevDay + 3, initialDay + baseInterval * 2 + 2);
-            const bestRevDay2 = availableDays.find(d => d >= secondaryTarget && d < eveDayLimit);
+            const bestRevDay2 = availableDays.find(d => d >= secondaryTarget && d < eveDayLimit && canAddReview(planDays[d], 45));
             if (bestRevDay2 !== undefined && bestRevDay2 !== bestRevDay) {
               const spacingDays2 = Math.max(2, bestRevDay2 - initialDay);
               planDays[bestRevDay2].tasks.push({
@@ -599,7 +567,9 @@ function _executeCorePlanAlgorithm(
         const hasEveTaskAlready = planDays[eveIdx].tasks.some(
           t => t.subject === cfg.subject && (t.isExamEveTask || t.id.includes('EVE'))
         );
-        if (!hasEveTaskAlready) {
+        const eveDay = planDays[eveIdx];
+        if (!hasEveTaskAlready && !eveDay.isRestDay && eveDay.exclusiveSubject === cfg.subject &&
+            canAddReview(eveDay, Math.min(90, dayMinutes(eveDay)))) {
           planDays[eveIdx].tasks.push({
             id: `IMP_REV_${cfg.subject.replace(/\s+/g, '_')}_EVE`,
             chapId: `IMP_REV_${cfg.subject.replace(/\s+/g, '_')}_EVE`,
@@ -610,7 +580,7 @@ function _executeCorePlanAlgorithm(
             part: 1,
             totalParts: 1,
             term: 1,
-            estimatedMinutes: 90,
+            estimatedMinutes: Math.min(90, dayMinutes(eveDay)),
             difficulty: 'HIGH',
             completed: false,
             isImprovement: true,
@@ -624,233 +594,25 @@ function _executeCorePlanAlgorithm(
     });
   }
 
-  // Phase 2: Plus Two Regular Tasks (Sequential Chapter State Machine & Interleaving)
-  const subjectChapterMap = {};
-  streamSubjects.forEach((s) => (subjectChapterMap[s] = []));
+  // Schedule regular syllabus once the earlier improvement exams have their time reserved.
+  const regularDays = planDays.slice(0, syllabusStudyDays).filter(day => !day.isRestDay && !day.isExamEve);
+  const remaining = scheduleChapterBlocks(regularDays, p2Tasks, dayMinutes, subjectWeights, weeklyRhythm === 'weekend_booster');
 
-  p2Tasks.forEach((task) => {
-    if (!subjectChapterMap[task.subject]) subjectChapterMap[task.subject] = [];
-    let ch = subjectChapterMap[task.subject].find((c) => (c.chapId && task.chapId ? c.chapId === task.chapId : c.chapNumber === task.chapNumber));
-    if (!ch) {
-      ch = {
-        chapNumber: task.chapNumber,
-        chapId: task.chapId,
-        chapterName: task.chapterName,
-        subject: task.subject,
-        term: task.term,
-        parts: [],
-      };
-      subjectChapterMap[task.subject].push(ch);
-    }
-    ch.parts.push(task);
-  });
-
-  Object.keys(subjectChapterMap).forEach((s) => {
-    subjectChapterMap[s].sort((a, b) => a.chapNumber - b.chapNumber);
-    subjectChapterMap[s].forEach((ch) => ch.parts.sort((a, b) => a.part - b.part));
-  });
-
-  const subjectState = {};
-  streamSubjects.forEach((s) => {
-    subjectState[s] = {
-      subject: s,
-      chapterIndex: 0,
-      partIndex: 0,
-      lastScheduledDay: -1,
-    };
-  });
-
-  let totalActiveWeight = 0;
-  const dayCapacityWeights = [];
-  for (let dayIndex = 0; dayIndex < syllabusStudyDays; dayIndex++) {
-    const day = planDays[dayIndex];
-    let w = 1.0;
-    if (day.isRestDay) {
-      w = 0.0;
-    } else if (day.isExamEve) {
-      w = 0.0; // Strict quarantine: zero capacity for Plus Two on Exam Eve
-    } else if (day.isPreExamEve) {
-      w = 0.2; // Minimal 20% capacity 2 days before exam to preserve focus
-    } else if (weeklyRhythm === 'weekend_booster') {
-      const isWeekend = day.dayOfWeek === 0 || day.dayOfWeek === 6;
-      w = isWeekend ? 1.6 : 0.8;
-    }
-
-    // Heavy importance to +1 Improvement:
-    // If improvement tasks are scheduled on this day, prioritize them by reducing P2 study load
-    // so students can dedicate their primary study hours to upcoming improvement exams.
-    const hasImpTasks = day.tasks && day.tasks.some((t) => t.isImprovement);
-    if (hasImpTasks && !day.isExamEve && !day.isPreExamEve) {
-      w = Math.max(0.2, w * 0.4);
-    }
-
-    dayCapacityWeights.push(w);
-    totalActiveWeight += w;
-  }
-  if (totalActiveWeight <= 0) totalActiveWeight = 1.0;
-
-  const remainingP2TasksCount = p2Tasks.length;
-  let p2Accumulator = 0;
-
-  for (let dayIndex = 0; dayIndex < syllabusStudyDays; dayIndex++) {
-    const day = planDays[dayIndex];
-    if (day.isRestDay || day.isExamEve) {
-      continue;
-    }
-
-    const dayWeightRatio = dayCapacityWeights[dayIndex] / totalActiveWeight;
-    p2Accumulator += remainingP2TasksCount * dayWeightRatio;
-    let p2TasksToScheduleToday = Math.floor(p2Accumulator);
-    p2Accumulator -= p2TasksToScheduleToday;
-
-    const isLastActiveDay = !planDays.slice(dayIndex + 1, syllabusStudyDays).some((d) => !d.isRestDay && !d.isExamEve);
-    if (isLastActiveDay) {
-      let totalUnscheduledP2 = 0;
-      streamSubjects.forEach((s) => {
-        const state = subjectState[s];
-        const chapters = subjectChapterMap[s];
-        for (let c = state.chapterIndex; c < chapters.length; c++) {
-          const startP = c === state.chapterIndex ? state.partIndex : 0;
-          totalUnscheduledP2 += chapters[c].parts.length - startP;
-        }
-      });
-      p2TasksToScheduleToday = Math.max(p2TasksToScheduleToday, totalUnscheduledP2);
-    }
-
-    let scheduledTodayCount = 0;
-    let subjectAttempts = 0;
-    const subjectsStudiedToday = new Set();
-
-    while (scheduledTodayCount < p2TasksToScheduleToday && subjectAttempts < streamSubjects.length * 3) {
-      subjectAttempts++;
-
-      const availableSubjects = streamSubjects.filter((s) => {
-        const state = subjectState[s];
-        const chapters = subjectChapterMap[s];
-        return state.chapterIndex < chapters.length;
-      });
-      if (availableSubjects.length === 0) break;
-
-      let pool = availableSubjects.filter((s) => !subjectsStudiedToday.has(s));
-      if (pool.length === 0) pool = availableSubjects;
-
-      // Pre-compute tightness and same-day chapter presence per candidate
-      const remainingActiveDays = planDays
-        .slice(dayIndex, syllabusStudyDays)
-        .filter((d) => !d.isRestDay && !d.isExamEve).length;
-
-      const subjectRemainingTasks = {};
-      streamSubjects.forEach((s) => {
-        const st = subjectState[s];
-        const chs = subjectChapterMap[s] || [];
-        let rem = 0;
-        for (let c = st.chapterIndex; c < chs.length; c++) {
-          const startP = c === st.chapterIndex ? st.partIndex : 0;
-          rem += chs[c].parts.length - startP;
-        }
-        subjectRemainingTasks[s] = rem;
-      });
-
-      const isChapterAlreadyOnDay = (s) => {
-        const st = subjectState[s];
-        const chs = subjectChapterMap[s] || [];
-        if (st.partIndex === 0) return false;
-        const curChapId = chs[st.chapterIndex]?.parts[0]?.chapId;
-        if (!curChapId) return false;
-        return day.tasks.some((t) => t.chapId === curChapId);
-      };
-
-      let candidateSubject = pool[0];
-      let bestScore = -Infinity;
-
-      pool.forEach((s) => {
-        const rawW = subjectWeights[s];
-        const w = Number.isFinite(Number(rawW)) && Number(rawW) > 0 ? Number(rawW) : 1.0;
-        const st = subjectState[s];
-        const remTasks = subjectRemainingTasks[s] || 1;
-        const isTightForSubject = remainingActiveDays <= remTasks || isLastActiveDay;
-
-        // Only give in-progress bonus if tight — suppress to force next-day spacing when loose
-        const inProgBonus = (st.partIndex > 0 && isTightForSubject) ? 1.8 : 0.0;
-        const recencyGap = st.lastScheduledDay === -1 ? 4 : dayIndex - st.lastScheduledDay;
-        // Balanced weighting: gentle priority nudge that preserves healthy subject interleaving
-        const score = w * 1.2 + inProgBonus + recencyGap * 0.8;
-        if (score > bestScore) {
-          bestScore = score;
-          candidateSubject = s;
-        }
-      });
-
-      const state = subjectState[candidateSubject];
-      const chapters = subjectChapterMap[candidateSubject];
-      if (state.chapterIndex >= chapters.length) continue;
-
-      // When NOT tight: skip Part 2+ of a chapter if Part 1 is already on today's day
-      if (!isLastActiveDay) {
-        const remTasks = subjectRemainingTasks[candidateSubject] || 1;
-        const isTightForCandidate = remainingActiveDays <= remTasks;
-        if (!isTightForCandidate && state.partIndex > 0 && isChapterAlreadyOnDay(candidateSubject)) {
-          continue;
-        }
-      }
-
-      const currentChapter = chapters[state.chapterIndex];
-      const nextPart = currentChapter.parts[state.partIndex];
-      if (!nextPart) {
-        state.chapterIndex++;
-        state.partIndex = 0;
-        continue;
-      }
-
-      const isFocus = (subjectWeights[candidateSubject] || 1.0) >= 1.1;
-
-      day.tasks.push({
-        ...nextPart,
-        completed: false,
-        isFocusSubject: isFocus,
-      });
-
-      subjectsStudiedToday.add(candidateSubject);
-      state.lastScheduledDay = dayIndex;
-      state.partIndex++;
-
-      if (state.partIndex >= currentChapter.parts.length) {
-        state.chapterIndex++;
-        state.partIndex = 0;
-      }
-
-      scheduledTodayCount++;
-      subjectAttempts = 0;
+  // Use revision days for remaining syllabus when the work still fits before the deadline.
+  if (remaining.length && revisionDaysCount) {
+    const reserveDays = planDays.slice(syllabusStudyDays).filter(day =>
+      !day.isExamEve && !(weeklyRhythm === 'rest_day' && day.dayOfWeek === restDayOfWeek)
+    );
+    const reservedTaskIds = new Set(remaining.map(task => task.id));
+    scheduleChapterBlocks(reserveDays, remaining, dayMinutes, subjectWeights);
+    const lastSyllabusDay = planDays.findLastIndex(day => day.isRevisionDay &&
+      day.tasks.some(task => reservedTaskIds.has(task.id)));
+    if (lastSyllabusDay >= syllabusStudyDays) {
+      for (let i = syllabusStudyDays; i <= lastSyllabusDay; i++) planDays[i].isRevisionDay = false;
+      syllabusStudyDays = lastSyllabusDay + 1;
+      revisionDaysCount = totalDaysCount - syllabusStudyDays;
     }
   }
-
-  // Fallback for any leftover tasks (placed on last active syllabus study day)
-  const fallbackDayIdx =
-    planDays
-      .slice(0, syllabusStudyDays)
-      .map((d, i) => (!d.isRestDay ? i : -1))
-      .filter((i) => i !== -1)
-      .pop() ?? syllabusStudyDays - 1;
-
-  streamSubjects.forEach((s) => {
-    const state = subjectState[s];
-    const chapters = subjectChapterMap[s];
-    const isFocus = (subjectWeights[s] || 1.0) >= 1.1;
-    while (state.chapterIndex < chapters.length) {
-      const currentChapter = chapters[state.chapterIndex];
-      while (state.partIndex < currentChapter.parts.length) {
-        const task = currentChapter.parts[state.partIndex];
-        planDays[fallbackDayIdx].tasks.push({
-          ...task,
-          completed: false,
-          isFocusSubject: isFocus,
-        });
-        state.partIndex++;
-      }
-      state.chapterIndex++;
-      state.partIndex = 0;
-    }
-  });
 
   // Phase 3: Tailored Spaced Revision Days (Ebbinghaus Forgetting Curve Grounded)
   if (revisionDaysCount > 0) {
@@ -895,6 +657,11 @@ function _executeCorePlanAlgorithm(
       const revDayIndex = syllabusStudyDays + r;
       if (revDayIndex >= planDays.length) break;
 
+      const revisionDay = planDays[revDayIndex];
+      const revisionMinutes = dayMinutes(revisionDay) - revisionDay.tasks.reduce((sum, task) => sum + studyMinutes(task), 0);
+      if (revisionDay.isRestDay || revisionDay.isExamEve || revisionMinutes <= 0 ||
+          groupStudyBlocks(revisionDay.tasks).length >= MAX_DAILY_BLOCKS) continue;
+
       const isFinalMock = r === revisionDaysCount - 1;
       const isPenultimateMock = r === revisionDaysCount - 2 && revisionDaysCount >= 4;
 
@@ -904,8 +671,10 @@ function _executeCorePlanAlgorithm(
           grade: defaultGrade,
           subject: 'All Subjects',
           chapterName: `Final Examination Simulation (Day ${r + 1}/${revisionDaysCount})`,
-          topicTitle:
-            'Full 3-Hour Model Exam Simulation under timed board exam conditions & self-evaluation',
+          topicTitle: revisionMinutes >= 180
+            ? 'Full 3-Hour Model Exam Simulation under timed board exam conditions & self-evaluation'
+            : 'Timed model paper section and self-evaluation',
+          estimatedMinutes: Math.min(180, revisionMinutes),
           taskType: 'MOCK',
           isRevision: true,
           completed: false,
@@ -920,6 +689,7 @@ function _executeCorePlanAlgorithm(
           topicTitle:
             'High-frequency 3-mark & 5-mark repeated questions from past 5 years DHSE board papers',
           taskType: 'PYQ',
+          estimatedMinutes: Math.min(120, revisionMinutes),
           isRevision: true,
           completed: false,
           term: 3,
@@ -970,6 +740,7 @@ function _executeCorePlanAlgorithm(
           chapterName: `Targeted Revision: ${activeSub} (Day ${r + 1}/${revisionDaysCount})`,
           topicTitle,
           taskType: 'REVISION',
+          estimatedMinutes: Math.min(90, revisionMinutes),
           isRevision: true,
           isSpacedRetrieval: true,
           isForgettingCurveReview: true,
@@ -981,54 +752,12 @@ function _executeCorePlanAlgorithm(
     }
   }
 
-  // Post-Scheduling: Tag isFullOnDay on chapters where ALL parts are on the same day
-  // This enables the "Full" display badge and collapsed card view (tight timetable detection)
-  planDays.forEach((day) => {
-    if (!day.tasks || day.tasks.length === 0) return;
-    const chapDayMap = {};
-    day.tasks.forEach((t) => {
-      if (!t.chapId || t.isRevision || t.isImprovement) return;
-      if (!chapDayMap[t.chapId]) chapDayMap[t.chapId] = [];
-      chapDayMap[t.chapId].push(t);
-    });
-    Object.values(chapDayMap).forEach((tasksForChap) => {
-      if (tasksForChap.length < 2) return;
-      const totalParts = tasksForChap[0].totalParts || tasksForChap.length;
-      if (tasksForChap.length >= totalParts) {
-        tasksForChap.forEach((t) => { t.isFullOnDay = true; });
-      }
-    });
-  });
-
-  // Post-Scheduling Quarantine & Invariant Enforcement
-  planDays.forEach((day, dIdx) => {
-    // 1. Strict Exam Eve Quarantine: Absolutely ONLY the target subject may appear on Exam Eve
-    if (day.isExamEve && day.exclusiveSubject) {
-      const targetSub = day.exclusiveSubject;
-      const foreignTasks = (day.tasks || []).filter((t) => t.subject !== targetSub);
-      if (foreignTasks.length > 0) {
-        day.tasks = day.tasks.filter((t) => t.subject === targetSub);
-        // Move any foreign tasks to the nearest non-quarantined day
-        foreignTasks.forEach((fTask) => {
-          let placed = false;
-          for (let offset = 1; offset < planDays.length; offset++) {
-            const prev = dIdx - offset;
-            if (prev >= 0 && !planDays[prev].isRestDay && !planDays[prev].isExamEve) {
-              planDays[prev].tasks.push(fTask);
-              placed = true;
-              break;
-            }
-            const next = dIdx + offset;
-            if (next < syllabusStudyDays && !planDays[next].isRestDay && !planDays[next].isExamEve) {
-              planDays[next].tasks.push(fTask);
-              placed = true;
-              break;
-            }
-          }
-          if (!placed) {
-            planDays[0].tasks.push(fTask);
-          }
-        });
+  planDays.forEach(day => {
+    for (const block of groupStudyBlocks(day.tasks)) {
+      const first = block[0];
+      if (!first.isRevision && first.totalParts > 1 && block.length === first.totalParts &&
+          block.every((task, index) => task.part === index + 1)) {
+        block.forEach(task => { task.isFullOnDay = true; });
       }
     }
 
@@ -1046,7 +775,21 @@ function _executeCorePlanAlgorithm(
     if (!day.isRevisionDay && (!day.tasks || day.tasks.length === 0)) {
       day.isRestDay = true;
     }
-    day.totalMinutes = day.isRestDay ? 0 : (day.tasks || []).reduce((acc, t) => acc + (t.estimatedMinutes || 60), 0);
+    day.totalMinutes = day.tasks.reduce((sum, task) => sum + studyMinutes(task), 0);
+  });
+
+  const scheduledIds = new Set(planDays.flatMap(day => day.tasks.map(task => task.id)));
+  const unscheduled = applicableTasks.filter(task => !scheduledIds.has(task.id));
+  const unscheduledChapterCount = groupStudyBlocks(unscheduled).length;
+  Object.assign(diagnostics, {
+    syllabusStudyDays,
+    revisionDaysCount,
+    isInfeasible: unscheduled.length > 0,
+    unscheduledTaskIds: unscheduled.map(task => task.id),
+    unscheduledChapterCount,
+    warningMessage: unscheduledChapterCount
+      ? `${unscheduledChapterCount} syllabus chapter${unscheduledChapterCount === 1 ? ' has' : 's have'} work that could not fit before your deadline. Allow more study time, start earlier, or reduce your syllabus scope.`
+      : null,
   });
 
   const valResult = validatePlan(planDays, applicableTasks, { improvementConfig, stream: effectiveStream });

@@ -15,7 +15,7 @@ describe('Requirement R1, R2 & R3: Rebalancing Reliability, Auto-Detect & Curric
     const elements = new Map();
     const createMockElement = (id = '') => ({
       id,
-      value: '1',
+      value: ['rebalance-hours', 'rebalance-deadline'].includes(id) ? '' : '1',
       options: [{ value: '0', text: 'Day 0' }, { value: '1', text: 'Day 1' }],
       appendChild(opt) { this.options.push(opt); },
       classList: { add: vi.fn(), remove: vi.fn(), toggle: vi.fn() },
@@ -104,7 +104,7 @@ describe('Requirement R1, R2 & R3: Rebalancing Reliability, Auto-Detect & Curric
       expect(futureTaskInNewPlan).toBeDefined();
       expect(futureTaskInNewPlan.completed).toBe(true);
       // Zero task vanishing: total syllabus tasks must be preserved
-      expect(allNewTasks.length).toBe(initialTotal);
+      expect(allNewTasks.length + getAppState().diagnostics.unscheduledTaskIds.length).toBe(initialTotal);
     });
 
     it('preserves previously completed tasks as historical completed markers on fresh reset (Day 0)', () => {
@@ -142,7 +142,7 @@ describe('Requirement R1, R2 & R3: Rebalancing Reliability, Auto-Detect & Curric
       const totalCompletedInPlan = allNewTasks.filter(t => t.completed).length;
 
       expect(totalCompletedInPlan).toBe(doneCount);
-      expect(allNewTasks.length).toBe(initialTotal);
+      expect(allNewTasks.length + getAppState().diagnostics.unscheduledTaskIds.length).toBe(initialTotal);
     });
 
     it('retains appState.improvementConfig during executeRegeneration', () => {
@@ -264,7 +264,7 @@ describe('Requirement R1, R2 & R3: Rebalancing Reliability, Auto-Detect & Curric
       expect(newPlan[1].dayNumber).toBe(2);
 
       const allNewTasks = newPlan.flatMap(d => d.tasks).filter(t => !t.isRevision);
-      expect(allNewTasks.length).toBe(initialTotal);
+      expect(allNewTasks.length + getAppState().diagnostics.unscheduledTaskIds.length).toBe(initialTotal);
       expect(allNewTasks.filter(t => t.completed).length).toBe(completedCount);
     });
 

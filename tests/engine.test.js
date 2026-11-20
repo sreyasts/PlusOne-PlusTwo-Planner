@@ -34,7 +34,8 @@ describe('Mission PlusTwo Planning Engine (v6.0.0)', () => {
       startDateStr: '2026-10-01',
       deadlineDateStr: '2026-10-08',
     });
-    expect(shortPlan.revisionDaysCount).toBe(1);
+    expect(shortPlan.revisionDaysCount).toBe(0);
+    expect(shortPlan.diagnostics.isInfeasible).toBe(true);
 
     // Medium runway (30 days) -> 4 revision days
     const medPlan = buildIntelligentPlan({
@@ -42,7 +43,8 @@ describe('Mission PlusTwo Planning Engine (v6.0.0)', () => {
       startDateStr: '2026-10-01',
       deadlineDateStr: '2026-10-31',
     });
-    expect(medPlan.revisionDaysCount).toBe(4);
+    expect(medPlan.revisionDaysCount).toBe(0);
+    expect(medPlan.diagnostics.isInfeasible).toBe(true);
 
     // Long runway (150 days) -> 10 revision days
     const longPlan = buildIntelligentPlan({
@@ -213,10 +215,8 @@ describe('State Migration Engine', () => {
       deadlineDateStr: '2026-10-10',
     });
 
-    // Simulate partial Day 1 completion: 3 tasks completed, rest uncompleted
-    planState.plan[0].tasks[0].completed = true;
-    planState.plan[0].tasks[1].completed = true;
-    planState.plan[0].tasks[2].completed = true;
+    // Leave the last task on Day 1 unfinished regardless of how many parts fit.
+    planState.plan[0].tasks.slice(0, -1).forEach(task => { task.completed = true; });
 
     const calendarToday = planState.plan.find(d => d.date === '2026-09-21');
     expect(calendarToday.dayNumber).toBe(2);
@@ -288,7 +288,7 @@ describe('Edge Cases, Boundary Conditions & Invariant Hardening', () => {
     const planState = buildIntelligentPlan({
       stream: 'cs',
       startDateStr: '2026-10-01',
-      deadlineDateStr: '2026-10-31',
+      deadlineDateStr: '2026-12-31',
       capacityOptions: {
         weekdayDailyTasks: -5,
         weekendDailyTasks: 0,

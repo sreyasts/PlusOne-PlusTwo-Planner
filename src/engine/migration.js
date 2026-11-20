@@ -111,6 +111,12 @@ export function migrateLegacyUserPlan(existingState) {
     return existingState;
   }
 
+  // Keep a legacy schedule if adapting it would remove an existing checkmark.
+  const scheduledIds = new Set(generated.planDays.flatMap(day => day.tasks.map(task => task.id)));
+  if (allTasksToPlan.some(task => completedTaskIds.has(task.id) && !scheduledIds.has(task.id))) {
+    return existingState;
+  }
+
   generated.planDays.forEach((day) => {
     (day.tasks || []).forEach((t) => {
       if (completedTaskIds.has(t.id)) {

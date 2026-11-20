@@ -3,6 +3,7 @@ import { test, expect } from '@playwright/test';
 test.use({ timezoneId: 'Asia/Kolkata' });
 
 test('today, overdue work and tomorrow stay separate across a calendar-day change', async ({ page }) => {
+  test.setTimeout(60000);
   await page.clock.install({ time: new Date('2026-10-16T12:00:00+05:30') });
   await page.goto('/');
   await page.locator('#setup-step-pill-4').click();

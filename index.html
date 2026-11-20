@@ -1102,6 +1102,16 @@
             </p>
             
             <div class="space-y-4 mb-6">
+                <div class="grid grid-cols-2 gap-3">
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-200">
+                        <span id="rebalance-hours-label">Study hours per day</span>
+                        <input id="rebalance-hours" type="number" min="0.5" max="16" step="0.25" class="block w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-[#141e33] p-2 mt-1">
+                    </label>
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-200">
+                        <span id="rebalance-deadline-label">Target date</span>
+                        <input id="rebalance-deadline" type="date" class="block w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-[#141e33] p-2 mt-1">
+                    </label>
+                </div>
                 <!-- Auto-Detect & Rebalance Section -->
                 <div id="auto-detect-card" class="p-4 rounded-2xl border border-blue-200 dark:border-blue-800/80 bg-blue-50/80 dark:bg-blue-950/40">
                     <div class="flex items-center justify-between gap-2 mb-2">
@@ -1138,7 +1148,7 @@
 
                 <div class="bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800/80 rounded-xl p-3 text-xs text-blue-900 dark:text-blue-200">
                     <svg class="w-4 h-4 inline-block text-blue-600 dark:text-blue-400 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                    <span id="regenerate-revision-note"><strong>Guaranteed Revision Days:</strong> Your target deadline will still maintain dedicated revision buffer days at the end!</span>
+                    <span id="regenerate-revision-note">The plan reserves revision days when there is enough time to cover the syllabus.</span>
                 </div>
                 <div class="pt-2 border-t border-slate-100 dark:border-slate-800 space-y-2">
                     <button type="button" onclick="compactPlanToToday()" class="w-full py-2.5 px-3 rounded-xl border border-amber-300 dark:border-amber-600/70 bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/40 dark:hover:bg-amber-900/50 text-amber-900 dark:text-amber-200 text-xs font-bold transition flex items-center justify-center gap-2 shadow-xs cursor-pointer">

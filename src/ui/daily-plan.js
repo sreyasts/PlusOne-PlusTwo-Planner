@@ -1,3 +1,5 @@
+import { groupStudyBlocks, studyMinutes } from '../engine/chapter-blocks.js';
+
 /**
  * Select calendar days without moving unfinished work into today's timetable.
  * Returned tasks retain their original IDs and dates for completion updates.
@@ -29,4 +31,24 @@ export function getDailyPlan(plan, today) {
     overdueDays,
     overdueCount: overdueDays.reduce((count, day) => count + day.tasks.length, 0),
   };
+}
+export function displayStudyBlocks(tasks) {
+  return groupStudyBlocks(tasks).map(parts => {
+    const first = parts[0];
+    if (!first.chapId || first.isRevision || first.isExamEveTask || first.isSpacedRetrieval || first.isForgettingCurveReview) return first;
+    const ordered = [...parts].sort((a, b) => (a.part || 1) - (b.part || 1));
+    const total = first.totalParts || 1;
+    const partNumbers = ordered.map(task => task.part || 1);
+    const completeParts = parts.filter(task => task.completed).length;
+    return {
+      ...first,
+      totalParts: total,
+      blockParts: ordered,
+      completeParts,
+      partNumbers,
+      isFullOnDay: partNumbers.length === total && partNumbers.every((part, index) => part === index + 1),
+      completed: completeParts === parts.length,
+      estimatedMinutes: parts.reduce((sum, task) => sum + studyMinutes(task), 0),
+    };
+  });
 }

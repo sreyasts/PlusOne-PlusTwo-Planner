@@ -81,6 +81,7 @@ function setup({ grade = '+2', stream = 'cs', step = 1 } = {}) {
     'setTermSelection',
     'renderApp',
     'handleInitialSetup',
+    'getRebalanceSettings',
     'executeRegeneration',
   ]) {
     vm.runInContext(appFunction(name), context);

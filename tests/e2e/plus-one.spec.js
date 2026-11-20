@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import fs from 'node:fs/promises';
+import { groupStudyBlocks } from '../../src/engine/chapter-blocks.js';
 
 test.use({ timezoneId: 'Asia/Kolkata' });
 
@@ -39,6 +40,7 @@ for (const width of [390, 1280]) {
     expect(studyTasks.every(task => task.grade === '+1')).toBe(true);
 
     const firstStudyDay = generated.plan.find(day => day.tasks.length);
+    const firstBlockIds = groupStudyBlocks(firstStudyDay.tasks)[0].map(task => task.id).sort();
     await page.clock.setSystemTime(new Date(`${firstStudyDay.date}T12:00:00+05:30`));
     await page.reload();
     await page.locator('[data-study-task][aria-pressed="false"]').first().click();
@@ -51,7 +53,7 @@ for (const width of [390, 1280]) {
     const backup = JSON.parse(await fs.readFile(await (await downloadEvent).path(), 'utf8'));
     expect(backup.grade).toBe('+1');
     expect(backup.stream).toBe('cs');
-    expect(backup.plan.flatMap(day => day.tasks).filter(task => task.completed)).toHaveLength(1);
+    expect(backup.plan.flatMap(day => day.tasks).filter(task => task.completed).map(task => task.id).sort()).toEqual(firstBlockIds);
 
     await page.locator('#settings-import-input').setInputFiles({
       name: 'plus-one-backup.json',
@@ -68,11 +70,17 @@ for (const width of [390, 1280]) {
     await page.evaluate(() => openRegenerateModal());
     await page.evaluate(() => continueAsGuest());
     await page.locator('#completed-day-select').selectOption('0');
+    await page.getByLabel('Study hours per day').fill('2');
+    await page.getByLabel('Target date').fill('2027-01-20');
     await page.locator('#regenerate-confirm-btn').click();
     await expect(page.locator('#today-overview')).toBeVisible({ timeout: 20000 });
+    await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('plusTwoMissionState_v2')).deadlineDate)).toBe('2027-01-20');
     const rebuilt = await page.evaluate(() => JSON.parse(localStorage.getItem('plusTwoMissionState_v2')));
     expect(rebuilt.grade).toBe('+1');
     expect(rebuilt.stream).toBe('cs');
+    expect(rebuilt.personalization.dailyHours).toBe(2);
+    expect(rebuilt.plan.flatMap(day => day.tasks).filter(task => task.completed).map(task => task.id).sort()).toEqual(firstBlockIds);
+    expect(rebuilt.plan.filter(day => !day.isCompletedMarker).every(day => day.totalMinutes <= 120 && groupStudyBlocks(day.tasks).length <= 3)).toBe(true);
     await page.screenshot({ path: test.info().outputPath(`plus-one-${width}.png`), fullPage: true });
   });
 }

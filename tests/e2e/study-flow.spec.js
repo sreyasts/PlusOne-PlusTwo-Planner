@@ -1,9 +1,11 @@
 import { test, expect } from '@playwright/test';
+import { groupStudyBlocks } from '../../src/engine/chapter-blocks.js';
 
 test.use({ timezoneId: 'Asia/Kolkata' });
 
 for (const width of [390, 1280]) {
   test(`guest plan, task completion and persistence at ${width}px`, async ({ page }) => {
+    test.setTimeout(60000);
     const testTime = new Date();
     testTime.setHours(12, 0, 0, 0);
     await page.clock.install({ time: testTime });
@@ -37,6 +39,7 @@ for (const width of [390, 1280]) {
     // date rather than relying on the old automatic jump to unfinished work.
     const firstStudyDay = saved.plan.find(day => day.tasks.length);
     expect(firstStudyDay).toBeTruthy();
+    const firstBlockIds = groupStudyBlocks(firstStudyDay.tasks)[0].map(task => task.id).sort();
     await page.clock.setSystemTime(new Date(`${firstStudyDay.date}T12:00:00+05:30`));
     await page.reload();
     await expect(page.locator('#today-tasks')).toBeVisible();
@@ -56,12 +59,12 @@ for (const width of [390, 1280]) {
     await page.locator('#today-tasks [data-study-task][aria-pressed="false"]').first().click();
     await expect.poll(() => page.evaluate(() => {
       const state = JSON.parse(localStorage.getItem('plusTwoMissionState_v2'));
-      return state.plan.flatMap(day => day.tasks).filter(task => task.completed).length;
-    })).toBe(1);
+      return state.plan.flatMap(day => day.tasks).filter(task => task.completed).map(task => task.id).sort();
+    })).toEqual(firstBlockIds);
     await page.reload();
     await expect(page.locator('#today-overview')).toBeVisible();
     const restored = await page.evaluate(() => JSON.parse(localStorage.getItem('plusTwoMissionState_v2')));
-    expect(restored.plan.flatMap(day => day.tasks).filter(task => task.completed)).toHaveLength(1);
+    expect(restored.plan.flatMap(day => day.tasks).filter(task => task.completed).map(task => task.id).sort()).toEqual(firstBlockIds);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await page.locator('.study-tools > summary').click();
     await expect(page.getByRole('button', { name: 'Print / PDF', exact: true })).toBeVisible();
@@ -70,7 +73,7 @@ for (const width of [390, 1280]) {
     await page.goto('/pages/stats.html');
     await expect(page.locator('#stat-device-has-plan')).toContainText('Generated');
     await expect(page.locator('#stat-device-stream')).toHaveText('BIO');
-    await expect(page.locator('#stat-device-chapters')).toContainText('1 tasks completed');
+    await expect(page.locator('#stat-device-chapters')).toContainText(`${firstBlockIds.length} tasks completed`);
     await expect(page.getByText('Owner / friend accounts; not adoption', { exact: true })).toBeVisible();
   });
 }

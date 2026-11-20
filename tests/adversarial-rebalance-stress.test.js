@@ -15,7 +15,7 @@ describe('Adversarial Stress Harness: Rebalancing Reliability & Auto-Detect Work
     const elements = new Map();
     const createMockElement = (id = '') => ({
       id,
-      value: '1',
+      value: ['rebalance-hours', 'rebalance-deadline'].includes(id) ? '' : '1',
       options: [{ value: '0', text: 'Day 0' }, { value: '1', text: 'Day 1' }],
       appendChild(opt) { this.options.push(opt); },
       classList: { add: vi.fn(), remove: vi.fn(), toggle: vi.fn() },
@@ -74,7 +74,7 @@ describe('Adversarial Stress Harness: Rebalancing Reliability & Auto-Detect Work
   // SUITE 1: Complex Non-Contiguous Task Completion Patterns
   // ==========================================================================
   describe('Suite 1: Complex Non-Contiguous Task Completion Patterns', () => {
-    it('1.1: student completes Day 1 Part 1, skips Part 2, completes Day 5, misses Days 2-4, triggers auto-detect rebalance', () => {
+    it('1.1: auto-detect preserves partial chapter progress and a completion on another date', () => {
       const allTasks = getRemainingPlanTasks({ grade: '+2', stream: 'cs', targetTerm: 3 });
       const initialRes = buildIntelligentPlan('2026-12-31', allTasks, '2026-11-01', [], 'cs');
       const initialPlan = initialRes.planDays;
@@ -87,34 +87,22 @@ describe('Adversarial Stress Harness: Rebalancing Reliability & Auto-Detect Work
 
       // Find Part 1 and Part 2 of this chapter in initialPlan
       let p1Day = null, p1Task = null;
-      let p2Day = null, p2Task = null;
+      let p2Task = null;
       initialPlan.forEach(d => {
         (d.tasks || []).forEach(t => {
           if (t.chapId === testChapId && t.part === 1) { p1Day = d; p1Task = t; }
-          if (t.chapId === testChapId && t.part === 2) { p2Day = d; p2Task = t; }
+          if (t.chapId === testChapId && t.part === 2) { p2Task = t; }
         });
       });
 
       expect(p1Task).toBeDefined();
       expect(p2Task).toBeDefined();
 
-      // Student completes Part 1 on Day 1
       p1Task.completed = true;
-
-      // Student SKIPS Part 2 (p2Task.completed remains false)
       p2Task.completed = false;
-
-      // Student completes a task on Day 5
-      const day5 = initialPlan[4];
-      expect(day5).toBeDefined();
-      expect(day5.tasks.length).toBeGreaterThan(0);
-      const day5Task = day5.tasks[0];
-      day5Task.completed = true;
-
-      // Days 2, 3, 4 remain completely missed/uncompleted
-      initialPlan[1].tasks.forEach(t => { t.completed = false; });
-      initialPlan[2].tasks.forEach(t => { t.completed = false; });
-      initialPlan[3].tasks.forEach(t => { t.completed = false; });
+      const otherDay = initialPlan.find(day => day !== p1Day && day.tasks.some(task => task.chapId !== testChapId));
+      const otherTask = otherDay.tasks.find(task => task.chapId !== testChapId);
+      otherTask.completed = true;
 
       setAppState({
         grade: '+2',
@@ -136,17 +124,12 @@ describe('Adversarial Stress Harness: Rebalancing Reliability & Auto-Detect Work
 
       // 1. Verify completed markers: Days 1..K
       const markers = newPlan.filter(d => d.isCompletedMarker);
-      expect(markers.length).toBe(2); // Day 1 and Day 5 with completed work
+      expect(markers.length).toBe(2);
       expect(markers[0].dayNumber).toBe(1);
       expect(markers[1].dayNumber).toBe(2);
 
-      // Verify that Day 1 marker contains Part 1
-      const marker1Tasks = markers[0].tasks;
-      expect(marker1Tasks.some(t => t.id === p1Task.id && t.completed)).toBe(true);
-
-      // Verify that Day 2 marker contains Day 5 task
-      const marker2Tasks = markers[1].tasks;
-      expect(marker2Tasks.some(t => t.id === day5Task.id && t.completed)).toBe(true);
+      expect(markers.find(day => day.date === p1Day.date)?.tasks).toContainEqual(p1Task);
+      expect(markers.find(day => day.date === otherDay.date)?.tasks).toContainEqual(otherTask);
 
       // 2. Verify remaining schedule: Days K+1..N
       const remainingDays = newPlan.filter(d => !d.isCompletedMarker);
@@ -165,7 +148,7 @@ describe('Adversarial Stress Harness: Rebalancing Reliability & Auto-Detect Work
 
       // 5. Total task conservation invariant: completed in markers + remaining syllabus == initialTotal
       const allNewSyllabusTasks = getSyllabusTasks(newPlan);
-      expect(allNewSyllabusTasks.length).toBe(initialTotal);
+      expect(allNewSyllabusTasks.length + getAppState().diagnostics.unscheduledTaskIds.length).toBe(initialTotal);
 
       // 6. Day numbering strictly continuous 1..N
       newPlan.forEach((d, idx) => {
@@ -219,7 +202,7 @@ describe('Adversarial Stress Harness: Rebalancing Reliability & Auto-Detect Work
       expect(p2New.completed).toBe(true);
 
       // Zero task drop
-      expect(newTasks.length).toBe(initialTotal);
+      expect(newTasks.length + getAppState().diagnostics.unscheduledTaskIds.length).toBe(initialTotal);
     });
 
     it('1.3: multi-part chapter with 3 parts: completes Part 1 and Part 3, skips Part 2 (middle pending)', () => {
@@ -270,7 +253,7 @@ describe('Adversarial Stress Harness: Rebalancing Reliability & Auto-Detect Work
       expect(newTasks.find(t => t.id === p3.id).completed).toBe(true);
 
       // Total tasks conserved
-      expect(newTasks.length).toBe(initialTotal);
+      expect(newTasks.length + getAppState().diagnostics.unscheduledTaskIds.length).toBe(initialTotal);
     });
 
     it('1.4: chaotic scatter: completes random tasks out of order across all 5 Bio subjects', () => {
@@ -306,7 +289,7 @@ describe('Adversarial Stress Harness: Rebalancing Reliability & Auto-Detect Work
       const newPlan = getAppState().plan;
       const newTasks = getSyllabusTasks(newPlan);
 
-      expect(newTasks.length).toBe(initialTotal);
+      expect(newTasks.length + getAppState().diagnostics.unscheduledTaskIds.length).toBe(initialTotal);
       completedIds.forEach(id => {
         const found = newTasks.find(t => t.id === id);
         expect(found).toBeDefined();
@@ -349,7 +332,7 @@ describe('Adversarial Stress Harness: Rebalancing Reliability & Auto-Detect Work
 
       // All tasks scheduled
       const newTasks = getSyllabusTasks(newPlan);
-      expect(newTasks.length).toBe(allTasks.length);
+      expect(newTasks.length + getAppState().diagnostics.unscheduledTaskIds.length).toBe(allTasks.length);
       expect(newTasks.every(t => !t.completed)).toBe(true);
     });
 
@@ -408,7 +391,7 @@ describe('Adversarial Stress Harness: Rebalancing Reliability & Auto-Detect Work
       expect(state.deadlineDate > '2026-11-01').toBe(true);
 
       const allNewTasks = getSyllabusTasks(state.plan);
-      expect(allNewTasks.length).toBe(allTasks.length);
+      expect(allNewTasks.length + getAppState().diagnostics.unscheduledTaskIds.length).toBe(allTasks.length);
     });
 
     it('2.4: survives 7 consecutive rebalances with progressive completions and idle days', () => {
@@ -464,7 +447,7 @@ describe('Adversarial Stress Harness: Rebalancing Reliability & Auto-Detect Work
         // INVARIANTS AT EVERY SINGLE CYCLE:
         // 1. Total syllabus tasks strictly conserved
         const tasksNow = getSyllabusTasks(postPlan);
-        expect(tasksNow.length).toBe(initialTotal);
+        expect(tasksNow.length + getAppState().diagnostics.unscheduledTaskIds.length).toBe(initialTotal);
 
         // 2. Sequential day numbering 1..N with 0 gaps
         postPlan.forEach((d, idx) => {
@@ -553,7 +536,7 @@ describe('Adversarial Stress Harness: Rebalancing Reliability & Auto-Detect Work
 
         // 1. Invariant: Zero task loss or duplication
         const newTasks = getSyllabusTasks(newPlan);
-        expect(newTasks.length).toBe(initialTotal);
+        expect(newTasks.length + getAppState().diagnostics.unscheduledTaskIds.length).toBe(initialTotal);
 
         // 2. Invariant: Completed task count exactly matches
         const doneTasks = newTasks.filter(t => t.completed);
@@ -648,7 +631,7 @@ describe('Adversarial Stress Harness: Rebalancing Reliability & Auto-Detect Work
         const newTasks = getSyllabusTasks(newPlan);
 
         // Core Mathematical Invariants
-        expect(newTasks.length).toBe(initialTotal);
+        expect(newTasks.length + getAppState().diagnostics.unscheduledTaskIds.length).toBe(initialTotal);
         expect(newTasks.filter(t => t.completed).length).toBe(totalMarked);
 
         // Zero duplicate task IDs
@@ -707,7 +690,7 @@ describe('Adversarial Stress Harness: Rebalancing Reliability & Auto-Detect Work
 
       const allNewSyllabusTasks = getSyllabusTasks(newPlan);
       // Canonical syllabus tasks count must remain strictly constant
-      expect(allNewSyllabusTasks.length).toBe(initialTotal);
+      expect(allNewSyllabusTasks.length + getAppState().diagnostics.unscheduledTaskIds.length).toBe(initialTotal);
     });
 
     it('5.2: executeRegeneration with Day 0 reset preserves non-contiguous completed tasks (Days 1, 4, 8) as markers', () => {
@@ -744,7 +727,7 @@ describe('Adversarial Stress Harness: Rebalancing Reliability & Auto-Detect Work
       expect(markers[2].dayNumber).toBe(3);
 
       const allNewTasks = getSyllabusTasks(newPlan);
-      expect(allNewTasks.length).toBe(initialTotal);
+      expect(allNewTasks.length + getAppState().diagnostics.unscheduledTaskIds.length).toBe(initialTotal);
       expect(allNewTasks.filter(t => t.completed).length).toBe(3);
     });
 
@@ -781,7 +764,7 @@ describe('Adversarial Stress Harness: Rebalancing Reliability & Auto-Detect Work
 
       const newPlan = getAppState().plan;
       const allNewTasks = getSyllabusTasks(newPlan);
-      expect(allNewTasks.length).toBe(initialTotal);
+      expect(allNewTasks.length + getAppState().diagnostics.unscheduledTaskIds.length).toBe(initialTotal);
       expect(allNewTasks.filter(t => t.completed).length).toBe(expectedDone);
 
       const foundAhead = allNewTasks.find(t => t.id === aheadTask.id);
@@ -928,7 +911,7 @@ describe('Adversarial Stress Harness: Rebalancing Reliability & Auto-Detect Work
       const newPlan = getAppState().plan;
       const newTasks = getSyllabusTasks(newPlan);
       expect(newTasks.some(t => t.chapId === completedChapId)).toBe(false);
-      expect(newTasks.length).toBe(allTasks.length);
+      expect(newTasks.length + getAppState().diagnostics.unscheduledTaskIds.length).toBe(allTasks.length);
     });
   });
 });

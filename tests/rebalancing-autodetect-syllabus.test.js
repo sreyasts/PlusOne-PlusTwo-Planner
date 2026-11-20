@@ -92,7 +92,7 @@ describe('Tier 1: Feature Coverage (Rebalancing, Auto-Detect & Syllabus Conforma
 
       // Verify task preservation invariant: completed tasks + remaining tasks == all initial tasks
       const remainingScheduledTasks = getSyllabusTasks(rebalanceRes.planDays);
-      expect(completedTaskIds.size + remainingScheduledTasks.length).toBe(allTasks.length);
+      expect(completedTaskIds.size + remainingScheduledTasks.length + rebalanceRes.diagnostics.unscheduledTaskIds.length).toBe(allTasks.length);
 
       // The ahead task must NOT appear in remaining uncompleted tasks (no duplication)
       expect(remainingScheduledTasks.some((t) => t.id === aheadTask.id)).toBe(false);
@@ -210,9 +210,10 @@ describe('Tier 1: Feature Coverage (Rebalancing, Auto-Detect & Syllabus Conforma
       const tightPlan = buildIntelligentPlan('2026-11-10', remainingTasks, '2026-11-05', [], 'cs');
       const tightTasks = getSyllabusTasks(tightPlan.planDays);
 
-      // Even under tight deadline, all 25 remaining tasks must be scheduled
-      expect(tightTasks.length).toBe(25);
-      expect(tightTasks.length + completedTaskIds.size).toBe(allTasks.length);
+      // Any work that misses the deadline remains accounted for.
+      const unscheduled = tightPlan.diagnostics.unscheduledTaskIds;
+      expect(unscheduled.length).toBeGreaterThan(0);
+      expect(tightTasks.length + unscheduled.length + completedTaskIds.size).toBe(allTasks.length);
     });
   });
 
@@ -1125,23 +1126,21 @@ describe('Tier 4: Real-World Student Lifecycle Workloads', () => {
       expect(d.dayNumber).toBe(idx + 1);
     });
 
-    // 2. Exact 100% total task preservation
+    // 2. Preserve every task across the dated plan and the unscheduled list
     const totalUnifiedTasks = [
       ...completedMarkers.flatMap((d) => d.tasks),
       ...getSyllabusTasks(rebalancedDays),
     ];
-    expect(totalUnifiedTasks.length).toBe(allTasks.length);
-
-    // 3. Zero duplicate tasks
-    const uniqueIds = new Set(totalUnifiedTasks.map((t) => t.id));
-    expect(uniqueIds.size).toBe(allTasks.length);
+    const unscheduled = rebalancedRes.diagnostics.unscheduledTaskIds;
+    const accountedIds = [...totalUnifiedTasks.map(task => task.id), ...unscheduled];
+    expect(accountedIds.sort()).toEqual(allTasks.map(task => task.id).sort());
 
     // 4. Student advances to completion: completing all remaining syllabus tasks reaches 100% mastery
     rebalancedDays.forEach((d) => {
       d.tasks.forEach((t) => { if (!t.isRevision) t.completed = true; });
     });
     const finalCompleted = unifiedPlan.flatMap((d) => d.tasks).filter((t) => !t.isRevision && t.completed);
-    expect(finalCompleted.length).toBe(allTasks.length);
+    expect(finalCompleted.length + unscheduled.length).toBe(allTasks.length);
   });
 
   it('4.2 Scenario 2: Plus Two Commerce Non-Contiguous Workload & Auto-Detect Rebalance', () => {

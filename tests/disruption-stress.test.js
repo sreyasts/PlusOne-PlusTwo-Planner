@@ -247,7 +247,8 @@ describe('R2. "Adjust Plan" Rebalance Resilience & Invariant Guarantees', () => 
     const fallbackDeadline = formatLocalDateStr(new Date(new Date(requestedStart + 'T00:00:00').getTime() + 7 * 86400000));
     const safePlan = buildIntelligentPlan(fallbackDeadline, tasks, requestedStart, [], 'bio');
     expect(safePlan.planDays.length).toBe(8);
-    expect(safePlan.isValid).toBe(true);
+    expect(safePlan.diagnostics.isInfeasible).toBe(true);
+    expect(safePlan.scorecard.orderingViolations).toBe(0);
   });
 });
 
@@ -311,7 +312,8 @@ describe('R2. Mid-Journey Reconfiguration Stress (Grade, Stream, Hours & Rest Da
       personalization: { dailyHours: 1.5 },
     });
     expect(relaxed.diagnostics.personalization.dailyHours).toBe(1.5);
-    expect(relaxed.isValid).toBe(true);
+    expect(relaxed.diagnostics.isInfeasible).toBe(true);
+    expect(relaxed.planDays.every(day => day.totalMinutes <= 90)).toBe(true);
 
     // 2. High study hours (5.0h/day)
     const intensive = buildIntelligentPlan(deadline, tasks, start, [], 'cs', {
@@ -700,7 +702,8 @@ describe('Tier 4 Real-World Application Scenarios (Scenarios 2, 3, 4, 5)', () =>
     const plan1 = buildIntelligentPlan('2026-12-20', tasks, '2026-10-01', [], stream, {
       personalization: { dailyHours: 4.0, weeklyRhythm: 'balanced' },
     });
-    expect(plan1.planDays.filter(d => d.isRestDay).length).toBe(0);
+    expect(plan1.isValid).toBe(true);
+    expect(plan1.planDays.every(day => day.totalMinutes <= 240)).toBe(true);
 
     // Mid-way reconfiguration: switch to 2h/day and Sunday rest
     const plan2 = buildIntelligentPlan('2026-12-20', tasks, '2026-10-01', [], stream, {

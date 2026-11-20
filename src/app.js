@@ -69,10 +69,10 @@ import {
 import {
   generateAiTutorPrompt,
 } from './utils/ai_tutor.js';
-import { getDailyPlan } from './ui/daily-plan.js';
+import { displayStudyBlocks, getDailyPlan } from './ui/daily-plan.js';
 import { MAX_BACKUP_BYTES, parseStudyBackup, validateStudyBackup, createStudyBackup, persistStudyBackup } from './utils/study-backup.js';
 import { persistTaskCompletion } from './utils/study-progress.js';
-import { getRemainingPlanTasks, detectCompletedSyllabusProgress } from './utils/plan-scope.js';
+import { getRemainingPlanTasks, detectCompletedSyllabusProgress, isCalendarDate } from './utils/plan-scope.js';
 import { getHandbookUrl } from './utils/handbook-lookup.js';
 import { createAccountSync, queuePendingAccountState } from './auth/account-sync.js';
 import appPackage from '../package.json' with { type: 'json' };
@@ -1044,11 +1044,11 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
            Synchronous across Today & Full Plan views
            ========================================================================== */
 
-        function toggleTaskDirect(taskId) {
+        function toggleTaskDirect(taskId, wholeBlock = false) {
             if (!appState || !appState.plan) return;
             try {
                 const next = persistTaskCompletion(appState, taskId, localStorage, {
-                    today: getLocalDateStr(), yesterday: getYesterdayStr(), modifiedAt: new Date().toISOString(),
+                    today: getLocalDateStr(), yesterday: getYesterdayStr(), modifiedAt: new Date().toISOString(), wholeBlock,
                 });
                 if (!next) return;
                 appState = next;
@@ -1071,7 +1071,12 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
             try {
                 const escapedId = (typeof window !== 'undefined' && window.CSS?.escape) ? window.CSS.escape(taskId) : taskId.replace(/"/g, '\\"');
                 const checkboxElements = document.querySelectorAll(`[data-task-id="${escapedId}"]`);
+                const updatedBlock = wholeBlock && checkboxElements.length
+                    ? displayStudyBlocks(targetDay.tasks).find(block => block.id === taskId)
+                    : null;
                 checkboxElements.forEach(cb => {
+                    const topic = cb.closest('.task-item-container')?.querySelector('.task-block-topic');
+                    if (topic && updatedBlock) topic.textContent = formatTaskTopicTitle(updatedBlock);
                     if (targetTask.completed) {
                         cb.classList.add('checked');
                         cb.setAttribute('aria-checked', 'true');
@@ -1098,6 +1103,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                         if (typeof currentPlanSubjectFilter !== 'undefined' && currentPlanSubjectFilter !== 'All') {
                             displayedTasks = targetDay.tasks.filter(t => t.subject === currentPlanSubjectFilter);
                         }
+                        displayedTasks = displayStudyBlocks(displayedTasks);
                         const completedCount = displayedTasks.filter(t => t.completed).length;
                         const isML = (typeof getAppLanguage === 'function' && getAppLanguage() === 'ml');
                         counterSpan.textContent = `${completedCount}/${displayedTasks.length} ${isML ? ML_I18N.plan.done : 'Done'}`;
@@ -1154,18 +1160,19 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 const activeDayNum = typeof getActiveMissionDayNumber === 'function' ? getActiveMissionDayNumber() : 1;
                 const todayPlan = appState.plan.find(d => d.dayNumber === activeDayNum) || appState.plan.find(d => d.date === getLocalDateStr());
                 if (todayPlan && targetDay?.date === getLocalDateStr()) {
-                    const completedToday = todayPlan.tasks.filter(t => t.completed).length;
-                    const totalToday = todayPlan.tasks.length;
+                    const blocks = displayStudyBlocks(todayPlan.tasks);
+                    const completedToday = blocks.filter(t => t.completed).length;
+                    const totalToday = blocks.length;
                     if (completedToday === totalToday && totalToday > 0) {
                         try {
                             fireStudyConfetti({ particleCount: 140, spread: 90, origin: { y: 0.55 } });
                         } catch(e) {}
                         playCelebrationSound();
-                        showAppToast(getAppLanguage() === 'ml' ? 'ഇന്നത്തെ പഠനം പൂർത്തിയായി.' : 'All tasks for today are complete.');
+                        showAppToast(getAppLanguage() === 'ml' ? 'ഇന്നത്തെ പഠനം പൂർത്തിയായി.' : 'All study blocks for today are complete.');
                     } else {
                         playTaskTickSound();
                         const remaining = totalToday - completedToday;
-                        showAppToast(`${remaining} task${remaining === 1 ? '' : 's'} remaining today.`);
+                        showAppToast(`${remaining} study block${remaining === 1 ? '' : 's'} remaining today.`);
                     }
                 } else {
                     playTaskTickSound();
@@ -2981,8 +2988,8 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 }, 2200);
             };
 
-            if (typeof requestAnimationFrame === 'function') {
-                requestAnimationFrame(() => performOpenAndScroll());
+            if (typeof globalThis.requestAnimationFrame === 'function') {
+                globalThis.requestAnimationFrame(() => performOpenAndScroll());
             } else {
                 performOpenAndScroll();
             }
@@ -2990,6 +2997,11 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
 
         function openRegenerateModal() {
             if (!appState || !appState.plan) return;
+
+            const hoursInput = document.getElementById('rebalance-hours');
+            const targetInput = document.getElementById('rebalance-deadline');
+            if (hoursInput) hoursInput.value = appState.personalization?.dailyHours ?? '';
+            if (targetInput) targetInput.value = appState.deadlineDate ?? '';
 
             // Run intelligent completion scan
             const detection = (typeof detectCompletedSyllabusProgress === 'function')
@@ -3095,7 +3107,28 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
             modal.classList.remove('flex');
         }
 
+        function getRebalanceSettings() {
+            const hoursInput = document.getElementById('rebalance-hours');
+            const targetInput = document.getElementById('rebalance-deadline');
+            const personalization = { ...appState.personalization };
+            const hours = Number(hoursInput?.value);
+            const deadline = targetInput?.value || appState.deadlineDate;
+            if ((hoursInput?.value && (!Number.isFinite(hours) || hours < 0.5 || hours > 16)) ||
+                (targetInput?.value && !isCalendarDate(deadline))) {
+                const isML = getAppLanguage() === 'ml';
+                showAppAlert({
+                    title: isML ? 'പഠനസമയം പരിശോധിക്കുക' : 'Check your study settings',
+                    message: isML ? 'ദിവസേന 0.5 മുതൽ 16 മണിക്കൂർ വരെ നൽകുക. അവസാന തീയതിയും പരിശോധിക്കുക.' : 'Enter 0.5 to 16 study hours per day and a valid target date.',
+                });
+                return null;
+            }
+            if (hoursInput?.value) personalization.dailyHours = hours;
+            return { deadline, personalization };
+        }
+
         function executeRegeneration() {
+            const settings = getRebalanceSettings();
+            if (!settings) return;
             if (typeof savePreviousPlanSnapshot === 'function') savePreviousPlanSnapshot();
             const completedUpTo = parseInt(document.getElementById('completed-day-select').value);
 
@@ -3107,11 +3140,8 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 // Keep days 1..completedUpTo with tasks marked completed
                 appState.plan.forEach(day => {
                     if (day.dayNumber <= completedUpTo) {
-                        day.tasks.forEach(t => {
-                            t.completed = true;
-                            completedTaskIds.add(t.id);
-                        });
-                        keptDays.push(day);
+                        day.tasks.forEach(t => completedTaskIds.add(t.id));
+                        keptDays.push({ ...day, tasks: day.tasks.map(task => ({ ...task, completed: true })) });
                     }
                 });
 
@@ -3189,11 +3219,14 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
 
             animatePlanGeneration({ mode: 'rebalance', isLateEvening: (completedUpTo === 0 && smartStart.isLateEvening) }, () => {
                 let result;
+                let deadline = settings.deadline;
                 try {
-                    if (rebuildStartDate >= appState.deadlineDate) {
+                    if (rebuildStartDate >= deadline) {
+                        if (deadline !== appState.deadlineDate) throw new Error('Target date must be after the next study day.');
+
                         const [ry, rm, rd] = rebuildStartDate.split('-').map(Number);
                         const newDeadlineDate = new Date(ry, rm - 1, rd + 30);
-                        appState.deadlineDate = formatLocalDateStr(newDeadlineDate);
+                        deadline = formatLocalDateStr(newDeadlineDate);
                         const isML = (typeof getAppLanguage === 'function' && getAppLanguage() === 'ml');
                         showAppToast(
                             isML
@@ -3204,14 +3237,14 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                     }
 
                     result = buildIntelligentPlan(
-                        appState.deadlineDate,
+                        deadline,
                         uncompletedTasks,
                         rebuildStartDate,
                         appState.improvementConfig || [],
                         userStream,
                         {
                             intensity: appState.studyIntensity || 'balanced',
-                            personalization: appState.personalization || {}
+                            personalization: settings.personalization
                         }
                     );
                 } catch (err) {
@@ -3237,6 +3270,8 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                         appState.startDate = rebuildStartDate;
                     }
 
+                    appState.deadlineDate = deadline;
+                    appState.personalization = settings.personalization;
                     appState.revisionDaysCount = result.revisionDaysCount;
                     appState.diagnostics = result.diagnostics;
                     appState.engineVersion = PLANNER_ENGINE_VERSION;
@@ -3273,6 +3308,8 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
 
         function autoDetectAndRebalance() {
             if (!appState || !appState.plan || appState.plan.length === 0) return;
+            const settings = getRebalanceSettings();
+            if (!settings) return;
 
             // 1. Scan user's current progress
             const detection = (typeof detectCompletedSyllabusProgress === 'function')
@@ -3281,7 +3318,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
 
             // Guard: If everything is completed, celebrate and stop
             const allDone = appState.plan.every(d => d.tasks && d.tasks.every(t => t.completed));
-            if (allDone) {
+            if (allDone && !appState.diagnostics?.unscheduledTaskIds?.length) {
                 const isML = (typeof getAppLanguage === 'function' && getAppLanguage() === 'ml');
                 showAppToast(
                     isML ? "🎉 നിങ്ങൾ മുഴുവൻ സിലബസും പൂർത്തിയാക്കി കഴിഞ്ഞു!" : "🎉 You have completed all scheduled tasks!",
@@ -3336,11 +3373,14 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
 
             animatePlanGeneration({ mode: 'rebalance', isLateEvening: (detection.anchorDayNumber === 0 && smartStart.isLateEvening) }, () => {
                 let result;
+                let deadline = settings.deadline;
                 try {
-                    if (rebuildStartDate >= appState.deadlineDate) {
+                    if (rebuildStartDate >= deadline) {
+                        if (deadline !== appState.deadlineDate) throw new Error('Target date must be after the next study day.');
+
                         const [ry, rm, rd] = rebuildStartDate.split('-').map(Number);
                         const newDeadlineDate = new Date(ry, rm - 1, rd + 30);
-                        appState.deadlineDate = formatLocalDateStr(newDeadlineDate);
+                        deadline = formatLocalDateStr(newDeadlineDate);
                         const isML = (typeof getAppLanguage === 'function' && getAppLanguage() === 'ml');
                         showAppToast(
                             isML
@@ -3351,14 +3391,14 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                     }
 
                     result = buildIntelligentPlan(
-                        appState.deadlineDate,
+                        deadline,
                         uncompletedTasks,
                         rebuildStartDate,
                         appState.improvementConfig || [],
                         userStream,
                         {
                             intensity: appState.studyIntensity || 'balanced',
-                            personalization: appState.personalization || {}
+                            personalization: settings.personalization
                         }
                     );
                 } catch (err) {
@@ -3385,6 +3425,8 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                         appState.startDate = rebuildStartDate;
                     }
 
+                    appState.deadlineDate = deadline;
+                    appState.personalization = settings.personalization;
                     appState.revisionDaysCount = result.revisionDaysCount;
                     appState.diagnostics = result.diagnostics;
                     appState.engineVersion = PLANNER_ENGINE_VERSION;
@@ -3992,19 +4034,24 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 const daily = getDailyPlan(appState.plan, localToday);
                 const { todayPlan, tomorrowPlan, yesterdayPlan } = daily;
 
-                const tasks = todayPlan?.tasks ?? [];
+                const tasks = displayStudyBlocks(todayPlan?.tasks ?? []);
+                const tomorrowBlocks = displayStudyBlocks(tomorrowPlan?.tasks ?? []);
+                const yesterdayBlocks = displayStudyBlocks(yesterdayPlan?.tasks ?? []);
+                const overdueDays = daily.overdueDays.map(day => ({ ...day, tasks: displayStudyBlocks(day.tasks) }));
+                const overdueCount = overdueDays.reduce((count, day) => count + day.tasks.length, 0);
                 const completedCount = tasks.filter(task => task.completed).length;
                 const orderedTasks = [...tasks.filter(task => !task.completed), ...tasks.filter(task => task.completed)];
                 const hasFutureTasks = appState.plan.some(d => d.date > localToday && d.tasks.some(t => !t.completed));
                 const todayTasksHTML = tasks.length ? `
-                    ${appState.diagnostics?.isInfeasible ? `<p class="daily-advisory">${escapeStudyText(appState.diagnostics.warningMessage || (isML ? 'പഠന സമയം അല്ലെങ്കിൽ അവസാന തീയതി ക്രമീകരിക്കുക.' : 'This plan needs more study time. Adjust your hours or target date.'))}</p>` : ''}
                     ${todayPlan.isExamEve ? `<p class="daily-advisory">${isML ? 'നാളത്തെ പരീക്ഷ' : 'Exam tomorrow'}: ${escapeStudyText(todayPlan.exclusiveSubject)}</p>` : ''}
                     ${completedCount === tasks.length ? `
                         <div class="daily-finished" role="status">
                             <div class="flex items-center justify-between flex-wrap gap-2.5">
                                 <div>
                                     <strong class="text-emerald-700 dark:text-emerald-400 font-bold">${isML ? '🎉 ഇന്നത്തെ പഠനം പൂർത്തിയായി!' : '🎉 Today is complete! Great work!'}</strong>
-                                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">${hasFutureTasks ? (isML ? 'മുൻകൂട്ടി പഠിക്കാൻ തയ്യാറാണോ? നാളത്തെ ഭാഗങ്ങൾ ഇന്നത്തേക്ക് കൊണ്ടുവരാം.' : 'Want to keep momentum going? Fast-forward next chapters to Today.') : (isML ? 'മുഴുവൻ സിലബസും പൂർത്തിയായി.' : 'All portions finished!')}</p>
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">${hasFutureTasks ? (isML ? 'മുൻകൂട്ടി പഠിക്കാൻ തയ്യാറാണോ? നാളത്തെ ഭാഗങ്ങൾ ഇന്നത്തേക്ക് കൊണ്ടുവരാം.' : 'Want to keep momentum going? Fast-forward next chapters to Today.') : appState.diagnostics?.unscheduledTaskIds?.length
+                                        ? (isML ? 'ചില പഠന ഭാഗങ്ങൾ ഇനിയും ക്രമീകരിക്കാനുണ്ട്.' : 'Some syllabus work still needs study time.')
+                                        : (isML ? 'ഇന്നത്തെ പഠനം പൂർത്തിയായി.' : 'Your scheduled study blocks are complete.')}</p>
                                 </div>
                                 ${hasFutureTasks ? `
                                     <button type="button" onclick="compactPlanToToday()" class="py-2 px-3.5 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white text-xs font-bold rounded-xl shadow-md transition flex items-center gap-1.5 cursor-pointer">
@@ -4051,7 +4098,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                     <section id="today-overview" class="study-overview" aria-labelledby="today-heading">
                         <div>
                             <h2 id="today-heading">${isML ? 'ഇന്നത്തെ പഠനം' : "Today's study"}</h2>
-                            <p>${todayPlan ? todayPlan.tasks.filter(t => t.completed).length : 0} / ${todayPlan ? todayPlan.tasks.length : 0} ${isML ? 'പൂർത്തിയായി' : 'tasks complete'}</p>
+                            <p>${completedCount} / ${tasks.length} ${isML ? 'പൂർത്തിയായി' : 'blocks complete'}</p>
                         </div>
                         <button type="button" onclick="openRegenerateModal()" class="study-adjust">${isML ? 'പ്ലാൻ ക്രമീകരിക്കുക' : 'Adjust plan'}</button>
                     </section>
@@ -4059,25 +4106,26 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                     ${typeof renderDashboardRestoreBanner === 'function' ? renderDashboardRestoreBanner() : ''}
 
                     <p class="study-date">${localToday}</p>
-                    ${daily.overdueCount ? `
+                    ${renderStudyCapacityNotice(isML)}
+                    ${overdueCount ? `
                         <p class="pending-notice" role="status" onclick="openPendingWork(event)">
                             <i class="fa-solid fa-clock-rotate-left mr-1 opacity-80" aria-hidden="true"></i>
-                            <span>${daily.overdueCount} ${isML ? 'മുൻ ദിവസങ്ങളിൽ ബാക്കിയുണ്ട്.' : 'unfinished from previous days.'}</span>
+                            <span>${overdueCount} ${isML ? 'മുൻ ദിവസങ്ങളിൽ ബാക്കിയുണ്ട്.' : 'unfinished from previous days.'}</span>
                             <a href="#pending-work" onclick="openPendingWork(event)" class="pending-link font-bold underline ml-1" aria-label="${isML ? 'മുൻ ദിവസങ്ങളിലെ ബാക്കി പഠനം കാണുക' : 'View pending tasks from previous days'}">
                                 ${isML ? 'കാണുക' : 'View pending'}
                             </a>
                         </p>` : ''}
-                    ${yesterdayPlan?.tasks.length ? `<p class="study-history">${isML ? 'ഇന്നലെ' : 'Yesterday'}: ${yesterdayPlan.tasks.filter(task => task.completed).length} / ${yesterdayPlan.tasks.length} ${isML ? 'പൂർത്തിയായി' : 'completed'}</p>` : ''}
+                    ${yesterdayBlocks.length ? `<p class="study-history">${isML ? 'ഇന്നലെ' : 'Yesterday'}: ${yesterdayBlocks.filter(task => task.completed).length} / ${yesterdayBlocks.length} ${isML ? 'പൂർത്തിയായി' : 'completed'}</p>` : ''}
 
                     <!-- Main Section: Today's Targets -->
                     <div id="today-tasks" class="daily-board">
                         ${todayTasksHTML}
                     </div>
 
-                    ${daily.overdueCount ? `
+                    ${overdueCount ? `
                         <details id="pending-work" class="study-pending" ${openSections.has('pending-work') || (typeof window !== 'undefined' && window.location && window.location.hash === '#pending-work') ? 'open' : ''}>
-                            <summary>${isML ? 'മുൻ ദിവസങ്ങളിലെ ബാക്കി പഠനം' : 'Pending from previous days'} (${daily.overdueCount})</summary>
-                            ${daily.overdueDays.map(day => `
+                            <summary>${isML ? 'മുൻ ദിവസങ്ങളിലെ ബാക്കി പഠനം' : 'Pending from previous days'} (${overdueCount})</summary>
+                            ${overdueDays.map(day => `
                                 <section class="pending-day">
                                     <h3>${day.date === daily.yesterdayDate ? (isML ? 'ഇന്നലെ' : 'Yesterday') : escapeStudyText(day.date)} · ${day.tasks.length} ${isML ? 'ബാക്കി' : 'pending'}</h3>
                                     ${day.tasks.map(task => {
@@ -4099,8 +4147,8 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                     ` : ''}
                     ${tomorrowPlan ? `
                         <details id="tomorrow-preview" class="study-tomorrow" ${openSections.has('tomorrow-preview') ? 'open' : ''}>
-                            <summary>${isML ? 'നാളെ' : 'Tomorrow'} · ${tomorrowPlan.date} · ${tomorrowPlan.tasks.length} ${isML ? 'പഠന ഭാഗങ്ങൾ' : 'tasks'}</summary>
-                            ${tomorrowPlan.tasks.length ? `<ul>${tomorrowPlan.tasks.map(task => `<li><strong>${escapeStudyText(task.subject)}</strong> — ${escapeStudyText(getTaskChapterTitle(task))}<p>${escapeStudyText(formatTaskTopicTitle(task))}</p></li>`).join('')}</ul>` : `<p>${isML ? 'വിശ്രമ ദിവസം' : 'Rest day — no study tasks scheduled.'}</p>`}
+                            <summary>${isML ? 'നാളെ' : 'Tomorrow'} · ${tomorrowPlan.date} · ${tomorrowBlocks.length} ${isML ? 'പഠന ഭാഗങ്ങൾ' : 'study blocks'}</summary>
+                            ${tomorrowBlocks.length ? `<ul>${tomorrowBlocks.map(task => `<li><strong>${escapeStudyText(task.subject)}</strong> — ${escapeStudyText(getTaskChapterTitle(task))}<p>${escapeStudyText(formatTaskTopicTitle(task))}</p></li>`).join('')}</ul>` : `<p>${isML ? 'വിശ്രമ ദിവസം' : 'Rest day — no study tasks scheduled.'}</p>`}
                         </details>
                     ` : ''}
 
@@ -4137,10 +4185,10 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 `;
 
                 container.querySelectorAll('[data-pending-task]').forEach(button => {
-                    button.addEventListener('click', () => toggleTaskDirect(button.dataset.pendingTask));
+                    button.addEventListener('click', () => toggleTaskDirect(button.dataset.pendingTask, true));
                 });
                 container.querySelectorAll('[data-study-task]').forEach(button => {
-                    button.addEventListener('click', () => toggleTaskDirect(button.dataset.studyTask));
+                    button.addEventListener('click', () => toggleTaskDirect(button.dataset.studyTask, true));
                 });
                 container.querySelectorAll('[data-study-tutor]').forEach(button => {
                     button.addEventListener('click', () => openAiTutorModal(button.dataset.studyTutor));
@@ -4159,6 +4207,8 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                     if (currentPlanSubjectFilter !== 'All') {
                         displayedTasks = day.tasks.filter(t => t.subject === currentPlanSubjectFilter);
                     }
+
+                    displayedTasks = displayStudyBlocks(displayedTasks);
 
                     // If a specific subject is filtered and this day has none, don't clutter the view
                     if (currentPlanSubjectFilter !== 'All' && displayedTasks.length === 0) {
@@ -4189,22 +4239,22 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                                     return `
                                         <div class="task-item-container py-2.5 first:pt-0 last:pb-0 flex items-start gap-3">
                                             <!-- Working Clickable Checkbox in Full Plan -->
-                                            <div class="task-checkbox ${task.completed ? 'checked' : ''} mt-0.5" role="checkbox" tabindex="0" aria-checked="${!!task.completed}" aria-label="${escapeStudyText(task.subject + ' - ' + getTaskChapterTitle(task))}" data-task-id="${taskIdSafe}" onclick="event.stopPropagation(); toggleTaskDirect('${taskIdSafe}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();toggleTaskDirect('${taskIdSafe}');}">
+                                            <div class="task-checkbox ${task.completed ? 'checked' : ''} mt-0.5" role="checkbox" tabindex="0" aria-checked="${!task.completed && task.completeParts ? 'mixed' : !!task.completed}" aria-label="${escapeStudyText(task.subject + ' - ' + getTaskChapterTitle(task))}" data-task-id="${taskIdSafe}" onclick="event.stopPropagation(); toggleTaskDirect('${taskIdSafe}', true)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();toggleTaskDirect('${taskIdSafe}', true);}">
                                                 <svg class="svg-check" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                                     <polyline points="20 6 9 17 4 12"></polyline>
                                                 </svg>
                                             </div>
-                                            <div class="flex-1 cursor-pointer" onclick="toggleTaskDirect('${taskIdSafe}')">
+                                            <div class="flex-1 cursor-pointer" onclick="toggleTaskDirect('${taskIdSafe}', true)">
                                                 <div class="flex flex-wrap items-center gap-1.5 mb-1">
                                                     <span class="text-xs font-bold px-1.5 py-0.5 rounded ${badgeColor}">${task.subject}</span>
                                                     ${renderTaskDailySlotBadge(taskIdx, displayedTasks.length, isML)}
                                                     ${task.isFocusSubject ? '<span class="text-xs font-black px-1.5 py-0.5 rounded bg-rose-100 text-rose-800 border border-rose-200">🎯 FOCUS</span>' : ''}
                                                     ${renderTaskGradeBadge(task)}
-                                                    ${renderTaskPartBadge(task)}
+                                                    ${task.estimatedMinutes ? `<span class="text-xs text-slate-500 dark:text-slate-400">${escapeStudyText(task.estimatedMinutes)} min</span>` : ''}
                                                     ${getTaskResourceBadge(task)}
                                                 </div>
                                                 <div class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 task-text-content ${task.completed ? 'line-through opacity-50' : ''}">
-                                                    ${getTaskChapterTitle(task)} - <span class="font-normal text-slate-500 dark:text-slate-400">${formatTaskTopicTitle(task)}</span>
+                                                    ${escapeStudyText(getTaskChapterTitle(task))} - <span class="task-block-topic font-normal text-slate-500 dark:text-slate-400">${escapeStudyText(formatTaskTopicTitle(task))}</span>
                                                 </div>
                                                 ${getTaskDeepLinksHtml(task)}
                                             </div>
@@ -4290,6 +4340,8 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                     </div>
 
                     ${typeof renderDashboardRestoreBanner === 'function' ? renderDashboardRestoreBanner() : ''}
+
+                    ${renderStudyCapacityNotice(isML)}
 
                     <!-- Subject Filter Tabs (Horizontal Scrollable Pills strictly stream-isolated) -->
                     <div class="no-print flex items-center gap-1.5 overflow-x-auto pb-2 mb-4 scrollbar-none text-xs">
@@ -4561,16 +4613,21 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
         function formatTaskTopicTitle(task) {
             if (!task) return '';
             if (task.isRevision) return task.topicTitle || '';
+            if (task.blockParts) {
+                const numbers = task.partNumbers;
+                const first = numbers[0];
+                const consecutive = numbers.every((part, index) => part === first + index);
+                const label = task.isFullOnDay ? 'Full chapter' : numbers.length === 1
+                    ? `Part ${first} of ${task.totalParts}`
+                    : `Parts ${consecutive ? `${first}–${numbers.at(-1)}` : numbers.join(', ')} of ${task.totalParts}`;
+                const topics = [...new Set(task.blockParts.map(getTopicDescription))];
+                const progress = !task.completed && task.completeParts ? ` (${task.completeParts}/${numbers.length} topics done)` : '';
+                return `${label}${progress}: ${topics.join(' · ')}`;
+            }
             const p = task.part || 1;
             const total = task.totalParts || 1;
             
-            // Extract the descriptive text after any "Part X of Y:" or "Part X/Y:"
-            let desc = task.topicTitle || '';
-            desc = desc.replace(/^Part\s+\d+\s*(?:of|\/)\s*\d+(?:\s*\([^)]*\))?:\s*/i, '');
-            desc = desc.replace(/^Full\s+Chapter(?:\s*Concepts\s*&\s*Key\s*Problems)?:\s*/i, '');
-            if (!desc) {
-                desc = (p === total || p > 1) ? 'Exercise Problems & PYQs' : 'Core Concepts & Theory';
-            }
+            const desc = getTopicDescription(task);
 
             // Tight timetable: all parts on same day — show "Full:" prefix for both cards
             if (task.isFullOnDay) {
@@ -4584,6 +4641,27 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 return `Part ${p}/${total} (Full Chapter): ${desc}`;
             }
             return `Part ${p}/${total}: ${desc}`;
+        }
+
+        function getTopicDescription(task) {
+            // Extract the descriptive text after any "Part X of Y:" or "Part X/Y:"
+            let desc = task.topicTitle || '';
+            desc = desc.replace(/^Part\s+\d+\s*(?:of|\/)\s*\d+(?:\s*\([^)]*\))?:\s*/i, '');
+            desc = desc.replace(/^Full\s+Chapter(?:\s*Concepts\s*&\s*Key\s*Problems)?:\s*/i, '');
+            if (!desc) {
+                desc = ((task.part || 1) >= (task.totalParts || 1) || task.part > 1) ? 'Exercise Problems & PYQs' : 'Core Concepts & Theory';
+            }
+            return desc;
+        }
+
+        function renderStudyCapacityNotice(isML) {
+            const diagnostics = appState.diagnostics;
+            if (!diagnostics?.isInfeasible) return '';
+            const count = diagnostics.unscheduledChapterCount;
+            const message = isML
+                ? (count ? `അവസാന തീയതിക്കുമുമ്പ് ${count} അധ്യായങ്ങളിലെ മുഴുവൻ ഭാഗങ്ങളും ഉൾപ്പെടുത്താനായില്ല. പഠനസമയം, അവസാന തീയതി, അല്ലെങ്കിൽ സിലബസ് ക്രമീകരിക്കുക.` : 'പഠന സമയം അല്ലെങ്കിൽ അവസാന തീയതി ക്രമീകരിക്കുക.')
+                : (diagnostics.warningMessage || 'This plan needs more study time. Adjust your study hours or target date.');
+            return `<p class="daily-advisory" role="status">${escapeStudyText(message)}</p>`;
         }
 
         function renderTaskGradeBadge(task) {
@@ -4635,7 +4713,8 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
 
         function getOverallStats() {
             if (!appState || !appState.plan) return { percentage: 0, completedCount: 0, totalCount: 0 };
-            let total = 0;
+            const unscheduled = appState.diagnostics?.unscheduledTaskIds?.length || 0;
+            let total = unscheduled;
             let done = 0;
             appState.plan.forEach(d => {
                 d.tasks.forEach(t => {
@@ -4643,7 +4722,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                     if (t.completed) done++;
                 });
             });
-            const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+            const pct = total > 0 ? Math.min(done === total ? 100 : 99, Math.round((done / total) * 100)) : 0;
             return { percentage: pct, completedCount: done, totalCount: total };
         }
 
@@ -4673,9 +4752,9 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 const activeDayNum = typeof getActiveMissionDayNumber === 'function' ? getActiveMissionDayNumber() : 1;
                 const todayPlan = appState.plan.find(d => d.dayNumber === activeDayNum) || appState.plan.find(d => d.date === localToday);
                 if (todayPlan) {
-                    const doneToday = todayPlan.tasks.filter(t => t.completed).length;
-                    const totalToday = todayPlan.tasks.length;
-                    todayOverviewP.textContent = `${doneToday} / ${totalToday} ${isML ? 'പൂർത്തിയായി' : 'tasks complete'}`;
+                    const blocks = displayStudyBlocks(todayPlan.tasks);
+                    const doneToday = blocks.filter(t => t.completed).length;
+                    todayOverviewP.textContent = `${doneToday} / ${blocks.length} ${isML ? 'പൂർത്തിയായി' : 'blocks complete'}`;
                 }
             }
         }
@@ -4909,7 +4988,9 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
             setText('regenerate-modal-title', isML ? ML_I18N.regenerateModal.title : 'Adjust & Rebalance Plan');
             setText('regenerate-modal-subtitle', isML ? ML_I18N.regenerateModal.subtitle : "Missed some days or fell behind? Don't stress. Select the last day you fully finished, and our intelligent pacing algorithm will recalculate and redistribute only the remaining unfinished syllabus evenly across your available time.");
             setText('regenerate-completed-label', isML ? ML_I18N.regenerateModal.completedUpTo : 'I have completed up to:');
-            setText('regenerate-revision-note', isML ? ML_I18N.regenerateModal.guaranteedRevision : 'Guaranteed Revision Days: Your target deadline will still maintain dedicated revision buffer days at the end!');
+            setText('regenerate-revision-note', isML ? 'സിലബസ് പൂർത്തിയാക്കാൻ സമയം മതിയെങ്കിൽ റിവിഷൻ ദിനങ്ങൾ മാറ്റിവയ്ക്കും.' : 'The plan reserves revision days when there is enough time to cover the syllabus.');
+            setText('rebalance-hours-label', isML ? 'ദിവസേന പഠന മണിക്കൂർ' : 'Study hours per day');
+            setText('rebalance-deadline-label', isML ? 'അവസാന തീയതി' : 'Target date');
             setText('regenerate-undo-reset-btn-text', isML ? '↺ റീസെറ്റ് ചെയ്ത പ്ലാൻ തിരിച്ചെടുക്കുക' : '↺ Undo Recent Reset / Restore Plan');
             setText('regenerate-cancel-btn', isML ? ML_I18N.regenerateModal.cancelBtn : 'Cancel');
             setText('regenerate-confirm-btn', isML ? ML_I18N.regenerateModal.rebalanceBtn : 'Rebalance Now');
