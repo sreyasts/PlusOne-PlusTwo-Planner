@@ -82,12 +82,6 @@ const escapeStudyText = value => String(value ?? '').replace(/[&<>"']/g,
   character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character]);
 
 
-function getTaskResourceBadge(task) {
-    if (!task) return '';
-    const mins = task.estimatedMinutes || 60;
-    return `<span class="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700">⏱️ ${mins}m</span>`;
-}
-
 function getTaskDeepLinksHtml(task) {
     if (!task || (task.isRevision && !task.isSpacedRetrieval && !task.isExamEveTask)) return '';
     const handbookUrl = getHandbookUrl(task, appState);
@@ -2997,6 +2991,9 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
 
         function openRegenerateModal() {
             if (!appState || !appState.plan) return;
+            const modal = document.getElementById('regenerate-modal');
+            if (!modal || modal.classList.contains?.('flex')) return;
+            modal.restoreFocusTo = document.activeElement;
 
             const hoursInput = document.getElementById('rebalance-hours');
             const targetInput = document.getElementById('rebalance-deadline');
@@ -3012,7 +3009,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
             const summaryBadge = document.getElementById('auto-detect-summary-badge');
             if (summaryBadge) {
                 const isML = typeof getAppLanguage === 'function' && getAppLanguage() === 'ml';
-                summaryBadge.textContent = `${detection.totalCompletedTasks} ${isML ? 'പൂർത്തിയായി' : 'Done'}`;
+                summaryBadge.textContent = `${detection.totalCompletedTasks} ${isML ? 'പൂർത്തിയായി' : 'checked'}`;
             }
 
             const select = document.getElementById('completed-day-select');
@@ -3096,8 +3093,30 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 }
             }
 
-            document.getElementById('regenerate-modal').classList.remove('hidden');
-            document.getElementById('regenerate-modal').classList.add('flex');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            modal.querySelectorAll?.('details[open]').forEach(details => { details.open = false; });
+            const body = modal.querySelector?.('.rebalance-body');
+            if (body) body.scrollTop = 0;
+            modal.querySelector?.('[data-rebalance-close]')?.focus?.();
+            modal.onkeydown = event => {
+                if (event.key === 'Escape') {
+                    event.preventDefault();
+                    closeRegenerateModal();
+                } else if (event.key === 'Tab') {
+                    const controls = [...modal.querySelectorAll('button:not(:disabled), input:not(:disabled), select:not(:disabled), summary')]
+                        .filter(control => control.getClientRects().length > 0);
+                    const first = controls[0];
+                    const last = controls.at(-1);
+                    if (event.shiftKey && document.activeElement === first) {
+                        event.preventDefault();
+                        last?.focus();
+                    } else if (!event.shiftKey && document.activeElement === last) {
+                        event.preventDefault();
+                        first?.focus();
+                    }
+                }
+            };
         }
 
         function closeRegenerateModal() {
@@ -3105,6 +3124,9 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
             if (!modal) return;
             modal.classList.add('hidden');
             modal.classList.remove('flex');
+            modal.onkeydown = null;
+            if (modal.restoreFocusTo?.isConnected) modal.restoreFocusTo.focus({ preventScroll: true });
+            modal.restoreFocusTo = null;
         }
 
         function getRebalanceSettings() {
@@ -4040,7 +4062,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 const overdueDays = daily.overdueDays.map(day => ({ ...day, tasks: displayStudyBlocks(day.tasks) }));
                 const overdueCount = overdueDays.reduce((count, day) => count + day.tasks.length, 0);
                 const completedCount = tasks.filter(task => task.completed).length;
-                const orderedTasks = [...tasks.filter(task => !task.completed), ...tasks.filter(task => task.completed)];
+                const plannedMinutes = tasks.reduce((total, task) => total + (task.estimatedMinutes || 0), 0);
                 const hasFutureTasks = appState.plan.some(d => d.date > localToday && d.tasks.some(t => !t.completed));
                 const todayTasksHTML = tasks.length ? `
                     ${todayPlan.isExamEve ? `<p class="daily-advisory">${isML ? 'നാളത്തെ പരീക്ഷ' : 'Exam tomorrow'}: ${escapeStudyText(todayPlan.exclusiveSubject)}</p>` : ''}
@@ -4062,21 +4084,34 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                             </div>
                         </div>` : ''}
                     <ol class="daily-tasks" aria-label="${isML ? 'ഇന്നത്തെ പഠനം' : 'Today’s timetable'}">
-                        ${orderedTasks.map(task => {
+                        ${tasks.map(task => {
                             const key = encodeURIComponent(String(task.id));
                             const handbookUrl = getHandbookUrl(task, appState);
+                            const scope = getStudyBlockScope(task, isML);
+                            const topics = task.blockParts ? [...new Set(task.blockParts.map(getTopicDescription))] : [];
                             return `<li class="daily-task ${task.completed ? 'is-complete' : ''}">
                                 <div class="daily-task-content">
-                                    <div class="daily-task-meta"><span>${escapeStudyText(task.subject)}</span>${task.estimatedMinutes ? `<span>${escapeStudyText(task.estimatedMinutes)} min</span>` : ''}${task.completed ? `<span class="daily-done-label">${isML ? 'പൂർത്തിയായി' : 'Completed'}</span>` : ''}</div>
+                                    <div class="daily-task-meta">
+                                        <span>${escapeStudyText(task.subject)}</span>
+                                        ${scope ? `<span class="daily-scope">${escapeStudyText(scope)}</span>` : ''}
+                                        ${task.estimatedMinutes ? `<span class="daily-duration">${escapeStudyText(task.estimatedMinutes)} min</span>` : ''}
+                                    </div>
                                     <h3 id="task-${key}">${escapeStudyText(getTaskChapterTitle(task))}</h3>
-                                    <p class="daily-topic">${escapeStudyText(formatTaskTopicTitle(task))}</p>
-                                    ${handbookUrl ? `<div class="daily-task-actions"><a href="${handbookUrl}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" class="daily-notes-btn" title="${isML ? 'ഹാൻഡ്ബുക്ക് / നോട്ട്സ് കാണുക' : 'Open chapter study notes (PDF)'}">📖 Notes</a></div>` : ''}
-                                    <details id="resources-${key}" class="daily-resources" ${openSections.has('resources-' + key) ? 'open' : ''}>
-                                        <summary>${isML ? 'പഠന സഹായികൾ' : 'Study resources'}</summary>
-                                        <div><button type="button" data-study-tutor="${escapeStudyText(task.id)}">${isML ? 'AI പഠന സഹായി' : 'AI study tutor'}</button></div>
-                                    </details>
+                                    ${topics.length > 1
+                                        ? `<ul class="daily-topic daily-topic-list">${topics.map(topic => `<li>${escapeStudyText(topic)}</li>`).join('')}</ul>`
+                                        : `<p class="daily-topic">${escapeStudyText(topics[0] || formatTaskTopicTitle(task))}</p>`}
+                                    ${!task.completed && task.completeParts ? `<p class="daily-part-progress">${task.completeParts}/${task.blockParts.length} ${isML ? 'വിഷയങ്ങൾ പൂർത്തിയായി' : 'topics complete'}</p>` : ''}
                                 </div>
-                                <button type="button" class="daily-toggle" data-study-task="${escapeStudyText(task.id)}" aria-pressed="${!!task.completed}" aria-describedby="task-${key}">${task.completed ? (isML ? 'തിരിച്ചെടുക്കുക' : 'Undo') : (isML ? 'പൂർത്തിയായി' : 'Mark done')}</button>
+                                <div class="daily-task-footer">
+                                    <div class="daily-task-tools">
+                                        ${handbookUrl ? `<a href="${handbookUrl}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" class="daily-notes-btn" title="${isML ? 'ഹാൻഡ്ബുക്ക് / നോട്ട്സ് കാണുക' : 'Open chapter study notes (PDF)'}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6v14m0-14C9 4 5 4 3 5v14c3-1 6-1 9 1m0-14c3-2 7-2 9-1v14c-3-1-6-1-9 1"/></svg>${isML ? 'നോട്ട്സ്' : 'Notes'}</a>` : ''}
+                                        <details id="resources-${key}" class="daily-resources" ${openSections.has('resources-' + key) ? 'open' : ''}>
+                                            <summary>${isML ? 'പഠന സഹായികൾ' : 'Resources'}</summary>
+                                            <div><button type="button" data-study-tutor="${escapeStudyText(task.id)}">${isML ? 'AI പഠന സഹായി' : 'AI study tutor'}</button></div>
+                                        </details>
+                                    </div>
+                                    <button type="button" class="daily-toggle" data-study-task="${escapeStudyText(task.id)}" aria-pressed="${!!task.completed}" aria-describedby="task-${key}">${task.completed ? (isML ? 'തിരിച്ചെടുക്കുക' : 'Undo') : (isML ? 'പൂർത്തിയായി' : 'Mark done')}</button>
+                                </div>
                             </li>`;
                         }).join('')}
                     </ol>
@@ -4098,14 +4133,17 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                     <section id="today-overview" class="study-overview" aria-labelledby="today-heading">
                         <div>
                             <h2 id="today-heading">${isML ? 'ഇന്നത്തെ പഠനം' : "Today's study"}</h2>
-                            <p>${completedCount} / ${tasks.length} ${isML ? 'പൂർത്തിയായി' : 'blocks complete'}</p>
+                            <time class="study-date" datetime="${localToday}">${localToday}</time>
                         </div>
                         <button type="button" onclick="openRegenerateModal()" class="study-adjust">${isML ? 'പ്ലാൻ ക്രമീകരിക്കുക' : 'Adjust plan'}</button>
+                        ${tasks.length ? `<div class="study-progress">
+                            <div><span id="today-progress-caption">${completedCount} / ${tasks.length} ${isML ? 'പൂർത്തിയായി' : 'blocks complete'}</span>${plannedMinutes ? `<span>${plannedMinutes} ${isML ? 'മിനിറ്റ്' : 'min planned'}</span>` : ''}</div>
+                            <progress id="today-block-progress" max="${tasks.length}" value="${completedCount}" aria-labelledby="today-progress-caption"></progress>
+                        </div>` : ''}
                     </section>
 
                     ${typeof renderDashboardRestoreBanner === 'function' ? renderDashboardRestoreBanner() : ''}
 
-                    <p class="study-date">${localToday}</p>
                     ${renderStudyCapacityNotice(isML)}
                     ${overdueCount ? `
                         <p class="pending-notice" role="status" onclick="openPendingWork(event)">
@@ -4147,7 +4185,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                     ` : ''}
                     ${tomorrowPlan ? `
                         <details id="tomorrow-preview" class="study-tomorrow" ${openSections.has('tomorrow-preview') ? 'open' : ''}>
-                            <summary>${isML ? 'നാളെ' : 'Tomorrow'} · ${tomorrowPlan.date} · ${tomorrowBlocks.length} ${isML ? 'പഠന ഭാഗങ്ങൾ' : 'study blocks'}</summary>
+                            <summary>${isML ? 'നാളെ' : 'Tomorrow'} · ${tomorrowPlan.date} · ${tomorrowBlocks.length} ${isML ? 'പഠന ഭാഗങ്ങൾ' : tomorrowBlocks.length === 1 ? 'study block' : 'study blocks'}</summary>
                             ${tomorrowBlocks.length ? `<ul>${tomorrowBlocks.map(task => `<li><strong>${escapeStudyText(task.subject)}</strong> — ${escapeStudyText(getTaskChapterTitle(task))}<p>${escapeStudyText(formatTaskTopicTitle(task))}</p></li>`).join('')}</ul>` : `<p>${isML ? 'വിശ്രമ ദിവസം' : 'Rest day — no study tasks scheduled.'}</p>`}
                         </details>
                     ` : ''}
@@ -4188,7 +4226,15 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                     button.addEventListener('click', () => toggleTaskDirect(button.dataset.pendingTask, true));
                 });
                 container.querySelectorAll('[data-study-task]').forEach(button => {
-                    button.addEventListener('click', () => toggleTaskDirect(button.dataset.studyTask, true));
+                    button.addEventListener('click', () => {
+                        const id = button.dataset.studyTask;
+                        const hadFocus = document.activeElement === button;
+                        toggleTaskDirect(id, true);
+                        if (hadFocus && !button.isConnected) {
+                            const updated = [...container.querySelectorAll('[data-study-task]')].find(control => control.dataset.studyTask === id);
+                            updated?.focus({ preventScroll: true });
+                        }
+                    });
                 });
                 container.querySelectorAll('[data-study-tutor]').forEach(button => {
                     button.addEventListener('click', () => openAiTutorModal(button.dataset.studyTutor));
@@ -4233,7 +4279,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
 
                             <div class="p-3 sm:p-4 divide-y divide-slate-100 dark:divide-slate-800">
                                 ${displayedTasks.length === 0 ? (day.isRestDay ? `<p class="text-xs text-emerald-700 font-semibold py-1.5 flex items-center gap-2"><i class="fa-solid fa-mug-hot text-emerald-600"></i><span>${isML ? ML_I18N.plan.restDayNotice : 'Personalized Rest & Recharge Day (0 new chapters)'}</span></p>` : `<p class="text-xs text-slate-400 italic py-1">${isML ? 'ഫ്രീ / ബഫർ ദിനം' : 'Free / Buffer Day'}</p>`) : ''}
-                                ${displayedTasks.map((task, taskIdx) => {
+                                ${displayedTasks.map(task => {
                                     const badgeColor = getSubjectColorBadge(task.subject);
                                     const taskIdSafe = escapeStudyText(task.id);
                                     return `
@@ -4247,14 +4293,13 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                                             <div class="flex-1 cursor-pointer" onclick="toggleTaskDirect('${taskIdSafe}', true)">
                                                 <div class="flex flex-wrap items-center gap-1.5 mb-1">
                                                     <span class="text-xs font-bold px-1.5 py-0.5 rounded ${badgeColor}">${task.subject}</span>
-                                                    ${renderTaskDailySlotBadge(taskIdx, displayedTasks.length, isML)}
                                                     ${task.isFocusSubject ? '<span class="text-xs font-black px-1.5 py-0.5 rounded bg-rose-100 text-rose-800 border border-rose-200">🎯 FOCUS</span>' : ''}
                                                     ${renderTaskGradeBadge(task)}
                                                     ${task.estimatedMinutes ? `<span class="text-xs text-slate-500 dark:text-slate-400">${escapeStudyText(task.estimatedMinutes)} min</span>` : ''}
-                                                    ${getTaskResourceBadge(task)}
                                                 </div>
                                                 <div class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 task-text-content ${task.completed ? 'line-through opacity-50' : ''}">
-                                                    ${escapeStudyText(getTaskChapterTitle(task))} - <span class="task-block-topic font-normal text-slate-500 dark:text-slate-400">${escapeStudyText(formatTaskTopicTitle(task))}</span>
+                                                    ${escapeStudyText(getTaskChapterTitle(task))}
+                                                    <div class="task-block-topic font-normal text-slate-600 dark:text-slate-400 mt-1">${escapeStudyText(formatTaskTopicTitle(task))}</div>
                                                 </div>
                                                 ${getTaskDeepLinksHtml(task)}
                                             </div>
@@ -4610,16 +4655,23 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
             return cleanName || rawName;
         }
 
+        function getStudyBlockScope(task, isML = false) {
+            if (!task.blockParts) return '';
+            const numbers = task.partNumbers;
+            if (task.isFullOnDay) return isML ? 'മുഴുവൻ അധ്യായം' : 'Full chapter';
+            const first = numbers[0];
+            const consecutive = numbers.every((part, index) => part === first + index);
+            const selection = numbers.length === 1 ? first : consecutive ? `${first}–${numbers.at(-1)}` : numbers.join(', ');
+            if (isML) return `${task.totalParts} ഭാഗങ്ങളിൽ ${selection}`;
+            return `${numbers.length === 1 ? 'Part' : 'Parts'} ${selection} of ${task.totalParts}`;
+        }
+
         function formatTaskTopicTitle(task) {
             if (!task) return '';
             if (task.isRevision) return task.topicTitle || '';
             if (task.blockParts) {
                 const numbers = task.partNumbers;
-                const first = numbers[0];
-                const consecutive = numbers.every((part, index) => part === first + index);
-                const label = task.isFullOnDay ? 'Full chapter' : numbers.length === 1
-                    ? `Part ${first} of ${task.totalParts}`
-                    : `Parts ${consecutive ? `${first}–${numbers.at(-1)}` : numbers.join(', ')} of ${task.totalParts}`;
+                const label = getStudyBlockScope(task);
                 const topics = [...new Set(task.blockParts.map(getTopicDescription))];
                 const progress = !task.completed && task.completeParts ? ` (${task.completeParts}/${numbers.length} topics done)` : '';
                 return `${label}${progress}: ${topics.join(' · ')}`;
@@ -4661,7 +4713,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
             const message = isML
                 ? (count ? `അവസാന തീയതിക്കുമുമ്പ് ${count} അധ്യായങ്ങളിലെ മുഴുവൻ ഭാഗങ്ങളും ഉൾപ്പെടുത്താനായില്ല. പഠനസമയം, അവസാന തീയതി, അല്ലെങ്കിൽ സിലബസ് ക്രമീകരിക്കുക.` : 'പഠന സമയം അല്ലെങ്കിൽ അവസാന തീയതി ക്രമീകരിക്കുക.')
                 : (diagnostics.warningMessage || 'This plan needs more study time. Adjust your study hours or target date.');
-            return `<p class="daily-advisory" role="status">${escapeStudyText(message)}</p>`;
+            return `<p class="daily-advisory study-capacity" role="status">${escapeStudyText(message)}</p>`;
         }
 
         function renderTaskGradeBadge(task) {
@@ -4706,11 +4758,6 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
             return `<span class="text-xs font-bold px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border border-slate-200/60 dark:border-slate-700/60">Part ${p}/${total}</span>`;
         }
 
-        function renderTaskDailySlotBadge(slotIndex, totalTasks, isML) {
-            if (!totalTasks || totalTasks <= 0) return '';
-            return `<span class="text-xs text-slate-500 dark:text-slate-400">${isML ? 'പഠന ഭാഗം' : 'Study block'} ${slotIndex + 1} / ${totalTasks}</span>`;
-        }
-
         function getOverallStats() {
             if (!appState || !appState.plan) return { percentage: 0, completedCount: 0, totalCount: 0 };
             const unscheduled = appState.diagnostics?.unscheduledTaskIds?.length || 0;
@@ -4746,7 +4793,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
             if (planProgressSummary) {
                 planProgressSummary.textContent = `${stats.percentage}% ${isML ? 'പൂർത്തിയായി' : 'Done'} (${stats.completedCount}/${stats.totalCount})`;
             }
-            const todayOverviewP = document.querySelector('#today-overview div p');
+            const todayOverviewP = document.getElementById('today-progress-caption');
             if (todayOverviewP && appState?.plan) {
                 const localToday = getLocalDateStr();
                 const activeDayNum = typeof getActiveMissionDayNumber === 'function' ? getActiveMissionDayNumber() : 1;
@@ -4755,6 +4802,8 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                     const blocks = displayStudyBlocks(todayPlan.tasks);
                     const doneToday = blocks.filter(t => t.completed).length;
                     todayOverviewP.textContent = `${doneToday} / ${blocks.length} ${isML ? 'പൂർത്തിയായി' : 'blocks complete'}`;
+                    const todayProgress = document.getElementById('today-block-progress');
+                    if (todayProgress) todayProgress.value = doneToday;
                 }
             }
         }
@@ -4981,19 +5030,20 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
             setText('settings-done-btn', isML ? ML_I18N.settingsModal.doneBtn : 'Done');
 
             // 7. Regenerate Modal Localization
-            setText('auto-detect-card-title', isML ? (ML_I18N.regenerateModal.autoDetectTitle || 'പൂർത്തിയായവ ഓട്ടോ-ഡിറ്റക്റ്റ് ചെയ്യുക') : 'Auto-Detect Completed Tasks');
-            setText('auto-detect-card-sub', isML ? (ML_I18N.regenerateModal.autoDetectSub || 'നിങ്ങൾ ടിക്ക് ചെയ്ത അധ്യായങ്ങളും ഭാഗങ്ങളും സ്വയം കണ്ടെത്തി നിലനിർത്തുകയും ബാക്കിയുള്ളവ പുതിയ ദിവസങ്ങളിലേക്ക് പുനഃക്രമീകരിക്കുകയും ചെയ്യുന്നു.') : 'Automatically scans all chapters and sections you have checked off, locks them as completed markers, and redistributes remaining portions starting today.');
-            setText('btn-auto-rebalance-label', isML ? (ML_I18N.regenerateModal.autoDetectBtn || 'ഓട്ടോ-ഡിറ്റക്റ്റ് & പുനഃക്രമീകരണം') : 'Auto-Detect & Rebalance Schedule');
-            setText('regenerate-or-manual-label', isML ? (ML_I18N.regenerateModal.orManual || 'അല്ലെങ്കിൽ ദിവസം നേരിട്ട് തിരഞ്ഞെടുക്കുക') : 'Or Select Day Manually');
-            setText('regenerate-modal-title', isML ? ML_I18N.regenerateModal.title : 'Adjust & Rebalance Plan');
-            setText('regenerate-modal-subtitle', isML ? ML_I18N.regenerateModal.subtitle : "Missed some days or fell behind? Don't stress. Select the last day you fully finished, and our intelligent pacing algorithm will recalculate and redistribute only the remaining unfinished syllabus evenly across your available time.");
-            setText('regenerate-completed-label', isML ? ML_I18N.regenerateModal.completedUpTo : 'I have completed up to:');
-            setText('regenerate-revision-note', isML ? 'സിലബസ് പൂർത്തിയാക്കാൻ സമയം മതിയെങ്കിൽ റിവിഷൻ ദിനങ്ങൾ മാറ്റിവയ്ക്കും.' : 'The plan reserves revision days when there is enough time to cover the syllabus.');
+            setText('auto-detect-card-title', isML ? ML_I18N.regenerateModal.autoDetectTitle : 'Keep your progress');
+            setText('auto-detect-card-sub', isML ? ML_I18N.regenerateModal.autoDetectSub : 'Your checked work carries over to the updated plan.');
+            setText('btn-auto-rebalance-label', isML ? ML_I18N.regenerateModal.autoDetectBtn : 'Update plan');
+            setText('regenerate-or-manual-label', isML ? ML_I18N.regenerateModal.orManual : 'Mark earlier days complete');
+            setText('regenerate-modal-title', isML ? ML_I18N.regenerateModal.title : 'Adjust study plan');
+            setText('regenerate-modal-subtitle', isML ? ML_I18N.regenerateModal.subtitle : 'Set your study time and target date. The planner will rebuild your remaining work.');
+            setText('regenerate-completed-label', isML ? ML_I18N.regenerateModal.completedUpTo : 'I’ve completed every block through');
+            setText('regenerate-revision-note', isML ? ML_I18N.regenerateModal.guaranteedRevision : 'The planner reserves revision days when there’s enough time.');
             setText('rebalance-hours-label', isML ? 'ദിവസേന പഠന മണിക്കൂർ' : 'Study hours per day');
             setText('rebalance-deadline-label', isML ? 'അവസാന തീയതി' : 'Target date');
-            setText('regenerate-undo-reset-btn-text', isML ? '↺ റീസെറ്റ് ചെയ്ത പ്ലാൻ തിരിച്ചെടുക്കുക' : '↺ Undo Recent Reset / Restore Plan');
+            setText('rebalance-tools-label', isML ? 'കൂടുതൽ പ്ലാൻ ഓപ്ഷനുകൾ' : 'More schedule tools');
+            setText('regenerate-undo-reset-btn-text', isML ? 'റീസെറ്റിന് മുമ്പുള്ള പ്ലാൻ തിരിച്ചെടുക്കുക' : 'Restore plan from before reset');
             setText('regenerate-cancel-btn', isML ? ML_I18N.regenerateModal.cancelBtn : 'Cancel');
-            setText('regenerate-confirm-btn', isML ? ML_I18N.regenerateModal.rebalanceBtn : 'Rebalance Now');
+            setText('regenerate-confirm-btn', isML ? ML_I18N.regenerateModal.rebalanceBtn : 'Update from selected day');
 
             // 8. Mobile Export & Share Sheet Localization
             setText('export-sheet-title', isML ? 'ടൈംടേബിൾ എക്സ്പോർട്ട് & ഷെയർ' : 'Export & Share Timetable');

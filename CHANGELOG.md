@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Plan up to three chapter blocks per day within the available study time. Study whole chapters together when the deadline is tight and spread larger chapters across days when there is room.
 - Show a single completion control per chapter block and flag syllabus work that could not fit. Change study hours or the target date in Adjust plan.
+- Make chapter scope, session length, and daily progress easier to scan, and keep Adjust plan controls reachable on small screens.
 
 ### Fixed
 - Restore +1 Improvement subject/date selection, accept improvement-only backups, and keep improvement-only regeneration and migration free of unrelated +2 lessons.

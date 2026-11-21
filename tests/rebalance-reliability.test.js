@@ -284,7 +284,7 @@ describe('Requirement R1, R2 & R3: Rebalancing Reliability, Auto-Detect & Curric
       openRegenerateModal();
 
       const badge = document.getElementById('auto-detect-summary-badge');
-      expect(badge.textContent).toContain(`${initialPlan[0].tasks.length} Done`);
+      expect(badge.textContent).toBe(`${initialPlan[0].tasks.length} checked`);
 
       const select = document.getElementById('completed-day-select');
       expect(select.options.length).toBeGreaterThan(0);

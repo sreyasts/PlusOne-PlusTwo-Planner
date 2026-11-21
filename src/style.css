@@ -3,25 +3,44 @@
 /* Keep setup focused; study navigation becomes useful once a plan exists. */
 body.is-setting-up #nav-desktop-tabs,
 body.is-setting-up #mobile-nav { display: none; }
-.study-overview { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 24px; }
-.study-overview h2 { font-size: 24px; font-weight: 750; color: #0f172a; }
-.study-overview p { font-size: 14px; color: #64748b; margin-top: 6px; }
+.study-overview { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 16px; margin-bottom: 20px; }
+.study-overview h2 { font-size: 26px; font-weight: 750; letter-spacing: -0.02em; line-height: 1.25; color: #0f172a; }
+.study-overview .study-date { display: block; margin: 4px 0 0; }
+.study-progress { grid-column: 1 / -1; font-size: 13px; color: #475569; font-variant-numeric: tabular-nums; }
+.study-progress > div { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 12px; margin-bottom: 8px; }
+#today-progress-caption { color: #0f172a; font-weight: 650; }
+.study-progress progress { display: block; appearance: none; inline-size: 100%; block-size: 5px; border: 0; border-radius: 8px; background: #dbe3ed; accent-color: #2563eb; }
+.study-progress progress::-webkit-progress-bar { background: #dbe3ed; border-radius: 8px; }
+.study-progress progress::-webkit-progress-value { background: #2563eb; border-radius: 8px; }
+.study-progress progress::-moz-progress-bar { background: #2563eb; border-radius: 8px; }
 .daily-board { border: 1px solid #dbe3ed; border-radius: 16px; background: #fff; margin-bottom: 20px; overflow: hidden; }
 .daily-tasks { list-style: none; padding: 0; margin: 0; }
-.daily-task { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; padding: 24px; border-top: 1px solid #e2e8f0; }
+.daily-task { display: grid; gap: 8px; padding: 16px 20px; border-top: 1px solid #e2e8f0; }
 .daily-task:first-child { border-top: 0; }
-.daily-task-content { flex: 1; min-width: 0; overflow-wrap: anywhere; }
-.daily-task-meta { display: flex; flex-wrap: wrap; gap: 12px; color: #64748b; font-size: 12px; margin-bottom: 8px; }
+.daily-task-content { min-width: 0; overflow-wrap: anywhere; }
+.daily-task-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; color: #475569; font-size: 12px; margin-bottom: 4px; }
 .daily-task-meta > span:first-child { color: #2563eb; font-weight: 700; }
-.daily-task h3 { font-size: 17px; line-height: 1.45; font-weight: 650; color: #0f172a; }
-.daily-topic { color: #475569; font-size: 14px; line-height: 1.65; margin-top: 4px; max-width: 65ch; }
+.daily-scope { border-inline-start: 1px solid #cbd5e1; padding-inline-start: 10px; }
+.daily-duration { margin-inline-start: auto; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.daily-task h3 { font-size: 17px; line-height: 1.4; font-weight: 700; color: #0f172a; }
+.daily-topic { color: #475569; font-size: 14px; line-height: 1.5; margin-top: 4px; max-width: 68ch; }
+.daily-topic-list { list-style: disc; padding-inline-start: 1.15em; }
+.daily-topic-list li + li { margin-top: 2px; }
+.daily-part-progress { font-size: 12px; color: #047857; margin-top: 4px; font-weight: 650; }
+.daily-task.is-complete { background: #f5f8fc; }
+.daily-task-footer, .daily-task-tools { display: flex; align-items: flex-start; flex-wrap: wrap; gap: 4px 8px; }
+.daily-task-footer { justify-content: space-between; }
+.daily-task-tools { flex: 1 1 auto; }
+.daily-task-footer .daily-toggle { margin-inline-start: auto; }
+.daily-task-tools .daily-notes-btn { padding: 0 8px; }
+.daily-task-tools .daily-notes-btn:hover { transform: none; }
+.daily-task-tools .daily-notes-btn svg { inline-size: 16px; block-size: 16px; }
 .daily-toggle { flex-shrink: 0; cursor: pointer; border: 1px solid #2563eb; background: #2563eb; color: #fff; padding: 10px 16px; min-height: 44px; border-radius: 10px; font-size: 13px; font-weight: 650; }
 .daily-toggle:hover { background: #1d4ed8; }
 .daily-toggle[aria-pressed="true"] { background: transparent; border-color: #cbd5e1; color: #475569; }
-.daily-done-label { color: #047857; font-weight: 650; }
-.daily-resources { margin-top: 14px; font-size: 13px; }
-.daily-resources summary { cursor: pointer; color: #64748b; width: fit-content; }
-.daily-resources > div { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 10px; }
+.daily-resources { font-size: 12px; }
+.daily-resources summary { cursor: pointer; color: #475569; width: fit-content; min-height: 44px; padding: 12px 6px; }
+.daily-resources > div { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .daily-resources button, .daily-empty button { cursor: pointer; color: #2563eb; text-decoration: underline; text-underline-offset: 3px; }
 .daily-resources a, .daily-resources button { padding: 6px 0; }
 /* Chapter Study Notes Buttons (Mission+1+2 Handbooks) */
@@ -91,15 +110,21 @@ body.is-setting-up #mobile-nav { display: none; }
 .daily-advisory { background: #fffbeb; color: #854d0e; border-bottom: 1px solid #fde68a; }
 .daily-empty h3 { font-size: 17px; font-weight: 650; }
 .daily-empty button { margin-top: 14px; }
-.daily-toggle:focus-visible, .daily-resources summary:focus-visible, .daily-resources button:focus-visible { outline: 3px solid #60a5fa; outline-offset: 3px; }
+.daily-toggle:focus-visible, .daily-resources summary:focus-visible, .daily-resources button:focus-visible { outline: 2px solid #2563eb; outline-offset: 2px; }
 html.dark .daily-board { background: #0e1422; border-color: #263247; }
 html.dark .daily-task { border-color: #263247; }
+html.dark .daily-task.is-complete { background: #121c2a; }
+html.dark .daily-scope { border-color: #475569; }
+html.dark :is(.daily-toggle, .daily-resources summary, .daily-resources button):focus-visible { outline-color: #60a5fa; }
 html.dark .daily-task h3 { color: #f1f5f9; }
 html.dark .daily-topic { color: #b5c0d0; }
 html.dark .daily-task-meta, html.dark .daily-resources summary { color: #94a3b8; }
 html.dark .daily-task-meta > span:first-child, html.dark .daily-resources button { color: #93c5fd; }
 html.dark .daily-toggle[aria-pressed="true"] { border-color: #475569; color: #cbd5e1; }
-html.dark .daily-done-label { color: #6ee7b7; }
+html.dark .daily-part-progress { color: #6ee7b7; }
+html.dark .study-progress { color: #cbd5e1; }
+html.dark #today-progress-caption { color: #f1f5f9; }
+html.dark .study-progress progress, html.dark .study-progress progress::-webkit-progress-bar { background: #334155; }
 html.dark .daily-finished { background: #102b25; color: #a7f3d0; border-color: #235447; }
 html.dark .daily-advisory { background: #292213; color: #fde68a; border-color: #785820; }
 html.dark .daily-notes-btn {
@@ -123,12 +148,11 @@ html.dark .syllabus-notes-btn:hover {
     border-color: rgba(96, 165, 250, 0.7);
 }
 @media (max-width: 600px) {
-    .daily-task { flex-direction: column; gap: 16px; padding: 20px; }
-    .daily-toggle { align-self: flex-start; }
+    .daily-task { padding: 14px 16px; }
     .daily-task h3 { font-size: 16px; }
 }
 .study-adjust, .study-back { padding: 10px 14px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 13px; font-weight: 650; cursor: pointer; white-space: nowrap; }
-.study-capacity { padding: 16px; border: 1px solid #cbd5e1; border-radius: 14px; }
+.study-capacity { margin-bottom: 16px; padding: 12px 16px; border: 1px solid #fde68a; border-radius: 12px; }
 .study-tools { border: 1px solid #cbd5e1; border-radius: 14px; padding: 20px; }
 .study-tools > summary { cursor: pointer; font-size: 14px; font-weight: 650; line-height: 1.5; overflow-wrap: anywhere; }
 .study-tools[open] > summary { margin-bottom: 20px; }
@@ -217,13 +241,94 @@ html.dark .pending-task button { color: #6ee7b7; }
 .study-adjust:focus-visible, .study-back:focus-visible,
 .study-tools > summary:focus-visible { outline: 3px solid #2563eb; outline-offset: 3px; }
 html.dark .study-overview h2 { color: #f1f5f9; }
-html.dark .study-overview p { color: #94a3b8; }
 html.dark .study-adjust, html.dark .study-back,
-html.dark .study-capacity, html.dark .study-tools { border-color: #334155; }
+html.dark .study-tools { border-color: #334155; }
 @media (max-width: 480px) {
     .study-overview { align-items: flex-start; }
     .study-overview h2 { font-size: 21px; }
     .study-adjust { min-height: 44px; padding: 9px 12px; font-size: 12px; display: inline-flex; align-items: center; justify-content: center; }
+}
+body:has(#regenerate-modal.flex) { overflow-y: hidden; }
+.rebalance-panel {
+    --rebalance-divider: #e2e8f0;
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100dvh - 24px);
+    overflow: hidden;
+}
+.rebalance-header, .rebalance-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 20px;
+}
+.rebalance-header { border-bottom: 1px solid var(--rebalance-divider); }
+.rebalance-header button { flex: 0 0 44px; }
+.rebalance-body {
+    display: grid;
+    gap: 16px;
+    min-height: 0;
+    padding: 16px 20px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+.rebalance-fields { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: 12px; }
+.rebalance-input {
+    display: block;
+    min-width: 0;
+    width: 100%;
+    min-height: 44px;
+    margin-top: 6px;
+    padding: 8px 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #f8fafc;
+    color: #0f172a;
+    font-size: 14px;
+    font-variant-numeric: tabular-nums;
+}
+.rebalance-progress-note {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+    border-block: 1px solid var(--rebalance-divider);
+    padding-block: 12px;
+}
+.rebalance-progress-note p + p { margin-top: 4px; }
+.rebalance-checked {
+    flex-shrink: 0;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: #eff6ff;
+    color: #1e40af;
+    font-size: 12px;
+    font-weight: 650;
+    font-variant-numeric: tabular-nums;
+}
+.rebalance-body .rebalance-disclosure + .rebalance-disclosure { margin-top: -16px; }
+.rebalance-disclosure summary { min-height: 44px; padding: 12px 0; cursor: pointer; font-size: 13px; font-weight: 650; }
+.rebalance-disclosure + .rebalance-disclosure { border-top: 1px solid var(--rebalance-divider); }
+.rebalance-disclosure-body { display: grid; gap: 8px; padding-bottom: 12px; }
+.rebalance-disclosure-body .rebalance-input { margin-top: 0; }
+.rebalance-disclosure-body button { min-height: 44px; }
+.rebalance-footer { justify-content: flex-end; border-top: 1px solid var(--rebalance-divider); }
+.rebalance-footer .daily-toggle { min-width: 128px; }
+.rebalance-panel :is(button, input, select, summary):focus-visible { outline: 2px solid #2563eb; outline-offset: 2px; }
+html.dark .rebalance-panel { --rebalance-divider: #263247; color-scheme: dark; }
+html.dark .rebalance-panel :is(button, input, select, summary):focus-visible { outline-color: #60a5fa; }
+html.dark .rebalance-input { border-color: #334155; background: #141e33; color: #f1f5f9; }
+html.dark .rebalance-input[type="date"]::-webkit-calendar-picker-indicator { filter: none; }
+html.dark .rebalance-checked { background: #1a2d4d; color: #bfdbfe; }
+@media (min-width: 640px) {
+    .rebalance-panel { max-height: calc(100dvh - 48px); }
+    .rebalance-header, .rebalance-footer { padding-inline: 24px; }
+    .rebalance-body { padding-inline: 24px; }
+}
+@media (max-width: 350px) {
+    .rebalance-header, .rebalance-footer, .rebalance-body { padding-inline: 16px; }
+    .rebalance-fields { grid-template-columns: minmax(0, 1fr); }
 }
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
@@ -587,7 +692,7 @@ html.dark .study-capacity, html.dark .study-tools { border-color: #334155; }
             background: linear-gradient(180deg, rgba(238, 242, 255, 0.5) 0%, #ffffff 50%, rgba(248, 250, 252, 0.5) 100%) !important;
             border-color: #e0e7ff !important;
         }
-        html:not(.dark) details {
+        html:not(.dark) details:not(.daily-resources, .rebalance-disclosure) {
             background-color: #ffffff !important;
             border-color: #e2e8f0 !important;
         }
@@ -1044,7 +1149,7 @@ html.dark .study-capacity, html.dark .study-tools { border-color: #334155; }
             background-color: rgba(245, 158, 11, 0.16) !important;
         }
         /* Details FAQ & Footer */
-        html.dark details {
+        html.dark details:not(.daily-resources, .rebalance-disclosure) {
             background-color: #0e1422 !important;
             border-color: #1e293b !important;
         }

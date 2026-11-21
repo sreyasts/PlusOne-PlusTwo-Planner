@@ -69,6 +69,7 @@ for (const width of [390, 1280]) {
 
     await page.evaluate(() => openRegenerateModal());
     await page.evaluate(() => continueAsGuest());
+    await page.locator('#rebalance-manual > summary').click();
     await page.locator('#completed-day-select').selectOption('0');
     await page.getByLabel('Study hours per day').fill('2');
     await page.getByLabel('Target date').fill('2027-01-20');

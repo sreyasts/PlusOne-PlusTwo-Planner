@@ -16,8 +16,8 @@ for (const completed of [false, true]) {
         const state = JSON.parse(localStorage.getItem('plusTwoMissionState_v2'));
         const task = state.plan.flatMap(day => day.tasks)[0];
         state.plan = [{ date: '2026-10-20', dayNumber: 1, tasks: [
-          { ...task, id: 'storage-probe', completed },
-          { ...task, id: 'storage-other', completed: false },
+          { ...task, id: 'storage-probe', part: 1, totalParts: 2, completed },
+          { ...task, id: 'storage-other', part: 2, totalParts: 2, completed },
         ] }];
         state.xp = 300;
         state.streakCount = 5;
@@ -52,7 +52,8 @@ for (const completed of [false, true]) {
       await control.click();
       await expect(control).toHaveAttribute('aria-pressed', String(!completed));
       const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('plusTwoMissionState_v2')));
-      expect(saved.xp).toBe(completed ? 200 : 400);
+      expect(saved.plan[0].tasks.map(task => task.completed)).toEqual([!completed, !completed]);
+      expect(saved.xp).toBe(completed ? 100 : 500);
       expect(saved.streakCount).toBe(completed ? 5 : 6);
       await page.reload();
       await expect(control).toHaveAttribute('aria-pressed', String(!completed));

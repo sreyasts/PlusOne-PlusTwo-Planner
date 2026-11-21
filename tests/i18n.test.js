@@ -149,7 +149,7 @@ describe('i18n Language & Browser Translation Auto-Detector', () => {
     expect(ML_STRINGS.settingsModal.title).toBe('ക്രമീകരണങ്ങൾ (Settings)');
     expect(ML_STRINGS.settingsModal.doneBtn).toBe('പൂർത്തിയായി');
     expect(ML_STRINGS.regenerateModal.title).toBe('പ്ലാൻ പുനഃക്രമീകരിക്കുക');
-    expect(ML_STRINGS.regenerateModal.rebalanceBtn).toBe('പുനഃക്രമീകരിക്കുക');
+    expect(ML_STRINGS.regenerateModal.rebalanceBtn).toBe('തിരഞ്ഞെടുത്ത ദിവസം മുതൽ പുതുക്കുക');
   });
 });
 

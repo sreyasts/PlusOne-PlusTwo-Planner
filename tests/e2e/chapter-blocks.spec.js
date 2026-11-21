@@ -26,11 +26,14 @@ test('shows one row per chapter and saves the whole block across views and reloa
 
   const today = page.locator('#today-tasks');
   await expect(today.locator('.daily-task')).toHaveCount(3);
-  await expect(today.locator('.daily-task').first()).toContainText('Full chapter: Concepts · Practice');
+  await expect(today.locator('.daily-task').first().locator('.daily-scope')).toHaveText('Full chapter');
+  await expect(today.locator('.daily-task').first().locator('.daily-topic-list li')).toHaveText(['Concepts', 'Practice']);
   await expect(today.locator('.daily-task').first()).toContainText('60 min');
   await expect(page.getByRole('status').filter({ hasText: '1 syllabus chapter' })).toBeVisible();
   await today.getByRole('button', { name: 'Mark done' }).first().click();
   await expect(page.locator('#today-overview')).toContainText('1 / 3');
+  await expect(page.locator('#today-block-progress')).toHaveJSProperty('value', 1);
+  await expect(today.getByRole('button', { name: 'Undo' })).toBeFocused();
 
   await page.reload();
   await expect(today.getByRole('button', { name: 'Undo' })).toHaveCount(1);
@@ -43,4 +46,30 @@ test('shows one row per chapter and saves the whole block across views and reloa
   await expect(completed).toHaveCount(0);
   const doneParts = await page.evaluate(() => JSON.parse(localStorage.getItem('plusTwoMissionState_v2')).plan[0].tasks.filter(task => task.completed));
   expect(doneParts).toHaveLength(0);
+});
+
+test('keeps the update action visible and contains keyboard focus on a short phone', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 568 });
+  await page.clock.install({ time: new Date('2026-11-20T12:00:00+05:30') });
+  await page.goto('/');
+  await page.locator('#setup-step-pill-4').click();
+  await page.getByRole('button', { name: 'Start Day 1', exact: true }).click();
+  const trigger = page.getByRole('button', { name: 'Adjust plan', exact: true });
+  await expect(trigger).toBeVisible({ timeout: 20000 });
+  await trigger.click();
+  const dialog = page.getByRole('dialog', { name: 'Adjust study plan' });
+  const close = dialog.getByRole('button', { name: 'Close', exact: true });
+  const update = dialog.getByRole('button', { name: 'Update plan', exact: true });
+  await expect(close).toBeFocused();
+  await expect(update).toBeInViewport({ ratio: 1 });
+  await page.keyboard.press('Shift+Tab');
+  await expect(update).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(close).toBeFocused();
+  await dialog.locator('#rebalance-manual > summary').click();
+  await expect(dialog.getByLabel('I’ve completed every block through')).toBeVisible();
+  await expect(update).toBeInViewport({ ratio: 1 });
+  await page.keyboard.press('Escape');
+  await expect(dialog).toBeHidden();
+  await expect(trigger).toBeFocused();
 });

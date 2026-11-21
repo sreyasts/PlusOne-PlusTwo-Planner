@@ -1083,87 +1083,62 @@
     </div>
 
     <!-- Rebalance / Adjust Schedule Modal -->
-    <div id="regenerate-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 px-4">
-        <div class="bg-white dark:bg-[#0e1526] rounded-3xl shadow-2xl max-w-md w-full p-6 sm:p-7 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 animate-fade-in-up">
-            <div class="flex justify-between items-center mb-3">
-                <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold">
-                        <svg class="w-4 h-4 inline-block text-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><polyline points="21 3 21 8 16 8"/></svg>
-                    </div>
-                    <h3 id="regenerate-modal-title" class="text-lg font-bold text-slate-900 dark:text-white">Adjust & Rebalance Plan</h3>
-                </div>
-                <button onclick="closeRegenerateModal()" class="w-11 h-11 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 flex items-center justify-center transition active:scale-95" title="Close" aria-label="Close">
-                    <svg class="w-4 h-4 inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    <div id="regenerate-modal" class="fixed inset-0 bg-slate-900/60 hidden items-center justify-center z-50 p-3 sm:p-6" role="dialog" aria-modal="true" aria-labelledby="regenerate-modal-title" aria-describedby="regenerate-modal-subtitle" onclick="if(event.target === this) closeRegenerateModal()">
+        <div class="rebalance-panel bg-white dark:bg-[#0e1526] rounded-2xl max-w-lg w-full text-slate-900 dark:text-slate-100">
+            <div class="rebalance-header">
+                <h3 id="regenerate-modal-title" class="text-xl font-bold text-slate-900 dark:text-white">Adjust study plan</h3>
+                <button type="button" onclick="closeRegenerateModal()" class="w-11 h-11 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center cursor-pointer" aria-label="Close" data-rebalance-close>
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
                 </button>
             </div>
-            
-            <p id="regenerate-modal-subtitle" class="text-xs text-slate-600 dark:text-slate-300 mb-5 leading-relaxed">
-                Missed some days or fell behind? Don't stress. Select the last day you fully finished, and our intelligent pacing algorithm will recalculate and redistribute only the remaining unfinished syllabus evenly across your available time.
-            </p>
-            
-            <div class="space-y-4 mb-6">
-                <div class="grid grid-cols-2 gap-3">
+            <div class="rebalance-body">
+                <p id="regenerate-modal-subtitle" class="text-sm text-slate-600 dark:text-slate-300">Set your study time and target date. The planner will rebuild your remaining work.</p>
+                <div class="rebalance-fields">
                     <label class="block text-xs font-bold text-slate-700 dark:text-slate-200">
                         <span id="rebalance-hours-label">Study hours per day</span>
-                        <input id="rebalance-hours" type="number" min="0.5" max="16" step="0.25" class="block w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-[#141e33] p-2 mt-1">
+                        <input id="rebalance-hours" type="number" min="0.5" max="16" step="0.25" class="rebalance-input">
                     </label>
                     <label class="block text-xs font-bold text-slate-700 dark:text-slate-200">
                         <span id="rebalance-deadline-label">Target date</span>
-                        <input id="rebalance-deadline" type="date" class="block w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-[#141e33] p-2 mt-1">
+                        <input id="rebalance-deadline" type="date" class="rebalance-input">
                     </label>
                 </div>
-                <!-- Auto-Detect & Rebalance Section -->
-                <div id="auto-detect-card" class="p-4 rounded-2xl border border-blue-200 dark:border-blue-800/80 bg-blue-50/80 dark:bg-blue-950/40">
-                    <div class="flex items-center justify-between gap-2 mb-2">
-                        <div class="flex items-center gap-2">
-                            <div class="w-7 h-7 rounded-lg bg-blue-600 text-white flex items-center justify-center text-xs font-bold shadow-xs">
-                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
-                            </div>
-                            <span id="auto-detect-card-title" class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">Auto-Detect Completed Tasks</span>
-                        </div>
-                        <span id="auto-detect-summary-badge" class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/70 dark:text-blue-200 border border-blue-300 dark:border-blue-700">
-                            0 Done
-                        </span>
+
+                <div id="auto-detect-card" class="rebalance-progress-note">
+                    <div>
+                        <p id="auto-detect-card-title" class="text-sm font-bold">Keep your progress</p>
+                        <p id="auto-detect-card-sub" class="text-xs text-slate-600 dark:text-slate-300">Your checked work carries over to the updated plan.</p>
                     </div>
-                    <p id="auto-detect-card-sub" class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-3">
-                        Automatically scans all chapters and sections you have checked off, locks them as completed markers, and redistributes remaining portions starting today.
-                    </p>
-                    <button type="button" id="btn-auto-rebalance" onclick="autoDetectAndRebalance()" class="w-full py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-extrabold transition flex items-center justify-center gap-2 shadow-md shadow-blue-500/25 cursor-pointer active:scale-98">
-                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><polyline points="21 3 21 8 16 8"/></svg>
-                        <span id="btn-auto-rebalance-label">Auto-Detect & Rebalance Schedule</span>
-                    </button>
+                    <span id="auto-detect-summary-badge" class="rebalance-checked">0 checked</span>
                 </div>
 
-                <div class="relative flex items-center justify-center my-2">
-                    <div class="border-t border-slate-200 dark:border-slate-800 w-full"></div>
-                    <span id="regenerate-or-manual-label" class="bg-white dark:bg-[#0e1526] px-2 text-[10px] font-bold uppercase tracking-wider text-slate-400 shrink-0">Or Select Day Manually</span>
-                </div>
+                <p id="regenerate-revision-note" class="text-xs text-slate-600 dark:text-slate-300">The planner reserves revision days when there’s enough time.</p>
 
-                <div>
-                    <label id="regenerate-completed-label" class="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1.5 uppercase tracking-wider">I have completed up to:</label>
-                    <select id="completed-day-select" class="w-full border-2 border-slate-200 dark:border-slate-700 rounded-xl p-3 text-sm focus:border-blue-500 dark:focus:border-blue-400 focus:ring-4 focus:ring-blue-50 dark:focus:ring-blue-900/40 outline-none transition font-semibold text-slate-800 dark:text-slate-100 bg-slate-50 dark:bg-[#141e33]">
-                        <!-- Populated by JS -->
-                    </select>
-                </div>
+                <details id="rebalance-manual" class="rebalance-disclosure">
+                    <summary id="regenerate-or-manual-label">Mark earlier days complete</summary>
+                    <div class="rebalance-disclosure-body">
+                        <label for="completed-day-select" id="regenerate-completed-label" class="block text-sm font-semibold">I’ve completed every block through</label>
+                        <select id="completed-day-select" class="rebalance-input"></select>
+                        <button type="button" id="regenerate-confirm-btn" onclick="executeRegeneration()" class="study-adjust">Update from selected day</button>
+                    </div>
+                </details>
 
-                <div class="bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800/80 rounded-xl p-3 text-xs text-blue-900 dark:text-blue-200">
-                    <svg class="w-4 h-4 inline-block text-blue-600 dark:text-blue-400 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                    <span id="regenerate-revision-note">The plan reserves revision days when there is enough time to cover the syllabus.</span>
-                </div>
-                <div class="pt-2 border-t border-slate-100 dark:border-slate-800 space-y-2">
+                <details class="rebalance-disclosure">
+                    <summary id="rebalance-tools-label">More schedule tools</summary>
+                    <div class="rebalance-disclosure-body">
                     <button type="button" onclick="compactPlanToToday()" class="w-full py-2.5 px-3 rounded-xl border border-amber-300 dark:border-amber-600/70 bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/40 dark:hover:bg-amber-900/50 text-amber-900 dark:text-amber-200 text-xs font-bold transition flex items-center justify-center gap-2 shadow-xs cursor-pointer">
                         <svg class="w-4 h-4 text-amber-600 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                        <span>Finished Early? Fast-Forward Next Chapters to Today</span>
+                        <span>Bring the next study day forward</span>
                     </button>
                     <button type="button" onclick="closeRegenerateModal(); shiftPlanToToday();" class="w-full py-2 px-3 rounded-xl border border-blue-300 dark:border-blue-600/70 bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/40 dark:hover:bg-blue-900/50 text-blue-900 dark:text-blue-200 text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer">
                         <svg class="w-4 h-4 inline-block text-blue-600 dark:text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                        <span>Reset Schedule: Make Today Day 1</span>
+                        <span>Start the schedule from today</span>
                     </button>
                     <!-- Restore Previous Rebalanced Snapshot -->
                     <div id="regenerate-restore-box" class="hidden pt-1">
                         <button type="button" onclick="restorePreviousPlan()" class="w-full py-2 px-3 rounded-xl border border-emerald-300 dark:border-emerald-600/70 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/50 text-emerald-900 dark:text-emerald-200 text-xs font-bold transition flex items-center justify-center gap-2 shadow-xs cursor-pointer">
                             <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
-                            <span>↺ Restore Previous Timetable Snapshot</span>
+                            <span>Restore previous timetable</span>
                         </button>
                         <p id="regenerate-restore-sub" class="text-[11px] text-center text-slate-500 dark:text-slate-400 mt-1"></p>
                     </div>
@@ -1171,7 +1146,7 @@
                     <div id="regenerate-undo-reset-box" class="hidden pt-1">
                         <button type="button" id="btn-regenerate-undo-reset" onclick="restorePreResetSnapshot()" class="w-full py-2 px-3 rounded-xl border border-amber-300 dark:border-amber-600/70 bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/40 dark:hover:bg-amber-900/50 text-amber-900 dark:text-amber-200 text-xs font-bold transition flex items-center justify-center gap-2 shadow-xs cursor-pointer">
                             <svg class="w-4 h-4 text-amber-600 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
-                            <span id="regenerate-undo-reset-btn-text">↺ Undo Recent Reset / Restore Plan</span>
+                            <span id="regenerate-undo-reset-btn-text">Restore plan from before reset</span>
                         </button>
                         <p id="regenerate-undo-reset-sub" class="text-[11px] text-center text-slate-500 dark:text-slate-400 mt-1"></p>
                     </div>
@@ -1179,15 +1154,17 @@
                     <div class="pt-1">
                         <button type="button" onclick="closeRegenerateModal(); resetApp();" class="w-full py-2 px-3 rounded-xl border border-rose-300 dark:border-rose-700/70 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/50 text-rose-800 dark:text-rose-200 text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer">
                             <svg class="w-4 h-4 text-rose-600 dark:text-rose-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                            <span>Reset Plan: Start Fresh with New Timetable</span>
+                            <span>Reset plan and start over</span>
                         </button>
                     </div>
-                </div>
+                    </div>
+                </details>
             </div>
-            
-            <div class="flex gap-3">
-                <button id="regenerate-cancel-btn" onclick="closeRegenerateModal()" class="flex-1 py-3 px-4 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-sm font-bold rounded-xl border border-slate-200 dark:border-slate-700 transition">Cancel</button>
-                <button id="regenerate-confirm-btn" onclick="executeRegeneration()" class="flex-1 py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-xl shadow-lg shadow-blue-500/25 transition">Rebalance Now</button>
+            <div class="rebalance-footer">
+                <button type="button" id="regenerate-cancel-btn" onclick="closeRegenerateModal()" class="study-adjust">Cancel</button>
+                <button type="button" id="btn-auto-rebalance" onclick="autoDetectAndRebalance()" class="daily-toggle">
+                    <span id="btn-auto-rebalance-label">Update plan</span>
+                </button>
             </div>
         </div>
     </div>
