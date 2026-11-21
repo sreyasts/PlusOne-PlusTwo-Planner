@@ -6,6 +6,21 @@
 let activeModalContainer = null;
 let toastTimeout = null;
 
+/**
+ * Escapes HTML characters to prevent XSS.
+ * @param {string|undefined|null} str
+ * @returns {string}
+ */
+export function escapeHTML(str) {
+  if (str == null) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
 function ensureModalContainer() {
   if (typeof document === 'undefined') return null;
   if (!activeModalContainer) {
@@ -35,7 +50,7 @@ export function showAppToast(message, icon = 'fa-circle-check text-emerald-400',
 
   content.innerHTML = `
     <i class="fa-solid ${icon} text-base shrink-0"></i>
-    <span class="flex-1 font-semibold">${message}</span>
+    <span class="flex-1 font-semibold">${escapeHTML(message)}</span>
   `;
 
   banner.classList.remove('translate-y-24', 'opacity-0', 'pointer-events-none');
@@ -76,10 +91,10 @@ export function showAppAlert({ title, message, icon = 'fa-circle-info text-blue-
         <div class="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 flex items-center justify-center text-xl mx-auto mb-3">
           <i class="fa-solid ${icon}"></i>
         </div>
-        <h3 class="text-base font-extrabold text-slate-900 dark:text-white mb-2">${title}</h3>
-        <p class="text-xs text-slate-600 dark:text-slate-300 mb-5 leading-relaxed">${message}</p>
+        <h3 class="text-base font-extrabold text-slate-900 dark:text-white mb-2">${escapeHTML(title)}</h3>
+        <p class="text-xs text-slate-600 dark:text-slate-300 mb-5 leading-relaxed">${escapeHTML(message)}</p>
         <button type="button" id="${modalId}-confirm" class="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-md transition active:scale-95">
-          ${confirmText}
+          ${escapeHTML(confirmText)}
         </button>
       </div>
     `;
@@ -147,14 +162,14 @@ export function showAppConfirm({
         <div class="w-12 h-12 rounded-2xl ${isDestructive ? 'bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400' : 'bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400'} flex items-center justify-center text-xl mx-auto mb-3">
           <i class="fa-solid ${icon}"></i>
         </div>
-        <h3 class="text-base font-extrabold text-slate-900 dark:text-white mb-2">${title}</h3>
-        <p class="text-xs text-slate-600 dark:text-slate-300 mb-5 leading-relaxed">${message}</p>
+        <h3 class="text-base font-extrabold text-slate-900 dark:text-white mb-2">${escapeHTML(title)}</h3>
+        <p class="text-xs text-slate-600 dark:text-slate-300 mb-5 leading-relaxed">${escapeHTML(message)}</p>
         <div class="flex items-center gap-2">
           <button type="button" id="${modalId}-cancel" class="flex-1 py-2.5 px-4 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold text-xs rounded-xl transition active:scale-95">
-            ${cancelText}
+            ${escapeHTML(cancelText)}
           </button>
           <button type="button" id="${modalId}-confirm" class="flex-1 py-2.5 px-4 ${confirmBtnStyle} font-bold text-xs rounded-xl shadow-md transition active:scale-95">
-            ${confirmText}
+            ${escapeHTML(confirmText)}
           </button>
         </div>
       </div>
