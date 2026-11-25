@@ -38,12 +38,12 @@ export function showAppToast(message, icon = 'fa-circle-check text-emerald-400',
     <span class="flex-1 font-semibold">${message}</span>
   `;
 
-  banner.classList.remove('translate-y-24', 'opacity-0', 'pointer-events-none');
+  banner.classList.remove('translate-y-24', '-translate-y-6', 'opacity-0', 'pointer-events-none');
   banner.classList.add('translate-y-0', 'opacity-100');
 
   toastTimeout = setTimeout(() => {
     banner.classList.remove('translate-y-0', 'opacity-100');
-    banner.classList.add('translate-y-24', 'opacity-0', 'pointer-events-none');
+    banner.classList.add('-translate-y-6', 'opacity-0', 'pointer-events-none');
   }, durationMs);
 }
 

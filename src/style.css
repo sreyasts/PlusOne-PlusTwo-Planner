@@ -3,7 +3,7 @@
 /* Keep setup focused; study navigation becomes useful once a plan exists. */
 body.is-setting-up #nav-desktop-tabs,
 body.is-setting-up #mobile-nav { display: none; }
-.study-overview { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 24px; }
+.study-overview { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 24px; }
 .study-overview h2 { font-size: 24px; font-weight: 750; color: #0f172a; }
 .study-overview p { font-size: 14px; color: #64748b; margin-top: 6px; }
 .daily-board { border: 1px solid #dbe3ed; border-radius: 16px; background: #fff; margin-bottom: 20px; overflow: hidden; }
@@ -22,7 +22,7 @@ body.is-setting-up #mobile-nav { display: none; }
 .daily-resources { margin-top: 14px; font-size: 13px; }
 .daily-resources summary { cursor: pointer; color: #64748b; width: fit-content; }
 .daily-resources > div { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 10px; }
-.daily-resources button, .daily-empty button { cursor: pointer; color: #2563eb; text-decoration: underline; text-underline-offset: 3px; }
+.daily-resources button, .daily-empty button:not([class*="bg-"]) { cursor: pointer; color: #2563eb; text-decoration: underline; text-underline-offset: 3px; }
 .daily-resources a, .daily-resources button { padding: 6px 0; }
 /* Chapter Study Notes Buttons (Mission+1+2 Handbooks) */
 .daily-task-actions { margin-top: 10px; margin-bottom: 4px; }
@@ -90,14 +90,14 @@ body.is-setting-up #mobile-nav { display: none; }
 .daily-finished p, .daily-empty p { margin-top: 4px; }
 .daily-advisory { background: #fffbeb; color: #854d0e; border-bottom: 1px solid #fde68a; }
 .daily-empty h3 { font-size: 17px; font-weight: 650; }
-.daily-empty button { margin-top: 14px; }
+.daily-empty > button { margin-top: 14px; }
 .daily-toggle:focus-visible, .daily-resources summary:focus-visible, .daily-resources button:focus-visible { outline: 3px solid #60a5fa; outline-offset: 3px; }
 html.dark .daily-board { background: #0e1422; border-color: #263247; }
 html.dark .daily-task { border-color: #263247; }
 html.dark .daily-task h3 { color: #f1f5f9; }
 html.dark .daily-topic { color: #b5c0d0; }
 html.dark .daily-task-meta, html.dark .daily-resources summary { color: #94a3b8; }
-html.dark .daily-task-meta > span:first-child, html.dark .daily-resources button { color: #93c5fd; }
+html.dark .daily-task-meta > span:first-child, html.dark .daily-resources button, html.dark .daily-empty button:not([class*="bg-"]) { color: #93c5fd; }
 html.dark .daily-toggle[aria-pressed="true"] { border-color: #475569; color: #cbd5e1; }
 html.dark .daily-done-label { color: #6ee7b7; }
 html.dark .daily-finished { background: #102b25; color: #a7f3d0; border-color: #235447; }
@@ -201,18 +201,45 @@ html.dark .syllabus-notes-btn:hover {
 }
 .pending-day { margin-top: 16px; }
 .pending-day h3 { font-weight: 650; font-size: 13px; }
-.pending-task { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 14px 0; border-bottom: 1px solid #e2e8f0; font-size: 13px; }
-.pending-task > div { min-width: 0; overflow-wrap: anywhere; }
+.pending-list { margin-top: 8px; }
+.pending-task { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; padding: 14px 0; border-bottom: 1px solid #e2e8f0; font-size: 13px; }
+.pending-task:last-child { border-bottom: 0; padding-bottom: 4px; }
+.pending-task > div { min-width: 0; flex: 1; overflow-wrap: anywhere; }
+.pending-task-badges { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 6px; }
+.pending-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 650; padding: 2px 8px; border-radius: 9999px; line-height: 1.4; }
+.pending-badge-subject { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+.pending-badge-scope { background: #eef2ff; color: #4338ca; border: 1px solid #c7d2fe; }
+.pending-badge-scope.is-full { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
+.pending-badge-duration { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
+.pending-badge-dates { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
+.pending-chapter-title { font-weight: 700; font-size: 14px; color: #0f172a; margin: 0 0 2px; }
+.pending-topic-summary { display: block; color: #64748b; line-height: 1.45; }
 .pending-task small { color: #64748b; }
-.pending-task button { flex-shrink: 0; cursor: pointer; border: 1px solid #10b981; border-radius: 10px; padding: 8px 12px; min-height: 44px; min-width: 44px; display: inline-flex; align-items: center; justify-content: center; color: #047857; font-weight: 600; }
+.pending-task button { flex-shrink: 0; cursor: pointer; border: 1px solid #10b981; border-radius: 10px; padding: 8px 12px; min-height: 44px; min-width: 44px; display: inline-flex; align-items: center; justify-content: center; color: #047857; font-weight: 600; background: transparent; }
+.pending-task button:hover { background: #ecfdf5; }
+.daily-scope-badge { display: inline-flex; align-items: center; padding: 1px 8px; border-radius: 9999px; font-weight: 700; background: #eef2ff; color: #4338ca; border: 1px solid #c7d2fe; }
+.daily-scope-badge.is-full { background: #ecfdf5; color: #047857; border-color: #a7f3d0; }
 .study-tomorrow ul { padding-left: 20px; }
 .study-tomorrow li, .study-tomorrow > p { margin-top: 12px; font-size: 13px; }
 html.dark .pending-notice { color: #fde68a; background: #292213; border-color: #785820; }
 html.dark .pending-notice:hover { background: #382c16; border-color: #b45309; }
 html.dark .pending-notice a:hover, html.dark .pending-notice .pending-link:hover { color: #fef08a; }
 html.dark .study-pending, html.dark .study-tomorrow, html.dark .pending-task { border-color: #334155; }
-html.dark .study-date, html.dark .study-history, html.dark .pending-task small { color: #94a3b8; }
+html.dark .study-date, html.dark .study-history, html.dark .pending-task small, html.dark .pending-topic-summary { color: #94a3b8; }
+html.dark .pending-chapter-title { color: #f1f5f9; }
+html.dark .pending-badge-subject { background: rgba(30, 58, 138, 0.45); color: #93c5fd; border-color: rgba(59, 130, 246, 0.45); }
+html.dark .pending-badge-scope { background: rgba(49, 46, 129, 0.45); color: #c7d2fe; border-color: rgba(129, 140, 248, 0.4); }
+html.dark .pending-badge-scope.is-full { background: rgba(6, 78, 59, 0.45); color: #6ee7b7; border-color: rgba(52, 211, 153, 0.4); }
+html.dark .pending-badge-duration { background: #1e293b; color: #cbd5e1; border-color: #334155; }
+html.dark .pending-badge-dates { background: rgba(120, 53, 15, 0.4); color: #fde68a; border-color: rgba(245, 158, 11, 0.4); }
+html.dark .daily-scope-badge { background: rgba(49, 46, 129, 0.45); color: #c7d2fe; border-color: rgba(129, 140, 248, 0.4); }
+html.dark .daily-scope-badge.is-full { background: rgba(6, 78, 59, 0.45); color: #6ee7b7; border-color: rgba(52, 211, 153, 0.4); }
 html.dark .pending-task button { color: #6ee7b7; }
+html.dark .pending-task button:hover { background: rgba(6, 78, 59, 0.35); }
+@media (max-width: 520px) {
+    .pending-task { flex-direction: column; align-items: stretch; gap: 10px; }
+    .pending-task button { align-self: flex-start; }
+}
 .stream-options [role="button"]:focus-visible,
 .study-adjust:focus-visible, .study-back:focus-visible,
 .study-tools > summary:focus-visible { outline: 3px solid #2563eb; outline-offset: 3px; }
@@ -221,9 +248,19 @@ html.dark .study-overview p { color: #94a3b8; }
 html.dark .study-adjust, html.dark .study-back,
 html.dark .study-capacity, html.dark .study-tools { border-color: #334155; }
 @media (max-width: 480px) {
-    .study-overview { align-items: flex-start; }
+    .study-overview { align-items: flex-start; gap: 12px; }
     .study-overview h2 { font-size: 21px; }
     .study-adjust { min-height: 44px; padding: 9px 12px; font-size: 12px; display: inline-flex; align-items: center; justify-content: center; }
+}
+
+/* Universal Interactive Summary & Control Touch Target Elevation */
+.daily-resources summary,
+.study-tools > summary,
+.study-pending summary,
+.study-tomorrow summary {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
 }
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
@@ -871,6 +908,32 @@ html.dark .study-capacity, html.dark .study-tools { border-color: #334155; }
         html.dark .bg-amber-200, html.dark .bg-amber-200\/80 { background-color: rgba(245, 158, 11, 0.28) !important; color: #fde68a !important; }
         html.dark .bg-purple-100, html.dark .bg-purple-100\/70 { background-color: rgba(168, 85, 247, 0.22) !important; color: #e9d5ff !important; }
         html.dark .bg-slate-700 { background-color: #334155 !important; color: #f8fafc !important; }
+        /* Export & Share Bottom Sheet Icon Styling in Dark Mode */
+        html.dark #action-sheet-ics-btn .w-11.h-11 {
+            background-color: rgba(245, 158, 11, 0.22) !important;
+            color: #fbbf24 !important;
+            border: 1px solid rgba(245, 158, 11, 0.35);
+        }
+        html.dark #action-sheet-csv-btn .w-11.h-11 {
+            background-color: rgba(16, 185, 129, 0.22) !important;
+            color: #34d399 !important;
+            border: 1px solid rgba(16, 185, 129, 0.35);
+        }
+        html.dark #action-sheet-share-btn .w-11.h-11 {
+            background-color: rgba(99, 102, 241, 0.22) !important;
+            color: #a5b4fc !important;
+            border: 1px solid rgba(99, 102, 241, 0.35);
+        }
+        html.dark #action-sheet-copy-btn .w-11.h-11 {
+            background-color: rgba(59, 130, 246, 0.22) !important;
+            color: #60a5fa !important;
+            border: 1px solid rgba(59, 130, 246, 0.35);
+        }
+        html.dark #export-share-sheet i {
+            display: inline-block;
+            opacity: 1 !important;
+            visibility: visible !important;
+        }
         /* Modals & Dropdowns */
         html.dark #user-dropdown,
         html.dark #settings-modal > div,
@@ -1091,6 +1154,10 @@ html.dark .study-capacity, html.dark .study-tools { border-color: #334155; }
 /* Safe Area Inset Support for Edge-to-Edge Displays */
 :root {
     --sab: env(safe-area-inset-bottom, 0px);
+    --sat: env(safe-area-inset-top, 0px);
+}
+header {
+    padding-top: var(--sat);
 }
 #mobile-nav {
     padding-bottom: calc(0.5rem + var(--sab));

@@ -28,7 +28,9 @@ export default [
         __dirname: 'readonly',
         sessionStorage: 'readonly',
         Blob: 'readonly',
-        URL: 'readonly'
+        URL: 'readonly',
+        requestAnimationFrame: 'readonly',
+        cancelAnimationFrame: 'readonly'
       }
     },
     rules: {

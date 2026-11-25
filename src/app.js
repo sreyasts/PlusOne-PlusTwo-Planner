@@ -69,9 +69,9 @@ import {
 import {
   generateAiTutorPrompt,
 } from './utils/ai_tutor.js';
-import { getDailyPlan } from './ui/daily-plan.js';
+import { getDailyPlan, compressSameDayTasks, compressPendingOverdueDays, formatCompressedGroupScope } from './ui/daily-plan.js';
 import { MAX_BACKUP_BYTES, parseStudyBackup, validateStudyBackup, createStudyBackup, persistStudyBackup } from './utils/study-backup.js';
-import { persistTaskCompletion } from './utils/study-progress.js';
+import { persistTaskCompletion, persistTaskGroupCompletion } from './utils/study-progress.js';
 import { getRemainingPlanTasks, detectCompletedSyllabusProgress } from './utils/plan-scope.js';
 import { getHandbookUrl } from './utils/handbook-lookup.js';
 import { createAccountSync, queuePendingAccountState } from './auth/account-sync.js';
@@ -1044,12 +1044,27 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
            Synchronous across Today & Full Plan views
            ========================================================================== */
 
-        function toggleTaskDirect(taskId) {
+        function toggleTaskDirect(taskIdOrIds, groupIdsCsv = '') {
             if (!appState || !appState.plan) return;
+            const rawIds = groupIdsCsv
+                ? String(groupIdsCsv).split(',').map(s => s.trim()).filter(Boolean)
+                : (Array.isArray(taskIdOrIds)
+                    ? taskIdOrIds.map(s => String(s || '').trim()).filter(Boolean)
+                    : String(taskIdOrIds || '').split(',').map(s => s.trim()).filter(Boolean));
+            if (rawIds.length === 0) return;
+
+            const primaryTaskId = rawIds[rawIds.length - 1];
+            const prevPlan = appState.plan;
+            let next;
             try {
-                const next = persistTaskCompletion(appState, taskId, localStorage, {
-                    today: getLocalDateStr(), yesterday: getYesterdayStr(), modifiedAt: new Date().toISOString(),
-                });
+                const progressOpts = {
+                    today: getLocalDateStr(),
+                    yesterday: getYesterdayStr(),
+                    modifiedAt: new Date().toISOString(),
+                };
+                next = rawIds.length > 1
+                    ? persistTaskGroupCompletion(appState, rawIds, localStorage, progressOpts)
+                    : persistTaskCompletion(appState, primaryTaskId, localStorage, progressOpts);
                 if (!next) return;
                 appState = next;
             } catch (error) {
@@ -1062,17 +1077,43 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 });
                 return;
             }
-            const targetDay = appState.plan.find(day => day.tasks.some(task => task.id === taskId));
-            const targetTask = targetDay?.tasks.find(task => task.id === taskId);
+            const targetDay = appState.plan.find(day => day.tasks.some(task => rawIds.includes(task.id)));
+            const targetTask = targetDay?.tasks.find(task => task.id === primaryTaskId)
+                || targetDay?.tasks.find(task => rawIds.includes(task.id));
             if (!targetDay || !targetTask) return;
             void syncAppStateToCloud(appState);
 
-            // Update UI elements in DOM safely using escaped selector or dataset
+            // Determine all tasks whose completion status changed and all affected days across the plan
+            const changedTasks = [];
+            const affectedDays = new Set();
+            const prevTaskMap = new Map();
+            const currentTaskMap = new Map();
+            prevPlan.forEach(d => {
+                (d.tasks || []).forEach(t => {
+                    if (t && t.id) prevTaskMap.set(t.id, Boolean(t.completed));
+                });
+            });
+
+            appState.plan.forEach(day => {
+                let dayHasChange = false;
+                (day.tasks || []).forEach(task => {
+                    if (task && task.id) {
+                        currentTaskMap.set(task.id, Boolean(task.completed));
+                        if (prevTaskMap.has(task.id) && prevTaskMap.get(task.id) !== Boolean(task.completed)) {
+                            changedTasks.push(task);
+                            dayHasChange = true;
+                        }
+                    }
+                });
+                if (dayHasChange) {
+                    affectedDays.add(day);
+                }
+            });
+
+            // Update UI elements in DOM safely for all changed tasks (including cascaded sibling parts and grouped blocks)
             try {
-                const escapedId = (typeof window !== 'undefined' && window.CSS?.escape) ? window.CSS.escape(taskId) : taskId.replace(/"/g, '\\"');
-                const checkboxElements = document.querySelectorAll(`[data-task-id="${escapedId}"]`);
-                checkboxElements.forEach(cb => {
-                    if (targetTask.completed) {
+                const syncCheckboxState = (cb, isDone) => {
+                    if (isDone) {
                         cb.classList.add('checked');
                         cb.setAttribute('aria-checked', 'true');
                         const textLabel = cb.closest('.task-item-container')?.querySelector('.task-text-content');
@@ -1083,27 +1124,44 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                         const textLabel = cb.closest('.task-item-container')?.querySelector('.task-text-content');
                         if (textLabel) textLabel.classList.remove('line-through', 'opacity-50');
                     }
+                };
+
+                const changedIdSet = new Set(changedTasks.map(t => t.id));
+                changedTasks.forEach(task => {
+                    const escapedId = (typeof window !== 'undefined' && window.CSS?.escape)
+                        ? window.CSS.escape(task.id)
+                        : String(task.id).replace(/"/g, '\\"');
+                    const checkboxElements = document.querySelectorAll(`[data-task-id="${escapedId}"]`);
+                    checkboxElements.forEach(cb => syncCheckboxState(cb, task.completed));
+                });
+
+                document.querySelectorAll('[data-group-task-ids]').forEach(cb => {
+                    const groupIds = String(cb.dataset.groupTaskIds || '').split(',').filter(Boolean);
+                    if (groupIds.some(id => changedIdSet.has(id))) {
+                        const allGroupDone = groupIds.length > 0 && groupIds.every(id => currentTaskMap.get(id));
+                        syncCheckboxState(cb, allGroupDone);
+                    }
                 });
             } catch (e) {
                 console.warn('DOM checkbox update note:', e);
             }
 
-            // Dynamically update day card counter in Plan View
-            if (targetDay) {
-                const dayCard = document.querySelector(`[data-day-number="${targetDay.dayNumber}"]`);
+            // Dynamically update day card counter in Plan View across all affected days
+            affectedDays.forEach(day => {
+                const dayCard = document.querySelector(`[data-day-number="${day.dayNumber}"]`);
                 if (dayCard) {
                     const counterSpan = dayCard.querySelector('.day-card-counter');
                     if (counterSpan) {
-                        let displayedTasks = targetDay.tasks;
+                        let displayedTasks = day.tasks || [];
                         if (typeof currentPlanSubjectFilter !== 'undefined' && currentPlanSubjectFilter !== 'All') {
-                            displayedTasks = targetDay.tasks.filter(t => t.subject === currentPlanSubjectFilter);
+                            displayedTasks = displayedTasks.filter(t => t.subject === currentPlanSubjectFilter);
                         }
                         const completedCount = displayedTasks.filter(t => t.completed).length;
                         const isML = (typeof getAppLanguage === 'function' && getAppLanguage() === 'ml');
                         counterSpan.textContent = `${completedCount}/${displayedTasks.length} ${isML ? ML_I18N.plan.done : 'Done'}`;
                     }
                 }
-            }
+            });
 
             // Synchronize Plan progress summary pill
             const planProgressSummary = document.getElementById('plan-progress-summary');
@@ -1169,7 +1227,12 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                     }
                 } else {
                     playTaskTickSound();
-                    showAppToast(getAppLanguage() === 'ml' ? 'ബാക്കി പഠന ഭാഗം പൂർത്തിയായി.' : 'Pending task completed. Today’s timetable is unchanged.');
+                    const isML = getAppLanguage() === 'ml';
+                    showAppToast(
+                        rawIds.length > 1
+                            ? (isML ? 'അധ്യായം പൂർത്തിയായി. ഇന്നത്തെ ടൈംടേബിളിൽ മാറ്റമില്ല.' : 'Pending chapter completed. Today’s timetable is unchanged.')
+                            : (isML ? 'ബാക്കി പഠന ഭാഗം പൂർത്തിയായി.' : 'Pending task completed. Today’s timetable is unchanged.')
+                    );
                 }
 
                 // If in today view, re-render to advance the hero focus card smoothly
@@ -2743,16 +2806,16 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                     // Subsequent visits: Transition from intrusive reset pop-up to Settings button / quiet link
                     return `
                         <div id="dashboard-restore-banner" class="max-w-4xl mx-auto my-2.5 px-3.5 py-2 rounded-xl bg-slate-100/90 dark:bg-[#111827]/90 border border-slate-200/90 dark:border-slate-800/90 text-left flex items-center justify-between gap-3 text-xs animate-fade-in">
-                            <div class="flex items-center gap-2 text-slate-600 dark:text-slate-300">
+                            <div class="flex items-center gap-2 text-slate-600 dark:text-slate-300 min-w-0 flex-1">
                                 <svg class="w-4 h-4 text-blue-600 dark:text-blue-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                <span class="truncate">${isML ? 'മുൻപത്തെ ടൈംടേബിൾ ക്രമീകരണങ്ങളിൽ (Settings) ലഭ്യമാണ്.' : 'Previous timetable is saved. View or restore anytime in Settings.'}</span>
+                                <span class="min-w-0 break-words pr-2 text-[11px] sm:text-xs">${isML ? 'മുൻപത്തെ ടൈംടേബിൾ ക്രമീകരണങ്ങളിൽ (Settings) ലഭ്യമാണ്.' : 'Previous timetable is saved. View or restore anytime in Settings.'}</span>
                             </div>
                             <div class="flex items-center gap-2 shrink-0">
-                                <button type="button" onclick="openSettingsModal()" class="px-3 py-1 bg-white dark:bg-[#1a233a] hover:bg-slate-50 dark:hover:bg-[#222f4c] text-blue-600 dark:text-blue-400 font-bold rounded-lg border border-slate-200 dark:border-slate-700 transition flex items-center gap-1 shadow-xs cursor-pointer">
-                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                                <button type="button" onclick="openSettingsModal()" class="min-h-[44px] px-3.5 py-2.5 bg-white dark:bg-[#1a233a] hover:bg-slate-50 dark:hover:bg-[#222f4c] text-blue-600 dark:text-blue-400 font-bold rounded-lg border border-slate-200 dark:border-slate-700 transition flex items-center gap-1 shadow-xs cursor-pointer">
+                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                                     <span>${isML ? 'Settings' : 'Settings'}</span>
                                 </button>
-                                <button type="button" onclick="dismissDashboardRestoreBanner()" class="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200" title="Dismiss">
+                                <button type="button" onclick="dismissDashboardRestoreBanner()" class="min-h-[44px] min-w-[44px] flex items-center justify-center p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200" title="Dismiss">
                                     <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
                                 </button>
                             </div>
@@ -2782,14 +2845,14 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                             </div>
                         </div>
                         <div class="flex items-center gap-2 w-full sm:w-auto shrink-0">
-                            <button type="button" onclick="${isReset ? 'restorePreResetSnapshot()' : 'restorePreviousPlan()'}" class="flex-1 sm:flex-none px-4 py-2 bg-amber-600 hover:bg-amber-700 active:scale-95 text-white text-xs font-black rounded-xl shadow-md shadow-amber-600/25 transition flex items-center justify-center gap-1.5 cursor-pointer">
+                            <button type="button" onclick="${isReset ? 'restorePreResetSnapshot()' : 'restorePreviousPlan()'}" class="flex-1 sm:flex-none min-h-[44px] px-4 py-2 bg-amber-600 hover:bg-amber-700 active:scale-95 text-white text-xs font-black rounded-xl shadow-md shadow-amber-600/25 transition flex items-center justify-center gap-1.5 cursor-pointer">
                                 <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
                                 <span>${isML ? 'ടൈംടേബിൾ തിരിച്ചെടുക്കുക' : 'Restore Timetable'}</span>
                             </button>
-                            <button type="button" onclick="openSettingsModal()" class="px-3 py-2 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white text-xs font-bold rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#141d30] transition flex items-center gap-1 cursor-pointer" title="Settings">
+                            <button type="button" onclick="openSettingsModal()" class="min-h-[44px] px-3 py-2 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white text-xs font-bold rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#141d30] transition flex items-center gap-1 cursor-pointer" title="Settings">
                                 <span>Settings</span>
                             </button>
-                            <button type="button" onclick="dismissDashboardRestoreBanner()" class="px-2.5 py-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition text-xs rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800" title="Dismiss">
+                            <button type="button" onclick="dismissDashboardRestoreBanner()" class="min-h-[44px] min-w-[44px] flex items-center justify-center px-2.5 py-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition text-xs rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800" title="Dismiss">
                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
                             </button>
                         </div>
@@ -3554,7 +3617,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                                             </p>
                                         </div>
                                     </div>
-                                    <button type="button" id="btn-restore-pre-reset" onclick="restorePreResetSnapshot()" class="w-full sm:w-auto px-4 py-2.5 bg-amber-600 hover:bg-amber-700 active:scale-95 text-white text-xs font-black rounded-xl shadow-md shadow-amber-600/25 transition flex items-center justify-center gap-1.5 cursor-pointer shrink-0">
+                                    <button type="button" id="btn-restore-pre-reset" onclick="restorePreResetSnapshot()" class="w-full sm:w-auto min-h-[44px] px-4 py-2.5 bg-amber-600 hover:bg-amber-700 active:scale-95 text-white text-xs font-black rounded-xl shadow-md shadow-amber-600/25 transition flex items-center justify-center gap-1.5 cursor-pointer shrink-0">
                                         <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
                                         <span>${btnText}</span>
                                     </button>
@@ -3607,35 +3670,35 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                                 <label class="block text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
                                     ${isML ? 'ക്ലാസ് / ഗ്രേഡ്' : 'Class / Academic Year'}
                                 </label>
-                                <div class="grid grid-cols-2 gap-3">
-                                    <button type="button" id="grade-btn-p2" onclick="setGradeSelection('+2')" class="cursor-pointer p-3.5 rounded-2xl border-2 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${currentSelectedGrade === '+2' ? 'border-blue-600 dark:border-blue-500 bg-blue-50/70 dark:bg-blue-950/40 ring-2 ring-blue-500/20 shadow-sm' : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600'} transition-transform duration-150 text-left flex flex-col justify-between">
-                                        <div class="flex items-center justify-between">
-                                            <div class="flex items-center gap-2.5">
-                                                <div class="w-9 h-9 rounded-xl bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 flex items-center justify-center shrink-0 p-1.5 border border-blue-200/50 dark:border-blue-800/50">
-                                                    ${typeof GRADE_ICONS !== 'undefined' && GRADE_ICONS.plusTwo ? GRADE_ICONS.plusTwo : '<i class="fa-solid fa-graduation-cap text-sm"></i>'}
+                                <div class="grid grid-cols-2 gap-2 sm:gap-3">
+                                    <button type="button" id="grade-btn-p2" onclick="setGradeSelection('+2')" class="cursor-pointer p-2.5 sm:p-3.5 rounded-2xl border-2 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${currentSelectedGrade === '+2' ? 'border-blue-600 dark:border-blue-500 bg-blue-50/70 dark:bg-blue-950/40 ring-2 ring-blue-500/20 shadow-sm' : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600'} transition-transform duration-150 text-left flex flex-col justify-between min-w-0">
+                                        <div class="flex items-center justify-between gap-1 w-full min-w-0">
+                                            <div class="flex items-center gap-1.5 sm:gap-2.5 min-w-0">
+                                                <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 flex items-center justify-center shrink-0 p-1 sm:p-1.5 border border-blue-200/50 dark:border-blue-800/50">
+                                                    ${typeof GRADE_ICONS !== 'undefined' && GRADE_ICONS.plusTwo ? GRADE_ICONS.plusTwo : '<i class="fa-solid fa-graduation-cap text-xs sm:text-sm"></i>'}
                                                 </div>
-                                                <span class="text-sm font-black text-slate-900 dark:text-white">Plus Two (+2)</span>
+                                                <span class="text-xs sm:text-sm font-black text-slate-900 dark:text-white truncate">Plus Two (+2)</span>
                                             </div>
-                                            <span class="w-5 h-5 rounded-full ${currentSelectedGrade === '+2' ? 'bg-blue-600 text-white' : 'border border-slate-300 dark:border-slate-600'} flex items-center justify-center text-[10px]">
+                                            <span class="w-4 h-4 sm:w-5 sm:h-5 rounded-full shrink-0 ${currentSelectedGrade === '+2' ? 'bg-blue-600 text-white' : 'border border-slate-300 dark:border-slate-600'} flex items-center justify-center text-[10px]">
                                                 ${currentSelectedGrade === '+2' ? '<i class="fa-solid fa-check"></i>' : ''}
                                             </span>
                                         </div>
-                                        <span class="text-xs font-semibold text-slate-400 mt-2">Class 12 Board Syllabus</span>
+                                        <span class="text-[11px] sm:text-xs font-semibold text-slate-400 mt-2 truncate block w-full">Class 12 Board Syllabus</span>
                                     </button>
 
-                                    <button type="button" id="grade-btn-p1" onclick="setGradeSelection('+1')" class="cursor-pointer p-3.5 rounded-2xl border-2 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${currentSelectedGrade === '+1' ? 'border-amber-600 dark:border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 ring-2 ring-amber-500/20 shadow-sm' : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600'} transition-transform duration-150 text-left flex flex-col justify-between">
-                                        <div class="flex items-center justify-between">
-                                            <div class="flex items-center gap-2.5">
-                                                <div class="w-9 h-9 rounded-xl bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 flex items-center justify-center shrink-0 p-1.5 border border-amber-200/50 dark:border-amber-800/50">
-                                                    ${typeof GRADE_ICONS !== 'undefined' && GRADE_ICONS.plusOne ? GRADE_ICONS.plusOne : '<i class="fa-solid fa-book-open text-sm"></i>'}
+                                    <button type="button" id="grade-btn-p1" onclick="setGradeSelection('+1')" class="cursor-pointer p-2.5 sm:p-3.5 rounded-2xl border-2 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${currentSelectedGrade === '+1' ? 'border-amber-600 dark:border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 ring-2 ring-amber-500/20 shadow-sm' : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600'} transition-transform duration-150 text-left flex flex-col justify-between min-w-0">
+                                        <div class="flex items-center justify-between gap-1 w-full min-w-0">
+                                            <div class="flex items-center gap-1.5 sm:gap-2.5 min-w-0">
+                                                <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 flex items-center justify-center shrink-0 p-1 sm:p-1.5 border border-amber-200/50 dark:border-amber-800/50">
+                                                    ${typeof GRADE_ICONS !== 'undefined' && GRADE_ICONS.plusOne ? GRADE_ICONS.plusOne : '<i class="fa-solid fa-book-open text-xs sm:text-sm"></i>'}
                                                 </div>
-                                                <span class="text-sm font-black text-slate-900 dark:text-white">Plus One (+1)</span>
+                                                <span class="text-xs sm:text-sm font-black text-slate-900 dark:text-white truncate">Plus One (+1)</span>
                                             </div>
-                                            <span class="w-5 h-5 rounded-full ${currentSelectedGrade === '+1' ? 'bg-amber-600 text-white' : 'border border-slate-300 dark:border-slate-600'} flex items-center justify-center text-[10px]">
+                                            <span class="w-4 h-4 sm:w-5 sm:h-5 rounded-full shrink-0 ${currentSelectedGrade === '+1' ? 'bg-amber-600 text-white' : 'border border-slate-300 dark:border-slate-600'} flex items-center justify-center text-[10px]">
                                                 ${currentSelectedGrade === '+1' ? '<i class="fa-solid fa-check"></i>' : ''}
                                             </span>
                                         </div>
-                                        <span class="text-xs font-semibold text-slate-400 mt-2">Class 11 Annual Syllabus</span>
+                                        <span class="text-[11px] sm:text-xs font-semibold text-slate-400 mt-2 truncate block w-full">Class 11 Annual Syllabus</span>
                                     </button>
                                 </div>
                             </div>
@@ -3743,22 +3806,22 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
 
                             <!-- Fast Presets -->
                             <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
-                                <button type="button" id="preset-btn-30" onclick="setDeadlinePreset('${getRelativePresetDate(30)}')" class="preset-date-btn py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-[#162137] hover:bg-blue-50/80 dark:hover:bg-blue-950/40 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-200 dark:border-slate-700/80 transition-all duration-150 flex flex-col items-center justify-center text-center gap-1 active:scale-95 cursor-pointer">
+                                <button type="button" id="preset-btn-30" onclick="setDeadlinePreset('${getRelativePresetDate(30)}')" class="preset-date-btn min-h-[44px] py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-[#162137] hover:bg-blue-50/80 dark:hover:bg-blue-950/40 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-200 dark:border-slate-700/80 transition-all duration-150 flex flex-col items-center justify-center text-center gap-1 active:scale-95 cursor-pointer">
                                     <i class="fa-solid fa-bolt text-amber-500 text-sm"></i>
                                     <span>${isML ? '30 ദിവസത്തെ പ്ലാൻ' : '30-Day Sprint'}</span>
                                     <span class="preset-sub text-[10px] text-slate-400 font-medium">Fast Crash</span>
                                 </button>
-                                <button type="button" id="preset-btn-xmas" onclick="setDeadlinePreset('${getPresetDate(12, 20)}')" class="preset-date-btn py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-[#162137] hover:bg-blue-50/80 dark:hover:bg-blue-950/40 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-200 dark:border-slate-700/80 transition-all duration-150 flex flex-col items-center justify-center text-center gap-1 active:scale-95 cursor-pointer">
+                                <button type="button" id="preset-btn-xmas" onclick="setDeadlinePreset('${getPresetDate(12, 20)}')" class="preset-date-btn min-h-[44px] py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-[#162137] hover:bg-blue-50/80 dark:hover:bg-blue-950/40 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-200 dark:border-slate-700/80 transition-all duration-150 flex flex-col items-center justify-center text-center gap-1 active:scale-95 cursor-pointer">
                                     <i class="fa-solid fa-star text-emerald-500 text-sm"></i>
                                     <span>${isML ? 'ക്രിസ്മസ് പരീക്ഷ' : 'Dec 20 Xmas'}</span>
                                     <span class="preset-sub text-[10px] text-slate-400 font-medium">Term 1 & 2</span>
                                 </button>
-                                <button type="button" id="preset-btn-board" onclick="setDeadlinePreset('${getPresetDate(2, 28, true)}')" class="preset-date-btn py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-[#162137] hover:bg-blue-50/80 dark:hover:bg-blue-950/40 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-200 dark:border-slate-700/80 transition-all duration-150 flex flex-col items-center justify-center text-center gap-1 active:scale-95 cursor-pointer">
+                                <button type="button" id="preset-btn-board" onclick="setDeadlinePreset('${getPresetDate(2, 28, true)}')" class="preset-date-btn min-h-[44px] py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-[#162137] hover:bg-blue-50/80 dark:hover:bg-blue-950/40 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-200 dark:border-slate-700/80 transition-all duration-150 flex flex-col items-center justify-center text-center gap-1 active:scale-95 cursor-pointer">
                                     <i class="fa-solid fa-bullseye text-purple-500 text-sm"></i>
                                     <span>${isML ? 'പബ്ലിക് പരീക്ഷ' : 'Feb 28 Board'}</span>
                                     <span class="preset-sub text-[10px] text-slate-400 font-medium">Full Syllabus</span>
                                 </button>
-                                <button type="button" id="preset-btn-term2" onclick="setDeadlinePreset('${getPresetDate(11, 30)}')" class="preset-date-btn py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-[#162137] hover:bg-blue-50/80 dark:hover:bg-blue-950/40 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-200 dark:border-slate-700/80 transition-all duration-150 flex flex-col items-center justify-center text-center gap-1 active:scale-95 cursor-pointer">
+                                <button type="button" id="preset-btn-term2" onclick="setDeadlinePreset('${getPresetDate(11, 30)}')" class="preset-date-btn min-h-[44px] py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-[#162137] hover:bg-blue-50/80 dark:hover:bg-blue-950/40 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-200 dark:border-slate-700/80 transition-all duration-150 flex flex-col items-center justify-center text-center gap-1 active:scale-95 cursor-pointer">
                                     <i class="fa-solid fa-calendar-days text-blue-500 text-sm"></i>
                                     <span>${isML ? 'നവം 30' : 'Nov 30 Term 2'}</span>
                                     <span class="preset-sub text-[10px] text-slate-400 font-medium">Half-Yearly</span>
@@ -3965,7 +4028,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                                         <!-- Intensity -->
                                         <div class="flex items-center justify-between gap-2 pt-1">
                                             <label for="study-intensity" class="text-xs font-bold text-slate-700 dark:text-slate-200">${isML ? ML_I18N.setup.intensityLabel : 'Daily Study Pacing'}</label>
-                                            <select id="study-intensity" class="text-xs font-bold bg-white dark:bg-[#101726] border border-slate-300 dark:border-slate-700 rounded-xl px-2.5 py-1 text-slate-800 dark:text-white outline-none">
+                                            <select id="study-intensity" class="min-h-[44px] text-xs font-bold bg-white dark:bg-[#101726] border border-slate-300 dark:border-slate-700 rounded-xl px-2.5 py-1 text-slate-800 dark:text-white outline-none">
                                                 <option value="balanced" selected>${isML ? ML_I18N.setup.intensityBalanced : 'Standard (2-3 parts/day)'}</option>
                                                 <option value="intense">${isML ? ML_I18N.setup.intensityIntense : 'Intensive (3-4+ parts/day)'}</option>
                                                 <option value="light">${isML ? ML_I18N.setup.intensityLight : 'Relaxed (1-2 parts/day)'}</option>
@@ -3995,6 +4058,9 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 const tasks = todayPlan?.tasks ?? [];
                 const completedCount = tasks.filter(task => task.completed).length;
                 const orderedTasks = [...tasks.filter(task => !task.completed), ...tasks.filter(task => task.completed)];
+                const todayGroups = compressSameDayTasks(orderedTasks, localToday);
+                const overdueGroups = daily.overdueGroups || compressPendingOverdueDays(daily.overdueDays);
+                const isPendingCompressed = overdueGroups.length < daily.overdueCount;
                 const hasFutureTasks = appState.plan.some(d => d.date > localToday && d.tasks.some(t => !t.completed));
                 const todayTasksHTML = tasks.length ? `
                     ${appState.diagnostics?.isInfeasible ? `<p class="daily-advisory">${escapeStudyText(appState.diagnostics.warningMessage || (isML ? 'പഠന സമയം അല്ലെങ്കിൽ അവസാന തീയതി ക്രമീകരിക്കുക.' : 'This plan needs more study time. Adjust your hours or target date.'))}</p>` : ''}
@@ -4007,7 +4073,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                                     <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">${hasFutureTasks ? (isML ? 'മുൻകൂട്ടി പഠിക്കാൻ തയ്യാറാണോ? നാളത്തെ ഭാഗങ്ങൾ ഇന്നത്തേക്ക് കൊണ്ടുവരാം.' : 'Want to keep momentum going? Fast-forward next chapters to Today.') : (isML ? 'മുഴുവൻ സിലബസും പൂർത്തിയായി.' : 'All portions finished!')}</p>
                                 </div>
                                 ${hasFutureTasks ? `
-                                    <button type="button" onclick="compactPlanToToday()" class="py-2 px-3.5 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white text-xs font-bold rounded-xl shadow-md transition flex items-center gap-1.5 cursor-pointer">
+                                    <button type="button" onclick="compactPlanToToday()" class="min-h-[44px] py-2 px-3.5 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white text-xs font-bold rounded-xl shadow-md transition flex items-center gap-1.5 cursor-pointer">
                                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                                         <span>${isML ? 'അടുത്ത ഭാഗങ്ങൾ ഇപ്പോൾ പഠിക്കാം' : 'Fast-Track Next Chapters to Today'}</span>
                                     </button>
@@ -4015,21 +4081,26 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                             </div>
                         </div>` : ''}
                     <ol class="daily-tasks" aria-label="${isML ? 'ഇന്നത്തെ പഠനം' : 'Today’s timetable'}">
-                        ${orderedTasks.map(task => {
+                        ${todayGroups.map(group => {
+                            const task = group.primaryTask;
                             const key = encodeURIComponent(String(task.id));
                             const handbookUrl = getHandbookUrl(task, appState);
-                            return `<li class="daily-task ${task.completed ? 'is-complete' : ''}">
+                            const scopeLabel = group.isMultiTask ? formatCompressedGroupScope(group, isML) : '';
+                            const mins = group.totalMinutes || task.estimatedMinutes || 0;
+                            const topicDisplay = group.isMultiTask ? formatGroupTopicSummary(group, isML) : formatTaskTopicTitle(task);
+                            const groupIdsCsv = group.taskIds.join(',');
+                            return `<li class="daily-task ${group.completed ? 'is-complete' : ''}">
                                 <div class="daily-task-content">
-                                    <div class="daily-task-meta"><span>${escapeStudyText(task.subject)}</span>${task.estimatedMinutes ? `<span>${escapeStudyText(task.estimatedMinutes)} min</span>` : ''}${task.completed ? `<span class="daily-done-label">${isML ? 'പൂർത്തിയായി' : 'Completed'}</span>` : ''}</div>
+                                    <div class="daily-task-meta"><span>${escapeStudyText(task.subject)}</span>${task.grade ? `<span>${escapeStudyText(task.grade)}${task.term ? ` · Term ${escapeStudyText(task.term)}` : ''}</span>` : ''}${scopeLabel ? `<span class="daily-scope-badge ${group.isFullChapter ? 'is-full' : ''}">${escapeStudyText(scopeLabel)}</span>` : ''}${mins ? `<span>${escapeStudyText(mins)} min</span>` : ''}${group.completed ? `<span class="daily-done-label">${isML ? 'പൂർത്തിയായി' : 'Completed'}</span>` : ''}</div>
                                     <h3 id="task-${key}">${escapeStudyText(getTaskChapterTitle(task))}</h3>
-                                    <p class="daily-topic">${escapeStudyText(formatTaskTopicTitle(task))}</p>
+                                    <p class="daily-topic">${escapeStudyText(topicDisplay)}</p>
                                     ${handbookUrl ? `<div class="daily-task-actions"><a href="${handbookUrl}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" class="daily-notes-btn" title="${isML ? 'ഹാൻഡ്ബുക്ക് / നോട്ട്സ് കാണുക' : 'Open chapter study notes (PDF)'}">📖 Notes</a></div>` : ''}
                                     <details id="resources-${key}" class="daily-resources" ${openSections.has('resources-' + key) ? 'open' : ''}>
                                         <summary>${isML ? 'പഠന സഹായികൾ' : 'Study resources'}</summary>
                                         <div><button type="button" data-study-tutor="${escapeStudyText(task.id)}">${isML ? 'AI പഠന സഹായി' : 'AI study tutor'}</button></div>
                                     </details>
                                 </div>
-                                <button type="button" class="daily-toggle" data-study-task="${escapeStudyText(task.id)}" aria-pressed="${!!task.completed}" aria-describedby="task-${key}">${task.completed ? (isML ? 'തിരിച്ചെടുക്കുക' : 'Undo') : (isML ? 'പൂർത്തിയായി' : 'Mark done')}</button>
+                                <button type="button" class="daily-toggle" data-study-task="${escapeStudyText(group.actionTaskId)}" ${group.isMultiTask ? `data-study-tasks="${escapeStudyText(groupIdsCsv)}"` : ''} aria-pressed="${!!group.completed}" aria-describedby="task-${key}">${group.completed ? (isML ? 'തിരിച്ചെടുക്കുക' : 'Undo') : (isML ? 'പൂർത്തിയായി' : 'Mark done')}</button>
                             </li>`;
                         }).join('')}
                     </ol>
@@ -4039,7 +4110,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                     <div class="flex items-center justify-center gap-2 mt-3 flex-wrap">
                         <button type="button" onclick="goToPlan()">${isML ? 'മുഴുവൻ പ്ലാൻ' : 'View full plan'}</button>
                         ${appState.plan.some(d => d.tasks.some(t => !t.completed)) ? `
-                            <button type="button" onclick="compactPlanToToday()" class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-3.5 rounded-xl text-xs transition active:scale-95 flex items-center gap-1.5 shadow-sm">
+                            <button type="button" onclick="compactPlanToToday()" class="min-h-[44px] bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-3.5 rounded-xl text-xs transition active:scale-95 flex items-center gap-1.5 shadow-sm">
                                 <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                                 <span>${isML ? 'അടുത്ത ഭാഗങ്ങൾ ഇന്നത്തേക്ക് കൊണ്ടുവരിക' : 'Pull Next Chapters to Today'}</span>
                             </button>
@@ -4062,7 +4133,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                     ${daily.overdueCount ? `
                         <p class="pending-notice" role="status" onclick="openPendingWork(event)">
                             <i class="fa-solid fa-clock-rotate-left mr-1 opacity-80" aria-hidden="true"></i>
-                            <span>${daily.overdueCount} ${isML ? 'മുൻ ദിവസങ്ങളിൽ ബാക്കിയുണ്ട്.' : 'unfinished from previous days.'}</span>
+                            <span>${daily.overdueCount} ${isML ? 'മുൻ ദിവസങ്ങളിൽ ബാക്കിയുണ്ട്.' : 'unfinished from previous days.'}${isPendingCompressed ? ` (${overdueGroups.length} ${isML ? 'അധ്യായങ്ങൾ' : (overdueGroups.length === 1 ? 'chapter' : 'chapters')})` : ''}</span>
                             <a href="#pending-work" onclick="openPendingWork(event)" class="pending-link font-bold underline ml-1" aria-label="${isML ? 'മുൻ ദിവസങ്ങളിലെ ബാക്കി പഠനം കാണുക' : 'View pending tasks from previous days'}">
                                 ${isML ? 'കാണുക' : 'View pending'}
                             </a>
@@ -4076,25 +4147,40 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
 
                     ${daily.overdueCount ? `
                         <details id="pending-work" class="study-pending" ${openSections.has('pending-work') || (typeof window !== 'undefined' && window.location && window.location.hash === '#pending-work') ? 'open' : ''}>
-                            <summary>${isML ? 'മുൻ ദിവസങ്ങളിലെ ബാക്കി പഠനം' : 'Pending from previous days'} (${daily.overdueCount})</summary>
-                            ${daily.overdueDays.map(day => `
-                                <section class="pending-day">
-                                    <h3>${day.date === daily.yesterdayDate ? (isML ? 'ഇന്നലെ' : 'Yesterday') : escapeStudyText(day.date)} · ${day.tasks.length} ${isML ? 'ബാക്കി' : 'pending'}</h3>
-                                    ${day.tasks.map(task => {
-                                        const pendingHandbookUrl = getHandbookUrl(task, appState);
-                                        return `
+                            <summary>${isML ? 'മുൻ ദിവസങ്ങളിലെ ബാക്കി പഠനം' : 'Pending from previous days'} (${isPendingCompressed ? `${overdueGroups.length} ${isML ? 'അധ്യായങ്ങൾ' : (overdueGroups.length === 1 ? 'chapter' : 'chapters')} · ${daily.overdueCount} ${isML ? 'ഭാഗങ്ങൾ' : 'parts'}` : daily.overdueCount})</summary>
+                            <div class="pending-list">
+                                ${overdueGroups.map(group => {
+                                    const task = group.primaryTask;
+                                    const pendingHandbookUrl = getHandbookUrl(task, appState);
+                                    const scopeLabel = group.chapterKey ? formatCompressedGroupScope(group, isML) : '';
+                                    const dateSpan = formatPendingDateSpan(group.dates, daily.yesterdayDate, isML);
+                                    const mins = group.totalMinutes || task.estimatedMinutes || 0;
+                                    const topicDisplay = group.isMultiTask ? formatGroupTopicSummary(group, isML) : formatTaskTopicTitle(task);
+                                    const btnLabel = group.isMultiTask
+                                        ? (group.isFullChapter
+                                            ? (isML ? 'അധ്യായം പൂർത്തിയാക്കുക' : 'Complete Chapter')
+                                            : (isML ? `${group.tasks.length} ഭാഗങ്ങൾ പൂർത്തിയാക്കുക` : `Mark ${group.tasks.length} parts done`))
+                                        : (isML ? 'പൂർത്തിയായി' : 'Mark done');
+                                    const groupIdsCsv = group.taskIds.join(',');
+                                    return `
                                         <div class="pending-task">
-                                            <div>
-                                                <strong>${escapeStudyText(task.subject)}</strong>
-                                                <p>${escapeStudyText(getTaskChapterTitle(task))}</p>
-                                                <small>${escapeStudyText(formatTaskTopicTitle(task))}</small>
-                                                ${pendingHandbookUrl ? `<div><a href="${pendingHandbookUrl}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" class="daily-notes-btn" style="margin-top: 4px; padding: 2px 8px; font-size: 11px;" title="${isML ? 'ഹാൻഡ്ബുക്ക് / നോട്ട്സ് കാണുക' : 'Open chapter study notes (PDF)'}">📖 Notes</a></div>` : ''}
+                                            <div class="pending-task-body">
+                                                <div class="pending-task-badges">
+                                                    <span class="pending-badge pending-badge-subject">${escapeStudyText(task.subject)}</span>
+                                                    ${renderTaskGradeBadge(task)}
+                                                    ${scopeLabel ? `<span class="pending-badge pending-badge-scope ${group.isFullChapter ? 'is-full' : ''}">${escapeStudyText(scopeLabel)}</span>` : ''}
+                                                    ${mins ? `<span class="pending-badge pending-badge-duration">⏱️ ${escapeStudyText(mins)} min</span>` : ''}
+                                                    ${dateSpan ? `<span class="pending-badge pending-badge-dates">${escapeStudyText(dateSpan)}</span>` : ''}
+                                                </div>
+                                                <p class="pending-chapter-title">${escapeStudyText(getTaskChapterTitle(task))}</p>
+                                                <small class="pending-topic-summary">${escapeStudyText(topicDisplay)}</small>
+                                                ${pendingHandbookUrl ? `<div><a href="${pendingHandbookUrl}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" class="daily-notes-btn" style="margin-top: 6px; padding: 2px 10px; font-size: 11px;" title="${isML ? 'ഹാൻഡ്ബുക്ക് / നോട്ട്സ് കാണുക' : 'Open chapter study notes (PDF)'}">📖 Notes</a></div>` : ''}
                                             </div>
-                                            <button type="button" data-pending-task="${escapeStudyText(task.id)}">${isML ? 'പൂർത്തിയായി' : 'Mark done'}</button>
+                                            <button type="button" data-pending-task="${escapeStudyText(group.actionTaskId)}" ${group.isMultiTask ? `data-pending-tasks="${escapeStudyText(groupIdsCsv)}"` : ''}>${escapeStudyText(btnLabel)}</button>
                                         </div>
-                                    `;}).join('')}
-                                </section>
-                            `).join('')}
+                                    `;
+                                }).join('')}
+                            </div>
                         </details>
                     ` : ''}
                     ${tomorrowPlan ? `
@@ -4109,27 +4195,27 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                         <!-- Quick Action Bar -->
                     <div class="study-tool-actions no-print">
                         <div class="flex items-center gap-2">
-                            <button onclick="printSchedule()" class="flex items-center gap-1.5 bg-white dark:bg-[#101726] hover:bg-slate-50 dark:hover:bg-[#141d30] text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 font-bold text-xs py-2 px-3 sm:px-3.5 rounded-xl shadow-sm transition active:scale-95" title="Print full schedule or save as PDF">
+                            <button onclick="printSchedule()" class="min-h-[44px] flex items-center gap-1.5 bg-white dark:bg-[#101726] hover:bg-slate-50 dark:hover:bg-[#141d30] text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 font-bold text-xs py-2 px-3 sm:px-3.5 rounded-xl shadow-sm transition active:scale-95" title="Print full schedule or save as PDF">
                                 <i class="fa-solid fa-print text-blue-600 dark:text-blue-400"></i>
                                 <span>${isML ? ML_I18N.dashboard.printSchedule : 'Print / PDF'}</span>
                             </button>
-                            <button onclick="openRegenerateModal()" class="flex items-center gap-1.5 bg-white dark:bg-[#101726] hover:bg-slate-50 dark:hover:bg-[#141d30] text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 font-semibold text-xs py-2 px-3 rounded-xl shadow-sm transition active:scale-95" title="Recalculate schedule if you missed days">
+                            <button onclick="openRegenerateModal()" class="min-h-[44px] flex items-center gap-1.5 bg-white dark:bg-[#101726] hover:bg-slate-50 dark:hover:bg-[#141d30] text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 font-semibold text-xs py-2 px-3 rounded-xl shadow-sm transition active:scale-95" title="Recalculate schedule if you missed days">
                                 <i class="fa-solid fa-wrench text-slate-500 dark:text-slate-400"></i>
                                 <span>${isML ? ML_I18N.dashboard.adjustPlan : 'Adjust Plan'}</span>
                             </button>
                         </div>
-                        <button onclick="shareApp()" class="flex items-center gap-1.5 bg-white dark:bg-[#101726] hover:bg-slate-50 dark:hover:bg-[#141d30] text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 font-semibold text-xs py-2 px-3 rounded-xl shadow-sm transition active:scale-95">
+                        <button onclick="shareApp()" class="min-h-[44px] flex items-center gap-1.5 bg-white dark:bg-[#101726] hover:bg-slate-50 dark:hover:bg-[#141d30] text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 font-semibold text-xs py-2 px-3 rounded-xl shadow-sm transition active:scale-95">
                             <i class="fa-solid fa-arrow-up-from-bracket text-slate-500 dark:text-slate-400"></i>
                             <span>${isML ? ML_I18N.dashboard.share : 'Share'}</span>
                         </button>
                     </div>
                         <!-- Clean Bottom Controls -->
                     <div class="study-tool-recovery border-t border-slate-200 dark:border-slate-800 text-xs text-slate-400 no-print">
-                        <button onclick="openRegenerateModal()" class="text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white font-medium transition flex items-center gap-1.5">
+                        <button onclick="openRegenerateModal()" class="min-h-[44px] text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white font-medium transition inline-flex items-center gap-1.5">
                             <i class="fa-solid fa-rotate text-xs"></i>
                             <span>${isML ? ML_I18N.dashboard.fellBehind : 'Fell behind? Recalculate remaining portions'}</span>
                         </button>
-                        <button onclick="resetApp()" class="text-slate-400 hover:text-red-600 transition underline">
+                        <button onclick="resetApp()" class="min-h-[44px] text-slate-400 hover:text-red-600 transition underline inline-flex items-center">
                             ${isML ? ML_I18N.dashboard.resetPlan : 'Reset Plan'}
                         </button>
                     </div>
@@ -4137,10 +4223,16 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 `;
 
                 container.querySelectorAll('[data-pending-task]').forEach(button => {
-                    button.addEventListener('click', () => toggleTaskDirect(button.dataset.pendingTask));
+                    button.addEventListener('click', () => {
+                        const groupIds = button.dataset.pendingTasks || button.dataset.pendingTask;
+                        toggleTaskDirect(button.dataset.pendingTask, groupIds);
+                    });
                 });
                 container.querySelectorAll('[data-study-task]').forEach(button => {
-                    button.addEventListener('click', () => toggleTaskDirect(button.dataset.studyTask));
+                    button.addEventListener('click', () => {
+                        const groupIds = button.dataset.studyTasks || button.dataset.studyTask;
+                        toggleTaskDirect(button.dataset.studyTask, groupIds);
+                    });
                 });
                 container.querySelectorAll('[data-study-tutor]').forEach(button => {
                     button.addEventListener('click', () => openAiTutorModal(button.dataset.studyTutor));
@@ -4167,8 +4259,8 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
 
                     planDaysHTML += `
                         <div class="bg-white rounded-2xl border ${isToday ? 'border-blue-300 ring-2 ring-blue-100' : 'border-slate-200'} shadow-sm overflow-hidden mb-4 transition-all print-avoid-break" data-day-number="${day.dayNumber}">
-                            <div class="p-3.5 sm:p-4 bg-slate-50/80 border-b border-slate-100 flex items-center justify-between">
-                                <div class="flex items-center gap-2">
+                            <div class="p-3.5 sm:p-4 bg-slate-50/80 dark:bg-[#121929] border-b border-slate-100 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2">
+                                <div class="flex flex-wrap items-center gap-1.5 sm:gap-2 min-w-0">
                                     <span class="text-xs font-extrabold text-slate-900 dark:text-white">${isML ? `${ML_I18N.plan.day} ${day.dayNumber}` : `Day ${day.dayNumber}`}</span>
                                     <span class="text-xs font-bold text-slate-500 dark:text-slate-400">(${day.date})</span>
                                     ${isToday ? `<span class="text-xs font-extrabold bg-blue-600 text-white px-2 py-0.5 rounded-full no-print">${isML ? ML_I18N.plan.todayBadge : 'TODAY'}</span>` : ''}
@@ -4183,28 +4275,35 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
 
                             <div class="p-3 sm:p-4 divide-y divide-slate-100 dark:divide-slate-800">
                                 ${displayedTasks.length === 0 ? (day.isRestDay ? `<p class="text-xs text-emerald-700 font-semibold py-1.5 flex items-center gap-2"><i class="fa-solid fa-mug-hot text-emerald-600"></i><span>${isML ? ML_I18N.plan.restDayNotice : 'Personalized Rest & Recharge Day (0 new chapters)'}</span></p>` : `<p class="text-xs text-slate-400 italic py-1">${isML ? 'ഫ്രീ / ബഫർ ദിനം' : 'Free / Buffer Day'}</p>`) : ''}
-                                ${displayedTasks.map((task, taskIdx) => {
+                                ${compressSameDayTasks(displayedTasks, day.date).map((group, groupIdx, allDayGroups) => {
+                                    const task = group.primaryTask;
                                     const badgeColor = getSubjectColorBadge(task.subject);
-                                    const taskIdSafe = escapeStudyText(task.id);
+                                    const actionIdSafe = escapeStudyText(group.actionTaskId);
+                                    const groupIdsSafe = escapeStudyText(group.taskIds.join(','));
+                                    const toggleArgs = group.isMultiTask
+                                        ? `'${actionIdSafe}', '${groupIdsSafe}'`
+                                        : `'${actionIdSafe}'`;
+                                    const combinedMinutes = group.totalMinutes || (group.tasks.length * 60);
+                                    const topicDisplay = group.isMultiTask ? formatGroupTopicSummary(group, isML) : formatTaskTopicTitle(task);
                                     return `
                                         <div class="task-item-container py-2.5 first:pt-0 last:pb-0 flex items-start gap-3">
                                             <!-- Working Clickable Checkbox in Full Plan -->
-                                            <div class="task-checkbox ${task.completed ? 'checked' : ''} mt-0.5" role="checkbox" tabindex="0" aria-checked="${!!task.completed}" aria-label="${escapeStudyText(task.subject + ' - ' + getTaskChapterTitle(task))}" data-task-id="${taskIdSafe}" onclick="event.stopPropagation(); toggleTaskDirect('${taskIdSafe}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();toggleTaskDirect('${taskIdSafe}');}">
+                                            <div class="task-checkbox ${group.completed ? 'checked' : ''} mt-0.5" role="checkbox" tabindex="0" aria-checked="${!!group.completed}" aria-label="${escapeStudyText(task.subject + ' - ' + getTaskChapterTitle(task))}" data-task-id="${actionIdSafe}" ${group.isMultiTask ? `data-group-task-ids="${groupIdsSafe}"` : ''} onclick="event.stopPropagation(); toggleTaskDirect(${toggleArgs})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();toggleTaskDirect(${toggleArgs});}">
                                                 <svg class="svg-check" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                                     <polyline points="20 6 9 17 4 12"></polyline>
                                                 </svg>
                                             </div>
-                                            <div class="flex-1 cursor-pointer" onclick="toggleTaskDirect('${taskIdSafe}')">
+                                            <div class="flex-1 min-w-0 cursor-pointer" onclick="toggleTaskDirect(${toggleArgs})">
                                                 <div class="flex flex-wrap items-center gap-1.5 mb-1">
-                                                    <span class="text-xs font-bold px-1.5 py-0.5 rounded ${badgeColor}">${task.subject}</span>
-                                                    ${renderTaskDailySlotBadge(taskIdx, displayedTasks.length, isML)}
-                                                    ${task.isFocusSubject ? '<span class="text-xs font-black px-1.5 py-0.5 rounded bg-rose-100 text-rose-800 border border-rose-200">🎯 FOCUS</span>' : ''}
+                                                    <span class="text-xs font-bold px-1.5 py-0.5 rounded ${badgeColor}">${escapeStudyText(task.subject)}</span>
+                                                    ${renderTaskDailySlotBadge(groupIdx, allDayGroups.length, isML)}
+                                                    ${group.isFocusSubject ? '<span class="text-xs font-black px-1.5 py-0.5 rounded bg-rose-100 text-rose-800 border border-rose-200">🎯 FOCUS</span>' : ''}
                                                     ${renderTaskGradeBadge(task)}
-                                                    ${renderTaskPartBadge(task)}
-                                                    ${getTaskResourceBadge(task)}
+                                                    ${renderGroupPartBadge(group, isML)}
+                                                    ${getTaskResourceBadge({ ...task, estimatedMinutes: combinedMinutes })}
                                                 </div>
-                                                <div class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 task-text-content ${task.completed ? 'line-through opacity-50' : ''}">
-                                                    ${getTaskChapterTitle(task)} - <span class="font-normal text-slate-500 dark:text-slate-400">${formatTaskTopicTitle(task)}</span>
+                                                <div class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 task-text-content ${group.completed ? 'line-through opacity-50' : ''}">
+                                                    ${escapeStudyText(getTaskChapterTitle(task))} - <span class="font-normal text-slate-500 dark:text-slate-400">${escapeStudyText(topicDisplay)}</span>
                                                 </div>
                                                 ${getTaskDeepLinksHtml(task)}
                                             </div>
@@ -4324,7 +4423,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                             return filters.map(f => {
                                 const isActive = (currentPlanSubjectFilter === f.id);
                                 return `
-                                    <button onclick="setPlanSubjectFilter('${f.id}')" class="min-h-[44px] py-2.5 px-3.5 rounded-xl font-bold transition-colors duration-150 active:scale-95 shrink-0 flex items-center gap-1.5 ${isActive ? 'bg-blue-600 text-white shadow-sm shadow-blue-500/20' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'}">
+                                    <button onclick="setPlanSubjectFilter('${f.id}')" class="min-h-[44px] py-2.5 px-3.5 rounded-xl font-bold transition-colors duration-150 active:scale-95 shrink-0 flex items-center gap-1.5 ${isActive ? 'bg-blue-600 text-white shadow-sm shadow-blue-500/20' : 'bg-white dark:bg-[#0e1628] text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800'}">
                                         <i class="fa-solid ${f.icon} text-xs"></i>
                                         <span>${f.label}</span>
                                     </button>
@@ -4351,10 +4450,10 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
 
                     <!-- Subtle Bottom Rebalance -->
                     <div class="mt-8 pt-4 border-t border-slate-200 flex justify-between items-center text-xs text-slate-500 no-print">
-                        <button onclick="openRegenerateModal()" class="py-2 px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl transition flex items-center gap-1.5">
+                        <button onclick="openRegenerateModal()" class="min-h-[44px] py-2 px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl transition flex items-center gap-1.5">
                             <i class="fa-solid fa-wrench"></i> ${isML ? ML_I18N.plan.adjustSchedule : 'Adjust Schedule'}
                         </button>
-                        <button onclick="resetApp()" class="text-slate-400 hover:text-red-600 underline">${isML ? ML_I18N.plan.resetPlan : 'Reset Plan'}</button>
+                        <button onclick="resetApp()" class="min-h-[44px] text-slate-400 hover:text-red-600 underline inline-flex items-center">${isML ? ML_I18N.plan.resetPlan : 'Reset Plan'}</button>
                     </div>
                 `;
 
@@ -4457,7 +4556,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 });
 
                 container.innerHTML = `
-                    <div class="flex items-center justify-between mb-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
                         <div>
                             <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white">${isML ? ML_I18N.syllabus.title : 'Official DHSE Scheme of Work'}</h2>
                             <p class="text-xs text-slate-500 dark:text-slate-400">${(function() {
@@ -4612,6 +4711,46 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 <span class="text-xs font-extrabold px-1.5 py-0.5 rounded-md bg-blue-100 text-blue-800 border border-blue-300/80 dark:bg-blue-950/60 dark:text-blue-300 dark:border-blue-700/60 flex items-center gap-1 shadow-xs"><i class="fa-solid fa-graduation-cap text-xs text-blue-600"></i> +2</span>
                 ${task.term ? `<span class="text-xs font-semibold px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 border border-slate-200/50 dark:border-slate-700/50">Term ${task.term}</span>` : ''}
             `;
+        }
+
+        function formatGroupTopicSummary(group, isML = false) {
+            if (!group || !Array.isArray(group.tasks) || group.tasks.length === 0) return '';
+            if (!group.isMultiTask) return formatTaskTopicTitle(group.primaryTask);
+
+            const descriptions = [];
+            const seen = new Set();
+            group.tasks.forEach(task => {
+                let desc = String(task?.topicTitle || '');
+                desc = desc.replace(/^Part\s+\d+\s*(?:of|\/)\s*\d+(?:\s*\([^)]*\))?:\s*/i, '');
+                desc = desc.replace(/^Full\s+Chapter(?:\s*Concepts\s*&\s*Key\s*Problems)?:\s*/i, '');
+                desc = desc.trim();
+                if (desc && !seen.has(desc)) {
+                    seen.add(desc);
+                    descriptions.push(desc);
+                }
+            });
+
+            const scope = formatCompressedGroupScope(group, isML);
+            if (descriptions.length === 0) return scope;
+            return scope ? `${scope}: ${descriptions.join(' • ')}` : descriptions.join(' • ');
+        }
+
+        function formatPendingDateSpan(dates, yesterdayDate, isML = false) {
+            if (!Array.isArray(dates) || dates.length === 0) return '';
+            const fmt = d => (d === yesterdayDate ? (isML ? 'ഇന്നലെ' : 'Yesterday') : d);
+            if (dates.length === 1) return fmt(dates[0]);
+            return `${fmt(dates[0])} – ${fmt(dates[dates.length - 1])}`;
+        }
+
+        function renderGroupPartBadge(group, isML = false) {
+            if (!group) return '';
+            if (!group.isMultiTask) return renderTaskPartBadge(group.primaryTask);
+            if (!group.chapterKey) return '';
+            const scope = escapeStudyText(formatCompressedGroupScope(group, isML));
+            if (group.isFullChapter) {
+                return `<span class="text-xs font-black px-1.5 py-0.5 rounded-md bg-emerald-100 text-emerald-800 border border-emerald-300/80 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-700/60 flex items-center gap-1 shadow-xs"><i class="fa-solid fa-circle-check text-xs text-emerald-600 dark:text-emerald-400"></i> ${scope}</span>`;
+            }
+            return `<span class="text-xs font-bold px-1.5 py-0.5 rounded-md bg-indigo-50 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300 border border-indigo-200/70 dark:border-indigo-800/60">${scope}</span>`;
         }
 
         function renderTaskPartBadge(task) {

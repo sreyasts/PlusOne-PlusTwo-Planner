@@ -433,6 +433,852 @@ export function validateSchedule(planOrDays, originalTasks = [], options = {}) {
 }
 
 /**
+ * Group tasks into ordered subject -> chapter -> sorted parts structure.
+ * Generic across all grades, streams, and custom syllabi.
+ */
+function groupTasksIntoSubjectChapters(tasks, streamSubjects) {
+  const subjectChapterMap = {};
+  (streamSubjects || []).forEach((s) => {
+    subjectChapterMap[s] = [];
+  });
+
+  (tasks || []).forEach((task) => {
+    if (!task || !task.subject) return;
+    if (!subjectChapterMap[task.subject]) subjectChapterMap[task.subject] = [];
+    let ch = subjectChapterMap[task.subject].find((c) =>
+      c.chapId && task.chapId
+        ? c.chapId === task.chapId
+        : c.grade === task.grade && c.chapNumber === task.chapNumber
+    );
+    if (!ch) {
+      ch = {
+        grade: task.grade,
+        chapNumber: task.chapNumber || 0,
+        chapId: task.chapId,
+        chapterName: task.chapterName,
+        subject: task.subject,
+        term: task.term,
+        parts: [],
+      };
+      subjectChapterMap[task.subject].push(ch);
+    }
+    ch.parts.push(task);
+  });
+
+  Object.keys(subjectChapterMap).forEach((s) => {
+    subjectChapterMap[s].sort((a, b) => {
+      const ga = a.grade || '';
+      const gb = b.grade || '';
+      if (ga !== gb) return ga.localeCompare(gb);
+      return (a.chapNumber || 0) - (b.chapNumber || 0);
+    });
+    subjectChapterMap[s].forEach((ch) => {
+      ch.parts.sort((a, b) => (a.part || 0) - (b.part || 0));
+    });
+  });
+
+  return subjectChapterMap;
+}
+
+/**
+ * Inspect available study runway vs remaining chapter density to choose between
+ * multi-part pacing (abundant runway) and whole-chapter / contiguous block coalescing (tight/moderate runway).
+ */
+export function computeRunwayGranularity({
+  planDays,
+  syllabusStudyDays,
+  subjectChapterMap,
+  totalTasks,
+}) {
+  const activeStudyDays = (planDays || [])
+    .slice(0, syllabusStudyDays)
+    .filter((d) => !d.isRestDay && !d.isExamEve).length;
+
+  let uniqueChaptersCount = 0;
+  let multiPartChaptersCount = 0;
+  Object.values(subjectChapterMap || {}).forEach((chapters) => {
+    uniqueChaptersCount += chapters.length;
+    chapters.forEach((ch) => {
+      if (ch.parts && ch.parts.length > 1) multiPartChaptersCount++;
+    });
+  });
+
+  const safeActiveDays = Math.max(1, activeStudyDays);
+  const daysPerChapter = uniqueChaptersCount > 0 ? safeActiveDays / uniqueChaptersCount : safeActiveDays;
+  const tasksPerActiveDay = totalTasks > 0 ? totalTasks / safeActiveDays : 0;
+
+  const isChapterBlockMode =
+    uniqueChaptersCount > 0 &&
+    multiPartChaptersCount > 0 &&
+    (daysPerChapter <= 1.27 || tasksPerActiveDay >= 1.85);
+
+  return {
+    mode: isChapterBlockMode ? 'chapter_block' : 'multi_part',
+    activeStudyDays,
+    uniqueChaptersCount,
+    multiPartChaptersCount,
+    daysPerChapter: Number(daysPerChapter.toFixed(2)),
+    tasksPerActiveDay: Number(tasksPerActiveDay.toFixed(2)),
+  };
+}
+
+/**
+ * Schedule +1 improvement papers across available days before each exam date,
+ * coalescing chapter parts onto the same day when improvement runway is tight.
+ */
+export function scheduleImprovementTasks({
+  planDays,
+  p1Tasks,
+  impConfig,
+  startDateStr,
+  targetDeadline,
+  syllabusStudyDays,
+  subjectWeights = {},
+  calculateDaysFn = calculateDaysBetween,
+}) {
+  if (!impConfig || impConfig.length === 0) return;
+
+  // 1. Pre-mark Exam Eve and Exam Day on planDays
+  impConfig.forEach((cfg) => {
+    if (!cfg.examDate) return;
+    const examDate = cfg.examDate;
+    const examDayIdx = planDays.findIndex((d) => d.date === examDate);
+    if (examDayIdx !== -1) {
+      planDays[examDayIdx].isExamDay = true;
+      planDays[examDayIdx].examSubject = cfg.subject;
+    }
+
+    const daysUntilExam = calculateDaysFn(startDateStr, examDate);
+    let eveIdx = -1;
+    if (examDayIdx > 0) {
+      eveIdx = examDayIdx - 1;
+    } else if (Number.isFinite(daysUntilExam) && daysUntilExam > 0 && daysUntilExam - 1 < planDays.length) {
+      eveIdx = daysUntilExam - 1;
+    }
+
+    if (eveIdx >= 0 && eveIdx < planDays.length) {
+      planDays[eveIdx].isExamEve = true;
+      planDays[eveIdx].exclusiveSubject = cfg.subject;
+      planDays[eveIdx].examDate = examDate;
+    }
+
+    const preEveIdx = eveIdx - 1;
+    if (preEveIdx >= 0 && !planDays[preEveIdx].isExamEve) {
+      planDays[preEveIdx].isPreExamEve = true;
+      planDays[preEveIdx].prioritySubject = cfg.subject;
+    }
+  });
+
+  // 2. Schedule tasks for each improvement paper
+  impConfig.forEach((cfg) => {
+    const subTasks = p1Tasks.filter((t) => t.subject === cfg.subject);
+    if (subTasks.length === 0) return;
+
+    const examDate = cfg.examDate || targetDeadline;
+    const daysUntilExam = calculateDaysFn(startDateStr, examDate);
+    const examDayIdx = planDays.findIndex((d) => d.date === examDate);
+    let eveIdx = -1;
+    if (examDayIdx > 0) {
+      eveIdx = examDayIdx - 1;
+    } else if (Number.isFinite(daysUntilExam) && daysUntilExam > 0 && daysUntilExam - 1 < planDays.length) {
+      eveIdx = daysUntilExam - 1;
+    }
+
+    const maxStudyDayIdx = eveIdx >= 0
+      ? eveIdx
+      : Math.max(0, Math.min(Number.isFinite(daysUntilExam) && daysUntilExam > 1 ? daysUntilExam - 2 : 0, syllabusStudyDays - 1));
+
+    const availableDays = [];
+    for (let d = 0; d <= maxStudyDayIdx; d++) {
+      const day = planDays[d];
+      if (day.isRestDay) continue;
+      if (day.isExamEve && day.exclusiveSubject !== cfg.subject) continue;
+      availableDays.push(d);
+    }
+    if (availableDays.length === 0) {
+      for (let d = 0; d <= maxStudyDayIdx; d++) availableDays.push(d);
+    }
+
+    const partsCount = subTasks.length;
+    const uniqueChapters = [...new Map(subTasks.map((t) => [t.chapId || `${t.grade}_${t.subject}_${t.chapNumber}`, t])).values()];
+    const rawW = subjectWeights[cfg.subject];
+    const isFocus = (Number.isFinite(Number(rawW)) && Number(rawW) > 0 ? Number(rawW) : 1.0) >= 1.1;
+    const runwayRatio = availableDays.length / Math.max(1, partsCount);
+    const chapterRunwayRatio = availableDays.length / Math.max(1, uniqueChapters.length);
+    const hasAmpleRunway = (runwayRatio >= 1.0 || chapterRunwayRatio >= 1.2) && availableDays.length >= 6;
+
+    // --- Pass 1: Foundational Syllabus Coverage ---
+    const pass1Days = hasAmpleRunway
+      ? availableDays.slice(0, Math.max(uniqueChapters.length, Math.floor(availableDays.length * 0.6)))
+      : (availableDays.length > 1 && eveIdx >= 0)
+      ? availableDays.filter((d) => d < eveIdx)
+      : availableDays;
+
+    const targetPass1Days = pass1Days.length > 0 ? pass1Days : availableDays;
+    const coalesceImpChapters = !hasAmpleRunway || targetPass1Days.length <= uniqueChapters.length * 1.25;
+    const chapterKeyToIdx = new Map();
+    uniqueChapters.forEach((ch, idx) => {
+      chapterKeyToIdx.set(ch.chapId || `${ch.grade}_${ch.subject}_${ch.chapNumber}`, idx);
+    });
+
+    const chapterInitialStudyDay = new Map();
+
+    subTasks.forEach((task, tIdx) => {
+      let targetDayIndex;
+      if (targetPass1Days.length <= 1) {
+        targetDayIndex = targetPass1Days[0] || 0;
+      } else if (coalesceImpChapters) {
+        const chKey = task.chapId || `${task.grade}_${task.subject}_${task.chapNumber}`;
+        const chIdx = chapterKeyToIdx.get(chKey) ?? 0;
+        const stepIdx = Math.min(
+          targetPass1Days.length - 1,
+          Math.floor((chIdx / Math.max(1, uniqueChapters.length)) * targetPass1Days.length)
+        );
+        targetDayIndex = targetPass1Days[stepIdx];
+      } else {
+        const stepIdx = Math.min(
+          targetPass1Days.length - 1,
+          Math.floor((tIdx / partsCount) * targetPass1Days.length)
+        );
+        targetDayIndex = targetPass1Days[stepIdx];
+      }
+
+      if (tIdx > 0) {
+        const prevTaskId = subTasks[tIdx - 1].id;
+        const prevDayIndex = planDays.findIndex((d) => d.tasks.some((pt) => pt.id === prevTaskId));
+        if (prevDayIndex !== -1 && targetDayIndex < prevDayIndex) {
+          targetDayIndex = prevDayIndex;
+        }
+      }
+
+      chapterInitialStudyDay.set(task.chapId, targetDayIndex);
+
+      planDays[targetDayIndex].tasks.push({
+        ...task,
+        completed: false,
+        isImprovement: true,
+        isFocusSubject: isFocus,
+        pedagogyNote: runwayRatio > 1.4
+          ? 'Pass 1 (Concept Mastery): Theory understanding, textbook illustrations, and key derivations.'
+          : 'Core Syllabus Pacing: High-priority improvement preparation.',
+      });
+    });
+
+    // --- Pass 2: Ebbinghaus Forgetting Curve Spaced Retrieval (If Ample Runway) ---
+    if (hasAmpleRunway) {
+      const eveDayLimit = eveIdx >= 0 ? eveIdx : (availableDays[availableDays.length - 1] ?? 0) + 1;
+      const baseInterval = Math.max(2, Math.min(6, Math.floor(availableDays.length / Math.max(1, uniqueChapters.length * 1.5)) || 2));
+
+      uniqueChapters.forEach((chTask) => {
+        const initialDay = chapterInitialStudyDay.get(chTask.chapId) ?? availableDays[0];
+        const targetRevDay = initialDay + baseInterval;
+        let bestRevDay = availableDays.find((d) => d >= targetRevDay && d < eveDayLimit);
+        if (bestRevDay === undefined) {
+          const priorDays = availableDays.filter((d) => d < eveDayLimit);
+          bestRevDay = priorDays.length > 0 ? priorDays[priorDays.length - 1] : initialDay;
+        }
+
+        const spacingDays = Math.max(1, bestRevDay - initialDay);
+
+        planDays[bestRevDay].tasks.push({
+          id: `IMP_REV_${chTask.chapId}_EBB1`,
+          chapId: `IMP_REV_${chTask.chapId}`,
+          chapNumber: chTask.chapNumber,
+          chapterName: `${chTask.chapterName} — Active Recall & DHSE PYQs`,
+          subject: cfg.subject,
+          grade: '+1',
+          part: 1,
+          totalParts: 1,
+          term: chTask.term || 1,
+          estimatedMinutes: 50,
+          difficulty: 'HIGH',
+          completed: false,
+          isImprovement: true,
+          isRevision: true,
+          isSpacedRetrieval: true,
+          isForgettingCurveReview: true,
+          spacingInterval: `T+${spacingDays}`,
+          isFocusSubject: true,
+          pedagogyNote: `Ebbinghaus Spaced Retrieval (T+${spacingDays}): Active recall and DHSE PYQ drilling timed at the memory decay inflection point to convert conceptual encoding into permanent retention.`,
+        });
+
+        if (availableDays.length >= 14 && runwayRatio >= 2.0) {
+          const secondaryTarget = Math.max(bestRevDay + 3, initialDay + baseInterval * 2 + 2);
+          const bestRevDay2 = availableDays.find((d) => d >= secondaryTarget && d < eveDayLimit);
+          if (bestRevDay2 !== undefined && bestRevDay2 !== bestRevDay) {
+            const spacingDays2 = Math.max(2, bestRevDay2 - initialDay);
+            planDays[bestRevDay2].tasks.push({
+              id: `IMP_REV_${chTask.chapId}_EBB2`,
+              chapId: `IMP_REV_${chTask.chapId}`,
+              chapNumber: chTask.chapNumber,
+              chapterName: `${chTask.chapterName} — Speed Practice & Consolidation`,
+              subject: cfg.subject,
+              grade: '+1',
+              part: 1,
+              totalParts: 1,
+              term: chTask.term || 1,
+              estimatedMinutes: 45,
+              difficulty: 'HIGH',
+              completed: false,
+              isImprovement: true,
+              isRevision: true,
+              isSpacedRetrieval: true,
+              isForgettingCurveReview: true,
+              spacingInterval: `T+${spacingDays2}`,
+              isFocusSubject: true,
+              pedagogyNote: `Ebbinghaus Secondary Consolidation (T+${spacingDays2}): High-speed problem solving and active derivation retrieval before final exam eve.`,
+            });
+          }
+        }
+      });
+    }
+
+    // --- Pass 3: Dedicated Exam Eve Formula Blitz on T-1 ---
+    if (eveIdx >= 0 && eveIdx < planDays.length) {
+      const hasEveTaskAlready = planDays[eveIdx].tasks.some(
+        (t) => t.subject === cfg.subject && (t.isExamEveTask || t.id.includes('EVE'))
+      );
+      if (!hasEveTaskAlready) {
+        planDays[eveIdx].tasks.push({
+          id: `IMP_REV_${cfg.subject.replace(/\s+/g, '_')}_EVE`,
+          chapId: `IMP_REV_${cfg.subject.replace(/\s+/g, '_')}_EVE`,
+          chapNumber: 99,
+          chapterName: `${cfg.subject} Exam Eve: Rapid Formula Blitz & High-Yield PYQs`,
+          subject: cfg.subject,
+          grade: '+1',
+          part: 1,
+          totalParts: 1,
+          term: 1,
+          estimatedMinutes: 90,
+          difficulty: 'HIGH',
+          completed: false,
+          isImprovement: true,
+          isRevision: true,
+          isExamEveTask: true,
+          isFocusSubject: true,
+          pedagogyNote: 'Exam Eve 100% Exclusive Review: Tomorrow is the exam! Active recall of all formulas, core derivations, and Kerala DHSE model papers.',
+        });
+      }
+    }
+  });
+}
+
+function getSafeSubjectWeight(subjectWeights, subject) {
+  const rawW = subjectWeights?.[subject];
+  return Number.isFinite(Number(rawW)) && Number(rawW) > 0 ? Number(rawW) : 1.0;
+}
+
+/**
+ * Schedule regular (+2 / non-improvement +1) tasks using Runway-Adaptive Chapter Granularity:
+ * - Abundant runway ('multi_part'): spreads multi-part chapters smoothly across days.
+ * - Tight/moderate runway ('chapter_block'): coalesces chapter parts into whole-chapter
+ *   or continuous same-chapter blocks within a day while preserving strict part ordering.
+ */
+export function scheduleAdaptiveRegularTasks({
+  planDays,
+  p2Tasks,
+  streamSubjects,
+  syllabusStudyDays,
+  dayCapacityWeights,
+  totalActiveWeight,
+  subjectWeights = {},
+}) {
+  const subjectChapterMap = groupTasksIntoSubjectChapters(p2Tasks, streamSubjects);
+  const allSubjects = Array.from(new Set([...(streamSubjects || []), ...Object.keys(subjectChapterMap)]));
+
+  const granularity = computeRunwayGranularity({
+    planDays,
+    syllabusStudyDays,
+    subjectChapterMap,
+    totalTasks: p2Tasks.length,
+  });
+
+  if (p2Tasks.length === 0) {
+    return { granularity };
+  }
+
+  const subjectState = {};
+  allSubjects.forEach((s) => {
+    subjectState[s] = {
+      subject: s,
+      chapterIndex: 0,
+      partIndex: 0,
+      lastScheduledDay: -1,
+    };
+  });
+
+  const getSubjectRemainingCounts = () => {
+    const remTasks = {};
+    const remChapters = {};
+    let totalRemTasks = 0;
+    let totalRemChapters = 0;
+    allSubjects.forEach((s) => {
+      const st = subjectState[s];
+      const chs = subjectChapterMap[s] || [];
+      let rt = 0;
+      for (let c = st.chapterIndex; c < chs.length; c++) {
+        const startP = c === st.chapterIndex ? st.partIndex : 0;
+        rt += chs[c].parts.length - startP;
+      }
+      const rc = Math.max(0, chs.length - st.chapterIndex);
+      remTasks[s] = rt;
+      remChapters[s] = rc;
+      totalRemTasks += rt;
+      totalRemChapters += rc;
+    });
+    return { remTasks, remChapters, totalRemTasks, totalRemChapters };
+  };
+
+  if (granularity.mode === 'chapter_block') {
+    let remainingWeight = totalActiveWeight;
+    let unscheduledTotal = p2Tasks.length;
+
+    for (let dayIndex = 0; dayIndex < syllabusStudyDays; dayIndex++) {
+      const day = planDays[dayIndex];
+      const w = dayCapacityWeights[dayIndex] ?? 1.0;
+      const remainingWeightAfterToday = Math.max(0, remainingWeight - w);
+
+      if (day.isRestDay || day.isExamEve || w <= 0) {
+        remainingWeight = remainingWeightAfterToday;
+        continue;
+      }
+      if (unscheduledTotal <= 0) break;
+
+      const isLastActiveDay = !planDays
+        .slice(dayIndex + 1, syllabusStudyDays)
+        .some((d) => !d.isRestDay && !d.isExamEve);
+
+      if (isLastActiveDay) {
+        allSubjects.forEach((s) => {
+          const st = subjectState[s];
+          const chs = subjectChapterMap[s] || [];
+          const isFocus = getSafeSubjectWeight(subjectWeights, s) >= 1.1;
+          while (st.chapterIndex < chs.length) {
+            const curChap = chs[st.chapterIndex];
+            while (st.partIndex < curChap.parts.length) {
+              const partTask = curChap.parts[st.partIndex];
+              day.tasks.push({
+                ...partTask,
+                completed: false,
+                isFocusSubject: isFocus,
+              });
+              st.partIndex++;
+              unscheduledTotal--;
+            }
+            st.chapterIndex++;
+            st.partIndex = 0;
+          }
+        });
+        break;
+      }
+
+      const idealToday = remainingWeight > 0 ? unscheduledTotal * (w / remainingWeight) : unscheduledTotal;
+      const isReducedCapacityDay = day.isPreExamEve || (day.tasks && day.tasks.some((t) => t.isImprovement));
+
+      if (isReducedCapacityDay && idealToday < 0.75) {
+        remainingWeight = remainingWeightAfterToday;
+        continue;
+      }
+
+      const dayHardCap = (isReducedCapacityDay && idealToday < 1.0)
+        ? 1
+        : idealToday < 2.5
+        ? Math.max(3, Math.round(idealToday + 0.85))
+        : Math.max(3, Math.ceil(idealToday * 1.35));
+
+      let scheduledTodayCount = 0;
+      const subjectsStudiedToday = new Set();
+
+      while (scheduledTodayCount < dayHardCap && unscheduledTotal > 0) {
+        const availableSubjects = allSubjects.filter((s) => {
+          const st = subjectState[s];
+          const chs = subjectChapterMap[s] || [];
+          return st.chapterIndex < chs.length;
+        });
+        if (availableSubjects.length === 0) break;
+
+        const { remTasks } = getSubjectRemainingCounts();
+        const inProgressSubjects = availableSubjects.filter((s) => subjectState[s].partIndex > 0);
+        let candidateSubject = null;
+
+        if (inProgressSubjects.length > 0) {
+          // Finish an in-progress chapter before opening a new subject/chapter
+          let bestInProgScore = -Infinity;
+          inProgressSubjects.forEach((s) => {
+            const ws = getSafeSubjectWeight(subjectWeights, s);
+            const score = ws * 2.0 + (remTasks[s] || 0) * 0.05;
+            if (score > bestInProgScore) {
+              bestInProgScore = score;
+              candidateSubject = s;
+            }
+          });
+        } else {
+          let pool = availableSubjects.filter((s) => !subjectsStudiedToday.has(s));
+          if (pool.length === 0) pool = availableSubjects;
+
+          const remRoom = Math.max(0, idealToday - scheduledTodayCount);
+          const roomToHardCap = dayHardCap - scheduledTodayCount;
+          let bestScore = -Infinity;
+
+          pool.forEach((s) => {
+            const st = subjectState[s];
+            const chs = subjectChapterMap[s] || [];
+            const ws = getSafeSubjectWeight(subjectWeights, s);
+            const recencyGap = st.lastScheduledDay === -1 ? 4 : dayIndex - st.lastScheduledDay;
+            const workloadRatio = (remTasks[s] || 0) / Math.max(1, unscheduledTotal);
+            const nextChapRemParts = chs[st.chapterIndex].parts.length - st.partIndex;
+            const fitsRemainingRoom =
+              scheduledTodayCount > 0 &&
+              nextChapRemParts <= roomToHardCap &&
+              nextChapRemParts <= Math.round(remRoom + 0.65);
+
+            const score =
+              ws * 2.0 +
+              recencyGap * 0.8 +
+              workloadRatio * 3.0 +
+              (fitsRemainingRoom ? 2.5 : 0.0);
+
+            if (score > bestScore) {
+              bestScore = score;
+              candidateSubject = s;
+            }
+          });
+        }
+
+        if (!candidateSubject) break;
+
+        const st = subjectState[candidateSubject];
+        const chs = subjectChapterMap[candidateSubject];
+        const currentChapter = chs[st.chapterIndex];
+        const remParts = currentChapter.parts.length - st.partIndex;
+        const roomToHardCap = dayHardCap - scheduledTodayCount;
+
+        if (remParts <= 0) {
+          st.chapterIndex++;
+          st.partIndex = 0;
+          continue;
+        }
+
+        let partsToTake;
+        if (scheduledTodayCount === 0) {
+          if (remParts <= dayHardCap) {
+            partsToTake = remParts;
+          } else {
+            const chunks = Math.max(2, Math.ceil(remParts / Math.max(1, Math.round(idealToday))));
+            partsToTake = Math.min(roomToHardCap, Math.max(1, Math.ceil(remParts / chunks)));
+          }
+        } else if (st.partIndex > 0) {
+          // Completing leftover parts from an earlier day
+          partsToTake = Math.min(remParts, roomToHardCap);
+        } else {
+          const remRoom = idealToday - scheduledTodayCount;
+          if (remParts <= roomToHardCap && remParts <= Math.round(remRoom + 0.65)) {
+            partsToTake = remParts;
+          } else if (scheduledTodayCount >= Math.floor(idealToday) || remRoom < 0.75) {
+            break;
+          } else {
+            partsToTake = Math.min(remParts, Math.max(1, Math.min(roomToHardCap, Math.round(remRoom))));
+          }
+        }
+
+        const isFocus = getSafeSubjectWeight(subjectWeights, candidateSubject) >= 1.1;
+        for (let p = 0; p < partsToTake; p++) {
+          const nextPart = currentChapter.parts[st.partIndex];
+          day.tasks.push({
+            ...nextPart,
+            completed: false,
+            isFocusSubject: isFocus,
+          });
+          st.partIndex++;
+          scheduledTodayCount++;
+          unscheduledTotal--;
+        }
+
+        subjectsStudiedToday.add(candidateSubject);
+        st.lastScheduledDay = dayIndex;
+
+        if (st.partIndex >= currentChapter.parts.length) {
+          st.chapterIndex++;
+          st.partIndex = 0;
+        }
+
+        if (scheduledTodayCount >= idealToday) {
+          break;
+        }
+      }
+
+      remainingWeight = remainingWeightAfterToday;
+    }
+  } else {
+    // Abundant Runway ('multi_part'): spread parts across days smoothly
+    const remainingP2TasksCount = p2Tasks.length;
+    let p2Accumulator = 0;
+
+    for (let dayIndex = 0; dayIndex < syllabusStudyDays; dayIndex++) {
+      const day = planDays[dayIndex];
+      if (day.isRestDay || day.isExamEve) continue;
+
+      const dayWeightRatio = dayCapacityWeights[dayIndex] / totalActiveWeight;
+      p2Accumulator += remainingP2TasksCount * dayWeightRatio;
+      let p2TasksToScheduleToday = Math.floor(p2Accumulator);
+      p2Accumulator -= p2TasksToScheduleToday;
+
+      const isLastActiveDay = !planDays
+        .slice(dayIndex + 1, syllabusStudyDays)
+        .some((d) => !d.isRestDay && !d.isExamEve);
+      if (isLastActiveDay) {
+        const { totalRemTasks } = getSubjectRemainingCounts();
+        p2TasksToScheduleToday = Math.max(p2TasksToScheduleToday, totalRemTasks);
+      }
+
+      let scheduledTodayCount = 0;
+      let subjectAttempts = 0;
+      const subjectsStudiedToday = new Set();
+
+      while (scheduledTodayCount < p2TasksToScheduleToday && subjectAttempts < allSubjects.length * 3) {
+        subjectAttempts++;
+
+        const availableSubjects = allSubjects.filter((s) => {
+          const state = subjectState[s];
+          const chapters = subjectChapterMap[s] || [];
+          return state.chapterIndex < chapters.length;
+        });
+        if (availableSubjects.length === 0) break;
+
+        let pool = availableSubjects.filter((s) => !subjectsStudiedToday.has(s));
+        if (pool.length === 0) pool = availableSubjects;
+
+        const remainingActiveDays = planDays
+          .slice(dayIndex, syllabusStudyDays)
+          .filter((d) => !d.isRestDay && !d.isExamEve).length;
+
+        const { remTasks: subjectRemainingTasks } = getSubjectRemainingCounts();
+
+        const isChapterAlreadyOnDay = (s) => {
+          const st = subjectState[s];
+          const chs = subjectChapterMap[s] || [];
+          if (st.partIndex === 0) return false;
+          const curChapId = chs[st.chapterIndex]?.parts[0]?.chapId;
+          if (!curChapId) return false;
+          return day.tasks.some((t) => t.chapId === curChapId);
+        };
+
+        let candidateSubject = pool[0];
+        let bestScore = -Infinity;
+
+        pool.forEach((s) => {
+          const w = getSafeSubjectWeight(subjectWeights, s);
+          const st = subjectState[s];
+          const remTasks = subjectRemainingTasks[s] || 1;
+          const isTightForSubject = remainingActiveDays <= remTasks || isLastActiveDay;
+
+          // Only give in-progress bonus if tight — suppress to force next-day spacing when loose
+          const inProgBonus = st.partIndex > 0 && isTightForSubject ? 1.8 : 0.0;
+          const recencyGap = st.lastScheduledDay === -1 ? 4 : dayIndex - st.lastScheduledDay;
+          const score = w * 1.2 + inProgBonus + recencyGap * 0.8;
+          if (score > bestScore) {
+            bestScore = score;
+            candidateSubject = s;
+          }
+        });
+
+        const state = subjectState[candidateSubject];
+        const chapters = subjectChapterMap[candidateSubject];
+        if (state.chapterIndex >= chapters.length) continue;
+
+        if (!isLastActiveDay) {
+          const remTasks = subjectRemainingTasks[candidateSubject] || 1;
+          const isTightForCandidate = remainingActiveDays <= remTasks;
+          if (!isTightForCandidate && state.partIndex > 0 && isChapterAlreadyOnDay(candidateSubject)) {
+            continue;
+          }
+        }
+
+        const currentChapter = chapters[state.chapterIndex];
+        const nextPart = currentChapter.parts[state.partIndex];
+        if (!nextPart) {
+          state.chapterIndex++;
+          state.partIndex = 0;
+          continue;
+        }
+
+        const isFocus = getSafeSubjectWeight(subjectWeights, candidateSubject) >= 1.1;
+
+        day.tasks.push({
+          ...nextPart,
+          completed: false,
+          isFocusSubject: isFocus,
+        });
+
+        subjectsStudiedToday.add(candidateSubject);
+        state.lastScheduledDay = dayIndex;
+        state.partIndex++;
+
+        if (state.partIndex >= currentChapter.parts.length) {
+          state.chapterIndex++;
+          state.partIndex = 0;
+        }
+
+        scheduledTodayCount++;
+        subjectAttempts = 0;
+      }
+
+      if (!isLastActiveDay && scheduledTodayCount < p2TasksToScheduleToday) {
+        p2Accumulator += p2TasksToScheduleToday - scheduledTodayCount;
+      }
+    }
+  }
+
+  // Fallback placement for any leftover tasks on the final active study day
+  const fallbackDayIdx =
+    planDays
+      .slice(0, syllabusStudyDays)
+      .map((d, i) => (!d.isRestDay && !d.isExamEve ? i : -1))
+      .filter((i) => i !== -1)
+      .pop() ??
+    planDays
+      .slice(0, syllabusStudyDays)
+      .map((d, i) => (!d.isRestDay ? i : -1))
+      .filter((i) => i !== -1)
+      .pop() ??
+    Math.max(0, syllabusStudyDays - 1);
+
+  allSubjects.forEach((s) => {
+    const state = subjectState[s];
+    const chapters = subjectChapterMap[s] || [];
+    const isFocus = getSafeSubjectWeight(subjectWeights, s) >= 1.1;
+    while (state.chapterIndex < chapters.length) {
+      const currentChapter = chapters[state.chapterIndex];
+      while (state.partIndex < currentChapter.parts.length) {
+        const task = currentChapter.parts[state.partIndex];
+        planDays[fallbackDayIdx].tasks.push({
+          ...task,
+          completed: false,
+          isFocusSubject: isFocus,
+        });
+        state.partIndex++;
+      }
+      state.chapterIndex++;
+      state.partIndex = 0;
+    }
+  });
+
+  return { granularity };
+}
+
+/**
+ * Post-scheduling invariant enforcement:
+ * 1. Strict Exam Eve quarantine
+ * 2. Contiguous same-chapter grouping & strict part ordering within each day
+ * 3. isFullOnDay tagging for multi-part chapters completed on a single day
+ * 4. Empty non-revision rest-day fallback and totalMinutes aggregation
+ */
+export function finalizeScheduledDays({ planDays, syllabusStudyDays }) {
+  // 1. Strict Exam Eve Quarantine
+  planDays.forEach((day, dIdx) => {
+    if (day.isExamEve && day.exclusiveSubject) {
+      const targetSub = day.exclusiveSubject;
+      const foreignTasks = (day.tasks || []).filter((t) => t.subject !== targetSub);
+      if (foreignTasks.length > 0) {
+        day.tasks = day.tasks.filter((t) => t.subject === targetSub);
+        foreignTasks.forEach((fTask) => {
+          let placed = false;
+          for (let offset = 1; offset < planDays.length; offset++) {
+            const prev = dIdx - offset;
+            if (prev >= 0 && !planDays[prev].isRestDay && !planDays[prev].isExamEve) {
+              planDays[prev].tasks.push(fTask);
+              placed = true;
+              break;
+            }
+            const next = dIdx + offset;
+            if (next < syllabusStudyDays && !planDays[next].isRestDay && !planDays[next].isExamEve) {
+              planDays[next].tasks.push(fTask);
+              placed = true;
+              break;
+            }
+          }
+          if (!placed) {
+            planDays[0].tasks.push(fTask);
+          }
+        });
+      }
+    }
+  });
+
+  // 2. Contiguous chapter sorting, isFullOnDay tagging, rest-day & totalMinutes calculation
+  planDays.forEach((day) => {
+    if (day.tasks && day.tasks.length > 1) {
+      const getTier = (t) => {
+        if (t.isExamEveTask) return 0;
+        if (t.isImprovement) return 1;
+        if (t.isRevision || t.isSpacedRetrieval || t.isForgettingCurveReview || t.isModelExam) return 3;
+        return 2;
+      };
+
+      // Group by (tier, chapId || id) preserving first appearance order per tier
+      const groups = new Map();
+      day.tasks.forEach((t) => {
+        const tier = getTier(t);
+        const chapKey =
+          tier < 3 && t.chapId
+            ? `${tier}::${t.chapId}`
+            : `${tier}::${t.id || Math.random()}`;
+        if (!groups.has(chapKey)) {
+          groups.set(chapKey, { tier, tasks: [] });
+        }
+        groups.get(chapKey).tasks.push(t);
+      });
+
+      const orderedGroups = Array.from(groups.values()).sort((a, b) => a.tier - b.tier);
+      const sortedDayTasks = [];
+      orderedGroups.forEach((grp) => {
+        if (grp.tasks.length > 1) {
+          grp.tasks.sort((a, b) => (a.part || 0) - (b.part || 0));
+        }
+        sortedDayTasks.push(...grp.tasks);
+      });
+      day.tasks = sortedDayTasks;
+    }
+
+    // Tag isFullOnDay when all declared parts of a multi-part chapter are on this day
+    if (day.tasks && day.tasks.length >= 2) {
+      const chapDayMap = {};
+      day.tasks.forEach((t) => {
+        if (
+          !t.chapId ||
+          t.isRevision ||
+          t.isExamEveTask ||
+          t.isSpacedRetrieval ||
+          t.isForgettingCurveReview ||
+          t.isModelExam
+        ) {
+          return;
+        }
+        if (!chapDayMap[t.chapId]) chapDayMap[t.chapId] = [];
+        chapDayMap[t.chapId].push(t);
+      });
+
+      Object.values(chapDayMap).forEach((tasksForChap) => {
+        if (tasksForChap.length < 2) return;
+        const totalParts = tasksForChap[0].totalParts || tasksForChap.length;
+        if (tasksForChap.length >= totalParts) {
+          tasksForChap.forEach((t) => {
+            t.isFullOnDay = true;
+          });
+        }
+      });
+    }
+
+    if (!day.isRevisionDay && (!day.tasks || day.tasks.length === 0)) {
+      day.isRestDay = true;
+    }
+    day.totalMinutes = day.isRestDay
+      ? 0
+      : (day.tasks || []).reduce((acc, t) => acc + (t.estimatedMinutes || t.minutes || 60), 0);
+  });
+}
+
+/**
  * Standard deterministic scheduling entry point
  * Generates an end-to-end spaced study schedule adhering strictly to DHSE syllabus constraints.
  *
@@ -640,262 +1486,18 @@ export function generateSchedule({
     examDate: (improvementDates && improvementDates[s]) || targetDeadline,
   })).sort((a, b) => (a.examDate || '9999-12-31').localeCompare(b.examDate || '9999-12-31'));
 
-  if (impConfig.length > 0) {
-    // Pre-mark Exam Eve and Exam Day on planDays
-    impConfig.forEach((cfg) => {
-      if (!cfg.examDate) return;
-      const examDate = cfg.examDate;
-      const examDayIdx = planDays.findIndex((d) => d.date === examDate);
-      if (examDayIdx !== -1) {
-        planDays[examDayIdx].isExamDay = true;
-        planDays[examDayIdx].examSubject = cfg.subject;
-      }
-
-      const daysUntilExam = calculateDaysBetween(effectiveStart, examDate);
-      let eveIdx = -1;
-      if (examDayIdx > 0) {
-        eveIdx = examDayIdx - 1;
-      } else if (daysUntilExam > 0 && daysUntilExam - 1 < planDays.length) {
-        eveIdx = daysUntilExam - 1;
-      }
-
-      if (eveIdx >= 0 && eveIdx < planDays.length) {
-        planDays[eveIdx].isExamEve = true;
-        planDays[eveIdx].exclusiveSubject = cfg.subject;
-        planDays[eveIdx].examDate = examDate;
-      }
-
-      const preEveIdx = eveIdx - 1;
-      if (preEveIdx >= 0 && !planDays[preEveIdx].isExamEve) {
-        planDays[preEveIdx].isPreExamEve = true;
-        planDays[preEveIdx].prioritySubject = cfg.subject;
-      }
-    });
-
-    impConfig.forEach((cfg) => {
-      const subTasks = p1Tasks.filter((t) => t.subject === cfg.subject);
-      if (subTasks.length === 0) return;
-
-      const examDate = cfg.examDate || targetDeadline;
-      const daysUntilExam = calculateDaysBetween(effectiveStart, examDate);
-      const examDayIdx = planDays.findIndex((d) => d.date === examDate);
-      let eveIdx = -1;
-      if (examDayIdx > 0) {
-        eveIdx = examDayIdx - 1;
-      } else if (daysUntilExam > 0 && daysUntilExam - 1 < planDays.length) {
-        eveIdx = daysUntilExam - 1;
-      }
-
-      const maxStudyDayIdx = eveIdx >= 0
-        ? eveIdx
-        : Math.max(0, Math.min(daysUntilExam > 1 ? daysUntilExam - 2 : 0, syllabusStudyDays - 1));
-
-      // Available days for this subject:
-      // Must not be an Exam Eve for ANOTHER subject whose exam is on a different date!
-      const availableDays = [];
-      for (let d = 0; d <= maxStudyDayIdx; d++) {
-        const day = planDays[d];
-        if (day.isRestDay) continue;
-        if (day.isExamEve && day.exclusiveSubject !== cfg.subject) continue;
-        availableDays.push(d);
-      }
-      if (availableDays.length === 0) {
-        for (let d = 0; d <= maxStudyDayIdx; d++) availableDays.push(d);
-      }
-
-      const partsCount = subTasks.length;
-      const uniqueChapters = [...new Map(subTasks.map(t => [t.chapId, t])).values()];
-      const isFocus = (normalizedWeights[cfg.subject] || 1.0) >= 1.1;
-      const runwayRatio = availableDays.length / Math.max(1, partsCount);
-      const chapterRunwayRatio = availableDays.length / Math.max(1, uniqueChapters.length);
-      const hasAmpleRunway = (runwayRatio >= 1.0 || chapterRunwayRatio >= 1.2) && availableDays.length >= 6;
-
-      // --- Pass 1: Foundational Syllabus Coverage ---
-      const pass1Days = hasAmpleRunway
-        ? availableDays.slice(0, Math.max(uniqueChapters.length, Math.floor(availableDays.length * 0.6)))
-        : (availableDays.length > 1 && eveIdx >= 0)
-        ? availableDays.filter(d => d < eveIdx)
-        : availableDays;
-
-      const targetPass1Days = pass1Days.length > 0 ? pass1Days : availableDays;
-
-      const chapterInitialStudyDay = new Map();
-
-      subTasks.forEach((task, tIdx) => {
-        let targetDayIndex;
-        if (targetPass1Days.length <= 1) {
-          targetDayIndex = targetPass1Days[0] || 0;
-        } else {
-          const stepIdx = Math.min(
-            targetPass1Days.length - 1,
-            Math.floor((tIdx / partsCount) * targetPass1Days.length)
-          );
-          targetDayIndex = targetPass1Days[stepIdx];
-        }
-
-        if (tIdx > 0) {
-          const prevTaskId = subTasks[tIdx - 1].id;
-          const prevDayIndex = planDays.findIndex((d) => d.tasks.some((pt) => pt.id === prevTaskId));
-          if (prevDayIndex !== -1 && targetDayIndex < prevDayIndex) {
-            targetDayIndex = prevDayIndex;
-          }
-        }
-
-        chapterInitialStudyDay.set(task.chapId, targetDayIndex);
-
-        planDays[targetDayIndex].tasks.push({
-          ...task,
-          completed: false,
-          isImprovement: true,
-          isFocusSubject: isFocus,
-          pedagogyNote: runwayRatio > 1.4
-            ? 'Pass 1 (Concept Mastery): Theory understanding, textbook illustrations, and key derivations.'
-            : 'Core Syllabus Pacing: High-priority improvement preparation.'
-        });
-      });
-
-      // --- Pass 2: Ebbinghaus Forgetting Curve Spaced Retrieval (If Ample Runway) ---
-      if (hasAmpleRunway) {
-        const eveDayLimit = eveIdx >= 0 ? eveIdx : (availableDays[availableDays.length - 1] ?? 0) + 1;
-
-        // Base interval calculated according to Ebbinghaus decay curve:
-        // Memory drops steepest in 2-4 days post-study.
-        // Review interval arrests decay and flattens retention curve.
-        const baseInterval = Math.max(2, Math.min(6, Math.floor(availableDays.length / Math.max(1, uniqueChapters.length * 1.5)) || 2));
-
-        uniqueChapters.forEach((chTask) => {
-          const initialDay = chapterInitialStudyDay.get(chTask.chapId) ?? availableDays[0];
-          
-          // Ebbinghaus Review 1: First spaced retrieval interval (T + baseInterval)
-          const targetRevDay = initialDay + baseInterval;
-          let bestRevDay = availableDays.find(d => d >= targetRevDay && d < eveDayLimit);
-          if (bestRevDay === undefined) {
-            const priorDays = availableDays.filter(d => d < eveDayLimit);
-            bestRevDay = priorDays.length > 0 ? priorDays[priorDays.length - 1] : initialDay;
-          }
-
-          const spacingDays = Math.max(1, bestRevDay - initialDay);
-
-          planDays[bestRevDay].tasks.push({
-            id: `IMP_REV_${chTask.chapId}_EBB1`,
-            chapId: `IMP_REV_${chTask.chapId}`,
-            chapNumber: chTask.chapNumber,
-            chapterName: `${chTask.chapterName} — Active Recall & DHSE PYQs`,
-            subject: cfg.subject,
-            grade: '+1',
-            part: 1,
-            totalParts: 1,
-            term: chTask.term || 1,
-            estimatedMinutes: 50,
-            difficulty: 'HIGH',
-            completed: false,
-            isImprovement: true,
-            isRevision: true,
-            isSpacedRetrieval: true,
-            isForgettingCurveReview: true,
-            spacingInterval: `T+${spacingDays}`,
-            isFocusSubject: true,
-            pedagogyNote: `Ebbinghaus Spaced Retrieval (T+${spacingDays}): Active recall and DHSE PYQ drilling timed at the memory decay inflection point to convert conceptual encoding into permanent retention.`
-          });
-
-          // Ebbinghaus Review 2: Secondary consolidation interval for generous runways (availableDays >= 14 & runwayRatio >= 2.0)
-          if (availableDays.length >= 14 && runwayRatio >= 2.0) {
-            const secondaryTarget = Math.max(bestRevDay + 3, initialDay + baseInterval * 2 + 2);
-            const bestRevDay2 = availableDays.find(d => d >= secondaryTarget && d < eveDayLimit);
-            if (bestRevDay2 !== undefined && bestRevDay2 !== bestRevDay) {
-              const spacingDays2 = Math.max(2, bestRevDay2 - initialDay);
-              planDays[bestRevDay2].tasks.push({
-                id: `IMP_REV_${chTask.chapId}_EBB2`,
-                chapId: `IMP_REV_${chTask.chapId}`,
-                chapNumber: chTask.chapNumber,
-                chapterName: `${chTask.chapterName} — Speed Practice & Consolidation`,
-                subject: cfg.subject,
-                grade: '+1',
-                part: 1,
-                totalParts: 1,
-                term: chTask.term || 1,
-                estimatedMinutes: 45,
-                difficulty: 'HIGH',
-                completed: false,
-                isImprovement: true,
-                isRevision: true,
-                isSpacedRetrieval: true,
-                isForgettingCurveReview: true,
-                spacingInterval: `T+${spacingDays2}`,
-                isFocusSubject: true,
-                pedagogyNote: `Ebbinghaus Secondary Consolidation (T+${spacingDays2}): High-speed problem solving and active derivation retrieval before final exam eve.`
-              });
-            }
-          }
-        });
-      }
-
-      // --- Pass 3: Dedicated Exam Eve Formula Blitz on T-1 ---
-      if (eveIdx >= 0 && eveIdx < planDays.length) {
-        const hasEveTaskAlready = planDays[eveIdx].tasks.some(
-          t => t.subject === cfg.subject && (t.isExamEveTask || t.id.includes('EVE'))
-        );
-        if (!hasEveTaskAlready) {
-          planDays[eveIdx].tasks.push({
-            id: `IMP_REV_${cfg.subject.replace(/\s+/g, '_')}_EVE`,
-            chapId: `IMP_REV_${cfg.subject.replace(/\s+/g, '_')}_EVE`,
-            chapNumber: 99,
-            chapterName: `${cfg.subject} Exam Eve: Rapid Formula Blitz & High-Yield PYQs`,
-            subject: cfg.subject,
-            grade: '+1',
-            part: 1,
-            totalParts: 1,
-            term: 1,
-            estimatedMinutes: 90,
-            difficulty: 'HIGH',
-            completed: false,
-            isImprovement: true,
-            isRevision: true,
-            isExamEveTask: true,
-            isFocusSubject: true,
-            pedagogyNote: 'Exam Eve 100% Exclusive Review: Tomorrow is the exam! Active recall of all formulas, core derivations, and Kerala DHSE model papers.'
-          });
-        }
-      }
-    });
-  }
-
-  // 10. Phase 2: Schedule Regular Plus Two Tasks (State Machine & Interleaving)
-  const subjectChapterMap = {};
-  streamSubjects.forEach((s) => (subjectChapterMap[s] = []));
-
-  p2Tasks.forEach((task) => {
-    if (!subjectChapterMap[task.subject]) subjectChapterMap[task.subject] = [];
-    let ch = subjectChapterMap[task.subject].find((c) => (c.chapId && task.chapId ? c.chapId === task.chapId : c.chapNumber === task.chapNumber));
-    if (!ch) {
-      ch = {
-        chapNumber: task.chapNumber,
-        chapId: task.chapId,
-        chapterName: task.chapterName,
-        subject: task.subject,
-        term: task.term,
-        parts: [],
-      };
-      subjectChapterMap[task.subject].push(ch);
-    }
-    ch.parts.push(task);
+  scheduleImprovementTasks({
+    planDays,
+    p1Tasks,
+    impConfig,
+    startDateStr: effectiveStart,
+    targetDeadline,
+    syllabusStudyDays,
+    subjectWeights: normalizedWeights,
+    calculateDaysFn: calculateDaysBetween,
   });
 
-  Object.keys(subjectChapterMap).forEach((s) => {
-    subjectChapterMap[s].sort((a, b) => a.chapNumber - b.chapNumber);
-    subjectChapterMap[s].forEach((ch) => ch.parts.sort((a, b) => a.part - b.part));
-  });
-
-  const subjectState = {};
-  streamSubjects.forEach((s) => {
-    subjectState[s] = {
-      subject: s,
-      chapterIndex: 0,
-      partIndex: 0,
-      lastScheduledDay: -1,
-    };
-  });
-
+  // 10. Phase 2: Schedule Regular Tasks using Runway-Adaptive Chapter Granularity
   let totalActiveWeight = 0;
   const dayCapacityWeights = [];
   for (let dayIndex = 0; dayIndex < syllabusStudyDays; dayIndex++) {
@@ -925,163 +1527,14 @@ export function generateSchedule({
   }
   if (totalActiveWeight <= 0) totalActiveWeight = 1.0;
 
-  const remainingP2TasksCount = p2Tasks.length;
-  let p2Accumulator = 0;
-
-  for (let dayIndex = 0; dayIndex < syllabusStudyDays; dayIndex++) {
-    const day = planDays[dayIndex];
-    if (day.isRestDay || day.isExamEve) continue;
-
-    const dayWeightRatio = dayCapacityWeights[dayIndex] / totalActiveWeight;
-    p2Accumulator += remainingP2TasksCount * dayWeightRatio;
-    let p2TasksToScheduleToday = Math.floor(p2Accumulator);
-    p2Accumulator -= p2TasksToScheduleToday;
-
-    const isLastActiveDay = !planDays.slice(dayIndex + 1, syllabusStudyDays).some((d) => !d.isRestDay);
-    if (isLastActiveDay) {
-      let totalUnscheduledP2 = 0;
-      streamSubjects.forEach((s) => {
-        const state = subjectState[s];
-        const chapters = subjectChapterMap[s] || [];
-        for (let c = state.chapterIndex; c < chapters.length; c++) {
-          const startP = c === state.chapterIndex ? state.partIndex : 0;
-          totalUnscheduledP2 += chapters[c].parts.length - startP;
-        }
-      });
-      p2TasksToScheduleToday = Math.max(p2TasksToScheduleToday, totalUnscheduledP2);
-    }
-
-    let scheduledTodayCount = 0;
-    let subjectAttempts = 0;
-    const subjectsStudiedToday = new Set();
-
-    while (scheduledTodayCount < p2TasksToScheduleToday && subjectAttempts < streamSubjects.length * 3) {
-      subjectAttempts++;
-
-      const availableSubjects = streamSubjects.filter((s) => {
-        const state = subjectState[s];
-        const chapters = subjectChapterMap[s] || [];
-        return state.chapterIndex < chapters.length;
-      });
-      if (availableSubjects.length === 0) break;
-
-      let pool = availableSubjects.filter((s) => !subjectsStudiedToday.has(s));
-      if (pool.length === 0) pool = availableSubjects;
-
-      // Pre-compute tightness and same-day chapter presence per candidate
-      const remainingActiveDays = planDays
-        .slice(dayIndex, syllabusStudyDays)
-        .filter((d) => !d.isRestDay && !d.isExamEve).length;
-
-      const subjectRemainingTasks = {};
-      streamSubjects.forEach((s) => {
-        const st = subjectState[s];
-        const chs = subjectChapterMap[s] || [];
-        let rem = 0;
-        for (let c = st.chapterIndex; c < chs.length; c++) {
-          const startP = c === st.chapterIndex ? st.partIndex : 0;
-          rem += chs[c].parts.length - startP;
-        }
-        subjectRemainingTasks[s] = rem;
-      });
-
-      const isChapterAlreadyOnDay = (s) => {
-        const st = subjectState[s];
-        const chs = subjectChapterMap[s] || [];
-        if (st.partIndex === 0) return false;
-        const curChapId = chs[st.chapterIndex]?.parts[0]?.chapId;
-        if (!curChapId) return false;
-        return day.tasks.some((t) => t.chapId === curChapId);
-      };
-
-      let candidateSubject = pool[0];
-      let bestScore = -Infinity;
-
-      pool.forEach((s) => {
-        const w = normalizedWeights[s] || 1.0;
-        const st = subjectState[s];
-        const remTasks = subjectRemainingTasks[s] || 1;
-        const isTightForSubject = remainingActiveDays <= remTasks || isLastActiveDay;
-
-        // Only give in-progress bonus if tight — suppress to force next-day spacing when loose
-        const inProgBonus = (st.partIndex > 0 && isTightForSubject) ? 1.8 : 0.0;
-        const recencyGap = st.lastScheduledDay === -1 ? 4 : dayIndex - st.lastScheduledDay;
-        const score = w * 1.2 + inProgBonus + recencyGap * 0.8;
-        if (score > bestScore) {
-          bestScore = score;
-          candidateSubject = s;
-        }
-      });
-
-      const state = subjectState[candidateSubject];
-      const chapters = subjectChapterMap[candidateSubject];
-      if (state.chapterIndex >= chapters.length) continue;
-
-      // When NOT tight: skip Part 2+ of a chapter if Part 1 is already on today's day
-      if (!isLastActiveDay) {
-        const remTasks = subjectRemainingTasks[candidateSubject] || 1;
-        const isTightForCandidate = remainingActiveDays <= remTasks;
-        if (!isTightForCandidate && state.partIndex > 0 && isChapterAlreadyOnDay(candidateSubject)) {
-          continue;
-        }
-      }
-
-      const currentChapter = chapters[state.chapterIndex];
-      const nextPart = currentChapter.parts[state.partIndex];
-      if (!nextPart) {
-        state.chapterIndex++;
-        state.partIndex = 0;
-        continue;
-      }
-
-      const isFocus = (normalizedWeights[candidateSubject] || 1.0) >= 1.1;
-
-      day.tasks.push({
-        ...nextPart,
-        completed: false,
-        isFocusSubject: isFocus,
-      });
-
-      subjectsStudiedToday.add(candidateSubject);
-      state.lastScheduledDay = dayIndex;
-      state.partIndex++;
-
-      if (state.partIndex >= currentChapter.parts.length) {
-        state.chapterIndex++;
-        state.partIndex = 0;
-      }
-
-      scheduledTodayCount++;
-      subjectAttempts = 0;
-    }
-  }
-
-  // Fallback placement for any leftover tasks on the final active study day
-  const fallbackDayIdx =
-    planDays
-      .slice(0, syllabusStudyDays)
-      .map((d, i) => (!d.isRestDay ? i : -1))
-      .filter((i) => i !== -1)
-      .pop() ?? syllabusStudyDays - 1;
-
-  streamSubjects.forEach((s) => {
-    const state = subjectState[s];
-    const chapters = subjectChapterMap[s] || [];
-    const isFocus = (normalizedWeights[s] || 1.0) >= 1.1;
-    while (state.chapterIndex < chapters.length) {
-      const currentChapter = chapters[state.chapterIndex];
-      while (state.partIndex < currentChapter.parts.length) {
-        const task = currentChapter.parts[state.partIndex];
-        planDays[fallbackDayIdx].tasks.push({
-          ...task,
-          completed: false,
-          isFocusSubject: isFocus,
-        });
-        state.partIndex++;
-      }
-      state.chapterIndex++;
-      state.partIndex = 0;
-    }
+  const { granularity } = scheduleAdaptiveRegularTasks({
+    planDays,
+    p2Tasks,
+    streamSubjects,
+    syllabusStudyDays,
+    dayCapacityWeights,
+    totalActiveWeight,
+    subjectWeights: normalizedWeights,
   });
 
   // 11. Phase 3: Active Recall Allocation (Revision Runway Grounded in Ebbinghaus Forgetting Curve)
@@ -1137,78 +1590,8 @@ export function generateSchedule({
     });
   }
 
-  // Post-Scheduling: Tag isFullOnDay on chapters where ALL parts are on the same day
-  // This enables the "Full" display badge and collapsed card view (tight timetable detection)
-  planDays.forEach((day) => {
-    if (!day.tasks || day.tasks.length === 0) return;
-    // Group tasks by chapId
-    const chapDayMap = {};
-    day.tasks.forEach((t) => {
-      if (!t.chapId || t.isRevision || t.isImprovement) return;
-      if (!chapDayMap[t.chapId]) chapDayMap[t.chapId] = [];
-      chapDayMap[t.chapId].push(t);
-    });
-    // For each chapter, check if all declared parts are present on this day
-    Object.values(chapDayMap).forEach((tasksForChap) => {
-      if (tasksForChap.length < 2) return; // only flag multi-part chapters
-      const totalParts = tasksForChap[0].totalParts || tasksForChap.length;
-      if (tasksForChap.length >= totalParts) {
-        // All parts are on this day — tag them
-        tasksForChap.forEach((t) => { t.isFullOnDay = true; });
-      }
-    });
-  });
-
-  // Post-Scheduling Quarantine & Invariant Enforcement
-  planDays.forEach((day, dIdx) => {
-    // 1. Strict Exam Eve Quarantine: Absolutely ONLY the target subject may appear on Exam Eve
-    if (day.isExamEve && day.exclusiveSubject) {
-      const targetSub = day.exclusiveSubject;
-      const foreignTasks = (day.tasks || []).filter((t) => t.subject !== targetSub);
-      if (foreignTasks.length > 0) {
-        day.tasks = day.tasks.filter((t) => t.subject === targetSub);
-        // Move any foreign tasks to the nearest non-quarantined day
-        foreignTasks.forEach((fTask) => {
-          let placed = false;
-          for (let offset = 1; offset < planDays.length; offset++) {
-            const prev = dIdx - offset;
-            if (prev >= 0 && !planDays[prev].isRestDay && !planDays[prev].isExamEve) {
-              planDays[prev].tasks.push(fTask);
-              placed = true;
-              break;
-            }
-            const next = dIdx + offset;
-            if (next < syllabusStudyDays && !planDays[next].isRestDay && !planDays[next].isExamEve) {
-              planDays[next].tasks.push(fTask);
-              placed = true;
-              break;
-            }
-          }
-          if (!placed) {
-            planDays[0].tasks.push(fTask);
-          }
-        });
-      }
-    }
-
-    // 2. Sort tasks intelligently: Exam Eve tasks first, then Improvement, then regular
-    if (day.tasks && day.tasks.length > 1) {
-      day.tasks.sort((a, b) => {
-        if (a.isExamEveTask && !b.isExamEveTask) return -1;
-        if (!a.isExamEveTask && b.isExamEveTask) return 1;
-        if (a.isImprovement && !b.isImprovement) return -1;
-        if (!a.isImprovement && b.isImprovement) return 1;
-        return 0;
-      });
-    }
-
-    if (!day.isRevisionDay && (!day.tasks || day.tasks.length === 0)) {
-      day.isRestDay = true;
-    }
-    day.totalMinutes = day.isRestDay
-      ? 0
-      : (day.tasks || []).reduce((acc, t) => acc + (t.estimatedMinutes || t.minutes || 60), 0);
-  });
+  // Post-Scheduling Quarantine, Contiguous Chapter Sorting, isFullOnDay Tagging & Totals
+  finalizeScheduledDays({ planDays, syllabusStudyDays });
 
   // 12. Run Invariant Schedule Validation
   const valResult = validateSchedule(planDays, applicableTasks, {
@@ -1227,6 +1610,7 @@ export function generateSchedule({
     warningMessage: isInfeasible
       ? `The current deadline requires more study capacity (${totalTasksCount} units) than standard availability (~${Math.round(totalStandardCapacity)} units). The plan prioritizes the nearest exam and preserves the final revision buffer.`
       : null,
+    granularity,
     personalization: {
       weeklyRhythm,
       restDayOfWeek: effectiveRestDay,

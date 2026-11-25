@@ -362,6 +362,7 @@
     <!-- Compiled Tailwind CSS & Theme Styles (Zero CDN Dependencies) -->
     <link rel="stylesheet" href="/src/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <!-- Visual Dependencies (Confetti) -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -385,7 +386,7 @@
             <!-- Header Action Controls -->
             <div class="flex items-center gap-2 sm:gap-3">
                 <!-- 1-Click Install PWA Button -->
-                <button id="pwa-install-btn" onclick="triggerPWAInstall()" class="hidden items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2 px-3 sm:px-3.5 rounded-xl shadow-md shadow-emerald-500/20 transition-transform transform active:scale-95">
+                <button id="pwa-install-btn" onclick="triggerPWAInstall()" class="hidden items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold min-h-[44px] py-2 px-3 sm:px-3.5 rounded-xl shadow-md shadow-emerald-500/20 transition-transform transform active:scale-95">
                     <svg class="w-3.5 h-3.5 inline-block text-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                     <span class="hidden xs:inline">Install App</span>
                     <span class="xs:hidden">Install</span>
@@ -470,15 +471,15 @@
                                 <span id="dropdown-theme-badge" class="text-xs bg-blue-100 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300 font-extrabold px-1.5 py-0.5 rounded">System</span>
                             </div>
                             <div class="grid grid-cols-3 gap-1 p-1 bg-slate-100 dark:bg-[#141d30] rounded-xl border border-slate-200/60 dark:border-slate-700/60">
-                                <button type="button" id="menu-theme-btn-light" onclick="setThemePreference('light')" class="py-1.5 px-2 rounded-lg text-center font-bold text-xs transition-colors flex items-center justify-center gap-1 text-slate-600 dark:text-slate-300 hover:text-slate-900">
+                                <button type="button" id="menu-theme-btn-light" onclick="setThemePreference('light')" class="min-h-[44px] py-1.5 px-2 rounded-lg text-center font-bold text-xs transition-colors flex items-center justify-center gap-1 text-slate-600 dark:text-slate-300 hover:text-slate-900">
                                     <svg class="w-3.5 h-3.5 inline-block text-amber-500 text-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
                                     <span>Light</span>
-                                </button>
-                                <button type="button" id="menu-theme-btn-dark" onclick="setThemePreference('dark')" class="py-1.5 px-2 rounded-lg text-center font-bold text-xs transition-colors flex items-center justify-center gap-1 text-slate-600 dark:text-slate-300 hover:text-slate-900">
+                                </span>
+                                <button type="button" id="menu-theme-btn-dark" onclick="setThemePreference('dark')" class="min-h-[44px] py-1.5 px-2 rounded-lg text-center font-bold text-xs transition-colors flex items-center justify-center gap-1 text-slate-600 dark:text-slate-300 hover:text-slate-900">
                                     <svg class="w-3.5 h-3.5 inline-block text-indigo-400 text-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
                                     <span>Dark</span>
                                 </button>
-                                <button type="button" id="menu-theme-btn-system" onclick="setThemePreference('system')" class="py-1.5 px-2 rounded-lg text-center font-bold text-xs transition-colors flex items-center justify-center gap-1 text-slate-600 dark:text-slate-300 hover:text-slate-900">
+                                <button type="button" id="menu-theme-btn-system" onclick="setThemePreference('system')" class="min-h-[44px] py-1.5 px-2 rounded-lg text-center font-bold text-xs transition-colors flex items-center justify-center gap-1 text-slate-600 dark:text-slate-300 hover:text-slate-900">
                                     <svg class="w-3.5 h-3.5 inline-block text-blue-500 text-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/></svg>
                                     <span>Auto</span>
                                 </button>
@@ -486,7 +487,7 @@
                         </div>
 
                         <!-- Settings & Customization Button -->
-                        <button onclick="openSettingsModal(); closeUserDropdown();" class="w-full py-2.5 px-3 bg-slate-50 hover:bg-slate-100 dark:bg-[#141d30] dark:hover:bg-[#1a253c] text-slate-800 dark:text-slate-200 font-bold rounded-xl transition flex items-center justify-between mb-2">
+                        <button onclick="openSettingsModal(); closeUserDropdown();" class="w-full min-h-[44px] py-2.5 px-3 bg-slate-50 hover:bg-slate-100 dark:bg-[#141d30] dark:hover:bg-[#1a253c] text-slate-800 dark:text-slate-200 font-bold rounded-xl transition flex items-center justify-between mb-2">
                             <span class="flex items-center gap-2">
                                 <svg class="w-4 h-4 inline-block text-slate-500 dark:text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                                 <span>Settings & Customization</span>
@@ -494,7 +495,7 @@
                             <svg class="w-3.5 h-3.5 inline-block text-xs text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
                         </button>
 
-                        <a href="https://github.com/sreyasts/PlusOne-PlusTwo-Planner" target="_blank" rel="noopener noreferrer" class="w-full py-2 px-3 hover:bg-slate-50 dark:hover:bg-slate-800/60 text-slate-600 dark:text-slate-300 font-medium rounded-xl transition flex items-center justify-between mb-1">
+                        <a href="https://github.com/sreyasts/PlusOne-PlusTwo-Planner" target="_blank" rel="noopener noreferrer" class="w-full min-h-[44px] py-2 px-3 hover:bg-slate-50 dark:hover:bg-slate-800/60 text-slate-600 dark:text-slate-300 font-medium rounded-xl transition flex items-center justify-between mb-1">
                             <span class="flex items-center gap-2">
                                 <svg class="w-4 h-4 inline-block text-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
                                 <span>GitHub Repository</span>
@@ -503,7 +504,7 @@
                         </a>
 
                         <div id="dropdown-signout-block" class="hidden pt-2 border-t border-slate-100 dark:border-slate-800">
-                            <button onclick="signOutUser()" class="w-full py-2 px-3 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-rose-600 dark:text-rose-400 font-bold rounded-xl transition flex items-center justify-center gap-2">
+                            <button onclick="signOutUser()" class="w-full min-h-[44px] py-2 px-3 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-rose-600 dark:text-rose-400 font-bold rounded-xl transition flex items-center justify-center gap-2">
                                 <svg class="w-4 h-4 inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
                                 <span>Sign Out</span>
                             </button>
@@ -568,14 +569,14 @@
     <!-- Search Engine Indexed Syllabus & Comprehensive HSS Study Guide (Clean Directory-Style Drawer) -->
     <section class="max-w-5xl mx-auto px-4 sm:px-6 my-6 text-slate-600 dark:text-slate-300 text-xs no-print">
         <details class="group bg-slate-50/70 dark:bg-[#111827]/70 hover:bg-slate-100/80 dark:hover:bg-[#151f33]/80 rounded-xl border border-slate-200/70 dark:border-slate-800/70 p-2.5 transition">
-            <summary class="font-bold text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 flex items-center justify-between select-none cursor-pointer">
-                <span class="flex items-center gap-1.5">
-                    <svg class="w-3.5 h-3.5 inline-block text-blue-600 dark:text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-                    <span>Kerala Higher Secondary Study Guide & FAQs</span>
+            <summary class="font-bold text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 flex items-center justify-between gap-2 select-none cursor-pointer min-h-[44px]">
+                <span class="flex items-center gap-1.5 min-w-0 pr-1">
+                    <svg class="w-3.5 h-3.5 inline-block text-blue-600 dark:text-blue-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                    <span class="break-words">Kerala Higher Secondary Study Guide &amp; FAQs </span>
                 </span>
-                <span class="flex items-center gap-1 text-[10px] text-slate-400 dark:text-slate-400 font-normal">
+                <span class="inline-flex items-center gap-1 text-[10px] text-slate-400 dark:text-slate-400 font-normal shrink-0 ml-auto whitespace-nowrap">
                     <span class="group-open:hidden">Tap to view</span>
-                    <svg class="w-3.5 h-3.5 inline-block text-slate-400 group-open:rotate-180 transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+                    <svg class="w-3.5 h-3.5 inline-block text-slate-400 group-open:rotate-180 transition shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
                 </span>
             </summary>
 
@@ -664,14 +665,14 @@
         <div class="max-w-5xl mx-auto space-y-3">
             <!-- Collapsible Quick Directory Drawer -->
             <details class="group bg-slate-50/70 dark:bg-[#111827]/70 hover:bg-slate-100/80 dark:hover:bg-[#151f33]/80 rounded-xl border border-slate-200/70 dark:border-slate-800/70 p-2.5 transition">
-                <summary class="font-bold text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 flex items-center justify-between select-none cursor-pointer">
-                    <span class="flex items-center gap-1.5">
-                        <svg class="w-3.5 h-3.5 inline-block text-blue-600 dark:text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                        <span>Timetables, Tools & Study Guides Directory (+1 & +2 All Streams)</span>
+                <summary class="font-bold text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 flex items-center justify-between gap-2 select-none cursor-pointer min-h-[44px]">
+                    <span class="flex items-center gap-1.5 min-w-0 pr-1">
+                        <svg class="w-3.5 h-3.5 inline-block text-blue-600 dark:text-blue-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                        <span class="break-words">Timetables, Tools &amp; Study Guides Directory (+1 &amp; +2 All Streams) </span>
                     </span>
-                    <span class="flex items-center gap-1 text-[10px] text-slate-400 dark:text-slate-400 font-normal">
+                    <span class="inline-flex items-center gap-1 text-[10px] text-slate-400 dark:text-slate-400 font-normal shrink-0 ml-auto whitespace-nowrap">
                         <span class="group-open:hidden">Tap to view</span>
-                        <svg class="w-3.5 h-3.5 inline-block text-slate-400 group-open:rotate-180 transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+                        <svg class="w-3.5 h-3.5 inline-block text-slate-400 group-open:rotate-180 transition shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
                     </span>
                 </summary>
 
@@ -831,7 +832,7 @@
                 </label>
 
                 <!-- Secondary: Continue as Guest -->
-                <button id="auth-modal-guest-btn" onclick="continueAsGuest()" class="w-full text-center py-2 text-xs font-semibold text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition">
+                <button id="auth-modal-guest-btn" onclick="continueAsGuest()" class="w-full text-center min-h-[44px] py-2 text-xs font-semibold text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition flex items-center justify-center">
                     <span id="auth-guest-btn-text">Maybe later (continue as guest)</span>
                 </button>
             </div>
@@ -870,15 +871,15 @@
 
                     <!-- 3-Way Segmented Theme Switcher -->
                     <div class="grid grid-cols-3 gap-1.5 p-1 bg-white dark:bg-[#0e1422] rounded-xl border border-slate-200 dark:border-slate-700/80">
-                        <button type="button" id="theme-btn-light" onclick="setThemePreference('light')" class="flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-bold transition-all text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white">
+                        <button type="button" id="theme-btn-light" onclick="setThemePreference('light')" class="min-h-[44px] flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-bold transition-all text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white">
                             <svg class="w-3.5 h-3.5 inline-block text-amber-500 text-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
                             <span>Light</span>
                         </button>
-                        <button type="button" id="theme-btn-dark" onclick="setThemePreference('dark')" class="flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-bold transition-all text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white">
+                        <button type="button" id="theme-btn-dark" onclick="setThemePreference('dark')" class="min-h-[44px] flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-bold transition-all text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white">
                             <svg class="w-3.5 h-3.5 inline-block text-indigo-400 text-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
                             <span>Dark</span>
                         </button>
-                        <button type="button" id="theme-btn-system" onclick="setThemePreference('system')" class="flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-bold transition-all text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white">
+                        <button type="button" id="theme-btn-system" onclick="setThemePreference('system')" class="min-h-[44px] flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-bold transition-all text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white">
                             <svg class="w-3.5 h-3.5 inline-block text-blue-500 text-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/></svg>
                             <span>System</span>
                         </button>
@@ -898,11 +899,11 @@
 
                     <!-- 2-Way Segmented Language Switcher -->
                     <div class="grid grid-cols-2 gap-1.5 p-1 bg-white dark:bg-[#0e1422] rounded-xl border border-slate-200 dark:border-slate-700/80">
-                        <button type="button" id="lang-btn-en" onclick="setAppLanguage('en')" class="flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-bold transition-all text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white">
+                        <button type="button" id="lang-btn-en" onclick="setAppLanguage('en')" class="min-h-[44px] flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-bold transition-all text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white">
                             <svg class="w-3.5 h-3.5 inline-block text-blue-500 text-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="2" x2="22" y1="12" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
                             <span>English</span>
                         </button>
-                        <button type="button" id="lang-btn-ml" onclick="setAppLanguage('ml')" class="flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-bold transition-all text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white">
+                        <button type="button" id="lang-btn-ml" onclick="setAppLanguage('ml')" class="min-h-[44px] flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-bold transition-all text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white">
                             <svg class="w-3.5 h-3.5 inline-block text-emerald-500 text-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
                             <span>മലയാളം</span>
                         </button>
@@ -987,7 +988,7 @@
                         <span class="text-[10px] bg-amber-200/60 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200 font-bold px-2 py-0.5 rounded-full uppercase">Pacing Tool</span>
                     </div>
                     <p class="text-xs text-amber-800/80 dark:text-amber-300/80 mb-2.5">Finished your studies early? Pull upcoming chapters directly into Today without waiting for tomorrow's date!</p>
-                    <button type="button" onclick="compactPlanToToday()" class="w-full py-2 px-3 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white text-xs font-bold rounded-xl shadow-xs transition flex items-center justify-center gap-1.5 cursor-pointer">
+                    <button type="button" onclick="compactPlanToToday()" class="w-full min-h-[44px] py-2 px-3 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white text-xs font-bold rounded-xl shadow-xs transition flex items-center justify-center gap-1.5 cursor-pointer">
                         <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                         <span>Fast-Forward Next Chapters to Today</span>
                     </button>
@@ -1002,11 +1003,11 @@
                     <p id="settings-backup-hint" class="text-xs text-slate-400 mb-3">Export a backup JSON file or restore your study timetable on any device.</p>
 
                     <div class="grid grid-cols-2 gap-2">
-                        <button type="button" onclick="exportStudyPlanJSON()" class="py-2 px-3 bg-white hover:bg-slate-100 dark:bg-[#0e1422] dark:hover:bg-[#1a2640] text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl border border-slate-200 dark:border-slate-700/80 transition flex items-center justify-center gap-1.5 shadow-xs">
+                        <button type="button" onclick="exportStudyPlanJSON()" class="min-h-[44px] py-2 px-3 bg-white hover:bg-slate-100 dark:bg-[#0e1422] dark:hover:bg-[#1a2640] text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl border border-slate-200 dark:border-slate-700/80 transition flex items-center justify-center gap-1.5 shadow-xs">
                             <svg class="w-4 h-4 inline-block text-emerald-600 dark:text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="M12 18v-6"/><path d="m9 15 3 3 3-3"/></svg>
                             <span id="settings-export-text">Export Backup</span>
                         </button>
-                        <label class="py-2 px-3 bg-white hover:bg-slate-100 dark:bg-[#0e1422] dark:hover:bg-[#1a2640] text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl border border-slate-200 dark:border-slate-700/80 transition flex items-center justify-center gap-1.5 shadow-xs cursor-pointer">
+                        <label class="min-h-[44px] py-2 px-3 bg-white hover:bg-slate-100 dark:bg-[#0e1422] dark:hover:bg-[#1a2640] text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl border border-slate-200 dark:border-slate-700/80 transition flex items-center justify-center gap-1.5 shadow-xs cursor-pointer">
                             <svg class="w-4 h-4 inline-block text-blue-600 dark:text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="M12 12v6"/><path d="m9 15 3-3 3 3"/></svg>
                             <span id="settings-restore-text">Restore Backup</span>
                             <input type="file" id="settings-import-input" accept=".json" class="hidden" onchange="importStudyPlanJSON(event)">
@@ -1019,7 +1020,7 @@
                             <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400 block">Undo Last Rebalance</span>
                             <span id="settings-restore-plan-hint" class="text-xs text-slate-400">Restore previous timetable snapshot</span>
                         </div>
-                        <button type="button" onclick="restorePreviousPlan()" class="py-1.5 px-3 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 text-xs font-bold rounded-xl border border-emerald-200 dark:border-emerald-800/60 transition flex items-center gap-1.5 cursor-pointer">
+                        <button type="button" onclick="restorePreviousPlan()" class="min-h-[44px] py-1.5 px-3 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 text-xs font-bold rounded-xl border border-emerald-200 dark:border-emerald-800/60 transition flex items-center gap-1.5 cursor-pointer">
                             <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
                             <span>Restore Snapshot</span>
                         </button>
@@ -1031,7 +1032,7 @@
                             <span id="settings-undo-reset-title" class="text-xs font-bold text-amber-600 dark:text-amber-400 block">Undo Recent Reset</span>
                             <span id="settings-undo-reset-hint" class="text-xs text-slate-400">Restore timetable from recent reset</span>
                         </div>
-                        <button type="button" id="btn-settings-undo-reset" onclick="restorePreResetSnapshot()" class="py-1.5 px-3 bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/40 dark:hover:bg-amber-900/50 text-amber-700 dark:text-amber-300 text-xs font-bold rounded-xl border border-amber-200 dark:border-amber-800/60 transition flex items-center gap-1.5 cursor-pointer">
+                        <button type="button" id="btn-settings-undo-reset" onclick="restorePreResetSnapshot()" class="min-h-[44px] py-1.5 px-3 bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/40 dark:hover:bg-amber-900/50 text-amber-700 dark:text-amber-300 text-xs font-bold rounded-xl border border-amber-200 dark:border-amber-800/60 transition flex items-center gap-1.5 cursor-pointer">
                             <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
                             <span id="settings-undo-reset-btn-text">Restore</span>
                         </button>
@@ -1042,7 +1043,7 @@
                             <span id="settings-reset-title" class="text-xs font-bold text-rose-600 dark:text-rose-400 block">Reset Plan</span>
                             <span id="settings-reset-hint" class="text-xs text-slate-400">Clear current timetable to start fresh</span>
                         </div>
-                        <button type="button" onclick="closeSettingsModal(); resetApp();" class="py-1.5 px-3 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/50 text-rose-700 dark:text-rose-300 text-xs font-bold rounded-xl border border-rose-200 dark:border-rose-800/60 transition">
+                        <button type="button" onclick="closeSettingsModal(); resetApp();" class="min-h-[44px] py-1.5 px-3 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/50 text-rose-700 dark:text-rose-300 text-xs font-bold rounded-xl border border-rose-200 dark:border-rose-800/60 transition flex items-center">
                             <span id="settings-reset-btn-text">Reset</span>
                         </button>
                     </div>
@@ -1056,15 +1057,15 @@
                     </label>
                     <p class="text-xs text-slate-400 mb-2.5">Open source project. Report issues or suggest DHSE syllabus adjustments.</p>
                     <div class="flex flex-wrap gap-2 text-xs font-semibold">
-                        <a href="https://github.com/sreyasts/PlusOne-PlusTwo-Planner/issues/new/choose" target="_blank" rel="noopener noreferrer" class="py-1.5 px-2.5 bg-white hover:bg-slate-100 dark:bg-[#0e1422] dark:hover:bg-[#1a2640] text-blue-600 dark:text-blue-400 rounded-lg border border-slate-200 dark:border-slate-700 inline-flex items-center gap-1.5 transition">
+                        <a href="https://github.com/sreyasts/PlusOne-PlusTwo-Planner/issues/new/choose" target="_blank" rel="noopener noreferrer" class="min-h-[44px] py-1.5 px-2.5 bg-white hover:bg-slate-100 dark:bg-[#0e1422] dark:hover:bg-[#1a2640] text-blue-600 dark:text-blue-400 rounded-lg border border-slate-200 dark:border-slate-700 inline-flex items-center gap-1.5 transition">
                             <svg class="w-3.5 h-3.5 inline-block text-rose-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="8" height="14" x="8" y="6" rx="4"/><path d="m19 7-3 2"/><path d="m5 7 3 2"/><path d="m19 19-3-2"/><path d="m5 19 3-2"/><path d="M20 13h-4"/><path d="M4 13h4"/><path d="m10 4 1 2"/><path d="m14 4-1 2"/></svg>
                             <span>Report a Bug / Fix</span>
                         </a>
-                        <a href="https://github.com/sreyasts/PlusOne-PlusTwo-Planner/discussions" target="_blank" rel="noopener noreferrer" class="py-1.5 px-2.5 bg-white hover:bg-slate-100 dark:bg-[#0e1422] dark:hover:bg-[#1a2640] text-slate-700 dark:text-slate-300 rounded-lg border border-slate-200 dark:border-slate-700 inline-flex items-center gap-1.5 transition">
+                        <a href="https://github.com/sreyasts/PlusOne-PlusTwo-Planner/discussions" target="_blank" rel="noopener noreferrer" class="min-h-[44px] py-1.5 px-2.5 bg-white hover:bg-slate-100 dark:bg-[#0e1422] dark:hover:bg-[#1a2640] text-slate-700 dark:text-slate-300 rounded-lg border border-slate-200 dark:border-slate-700 inline-flex items-center gap-1.5 transition">
                             <svg class="w-3.5 h-3.5 inline-block text-blue-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                             <span>Discussions</span>
                         </a>
-                        <a href="/pages/stats" class="py-1.5 px-2.5 bg-white hover:bg-slate-100 dark:bg-[#0e1422] dark:hover:bg-[#1a2640] text-emerald-600 dark:text-emerald-400 rounded-lg border border-slate-200 dark:border-slate-700 inline-flex items-center gap-1.5 transition">
+                        <a href="/pages/stats" class="min-h-[44px] py-1.5 px-2.5 bg-white hover:bg-slate-100 dark:bg-[#0e1422] dark:hover:bg-[#1a2640] text-emerald-600 dark:text-emerald-400 rounded-lg border border-slate-200 dark:border-slate-700 inline-flex items-center gap-1.5 transition">
                             <svg class="w-3.5 h-3.5 inline-block text-emerald-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
                             <span>Usage & Audit Stats</span>
                         </a>
@@ -1075,7 +1076,7 @@
             <!-- Footer -->
             <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between">
                 <span id="app-version-footer" class="text-xs text-slate-400 dark:text-slate-500 font-medium">HSS Planner v7.1.0</span>
-                <button type="button" id="settings-done-btn" onclick="closeSettingsModal()" class="py-2 px-5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-md shadow-blue-500/25 transition">
+                <button type="button" id="settings-done-btn" onclick="closeSettingsModal()" class="min-h-[44px] py-2 px-5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-md shadow-blue-500/25 transition">
                     Done
                 </button>
             </div>
@@ -1118,7 +1119,7 @@
                     <p id="auto-detect-card-sub" class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-3">
                         Automatically scans all chapters and sections you have checked off, locks them as completed markers, and redistributes remaining portions starting today.
                     </p>
-                    <button type="button" id="btn-auto-rebalance" onclick="autoDetectAndRebalance()" class="w-full py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-extrabold transition flex items-center justify-center gap-2 shadow-md shadow-blue-500/25 cursor-pointer active:scale-98">
+                    <button type="button" id="btn-auto-rebalance" onclick="autoDetectAndRebalance()" class="w-full min-h-[44px] py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-extrabold transition flex items-center justify-center gap-2 shadow-md shadow-blue-500/25 cursor-pointer active:scale-98">
                         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><polyline points="21 3 21 8 16 8"/></svg>
                         <span id="btn-auto-rebalance-label">Auto-Detect & Rebalance Schedule</span>
                     </button>
@@ -1141,17 +1142,17 @@
                     <span id="regenerate-revision-note"><strong>Guaranteed Revision Days:</strong> Your target deadline will still maintain dedicated revision buffer days at the end!</span>
                 </div>
                 <div class="pt-2 border-t border-slate-100 dark:border-slate-800 space-y-2">
-                    <button type="button" onclick="compactPlanToToday()" class="w-full py-2.5 px-3 rounded-xl border border-amber-300 dark:border-amber-600/70 bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/40 dark:hover:bg-amber-900/50 text-amber-900 dark:text-amber-200 text-xs font-bold transition flex items-center justify-center gap-2 shadow-xs cursor-pointer">
+                    <button type="button" onclick="compactPlanToToday()" class="w-full min-h-[44px] py-2.5 px-3 rounded-xl border border-amber-300 dark:border-amber-600/70 bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/40 dark:hover:bg-amber-900/50 text-amber-900 dark:text-amber-200 text-xs font-bold transition flex items-center justify-center gap-2 shadow-xs cursor-pointer">
                         <svg class="w-4 h-4 text-amber-600 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                         <span>Finished Early? Fast-Forward Next Chapters to Today</span>
                     </button>
-                    <button type="button" onclick="closeRegenerateModal(); shiftPlanToToday();" class="w-full py-2 px-3 rounded-xl border border-blue-300 dark:border-blue-600/70 bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/40 dark:hover:bg-blue-900/50 text-blue-900 dark:text-blue-200 text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer">
+                    <button type="button" onclick="closeRegenerateModal(); shiftPlanToToday();" class="w-full min-h-[44px] py-2 px-3 rounded-xl border border-blue-300 dark:border-blue-600/70 bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/40 dark:hover:bg-blue-900/50 text-blue-900 dark:text-blue-200 text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer">
                         <svg class="w-4 h-4 inline-block text-blue-600 dark:text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                         <span>Reset Schedule: Make Today Day 1</span>
                     </button>
                     <!-- Restore Previous Rebalanced Snapshot -->
                     <div id="regenerate-restore-box" class="hidden pt-1">
-                        <button type="button" onclick="restorePreviousPlan()" class="w-full py-2 px-3 rounded-xl border border-emerald-300 dark:border-emerald-600/70 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/50 text-emerald-900 dark:text-emerald-200 text-xs font-bold transition flex items-center justify-center gap-2 shadow-xs cursor-pointer">
+                        <button type="button" onclick="restorePreviousPlan()" class="w-full min-h-[44px] py-2 px-3 rounded-xl border border-emerald-300 dark:border-emerald-600/70 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/50 text-emerald-900 dark:text-emerald-200 text-xs font-bold transition flex items-center justify-center gap-2 shadow-xs cursor-pointer">
                             <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
                             <span>↺ Restore Previous Timetable Snapshot</span>
                         </button>
@@ -1159,7 +1160,7 @@
                     </div>
                     <!-- Restore Pre-Reset Snapshot Box -->
                     <div id="regenerate-undo-reset-box" class="hidden pt-1">
-                        <button type="button" id="btn-regenerate-undo-reset" onclick="restorePreResetSnapshot()" class="w-full py-2 px-3 rounded-xl border border-amber-300 dark:border-amber-600/70 bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/40 dark:hover:bg-amber-900/50 text-amber-900 dark:text-amber-200 text-xs font-bold transition flex items-center justify-center gap-2 shadow-xs cursor-pointer">
+                        <button type="button" id="btn-regenerate-undo-reset" onclick="restorePreResetSnapshot()" class="w-full min-h-[44px] py-2 px-3 rounded-xl border border-amber-300 dark:border-amber-600/70 bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/40 dark:hover:bg-amber-900/50 text-amber-900 dark:text-amber-200 text-xs font-bold transition flex items-center justify-center gap-2 shadow-xs cursor-pointer">
                             <svg class="w-4 h-4 text-amber-600 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
                             <span id="regenerate-undo-reset-btn-text">↺ Undo Recent Reset / Restore Plan</span>
                         </button>
@@ -1167,7 +1168,7 @@
                     </div>
                     <!-- Reset Everything: Start Fresh with New Plan -->
                     <div class="pt-1">
-                        <button type="button" onclick="closeRegenerateModal(); resetApp();" class="w-full py-2 px-3 rounded-xl border border-rose-300 dark:border-rose-700/70 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/50 text-rose-800 dark:text-rose-200 text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer">
+                        <button type="button" onclick="closeRegenerateModal(); resetApp();" class="w-full min-h-[44px] py-2 px-3 rounded-xl border border-rose-300 dark:border-rose-700/70 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/50 text-rose-800 dark:text-rose-200 text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer">
                             <svg class="w-4 h-4 text-rose-600 dark:text-rose-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                             <span>Reset Plan: Start Fresh with New Timetable</span>
                         </button>
@@ -1234,15 +1235,15 @@
 
             <!-- Action Buttons -->
             <div class="pt-2 border-t border-slate-100 dark:border-slate-800 flex flex-wrap sm:flex-nowrap items-center gap-2">
-                <button type="button" onclick="copyAiTutorPrompt()" class="flex-1 py-2.5 px-3 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 transition active:scale-95">
+                <button type="button" onclick="copyAiTutorPrompt()" class="flex-1 min-h-[44px] py-2.5 px-3 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 transition active:scale-95">
                     <i class="fa-regular fa-copy"></i>
                     <span>Copy Prompt</span>
                 </button>
-                <a id="ai-tutor-chatgpt-link" href="#" target="_blank" rel="noopener noreferrer" class="flex-1 py-2.5 px-3 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs rounded-xl flex items-center justify-center gap-1.5 transition active:scale-95 shadow-md shadow-emerald-600/20">
+                <a id="ai-tutor-chatgpt-link" href="#" target="_blank" rel="noopener noreferrer" class="flex-1 min-h-[44px] py-2.5 px-3 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs rounded-xl flex items-center justify-center gap-1.5 transition active:scale-95 shadow-md shadow-emerald-600/20">
                     <i class="fa-solid fa-arrow-up-right-from-square"></i>
                     <span>Launch in ChatGPT</span>
                 </a>
-                <a id="ai-tutor-gemini-link" href="https://gemini.google.com/app" target="_blank" rel="noopener noreferrer" class="py-2.5 px-3 bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs rounded-xl flex items-center justify-center gap-1.5 transition active:scale-95 shadow-md shadow-blue-600/20" title="Open in Gemini">
+                <a id="ai-tutor-gemini-link" href="https://gemini.google.com/app" target="_blank" rel="noopener noreferrer" class="min-h-[44px] py-2.5 px-3 bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs rounded-xl flex items-center justify-center gap-1.5 transition active:scale-95 shadow-md shadow-blue-600/20" title="Open in Gemini">
                     <i class="fa-brands fa-google"></i>
                     <span class="hidden sm:inline">Gemini</span>
                 </a>
