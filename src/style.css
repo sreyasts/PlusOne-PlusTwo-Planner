@@ -967,14 +967,33 @@ html.dark .study-capacity, html.dark .study-tools { border-color: #334155; }
         html.dark #regenerate-modal label {
             color: #e2e8f0 !important;
         }
-        html.dark #regenerate-modal select {
+        html.dark #regenerate-modal select,
+        html.dark #regenerate-modal input[type="date"],
+        html.dark #regenerate-modal input[type="search"] {
             background-color: #141e33 !important;
             border-color: #2b3b59 !important;
             color: #ffffff !important;
+            color-scheme: dark;
         }
         html.dark #regenerate-modal select option {
             background-color: #0e1526 !important;
             color: #ffffff !important;
+        }
+        html.dark #regenerate-modal #adjust-safety-drawer,
+        html.dark #regenerate-modal #adjust-chapters-list label {
+            border-color: #23314d !important;
+        }
+        .adjust-pill-active {
+            border-color: #2563eb !important;
+            background-color: #eff6ff !important;
+            color: #1d4ed8 !important;
+            box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.25);
+        }
+        html.dark .adjust-pill-active {
+            border-color: #60a5fa !important;
+            background-color: rgba(37, 99, 235, 0.28) !important;
+            color: #dbeafe !important;
+            box-shadow: 0 0 0 1px rgba(96, 165, 250, 0.35);
         }
         html.dark #regenerate-modal .bg-blue-50,
         html.dark #regenerate-modal .bg-blue-50\/70 {

@@ -1083,102 +1083,222 @@
         </div>
     </div>
 
-    <!-- Rebalance / Adjust Schedule Modal -->
-    <div id="regenerate-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 px-4">
-        <div class="bg-white dark:bg-[#0e1526] rounded-3xl shadow-2xl max-w-md w-full p-6 sm:p-7 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 animate-fade-in-up">
-            <div class="flex justify-between items-center mb-3">
-                <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold">
-                        <svg class="w-4 h-4 inline-block text-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><polyline points="21 3 21 8 16 8"/></svg>
+    <!-- Rebalance / Edit Plan Modal -->
+    <div id="regenerate-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-3 sm:p-4 overflow-y-auto" onclick="if(event.target === this) closeRegenerateModal()">
+        <div class="bg-white dark:bg-[#0e1526] rounded-3xl shadow-2xl max-w-lg w-full max-h-[92vh] flex flex-col overflow-hidden border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 animate-fade-in-up my-auto">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-slate-100 dark:border-slate-800 shrink-0">
+                <div class="flex items-center gap-2.5 min-w-0">
+                    <button type="button" id="adjust-header-back-btn" onclick="closeAdjustChaptersPage()" class="hidden min-h-[44px] min-w-[44px] px-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold items-center gap-1.5 transition shrink-0 cursor-pointer" aria-label="Back to Plan Settings">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                        <span>Back</span>
+                    </button>
+                    <div id="adjust-header-icon" class="w-9 h-9 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold shrink-0">
+                        <svg class="w-4 h-4 inline-block text-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
                     </div>
-                    <h3 id="regenerate-modal-title" class="text-lg font-bold text-slate-900 dark:text-white">Adjust & Rebalance Plan</h3>
+                    <div class="min-w-0">
+                        <h3 id="regenerate-modal-title" class="text-base sm:text-lg font-bold text-slate-900 dark:text-white truncate">Edit &amp; Rebalance Plan</h3>
+                        <p id="regenerate-modal-subtitle" class="text-xs text-slate-600 dark:text-slate-300 truncate">Adjust your completed chapters, exam date, and study pace</p>
+                    </div>
                 </div>
-                <button onclick="closeRegenerateModal()" class="w-11 h-11 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 flex items-center justify-center transition active:scale-95" title="Close" aria-label="Close">
+                <button type="button" onclick="closeRegenerateModal()" class="w-11 h-11 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 flex items-center justify-center transition active:scale-95 shrink-0 cursor-pointer" title="Close" aria-label="Close">
                     <svg class="w-4 h-4 inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                 </button>
             </div>
-            
-            <p id="regenerate-modal-subtitle" class="text-xs text-slate-600 dark:text-slate-300 mb-5 leading-relaxed">
-                Missed some days or fell behind? Don't stress. Select the last day you fully finished, and our intelligent pacing algorithm will recalculate and redistribute only the remaining unfinished syllabus evenly across your available time.
-            </p>
-            
-            <div class="space-y-4 mb-6">
-                <!-- Auto-Detect & Rebalance Section -->
-                <div id="auto-detect-card" class="p-4 rounded-2xl border border-blue-200 dark:border-blue-800/80 bg-blue-50/80 dark:bg-blue-950/40">
-                    <div class="flex items-center justify-between gap-2 mb-2">
-                        <div class="flex items-center gap-2">
-                            <div class="w-7 h-7 rounded-lg bg-blue-600 text-white flex items-center justify-center text-xs font-bold shadow-xs">
-                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+
+            <!-- Scrollable Body -->
+            <div class="flex-1 overflow-y-auto px-5 sm:px-6 py-4 space-y-4">
+                <!-- PAGE 1: Main Plan Editor -->
+                <div id="adjust-main-view" class="space-y-4">
+                    <!-- 1. One-Button Entry to Mark Completed Chapters -->
+                    <div id="auto-detect-card" class="p-4 rounded-2xl border border-blue-200 dark:border-blue-800/80 bg-blue-50/80 dark:bg-blue-950/40">
+                        <div class="flex items-center justify-between gap-2 mb-1.5 flex-wrap">
+                            <div class="flex items-center gap-2">
+                                <div class="w-7 h-7 rounded-lg bg-blue-600 text-white flex items-center justify-center text-xs font-bold shadow-xs shrink-0">
+                                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                                </div>
+                                <span id="auto-detect-card-title" class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">Completed Chapters</span>
                             </div>
-                            <span id="auto-detect-card-title" class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">Auto-Detect Completed Tasks</span>
+                            <div class="flex items-center gap-1.5">
+                                <span id="adjust-chapters-count-badge" class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-200 border border-emerald-300 dark:border-emerald-700">
+                                    0 / 0 Chapters
+                                </span>
+                                <span id="auto-detect-summary-badge" class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/70 dark:text-blue-200 border border-blue-300 dark:border-blue-700">
+                                    0 Done
+                                </span>
+                            </div>
                         </div>
-                        <span id="auto-detect-summary-badge" class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/70 dark:text-blue-200 border border-blue-300 dark:border-blue-700">
-                            0 Done
+                        <p id="auto-detect-card-sub" class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-3">
+                            Open your chapter checklist to mark everything you have already finished — chapters completed in your plan are pre-checked automatically.
+                        </p>
+                        <button type="button" id="btn-open-chapters-editor" onclick="openAdjustChaptersPage()" class="w-full min-h-[44px] py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-extrabold transition flex items-center justify-center gap-2 shadow-md shadow-blue-500/25 cursor-pointer active:scale-98">
+                            <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                            <span id="btn-open-chapters-label">Mark Completed Chapters</span>
+                        </button>
+                    </div>
+
+                    <!-- 2. Full Editable Schedule Controls -->
+                    <div class="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-[#131d33] space-y-4">
+                        <div class="flex items-center justify-between gap-2">
+                            <span id="adjust-settings-heading" class="text-xs font-extrabold uppercase tracking-wider text-slate-800 dark:text-slate-100 flex items-center gap-1.5">
+                                <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="4" y1="21" y2="14"/><line x1="4" x2="4" y1="10" y2="3"/><line x1="12" x2="12" y1="21" y2="12"/><line x1="12" x2="12" y1="8" y2="3"/><line x1="20" x2="20" y1="21" y2="16"/><line x1="20" x2="20" y1="12" y2="3"/></svg>
+                                <span>Plan Settings &amp; Targets</span>
+                            </span>
+                            <span id="adjust-granularity-pill" class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800 dark:bg-indigo-950/80 dark:text-indigo-200 border border-indigo-200 dark:border-indigo-700/70">
+                                Smart Pacing
+                            </span>
+                        </div>
+
+                        <!-- Target Deadline Date -->
+                        <div>
+                            <div class="flex items-center justify-between gap-2 mb-1.5 flex-wrap">
+                                <label for="adjust-deadline-date" id="adjust-deadline-label" class="text-xs font-bold text-slate-700 dark:text-slate-200">Exam / Target Date</label>
+                                <span id="adjust-deadline-preview" class="text-[11px] font-semibold text-blue-700 dark:text-blue-300"></span>
+                            </div>
+                            <input type="date" id="adjust-deadline-date" onchange="onAdjustDeadlineChange(this.value)" class="w-full min-h-[44px] border-2 border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-sm font-semibold text-slate-800 dark:text-white bg-white dark:bg-[#0e1526] focus:border-blue-500 dark:focus:border-blue-400 outline-none transition">
+                            <div class="grid grid-cols-3 gap-1.5 mt-2">
+                                <button type="button" onclick="setAdjustDeadlineOffset(14)" class="min-h-[44px] py-1.5 px-2 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0e1526] hover:bg-slate-100 dark:hover:bg-[#19243d] text-slate-700 dark:text-slate-200 transition cursor-pointer">+14 Days</button>
+                                <button type="button" onclick="setAdjustDeadlineOffset(30)" class="min-h-[44px] py-1.5 px-2 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0e1526] hover:bg-slate-100 dark:hover:bg-[#19243d] text-slate-700 dark:text-slate-200 transition cursor-pointer">+30 Days</button>
+                                <button type="button" onclick="setAdjustDeadlineOffset(60)" class="min-h-[44px] py-1.5 px-2 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0e1526] hover:bg-slate-100 dark:hover:bg-[#19243d] text-slate-700 dark:text-slate-200 transition cursor-pointer">+60 Days</button>
+                            </div>
+                        </div>
+
+                        <!-- Daily Study Pace -->
+                        <div>
+                            <label id="adjust-intensity-label" class="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1.5">Daily Study Pace</label>
+                            <input type="hidden" id="adjust-study-intensity" value="balanced">
+                            <div class="grid grid-cols-3 gap-1.5">
+                                <button type="button" id="adjust-pace-light" onclick="setAdjustIntensity('light')" class="min-h-[44px] py-2 px-2 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0e1526] text-slate-700 dark:text-slate-200 transition cursor-pointer">Relaxed</button>
+                                <button type="button" id="adjust-pace-balanced" onclick="setAdjustIntensity('balanced')" class="min-h-[44px] py-2 px-2 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0e1526] text-slate-700 dark:text-slate-200 transition cursor-pointer">Standard</button>
+                                <button type="button" id="adjust-pace-intense" onclick="setAdjustIntensity('intense')" class="min-h-[44px] py-2 px-2 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0e1526] text-slate-700 dark:text-slate-200 transition cursor-pointer">Intensive</button>
+                            </div>
+                        </div>
+
+                        <!-- Weekly Rhythm -->
+                        <div>
+                            <label id="adjust-rhythm-label" class="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1.5">Weekly Study Schedule</label>
+                            <input type="hidden" id="adjust-weekly-rhythm" value="balanced">
+                            <div class="grid grid-cols-3 gap-1.5">
+                                <button type="button" id="adjust-rhythm-balanced" onclick="setAdjustRhythm('balanced')" class="min-h-[44px] py-2 px-1.5 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0e1526] text-slate-700 dark:text-slate-200 transition cursor-pointer">Every Day</button>
+                                <button type="button" id="adjust-rhythm-weekend_booster" onclick="setAdjustRhythm('weekend_booster')" class="min-h-[44px] py-2 px-1.5 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0e1526] text-slate-700 dark:text-slate-200 transition cursor-pointer">Weekend Boost</button>
+                                <button type="button" id="adjust-rhythm-sunday_rest" onclick="setAdjustRhythm('sunday_rest')" class="min-h-[44px] py-2 px-1.5 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0e1526] text-slate-700 dark:text-slate-200 transition cursor-pointer">Sunday Off</button>
+                            </div>
+                        </div>
+
+                        <!-- Syllabus Scope -->
+                        <div>
+                            <label id="adjust-term-label" class="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1.5">Syllabus Coverage</label>
+                            <input type="hidden" id="adjust-target-term" value="3">
+                            <div class="grid grid-cols-3 gap-1.5">
+                                <button type="button" id="adjust-term-1" onclick="setAdjustTerm(1)" class="min-h-[44px] py-2 px-2 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0e1526] text-slate-700 dark:text-slate-200 transition cursor-pointer">Term 1</button>
+                                <button type="button" id="adjust-term-2" onclick="setAdjustTerm(2)" class="min-h-[44px] py-2 px-2 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0e1526] text-slate-700 dark:text-slate-200 transition cursor-pointer">Terms 1 &amp; 2</button>
+                                <button type="button" id="adjust-term-3" onclick="setAdjustTerm(3)" class="min-h-[44px] py-2 px-2 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0e1526] text-slate-700 dark:text-slate-200 transition cursor-pointer">Full Year</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. Timeline Controls & Quick Actions -->
+                    <div class="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#11192d] space-y-3">
+                        <div>
+                            <label id="regenerate-completed-label" for="completed-day-select" class="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1.5 uppercase tracking-wider">Keep Schedule History Completed Up To:</label>
+                            <select id="completed-day-select" class="w-full min-h-[44px] border-2 border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-sm focus:border-blue-500 dark:focus:border-blue-400 focus:ring-4 focus:ring-blue-50 dark:focus:ring-blue-900/40 outline-none transition font-semibold text-slate-800 dark:text-slate-100 bg-slate-50 dark:bg-[#141e33]">
+                                <!-- Populated by JS -->
+                            </select>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            <button type="button" id="btn-pull-today" onclick="compactPlanToToday()" class="min-h-[44px] py-2 px-3 rounded-xl border border-amber-300 dark:border-amber-600/70 bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/40 dark:hover:bg-amber-900/50 text-amber-900 dark:text-amber-200 text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-xs cursor-pointer">
+                                <svg class="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                                <span id="btn-pull-today-label">Pull Next Tasks to Today</span>
+                            </button>
+                            <button type="button" id="btn-shift-today" onclick="closeRegenerateModal(); shiftPlanToToday();" class="min-h-[44px] py-2 px-3 rounded-xl border border-blue-300 dark:border-blue-600/70 bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/40 dark:hover:bg-blue-900/50 text-blue-900 dark:text-blue-200 text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer">
+                                <svg class="w-4 h-4 text-blue-600 dark:text-blue-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                <span id="btn-shift-today-label">Restart Start Date Today</span>
+                            </button>
+                        </div>
+
+                        <div class="bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800/80 rounded-xl p-3 text-xs text-blue-900 dark:text-blue-200">
+                            <svg class="w-4 h-4 inline-block text-blue-600 dark:text-blue-400 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                            <span id="regenerate-revision-note"><strong>Guaranteed Revision Days:</strong> Mock and spaced revision buffer days stay protected before your target date.</span>
+                        </div>
+                    </div>
+
+                    <!-- 4. Restore Snapshot / Reset (Clean Collapsible Section) -->
+                    <details id="adjust-safety-drawer" class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-[#10182b] p-3.5">
+                        <summary id="adjust-safety-summary" class="min-h-[44px] flex items-center justify-between text-xs font-bold text-slate-700 dark:text-slate-200 cursor-pointer select-none">
+                            <span>More Options: Auto-Rebalance, Restore Snapshot &amp; Reset</span>
+                            <svg class="w-4 h-4 text-slate-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                        </summary>
+                        <div class="pt-3 mt-2 border-t border-slate-200 dark:border-slate-800 space-y-2.5">
+                            <button type="button" id="btn-auto-rebalance" onclick="autoDetectAndRebalance()" class="w-full min-h-[44px] py-2 px-3 rounded-xl border border-blue-300 dark:border-blue-600/70 bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/40 dark:hover:bg-blue-900/50 text-blue-900 dark:text-blue-200 text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer">
+                                <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><polyline points="21 3 21 8 16 8"/></svg>
+                                <span id="btn-auto-rebalance-label">Quick Auto-Rebalance Current Progress</span>
+                            </button>
+                            <div id="regenerate-restore-box" class="hidden">
+                                <button type="button" onclick="restorePreviousPlan()" class="w-full min-h-[44px] py-2 px-3 rounded-xl border border-emerald-300 dark:border-emerald-600/70 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/50 text-emerald-900 dark:text-emerald-200 text-xs font-bold transition flex items-center justify-center gap-2 shadow-xs cursor-pointer">
+                                    <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
+                                    <span>Restore Schedule Before Last Edit</span>
+                                </button>
+                                <p id="regenerate-restore-sub" class="text-[11px] text-center text-slate-500 dark:text-slate-400 mt-1"></p>
+                            </div>
+                            <div id="regenerate-undo-reset-box" class="hidden">
+                                <button type="button" id="btn-regenerate-undo-reset" onclick="restorePreResetSnapshot()" class="w-full min-h-[44px] py-2 px-3 rounded-xl border border-amber-300 dark:border-amber-600/70 bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/40 dark:hover:bg-amber-900/50 text-amber-900 dark:text-amber-200 text-xs font-bold transition flex items-center justify-center gap-2 shadow-xs cursor-pointer">
+                                    <svg class="w-4 h-4 text-amber-600 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
+                                    <span id="regenerate-undo-reset-btn-text">Undo Recent Reset &amp; Restore</span>
+                                </button>
+                                <p id="regenerate-undo-reset-sub" class="text-[11px] text-center text-slate-500 dark:text-slate-400 mt-1"></p>
+                            </div>
+                            <button type="button" id="btn-start-fresh-plan" onclick="closeRegenerateModal(); resetApp();" class="w-full min-h-[44px] py-2 px-3 rounded-xl border border-rose-300 dark:border-rose-700/70 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/50 text-rose-800 dark:text-rose-200 text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer">
+                                <svg class="w-4 h-4 text-rose-600 dark:text-rose-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                <span id="btn-start-fresh-label">Create Brand-New Timetable</span>
+                            </button>
+                        </div>
+                    </details>
+                </div>
+
+                <!-- PAGE 2: Completed Chapters Checklist Page -->
+                <div id="adjust-chapters-view" class="hidden space-y-3">
+                    <div class="flex items-center justify-between gap-2 flex-wrap">
+                        <p id="adjust-chapters-helper" class="text-xs text-slate-600 dark:text-slate-300">
+                            Already finished chapters from your plan are pre-checked. Toggle any chapter below to update your schedule.
+                        </p>
+                        <span id="adjust-chapters-editor-stats" class="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950/70 dark:text-emerald-200 border border-emerald-300 dark:border-emerald-700">
+                            0 completed
                         </span>
                     </div>
-                    <p id="auto-detect-card-sub" class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed mb-3">
-                        Automatically scans all chapters and sections you have checked off, locks them as completed markers, and redistributes remaining portions starting today.
-                    </p>
-                    <button type="button" id="btn-auto-rebalance" onclick="autoDetectAndRebalance()" class="w-full min-h-[44px] py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-extrabold transition flex items-center justify-center gap-2 shadow-md shadow-blue-500/25 cursor-pointer active:scale-98">
-                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><polyline points="21 3 21 8 16 8"/></svg>
-                        <span id="btn-auto-rebalance-label">Auto-Detect & Rebalance Schedule</span>
-                    </button>
-                </div>
 
-                <div class="relative flex items-center justify-center my-2">
-                    <div class="border-t border-slate-200 dark:border-slate-800 w-full"></div>
-                    <span id="regenerate-or-manual-label" class="bg-white dark:bg-[#0e1526] px-2 text-[10px] font-bold uppercase tracking-wider text-slate-400 shrink-0">Or Select Day Manually</span>
-                </div>
+                    <!-- Search & Subject Filter -->
+                    <input type="search" id="adjust-chapter-search" oninput="setAdjustChapterSearch(this.value)" placeholder="Search chapter name or number..." class="w-full min-h-[44px] border-2 border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2 text-sm text-slate-800 dark:text-white bg-slate-50 dark:bg-[#141e33] focus:border-blue-500 outline-none transition">
 
-                <div>
-                    <label id="regenerate-completed-label" class="block text-xs font-bold text-slate-700 dark:text-slate-200 mb-1.5 uppercase tracking-wider">I have completed up to:</label>
-                    <select id="completed-day-select" class="w-full border-2 border-slate-200 dark:border-slate-700 rounded-xl p-3 text-sm focus:border-blue-500 dark:focus:border-blue-400 focus:ring-4 focus:ring-blue-50 dark:focus:ring-blue-900/40 outline-none transition font-semibold text-slate-800 dark:text-slate-100 bg-slate-50 dark:bg-[#141e33]">
-                        <!-- Populated by JS -->
-                    </select>
-                </div>
-
-                <div class="bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800/80 rounded-xl p-3 text-xs text-blue-900 dark:text-blue-200">
-                    <svg class="w-4 h-4 inline-block text-blue-600 dark:text-blue-400 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                    <span id="regenerate-revision-note"><strong>Guaranteed Revision Days:</strong> Your target deadline will still maintain dedicated revision buffer days at the end!</span>
-                </div>
-                <div class="pt-2 border-t border-slate-100 dark:border-slate-800 space-y-2">
-                    <button type="button" onclick="compactPlanToToday()" class="w-full min-h-[44px] py-2.5 px-3 rounded-xl border border-amber-300 dark:border-amber-600/70 bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/40 dark:hover:bg-amber-900/50 text-amber-900 dark:text-amber-200 text-xs font-bold transition flex items-center justify-center gap-2 shadow-xs cursor-pointer">
-                        <svg class="w-4 h-4 text-amber-600 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                        <span>Finished Early? Fast-Forward Next Chapters to Today</span>
-                    </button>
-                    <button type="button" onclick="closeRegenerateModal(); shiftPlanToToday();" class="w-full min-h-[44px] py-2 px-3 rounded-xl border border-blue-300 dark:border-blue-600/70 bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/40 dark:hover:bg-blue-900/50 text-blue-900 dark:text-blue-200 text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer">
-                        <svg class="w-4 h-4 inline-block text-blue-600 dark:text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                        <span>Reset Schedule: Make Today Day 1</span>
-                    </button>
-                    <!-- Restore Previous Rebalanced Snapshot -->
-                    <div id="regenerate-restore-box" class="hidden pt-1">
-                        <button type="button" onclick="restorePreviousPlan()" class="w-full min-h-[44px] py-2 px-3 rounded-xl border border-emerald-300 dark:border-emerald-600/70 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/50 text-emerald-900 dark:text-emerald-200 text-xs font-bold transition flex items-center justify-center gap-2 shadow-xs cursor-pointer">
-                            <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
-                            <span>↺ Restore Previous Timetable Snapshot</span>
-                        </button>
-                        <p id="regenerate-restore-sub" class="text-[11px] text-center text-slate-500 dark:text-slate-400 mt-1"></p>
+                    <div id="adjust-subject-tabs" class="flex items-center gap-1.5 overflow-x-auto pb-1">
+                        <!-- Populated dynamically by JS -->
                     </div>
-                    <!-- Restore Pre-Reset Snapshot Box -->
-                    <div id="regenerate-undo-reset-box" class="hidden pt-1">
-                        <button type="button" id="btn-regenerate-undo-reset" onclick="restorePreResetSnapshot()" class="w-full min-h-[44px] py-2 px-3 rounded-xl border border-amber-300 dark:border-amber-600/70 bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/40 dark:hover:bg-amber-900/50 text-amber-900 dark:text-amber-200 text-xs font-bold transition flex items-center justify-center gap-2 shadow-xs cursor-pointer">
-                            <svg class="w-4 h-4 text-amber-600 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
-                            <span id="regenerate-undo-reset-btn-text">↺ Undo Recent Reset / Restore Plan</span>
-                        </button>
-                        <p id="regenerate-undo-reset-sub" class="text-[11px] text-center text-slate-500 dark:text-slate-400 mt-1"></p>
+
+                    <div class="flex items-center justify-between gap-2 py-1 border-b border-slate-100 dark:border-slate-800">
+                        <span id="adjust-visible-scope-label" class="text-xs font-bold text-slate-700 dark:text-slate-200">All Subjects</span>
+                        <div class="flex items-center gap-2">
+                            <button type="button" onclick="toggleAllAdjustChapters(true)" class="min-h-[44px] px-2 text-xs font-bold text-emerald-700 dark:text-emerald-300 hover:underline cursor-pointer">Mark All Done</button>
+                            <span class="text-slate-300 dark:text-slate-600">|</span>
+                            <button type="button" onclick="toggleAllAdjustChapters(false)" class="min-h-[44px] px-2 text-xs font-bold text-slate-500 dark:text-slate-300 hover:underline cursor-pointer">Clear All</button>
+                        </div>
                     </div>
-                    <!-- Reset Everything: Start Fresh with New Plan -->
-                    <div class="pt-1">
-                        <button type="button" onclick="closeRegenerateModal(); resetApp();" class="w-full min-h-[44px] py-2 px-3 rounded-xl border border-rose-300 dark:border-rose-700/70 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/50 text-rose-800 dark:text-rose-200 text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer">
-                            <svg class="w-4 h-4 text-rose-600 dark:text-rose-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                            <span>Reset Plan: Start Fresh with New Timetable</span>
-                        </button>
+
+                    <div id="adjust-chapters-list" class="space-y-2 max-h-[44vh] overflow-y-auto pr-1">
+                        <!-- Populated dynamically by JS -->
                     </div>
                 </div>
             </div>
-            
-            <div class="flex gap-3">
-                <button id="regenerate-cancel-btn" onclick="closeRegenerateModal()" class="flex-1 py-3 px-4 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-sm font-bold rounded-xl border border-slate-200 dark:border-slate-700 transition">Cancel</button>
-                <button id="regenerate-confirm-btn" onclick="executeRegeneration()" class="flex-1 py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-xl shadow-lg shadow-blue-500/25 transition">Rebalance Now</button>
+
+            <!-- Modal Sticky Footer -->
+            <div class="px-5 sm:px-6 py-4 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-[#0e1526] shrink-0">
+                <div id="adjust-main-footer" class="flex gap-3">
+                    <button type="button" id="regenerate-cancel-btn" onclick="closeRegenerateModal()" class="flex-1 min-h-[44px] py-2.5 px-4 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-sm font-bold rounded-xl border border-slate-200 dark:border-slate-700 transition cursor-pointer">Cancel</button>
+                    <button type="button" id="regenerate-confirm-btn" onclick="executeRegeneration()" class="flex-1 min-h-[44px] py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-xl shadow-lg shadow-blue-500/25 transition cursor-pointer">Save &amp; Rebuild Plan</button>
+                </div>
+                <div id="adjust-chapters-footer" class="hidden flex gap-3">
+                    <button type="button" id="adjust-chapters-done-btn" onclick="closeAdjustChaptersPage()" class="flex-1 min-h-[44px] py-2.5 px-4 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-sm font-bold rounded-xl border border-slate-200 dark:border-slate-700 transition cursor-pointer">Done Selecting</button>
+                    <button type="button" id="adjust-chapters-apply-btn" onclick="executeRegeneration()" class="flex-1 min-h-[44px] py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-xl shadow-lg shadow-blue-500/25 transition cursor-pointer">Apply &amp; Rebuild Plan</button>
+                </div>
             </div>
         </div>
     </div>

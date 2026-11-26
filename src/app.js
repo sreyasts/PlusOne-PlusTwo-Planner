@@ -72,7 +72,7 @@ import {
 import { getDailyPlan, compressSameDayTasks, compressPendingOverdueDays, formatCompressedGroupScope } from './ui/daily-plan.js';
 import { MAX_BACKUP_BYTES, parseStudyBackup, validateStudyBackup, createStudyBackup, persistStudyBackup } from './utils/study-backup.js';
 import { persistTaskCompletion, persistTaskGroupCompletion } from './utils/study-progress.js';
-import { getRemainingPlanTasks, detectCompletedSyllabusProgress } from './utils/plan-scope.js';
+import { isCalendarDate, getRemainingPlanTasks, detectCompletedSyllabusProgress } from './utils/plan-scope.js';
 import { getHandbookUrl } from './utils/handbook-lookup.js';
 import { createAccountSync, queuePendingAccountState } from './auth/account-sync.js';
 import appPackage from '../package.json' with { type: 'json' };
@@ -3051,6 +3051,407 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
             }
         }
 
+        let adjustSelectedChapterIds = new Set();
+        let adjustPreCheckedChapterIds = new Set();
+        let adjustPartialChapterMap = new Map();
+        let adjustSelectionDirty = false;
+        let adjustModalControlsLoaded = false;
+        let adjustActiveSubjectTab = 'All';
+        let adjustChapterSearchQuery = '';
+
+        function inferPlanStreamAndGrade(state) {
+            let userStream = state?.stream;
+            if (!userStream && state?.plan) {
+                const subs = new Set(state.plan.flatMap(d => (d.tasks || []).map(t => t.subject)));
+                if (subs.has('Accountancy') || subs.has('Business Studies')) userStream = 'commerce';
+                else if (subs.has('History') || subs.has('Political Science') || subs.has('Sociology')) userStream = 'humanities';
+                else if (subs.has('Botany') || subs.has('Zoology')) userStream = 'bio';
+                else userStream = 'cs';
+            }
+            if (!userStream) userStream = 'cs';
+            const targetTerm = state?.targetTerm || 3;
+            const userGrade = state?.grade || (typeof selectedGrade !== 'undefined' ? selectedGrade : '+2');
+            return { userStream, userGrade, targetTerm };
+        }
+
+        function getEditableScopeChapters(state, termOverride) {
+            const { userStream, userGrade, targetTerm } = inferPlanStreamAndGrade(state);
+            const effectiveTerm = Number(termOverride) || targetTerm;
+            const scopeTasks = getRemainingPlanTasks({
+                grade: userGrade,
+                stream: userStream,
+                targetTerm: effectiveTerm,
+                completedChapterIds: new Set(),
+                completedTaskIds: new Set(),
+            });
+
+            const chapterMap = new Map();
+            const registerTask = (task) => {
+                if (!task || !task.chapId) return;
+                if (task.isRevision || task.isExamEveTask || task.isSpacedRetrieval || task.isForgettingCurveReview || task.isModelExam) return;
+                if (!chapterMap.has(task.chapId)) {
+                    chapterMap.set(task.chapId, {
+                        chapId: task.chapId,
+                        chapNumber: task.chapNumber || 1,
+                        chapterName: task.chapterName || task.chapId,
+                        subject: task.subject || 'General',
+                        grade: task.grade || userGrade,
+                        term: task.term || 1,
+                        totalParts: task.totalParts || 1,
+                    });
+                } else {
+                    const existing = chapterMap.get(task.chapId);
+                    if ((task.totalParts || 1) > existing.totalParts) {
+                        existing.totalParts = task.totalParts || 1;
+                    }
+                }
+            };
+
+            scopeTasks.forEach(registerTask);
+            if (state && Array.isArray(state.plan)) {
+                state.plan.forEach(day => (day.tasks || []).forEach(registerTask));
+            }
+
+            return Array.from(chapterMap.values()).sort((a, b) => {
+                if (a.grade !== b.grade) return a.grade === '+2' ? -1 : 1;
+                if (a.subject !== b.subject) return a.subject.localeCompare(b.subject);
+                return (a.chapNumber || 0) - (b.chapNumber || 0);
+            });
+        }
+
+        function updateAdjustChaptersBadges() {
+            const termEl = document.getElementById('adjust-target-term');
+            const activeTerm = termEl ? parseInt(termEl.value, 10) : (appState?.targetTerm || 3);
+            const allChapters = getEditableScopeChapters(appState, activeTerm);
+            const selectedInScope = allChapters.filter(ch => adjustSelectedChapterIds.has(ch.chapId)).length;
+            const totalChapters = allChapters.length;
+            const remainingChapters = Math.max(0, totalChapters - selectedInScope);
+            const isML = typeof getAppLanguage === 'function' && getAppLanguage() === 'ml';
+
+            const countBadge = document.getElementById('adjust-chapters-count-badge');
+            if (countBadge) {
+                countBadge.textContent = isML
+                    ? `${selectedInScope} / ${totalChapters} അധ്യായങ്ങൾ`
+                    : `${selectedInScope} / ${totalChapters} Chapters`;
+            }
+
+            const editorStats = document.getElementById('adjust-chapters-editor-stats');
+            if (editorStats) {
+                editorStats.textContent = isML
+                    ? `${selectedInScope} പൂർത്തിയായി • ${remainingChapters} ബാക്കി`
+                    : `${selectedInScope} done • ${remainingChapters} left`;
+            }
+        }
+
+        function setAdjustPillGroup(buttonIds, activeId) {
+            buttonIds.forEach(id => {
+                const btn = document.getElementById(id);
+                if (!btn) return;
+                btn.classList.toggle('adjust-pill-active', id === activeId);
+            });
+        }
+
+        function updateAdjustDeadlinePreview() {
+            const deadlineInput = document.getElementById('adjust-deadline-date');
+            const previewEl = document.getElementById('adjust-deadline-preview');
+            const granularityPill = document.getElementById('adjust-granularity-pill');
+            if (!deadlineInput) return;
+
+            const todayStr = typeof getLocalDateStr === 'function' ? getLocalDateStr() : TODAY_STR;
+            const days = typeof calculateDaysBetween === 'function' ? calculateDaysBetween(todayStr, deadlineInput.value) : NaN;
+            const termEl = document.getElementById('adjust-target-term');
+            const activeTerm = termEl ? parseInt(termEl.value, 10) : (appState?.targetTerm || 3);
+            const scopeChapters = getEditableScopeChapters(appState, activeTerm);
+            const remainingChaps = Math.max(1, scopeChapters.filter(ch => !adjustSelectedChapterIds.has(ch.chapId)).length);
+            const isML = typeof getAppLanguage === 'function' && getAppLanguage() === 'ml';
+
+            if (previewEl) {
+                if (Number.isFinite(days) && days > 0) {
+                    previewEl.textContent = isML ? `${days} ദിവസം ബാക്കി` : `${days} days left`;
+                } else if (deadlineInput.value) {
+                    previewEl.textContent = isML ? 'ഭാവി തീയതി തിരഞ്ഞെടുക്കുക' : 'Select a future date';
+                } else {
+                    previewEl.textContent = '';
+                }
+            }
+
+            if (granularityPill && Number.isFinite(days) && days > 0) {
+                const approxActiveDays = Math.max(1, Math.round(days * 0.8));
+                const daysPerChap = approxActiveDays / remainingChaps;
+                const isWholeBlock = daysPerChap <= 1.27;
+                granularityPill.textContent = isWholeBlock
+                    ? (isML ? 'മുഴുവൻ അധ്യായ രീതി' : 'Whole-Chapter Blocks')
+                    : (isML ? 'ഭാഗങ്ങളായുള്ള പഠനരീതി' : 'Multi-Part Pacing');
+            }
+        }
+
+        function onAdjustDeadlineChange(val) {
+            if (!val) return;
+            updateAdjustDeadlinePreview();
+        }
+
+        function setAdjustDeadlineOffset(days) {
+            const input = document.getElementById('adjust-deadline-date');
+            if (!input) return;
+            const baseStr = typeof getLocalDateStr === 'function' ? getLocalDateStr() : TODAY_STR;
+            const d = new Date(baseStr + 'T00:00:00');
+            d.setDate(d.getDate() + Number(days || 30));
+            input.value = formatLocalDateStr(d);
+            updateAdjustDeadlinePreview();
+        }
+
+        function setAdjustIntensity(val) {
+            const normalized = (val === 'light' || val === 'intense') ? val : 'balanced';
+            const input = document.getElementById('adjust-study-intensity');
+            if (input) input.value = normalized;
+            setAdjustPillGroup(['adjust-pace-light', 'adjust-pace-balanced', 'adjust-pace-intense'], `adjust-pace-${normalized}`);
+        }
+
+        function setAdjustRhythm(val) {
+            const normalized = (val === 'weekend_booster' || val === 'sunday_rest') ? val : 'balanced';
+            const input = document.getElementById('adjust-weekly-rhythm');
+            if (input) input.value = normalized;
+            setAdjustPillGroup(['adjust-rhythm-balanced', 'adjust-rhythm-weekend_booster', 'adjust-rhythm-sunday_rest'], `adjust-rhythm-${normalized}`);
+        }
+
+        function setAdjustTerm(termVal) {
+            const normalized = [1, 2, 3].includes(Number(termVal)) ? Number(termVal) : 3;
+            const input = document.getElementById('adjust-target-term');
+            if (input) input.value = String(normalized);
+            setAdjustPillGroup(['adjust-term-1', 'adjust-term-2', 'adjust-term-3'], `adjust-term-${normalized}`);
+            updateAdjustChaptersBadges();
+            updateAdjustDeadlinePreview();
+        }
+
+        function initAdjustEditControls(detection) {
+            const deadlineInput = document.getElementById('adjust-deadline-date');
+            if (!deadlineInput) {
+                adjustModalControlsLoaded = false;
+                return;
+            }
+
+            adjustModalControlsLoaded = true;
+            adjustSelectionDirty = false;
+            adjustActiveSubjectTab = 'All';
+            adjustChapterSearchQuery = '';
+
+            const searchInput = document.getElementById('adjust-chapter-search');
+            if (searchInput) searchInput.value = '';
+
+            adjustPartialChapterMap = new Map();
+            const fullDoneFromPlan = new Set();
+
+            if (appState && Array.isArray(appState.plan)) {
+                const statsMap = new Map();
+                appState.plan.forEach(day => {
+                    (day.tasks || []).forEach(task => {
+                        if (!task || !task.chapId || task.isRevision || task.isExamEveTask || task.isSpacedRetrieval || task.isForgettingCurveReview || task.isModelExam) return;
+                        if (!statsMap.has(task.chapId)) {
+                            statsMap.set(task.chapId, { doneParts: 0, totalParts: task.totalParts || 1, seenTasks: 0, allDone: true });
+                        }
+                        const rec = statsMap.get(task.chapId);
+                        rec.seenTasks++;
+                        if ((task.totalParts || 1) > rec.totalParts) rec.totalParts = task.totalParts || 1;
+                        if (task.completed) rec.doneParts++;
+                        else rec.allDone = false;
+                    });
+                });
+                statsMap.forEach((rec, chapId) => {
+                    if (rec.doneParts >= rec.totalParts || (rec.seenTasks > 0 && rec.allDone)) {
+                        fullDoneFromPlan.add(chapId);
+                    } else if (rec.doneParts > 0) {
+                        adjustPartialChapterMap.set(chapId, { doneParts: rec.doneParts, totalParts: rec.totalParts });
+                    }
+                });
+            }
+
+            adjustSelectedChapterIds = new Set([
+                ...(appState?.completedChaptersOnInit || []),
+                ...(detection?.completedChapterIds ? Array.from(detection.completedChapterIds) : []),
+                ...Array.from(fullDoneFromPlan)
+            ]);
+            adjustPreCheckedChapterIds = new Set(adjustSelectedChapterIds);
+
+            const todayStr = typeof getLocalDateStr === 'function' ? getLocalDateStr() : TODAY_STR;
+            deadlineInput.min = todayStr;
+            deadlineInput.value = appState?.deadlineDate || todayStr;
+
+            setAdjustIntensity(appState?.studyIntensity || 'balanced');
+            setAdjustRhythm(appState?.personalization?.weeklyRhythm || 'balanced');
+            setAdjustTerm(appState?.targetTerm || 3);
+            updateAdjustChaptersBadges();
+            updateAdjustDeadlinePreview();
+        }
+
+        function openAdjustChaptersPage() {
+            const mainView = document.getElementById('adjust-main-view');
+            const chaptersView = document.getElementById('adjust-chapters-view');
+            const mainFooter = document.getElementById('adjust-main-footer');
+            const chaptersFooter = document.getElementById('adjust-chapters-footer');
+            const backBtn = document.getElementById('adjust-header-back-btn');
+            const iconBox = document.getElementById('adjust-header-icon');
+            const titleEl = document.getElementById('regenerate-modal-title');
+            const subEl = document.getElementById('regenerate-modal-subtitle');
+            const isML = typeof getAppLanguage === 'function' && getAppLanguage() === 'ml';
+
+            if (mainView) mainView.classList.add('hidden');
+            if (mainFooter) mainFooter.classList.add('hidden');
+            if (chaptersView) chaptersView.classList.remove('hidden');
+            if (chaptersFooter) chaptersFooter.classList.remove('hidden');
+            if (backBtn) {
+                backBtn.classList.remove('hidden');
+                backBtn.classList.add('inline-flex');
+            }
+            if (iconBox) iconBox.classList.add('hidden');
+            if (titleEl) titleEl.textContent = isML ? 'പൂർത്തിയായ അധ്യായങ്ങൾ' : 'Mark Completed Chapters';
+            if (subEl) subEl.textContent = isML ? 'പൂർത്തിയാക്കിയ അധ്യായങ്ങൾ തിരഞ്ഞെടുക്കുക' : 'Finished chapters from your plan are pre-checked';
+
+            renderAdjustChaptersPage();
+        }
+
+        function closeAdjustChaptersPage(silent = false) {
+            const mainView = document.getElementById('adjust-main-view');
+            const chaptersView = document.getElementById('adjust-chapters-view');
+            const mainFooter = document.getElementById('adjust-main-footer');
+            const chaptersFooter = document.getElementById('adjust-chapters-footer');
+            const backBtn = document.getElementById('adjust-header-back-btn');
+            const iconBox = document.getElementById('adjust-header-icon');
+            const titleEl = document.getElementById('regenerate-modal-title');
+            const subEl = document.getElementById('regenerate-modal-subtitle');
+            const isML = typeof getAppLanguage === 'function' && getAppLanguage() === 'ml';
+
+            if (chaptersView) chaptersView.classList.add('hidden');
+            if (chaptersFooter) chaptersFooter.classList.add('hidden');
+            if (mainView) mainView.classList.remove('hidden');
+            if (mainFooter) mainFooter.classList.remove('hidden');
+            if (backBtn) {
+                backBtn.classList.add('hidden');
+                backBtn.classList.remove('inline-flex');
+            }
+            if (iconBox) iconBox.classList.remove('hidden');
+            if (titleEl) titleEl.textContent = isML ? (ML_I18N.regenerateModal.title || 'പ്ലാൻ എഡിറ്റ് & പുനഃക്രമീകരണം') : 'Edit & Rebalance Plan';
+            if (subEl) subEl.textContent = isML ? (ML_I18N.regenerateModal.subtitle || '') : 'Adjust your completed chapters, exam date, and study pace';
+
+            if (!silent) {
+                updateAdjustChaptersBadges();
+                updateAdjustDeadlinePreview();
+            }
+        }
+
+        function getAdjustFilteredChapters() {
+            const termEl = document.getElementById('adjust-target-term');
+            const activeTerm = termEl ? parseInt(termEl.value, 10) : (appState?.targetTerm || 3);
+            const allChapters = getEditableScopeChapters(appState, activeTerm);
+            const query = (adjustChapterSearchQuery || '').trim().toLowerCase();
+
+            return allChapters.filter(ch => {
+                if (adjustActiveSubjectTab !== 'All' && ch.subject !== adjustActiveSubjectTab) return false;
+                if (query) {
+                    const hay = `${ch.chapterName} chapter ${ch.chapNumber} ${ch.subject}`.toLowerCase();
+                    if (!hay.includes(query)) return false;
+                }
+                return true;
+            });
+        }
+
+        function renderAdjustChaptersPage() {
+            const termEl = document.getElementById('adjust-target-term');
+            const activeTerm = termEl ? parseInt(termEl.value, 10) : (appState?.targetTerm || 3);
+            const allChapters = getEditableScopeChapters(appState, activeTerm);
+            const isML = typeof getAppLanguage === 'function' && getAppLanguage() === 'ml';
+
+            const uniqueSubjects = ['All', ...new Set(allChapters.map(ch => ch.subject))];
+            if (!uniqueSubjects.includes(adjustActiveSubjectTab)) {
+                adjustActiveSubjectTab = 'All';
+            }
+
+            const tabsContainer = document.getElementById('adjust-subject-tabs');
+            if (tabsContainer) {
+                tabsContainer.innerHTML = uniqueSubjects.map(sub => {
+                    const active = sub === adjustActiveSubjectTab;
+                    const label = sub === 'All' ? (isML ? 'എല്ലാ വിഷയങ്ങളും' : 'All Subjects') : escapeStudyText(sub);
+                    return `<button type="button" onclick="switchAdjustSubject('${escapeStudyText(sub).replace(/'/g, "\\'")}')" class="min-h-[44px] px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition cursor-pointer shrink-0 ${active ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-[#141e33] text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-[#1e2d4a]'}">${label}</button>`;
+                }).join('');
+            }
+
+            const scopeLabel = document.getElementById('adjust-visible-scope-label');
+            if (scopeLabel) {
+                scopeLabel.textContent = adjustActiveSubjectTab === 'All'
+                    ? (isML ? 'എല്ലാ വിഷയങ്ങളും' : 'All Subjects')
+                    : adjustActiveSubjectTab;
+            }
+
+            const filtered = getAdjustFilteredChapters();
+            const listContainer = document.getElementById('adjust-chapters-list');
+            if (listContainer) {
+                if (filtered.length === 0) {
+                    listContainer.innerHTML = `<p class="text-xs text-slate-500 dark:text-slate-400 text-center py-6">${isML ? 'അധ്യായങ്ങളൊന്നും കണ്ടെത്തിയില്ല.' : 'No matching chapters found.'}</p>`;
+                } else {
+                    const hasMixedGrades = new Set(allChapters.map(ch => ch.grade)).size > 1;
+                    listContainer.innerHTML = filtered.map(ch => {
+                        const isChecked = adjustSelectedChapterIds.has(ch.chapId);
+                        const partialInfo = adjustPartialChapterMap.get(ch.chapId);
+                        const cleanName = String(ch.chapterName || '').replace(/^Chapter\s+\d+:\s*/i, '').replace(/^\d+\.\s*/, '');
+                        let statusBadge = '';
+                        if (isChecked) {
+                            const label = adjustPreCheckedChapterIds.has(ch.chapId)
+                                ? (isML ? 'പ്ലാനിൽ പൂർത്തിയായി' : 'Done in plan')
+                                : (isML ? 'പൂർത്തിയായി' : 'Marked done');
+                            statusBadge = `<span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-200 shrink-0">${label}</span>`;
+                        } else if (partialInfo) {
+                            statusBadge = `<span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900/60 dark:text-amber-200 shrink-0">${partialInfo.doneParts}/${partialInfo.totalParts} ${isML ? 'ഭാഗം' : 'parts done'}</span>`;
+                        }
+                        const gradeTag = hasMixedGrades ? `<span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300">${escapeStudyText(ch.grade)}</span>` : '';
+
+                        return `
+                            <label class="min-h-[44px] flex items-center gap-3 p-3 rounded-xl border ${isChecked ? 'bg-emerald-50/70 dark:bg-emerald-950/35 border-emerald-300 dark:border-emerald-700/70' : 'bg-slate-50/70 dark:bg-[#131d33] border-slate-200 dark:border-slate-800 hover:bg-slate-100/80 dark:hover:bg-[#182440]'} cursor-pointer transition select-none">
+                                <input type="checkbox" value="${escapeStudyText(ch.chapId)}" ${isChecked ? 'checked' : ''} onchange="toggleAdjustChapter('${escapeStudyText(ch.chapId).replace(/'/g, "\\'")}', this.checked)" class="w-5 h-5 rounded border-slate-300 dark:border-slate-600 text-emerald-600 focus:ring-emerald-500 shrink-0 cursor-pointer">
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center gap-1.5 flex-wrap mb-0.5">
+                                        <span class="text-[11px] font-bold text-blue-700 dark:text-blue-300">${escapeStudyText(ch.subject)}</span>
+                                        ${gradeTag}
+                                        <span class="text-[11px] text-slate-500 dark:text-slate-400">Term ${ch.term} • ${ch.totalParts} ${ch.totalParts === 1 ? 'part' : 'parts'}</span>
+                                    </div>
+                                    <p class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white leading-snug">Chapter ${ch.chapNumber}: ${escapeStudyText(cleanName)}</p>
+                                </div>
+                                ${statusBadge}
+                            </label>
+                        `;
+                    }).join('');
+                }
+            }
+
+            updateAdjustChaptersBadges();
+        }
+
+        function toggleAdjustChapter(chapId, isChecked) {
+            if (!chapId) return;
+            adjustSelectionDirty = true;
+            if (isChecked) adjustSelectedChapterIds.add(chapId);
+            else adjustSelectedChapterIds.delete(chapId);
+            renderAdjustChaptersPage();
+        }
+
+        function toggleAllAdjustChapters(shouldCheck) {
+            const filtered = getAdjustFilteredChapters();
+            adjustSelectionDirty = true;
+            filtered.forEach(ch => {
+                if (shouldCheck) adjustSelectedChapterIds.add(ch.chapId);
+                else adjustSelectedChapterIds.delete(ch.chapId);
+            });
+            renderAdjustChaptersPage();
+        }
+
+        function switchAdjustSubject(subject) {
+            adjustActiveSubjectTab = subject || 'All';
+            renderAdjustChaptersPage();
+        }
+
+        function setAdjustChapterSearch(query) {
+            adjustChapterSearchQuery = query || '';
+            renderAdjustChaptersPage();
+        }
+
         function openRegenerateModal() {
             if (!appState || !appState.plan) return;
 
@@ -3067,31 +3468,36 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
             }
 
             const select = document.getElementById('completed-day-select');
-            select.innerHTML = '';
+            if (select) {
+                select.innerHTML = '';
 
-            const todayIdx = appState.plan.findIndex(d => d.date === getLocalDateStr());
-            const currentDayNumber = todayIdx !== -1 ? appState.plan[todayIdx].dayNumber : appState.plan.length;
-            const maxChoice = Math.max(0, currentDayNumber - 1);
+                const todayIdx = appState.plan.findIndex(d => d.date === getLocalDateStr());
+                const currentDayNumber = todayIdx !== -1 ? appState.plan[todayIdx].dayNumber : appState.plan.length;
+                const maxChoice = Math.max(0, currentDayNumber - 1);
 
-            const opt0 = document.createElement('option');
-            opt0.value = 0;
-            opt0.text = "Day 0 (Start fresh from Day 1 today)";
-            select.appendChild(opt0);
+                const opt0 = document.createElement('option');
+                opt0.value = 0;
+                opt0.text = "Day 0 (Start fresh from Day 1 today)";
+                select.appendChild(opt0);
 
-            for (let i = 1; i <= maxChoice; i++) {
-                const dayPlan = appState.plan.find(p => p.dayNumber === i);
-                const dateNote = dayPlan ? ` (${dayPlan.date})` : '';
-                const opt = document.createElement('option');
-                opt.value = i;
-                opt.text = `Day ${i}${dateNote}`;
-                select.appendChild(opt);
+                for (let i = 1; i <= maxChoice; i++) {
+                    const dayPlan = appState.plan.find(p => p.dayNumber === i);
+                    const dateNote = dayPlan ? ` (${dayPlan.date})` : '';
+                    const opt = document.createElement('option');
+                    opt.value = i;
+                    opt.text = `Day ${i}${dateNote}`;
+                    select.appendChild(opt);
+                }
+
+                // Pre-select detected anchor day if valid, otherwise maxChoice
+                const preferredSelection = (detection.anchorDayNumber > 0 && detection.anchorDayNumber <= maxChoice)
+                    ? detection.anchorDayNumber
+                    : maxChoice;
+                select.value = preferredSelection;
             }
 
-            // Pre-select detected anchor day if valid, otherwise maxChoice
-            const preferredSelection = (detection.anchorDayNumber > 0 && detection.anchorDayNumber <= maxChoice)
-                ? detection.anchorDayNumber
-                : maxChoice;
-            select.value = preferredSelection;
+            if (typeof closeAdjustChaptersPage === 'function') closeAdjustChaptersPage(true);
+            if (typeof initAdjustEditControls === 'function') initAdjustEditControls(detection);
 
             // Show restore snapshot box if available
             const restoreBox = document.getElementById('regenerate-restore-box');
@@ -3152,6 +3558,8 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
         }
 
         function closeRegenerateModal() {
+            adjustSelectionDirty = false;
+            adjustModalControlsLoaded = false;
             const modal = document.getElementById('regenerate-modal');
             if (!modal) return;
             modal.classList.add('hidden');
@@ -3160,28 +3568,99 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
 
         function executeRegeneration() {
             if (typeof savePreviousPlanSnapshot === 'function') savePreviousPlanSnapshot();
-            const completedUpTo = parseInt(document.getElementById('completed-day-select').value);
+            const selectEl = document.getElementById('completed-day-select');
+            const completedUpTo = selectEl ? (parseInt(selectEl.value, 10) || 0) : 0;
 
-            let keptDays = [];
+            let userStream = appState?.stream;
+            if (!userStream && appState?.plan) {
+                const subs = new Set(appState.plan.flatMap(d => (d.tasks || []).map(t => t.subject)));
+                if (subs.has('Accountancy') || subs.has('Business Studies')) userStream = 'commerce';
+                else if (subs.has('History') || subs.has('Political Science') || subs.has('Sociology')) userStream = 'humanities';
+                else if (subs.has('Botany') || subs.has('Zoology')) userStream = 'bio';
+                else userStream = 'cs';
+            }
+            if (!userStream) userStream = 'cs';
+            const userGrade = appState?.grade || (typeof selectedGrade !== 'undefined' ? selectedGrade : '+2');
+
+            // Apply editable schedule settings when invoked from the redesigned Adjust Plan UI
+            const hasAdjustControls = (typeof adjustModalControlsLoaded !== 'undefined' && adjustModalControlsLoaded);
+            if (hasAdjustControls) {
+                const deadlineEl = document.getElementById('adjust-deadline-date');
+                const isDateValid = deadlineEl && ((typeof isCalendarDate === 'function') ? isCalendarDate(deadlineEl.value) : /^\d{4}-\d{2}-\d{2}$/.test(deadlineEl.value || ''));
+                if (isDateValid) {
+                    appState.deadlineDate = deadlineEl.value;
+                }
+                const intensityEl = document.getElementById('adjust-study-intensity');
+                if (intensityEl && ['light', 'balanced', 'intense'].includes(intensityEl.value)) {
+                    appState.studyIntensity = intensityEl.value;
+                }
+                const rhythmEl = document.getElementById('adjust-weekly-rhythm');
+                if (rhythmEl && ['balanced', 'weekend_booster', 'sunday_rest'].includes(rhythmEl.value)) {
+                    appState.personalization = {
+                        ...(appState.personalization || {}),
+                        weeklyRhythm: rhythmEl.value,
+                    };
+                }
+                const termEl = document.getElementById('adjust-target-term');
+                if (termEl && [1, 2, 3].includes(Number(termEl.value))) {
+                    appState.targetTerm = Number(termEl.value);
+                }
+            }
+
             const completedTaskIds = new Set(appState.completedTasks || []);
             const completedChapterIds = new Set(appState.completedChaptersOnInit || []);
+            const uncheckedInEditor = new Set();
+            const isChaptersDirty = (typeof adjustSelectionDirty !== 'undefined' && adjustSelectionDirty);
+
+            if (isChaptersDirty) {
+                if (typeof adjustPreCheckedChapterIds !== 'undefined') {
+                    adjustPreCheckedChapterIds.forEach(chapId => {
+                        if (typeof adjustSelectedChapterIds !== 'undefined' && !adjustSelectedChapterIds.has(chapId)) {
+                            uncheckedInEditor.add(chapId);
+                            completedChapterIds.delete(chapId);
+                        }
+                    });
+                }
+                if (typeof adjustSelectedChapterIds !== 'undefined') {
+                    adjustSelectedChapterIds.forEach(chapId => {
+                        completedChapterIds.add(chapId);
+                    });
+                }
+                if (uncheckedInEditor.size > 0 && Array.isArray(appState.plan)) {
+                    appState.plan.forEach(day => {
+                        (day.tasks || []).forEach(t => {
+                            if (t && uncheckedInEditor.has(t.chapId)) {
+                                t.completed = false;
+                                completedTaskIds.delete(t.id);
+                            }
+                        });
+                    });
+                }
+            }
+
+            let keptDays = [];
 
             if (completedUpTo > 0) {
-                // Keep days 1..completedUpTo with tasks marked completed
+                // Keep days 1..completedUpTo with tasks marked completed (unless explicitly unchecked in editor)
                 appState.plan.forEach(day => {
                     if (day.dayNumber <= completedUpTo) {
-                        day.tasks.forEach(t => {
+                        const keptTasks = [];
+                        (day.tasks || []).forEach(t => {
+                            if (uncheckedInEditor.has(t.chapId)) return;
                             t.completed = true;
                             completedTaskIds.add(t.id);
+                            keptTasks.push(t);
                         });
-                        keptDays.push(day);
+                        if (keptTasks.length > 0) {
+                            keptDays.push({ ...day, tasks: keptTasks });
+                        }
                     }
                 });
 
                 // Preserve tasks completed ahead of schedule in days beyond completedUpTo
                 appState.plan.forEach(day => {
                     if (day.dayNumber > completedUpTo) {
-                        const futureDone = (day.tasks || []).filter(t => t.completed);
+                        const futureDone = (day.tasks || []).filter(t => t.completed && !uncheckedInEditor.has(t.chapId));
                         if (futureDone.length > 0) {
                             futureDone.forEach(t => completedTaskIds.add(t.id));
                             keptDays.push({
@@ -3196,7 +3675,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 // Fresh reset (completedUpTo === 0):
                 // Preserve previously completed tasks as historical completed markers (Days 1..K)
                 appState.plan.forEach(day => {
-                    const doneTasks = (day.tasks || []).filter(t => t.completed);
+                    const doneTasks = (day.tasks || []).filter(t => t.completed && !uncheckedInEditor.has(t.chapId));
                     if (doneTasks.length > 0) {
                         doneTasks.forEach(t => completedTaskIds.add(t.id));
                         keptDays.push({
@@ -3229,24 +3708,29 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 }
             }
 
-            // Infer user stream reliably across science (bio/cs), commerce, and humanities
-            let userStream = appState.stream;
-            if (!userStream && appState.plan) {
-                const subs = new Set(appState.plan.flatMap(d => (d.tasks || []).map(t => t.subject)));
-                if (subs.has('Accountancy') || subs.has('Business Studies')) userStream = 'commerce';
-                else if (subs.has('History') || subs.has('Political Science') || subs.has('Sociology')) userStream = 'humanities';
-                else if (subs.has('Botany') || subs.has('Zoology')) userStream = 'bio';
-                else userStream = 'cs';
-            }
-            if (!userStream) userStream = 'cs';
-
             const targetTerm = appState.targetTerm || 3;
-            const userGrade = appState.grade || (typeof selectedGrade !== 'undefined' ? selectedGrade : '+2');
             const uncompletedTasks = getRemainingPlanTasks({
                 grade: userGrade,
-                stream: userStream, targetTerm,
-                completedChapterIds, completedTaskIds,
+                stream: userStream,
+                targetTerm,
+                completedChapterIds,
+                completedTaskIds,
             });
+
+            if (isChaptersDirty && uncompletedTasks.length === 0) {
+                const isML = typeof getAppLanguage === 'function' && getAppLanguage() === 'ml';
+                showAppAlert({
+                    title: isML ? 'എല്ലാ അധ്യായങ്ങളും പൂർത്തിയായി' : 'All Chapters Marked Completed',
+                    message: isML
+                        ? 'എല്ലാ അധ്യായങ്ങളും പൂർത്തിയായി എന്ന് അടയാളപ്പെടുത്തിയിരിക്കുന്നു. ഷെഡ്യൂൾ പുതുക്കാൻ കുറഞ്ഞത് ഒരു അധ്യായമെങ്കിലും ടിക്ക് ഒഴിവാക്കുക.'
+                        : 'All chapters in the selected scope are marked completed. Uncheck at least one chapter to keep scheduling remaining study days.',
+                    icon: 'fa-trophy text-amber-500'
+                });
+                return;
+            }
+
+            appState.completedChaptersOnInit = Array.from(completedChapterIds);
+            appState.completedTasks = Array.from(completedTaskIds);
 
             closeRegenerateModal();
 
@@ -3300,6 +3784,11 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                         appState.startDate = rebuildStartDate;
                     }
 
+                    const keptSyllabusCount = keptDays.reduce(
+                        (acc, d) => acc + (d.tasks || []).filter(t => !t.isRevision && !t.isExamEveTask).length,
+                        0
+                    );
+                    appState.totalConfiguredTasks = keptSyllabusCount + uncompletedTasks.length;
                     appState.revisionDaysCount = result.revisionDaysCount;
                     appState.diagnostics = result.diagnostics;
                     appState.engineVersion = PLANNER_ENGINE_VERSION;
@@ -3315,7 +3804,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                     } else {
                         showAppToast(isML
                             ? "✨ ടൈംടേബിൾ വീണ്ടും ക്രമീകരിച്ചു!"
-                            : "Schedule rebalanced with dependency tracking!",
+                            : "Schedule updated & rebalanced intelligently!",
                             "fa-wand-magic-sparkles text-blue-400");
                     }
                     renderApp();
@@ -5040,18 +5529,20 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
             setText('settings-undo-reset-btn-text', isML ? 'തിരിച്ചെടുക്കുക' : 'Restore');
             setText('settings-done-btn', isML ? ML_I18N.settingsModal.doneBtn : 'Done');
 
-            // 7. Regenerate Modal Localization
-            setText('auto-detect-card-title', isML ? (ML_I18N.regenerateModal.autoDetectTitle || 'പൂർത്തിയായവ ഓട്ടോ-ഡിറ്റക്റ്റ് ചെയ്യുക') : 'Auto-Detect Completed Tasks');
-            setText('auto-detect-card-sub', isML ? (ML_I18N.regenerateModal.autoDetectSub || 'നിങ്ങൾ ടിക്ക് ചെയ്ത അധ്യായങ്ങളും ഭാഗങ്ങളും സ്വയം കണ്ടെത്തി നിലനിർത്തുകയും ബാക്കിയുള്ളവ പുതിയ ദിവസങ്ങളിലേക്ക് പുനഃക്രമീകരിക്കുകയും ചെയ്യുന്നു.') : 'Automatically scans all chapters and sections you have checked off, locks them as completed markers, and redistributes remaining portions starting today.');
-            setText('btn-auto-rebalance-label', isML ? (ML_I18N.regenerateModal.autoDetectBtn || 'ഓട്ടോ-ഡിറ്റക്റ്റ് & പുനഃക്രമീകരണം') : 'Auto-Detect & Rebalance Schedule');
-            setText('regenerate-or-manual-label', isML ? (ML_I18N.regenerateModal.orManual || 'അല്ലെങ്കിൽ ദിവസം നേരിട്ട് തിരഞ്ഞെടുക്കുക') : 'Or Select Day Manually');
-            setText('regenerate-modal-title', isML ? ML_I18N.regenerateModal.title : 'Adjust & Rebalance Plan');
-            setText('regenerate-modal-subtitle', isML ? ML_I18N.regenerateModal.subtitle : "Missed some days or fell behind? Don't stress. Select the last day you fully finished, and our intelligent pacing algorithm will recalculate and redistribute only the remaining unfinished syllabus evenly across your available time.");
-            setText('regenerate-completed-label', isML ? ML_I18N.regenerateModal.completedUpTo : 'I have completed up to:');
-            setText('regenerate-revision-note', isML ? ML_I18N.regenerateModal.guaranteedRevision : 'Guaranteed Revision Days: Your target deadline will still maintain dedicated revision buffer days at the end!');
-            setText('regenerate-undo-reset-btn-text', isML ? '↺ റീസെറ്റ് ചെയ്ത പ്ലാൻ തിരിച്ചെടുക്കുക' : '↺ Undo Recent Reset / Restore Plan');
+            // 7. Regenerate / Edit Plan Modal Localization
+            setText('auto-detect-card-title', isML ? (ML_I18N.regenerateModal.autoDetectTitle || 'പൂർത്തിയായ അധ്യായങ്ങൾ') : 'Completed Chapters');
+            setText('auto-detect-card-sub', isML ? (ML_I18N.regenerateModal.autoDetectSub || '') : 'Open your chapter checklist to mark everything you have already finished — chapters completed in your plan are pre-checked automatically.');
+            setText('btn-open-chapters-label', isML ? (ML_I18N.regenerateModal.openChaptersBtn || 'പൂർത്തിയായ അധ്യായങ്ങൾ അടയാളപ്പെടുത്തുക') : 'Mark Completed Chapters');
+            setText('btn-auto-rebalance-label', isML ? (ML_I18N.regenerateModal.autoDetectBtn || 'പെട്ടെന്ന് ഓട്ടോ-റീബാലൻസ് ചെയ്യുക') : 'Quick Auto-Rebalance Current Progress');
+            setText('regenerate-modal-title', isML ? ML_I18N.regenerateModal.title : 'Edit & Rebalance Plan');
+            setText('regenerate-modal-subtitle', isML ? ML_I18N.regenerateModal.subtitle : 'Adjust your completed chapters, exam date, and study pace');
+            setText('regenerate-completed-label', isML ? ML_I18N.regenerateModal.completedUpTo : 'Keep Schedule History Completed Up To:');
+            setText('regenerate-revision-note', isML ? ML_I18N.regenerateModal.guaranteedRevision : 'Guaranteed Revision Days: Mock and spaced revision buffer days stay protected before your target date.');
+            setText('regenerate-undo-reset-btn-text', isML ? '↺ റീസെറ്റ് ചെയ്ത പ്ലാൻ തിരിച്ചെടുക്കുക' : 'Undo Recent Reset & Restore');
             setText('regenerate-cancel-btn', isML ? ML_I18N.regenerateModal.cancelBtn : 'Cancel');
-            setText('regenerate-confirm-btn', isML ? ML_I18N.regenerateModal.rebalanceBtn : 'Rebalance Now');
+            setText('regenerate-confirm-btn', isML ? ML_I18N.regenerateModal.rebalanceBtn : 'Save & Rebuild Plan');
+            setText('adjust-chapters-done-btn', isML ? 'തിരഞ്ഞെടുപ്പ് സൂക്ഷിക്കുക' : 'Done Selecting');
+            setText('adjust-chapters-apply-btn', isML ? (ML_I18N.regenerateModal.rebalanceBtn || 'സേവ് & പ്ലാൻ പുതുക്കുക') : 'Apply & Rebuild Plan');
 
             // 8. Mobile Export & Share Sheet Localization
             setText('export-sheet-title', isML ? 'ടൈംടേബിൾ എക്സ്പോർട്ട് & ഷെയർ' : 'Export & Share Timetable');
@@ -5517,6 +6008,19 @@ if (typeof window !== 'undefined') {
         prevSetupStep,
         handleInitialSetup,
         openRegenerateModal,
+        openAdjustChaptersPage,
+        closeAdjustChaptersPage,
+        toggleAdjustChapter,
+        toggleAllAdjustChapters,
+        switchAdjustSubject,
+        setAdjustChapterSearch,
+        setAdjustIntensity,
+        setAdjustRhythm,
+        setAdjustTerm,
+        setAdjustDeadlineOffset,
+        onAdjustDeadlineChange,
+        updateAdjustDeadlinePreview,
+        getEditableScopeChapters,
         openPendingWork,
         closeRegenerateModal,
         openSettingsModal,
@@ -5649,6 +6153,18 @@ export {
     openExportShareSheet,
     closeExportShareSheet,
     openRegenerateModal,
+    openAdjustChaptersPage,
+    closeAdjustChaptersPage,
+    toggleAdjustChapter,
+    toggleAllAdjustChapters,
+    switchAdjustSubject,
+    setAdjustChapterSearch,
+    setAdjustIntensity,
+    setAdjustRhythm,
+    setAdjustTerm,
+    setAdjustDeadlineOffset,
+    onAdjustDeadlineChange,
+    getEditableScopeChapters,
     openPendingWork,
     executeRegeneration,
     autoDetectAndRebalance,
