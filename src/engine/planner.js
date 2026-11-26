@@ -10,6 +10,8 @@ import {
   scheduleImprovementTasks,
   scheduleAdaptiveRegularTasks,
   finalizeScheduledDays,
+  prepareOfficialTimetableContext,
+  applyOfficialExamOverlay,
 } from '../core/scheduler.js';
 
 export { PLUS_TWO_CHAPTERS, PLUS_ONE_CHAPTERS };
@@ -265,6 +267,33 @@ function _executeCorePlanAlgorithm(
 
   const applicableTasks = dedupedTasks.filter((t) => streamSubjects.includes(t.subject));
 
+  // Personalization & Official DHSE Timetable configuration extraction
+  const pers = capacityOptions.personalization || capacityOptions.capacityOptions?.personalization || capacityOptions || {};
+  const subjectWeights = pers.subjectWeights || {};
+  const explicitExamCycle = capacityOptions.examCycle || capacityOptions.capacityOptions?.examCycle || null;
+  const useOfficialTimetable = capacityOptions.useOfficialTimetable !== false && capacityOptions.capacityOptions?.useOfficialTimetable !== false;
+  const alignToOfficialExamWindow = Boolean(
+    capacityOptions.alignToOfficialExamWindow ||
+    capacityOptions.capacityOptions?.alignToOfficialExamWindow ||
+    (explicitExamCycle && ['christmas', 'model', 'public'].includes(explicitExamCycle))
+  );
+  const includeExamEveTasks = Boolean(
+    capacityOptions.includeExamEveTasks ||
+    capacityOptions.capacityOptions?.includeExamEveTasks ||
+    (explicitExamCycle && ['christmas', 'model', 'public'].includes(explicitExamCycle))
+  );
+
+  const officialContext = prepareOfficialTimetableContext({
+    grade: capacityOptions.grade || (isImpOnly ? '+1' : null),
+    stream: effectiveStream,
+    tasks: applicableTasks,
+    startDateStr,
+    deadlineStr,
+    examCycle: explicitExamCycle,
+    useOfficialTimetable,
+    subjectWeights,
+  });
+
   let revisionDaysCount = 0;
   if (totalDaysCount >= 75) revisionDaysCount = 10;
   else if (totalDaysCount >= 45) revisionDaysCount = 7;
@@ -274,11 +303,22 @@ function _executeCorePlanAlgorithm(
 
   if (totalDaysCount <= 5) revisionDaysCount = 0;
 
+  if (
+    alignToOfficialExamWindow &&
+    officialContext.enabled &&
+    officialContext.examWindowStart &&
+    startDateStr < officialContext.examWindowStart &&
+    deadlineStr >= officialContext.examWindowStart
+  ) {
+    const preExamStudyDays = calculateDaysBetween(startDateStr, officialContext.examWindowStart);
+    const examWindowDays = totalDaysCount - preExamStudyDays;
+    if (preExamStudyDays >= 4 && examWindowDays > revisionDaysCount) {
+      revisionDaysCount = examWindowDays;
+    }
+  }
+
   const syllabusStudyDays = Math.max(1, totalDaysCount - revisionDaysCount);
 
-  // Personalization configuration extraction
-  const pers = capacityOptions.personalization || capacityOptions.capacityOptions?.personalization || capacityOptions || {};
-  const subjectWeights = pers.subjectWeights || {};
   const weeklyRhythm = pers.weeklyRhythm || 'balanced';
   const restDayOfWeek =
     pers.restDayOfWeek !== undefined && pers.restDayOfWeek !== null && pers.restDayOfWeek !== ''
@@ -384,6 +424,16 @@ function _executeCorePlanAlgorithm(
       spacingStrategy: 'Inflection Decay Arrest (T+2..5, T+8..14)',
       estimatedRetentionRate: '94%',
     },
+    officialSchedule: {
+      enabled: officialContext.enabled,
+      grade: officialContext.grade,
+      examCycle: officialContext.examCycle,
+      examEventsCount: officialContext.officialEvents.length,
+      subjectDates: officialContext.subjectDates,
+      hasChristmasMilestone: officialContext.hasChristmasMilestone,
+      hasModelMilestone: officialContext.hasModelMilestone,
+      hasPublicMilestone: officialContext.hasPublicMilestone,
+    },
   };
 
   // Canonical Sorting: Grade -> Subject -> ChapNumber -> Part
@@ -454,47 +504,49 @@ function _executeCorePlanAlgorithm(
     dayCapacityWeights,
     totalActiveWeight,
     subjectWeights,
+    schedulingWeights: officialContext.enabled ? officialContext.schedulingWeights : subjectWeights,
+    prioritizeTermsBeforeChristmas: Boolean(officialContext.enabled && officialContext.hasChristmasMilestone && deadlineStr > '2026-12-20'),
   });
   diagnostics.granularity = granularity;
 
-  // Phase 3: Tailored Spaced Revision Days (Ebbinghaus Forgetting Curve Grounded)
-  if (revisionDaysCount > 0) {
-    const completedChaptersBySubject = {};
-    const chapterLastStudiedDay = {};
-    streamSubjects.forEach((s) => {
-      completedChaptersBySubject[s] = [];
-      chapterLastStudiedDay[s] = {};
-    });
+  // Phase 3: Tailored Spaced Revision Days (Ebbinghaus Forgetting Curve Grounded + Official Exam Aware)
+  const completedChaptersBySubject = {};
+  const chapterLastStudiedDay = {};
+  streamSubjects.forEach((s) => {
+    completedChaptersBySubject[s] = [];
+    chapterLastStudiedDay[s] = {};
+  });
 
-    planDays.forEach((d, dIdx) => {
-      (d.tasks || []).forEach((t) => {
-        if (
-          t.grade !== '+1' &&
-          t.chapterName
-        ) {
-          if (!completedChaptersBySubject[t.subject]?.includes(t.chapterName)) {
-            if (completedChaptersBySubject[t.subject]) {
-              completedChaptersBySubject[t.subject].push(t.chapterName);
-            }
-          }
-          if (chapterLastStudiedDay[t.subject]) {
-            chapterLastStudiedDay[t.subject][t.chapterName] = dIdx;
+  planDays.forEach((d, dIdx) => {
+    (d.tasks || []).forEach((t) => {
+      if (
+        (t.grade === officialContext.grade || t.grade !== '+1' || isImpOnly) &&
+        t.chapterName
+      ) {
+        if (!completedChaptersBySubject[t.subject]?.includes(t.chapterName)) {
+          if (completedChaptersBySubject[t.subject]) {
+            completedChaptersBySubject[t.subject].push(t.chapterName);
           }
         }
-      });
+        if (chapterLastStudiedDay[t.subject]) {
+          chapterLastStudiedDay[t.subject][t.chapterName] = dIdx;
+        }
+      }
     });
+  });
 
-    // Ebbinghaus Decay Risk Sorting: Chapters studied earliest in time have decayed the most!
-    streamSubjects.forEach((s) => {
-      const chaps = completedChaptersBySubject[s] || [];
-      chaps.sort((a, b) => {
-        const dayA = chapterLastStudiedDay[s]?.[a] ?? 0;
-        const dayB = chapterLastStudiedDay[s]?.[b] ?? 0;
-        return dayA - dayB; // oldest studied first
-      });
+  // Ebbinghaus Decay Risk Sorting: Chapters studied earliest in time have decayed the most!
+  streamSubjects.forEach((s) => {
+    const chaps = completedChaptersBySubject[s] || [];
+    chaps.sort((a, b) => {
+      const dayA = chapterLastStudiedDay[s]?.[a] ?? 0;
+      const dayB = chapterLastStudiedDay[s]?.[b] ?? 0;
+      return dayA - dayB; // oldest studied first
     });
+  });
 
-    const defaultGrade = isImpOnly ? '+1' : (applicableTasks[0]?.grade || '+2');
+  if (revisionDaysCount > 0) {
+    const defaultGrade = isImpOnly ? '+1' : (applicableTasks[0]?.grade || officialContext.grade || '+2');
 
     for (let r = 0; r < revisionDaysCount; r++) {
       const revDayIndex = syllabusStudyDays + r;
@@ -586,6 +638,18 @@ function _executeCorePlanAlgorithm(
     }
   }
 
+  // Apply official DHSE timetable annotations, milestones & exam-aware revision
+  applyOfficialExamOverlay({
+    planDays,
+    syllabusStudyDays,
+    officialContext,
+    streamSubjects,
+    completedChaptersBySubject,
+    subjectWeights,
+    isImpOnly,
+    includeExamEveTasks,
+  });
+
   // Post-Scheduling Quarantine, Contiguous Chapter Sorting, isFullOnDay Tagging & Totals
   finalizeScheduledDays({ planDays, syllabusStudyDays });
 
@@ -604,7 +668,10 @@ function _executeCorePlanAlgorithm(
     validationIssues: valResult.issues,
     totalConfiguredTasks: totalTasksCount,
     engineVersion: 6,
+    grade: officialContext.grade,
     stream: effectiveStream,
+    examCycle: officialContext.examCycle,
+    officialEvents: officialContext.officialEvents,
     startDate: startDateStr,
     deadlineDate: deadlineStr,
   };

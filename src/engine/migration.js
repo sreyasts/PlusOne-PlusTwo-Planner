@@ -48,7 +48,7 @@ export function migrateOldState(oldState) {
   return {
     stream: detectedStream,
     startDate: oldState.startDate || formatLocalDateStr(),
-    deadlineDate: oldState.deadlineDate || '2026-11-30',
+    deadlineDate: oldState.deadlineDate || '2026-12-17',
     targetTerm: oldState.targetTerm || 2,
     completedChaptersOnInit: oldState.completedChapters || [],
     improvementConfig: oldState.improvementConfig || [],
@@ -91,7 +91,7 @@ export function migrateLegacyUserPlan(existingState) {
     }
   }
   const targetTerm = existingState.targetTerm || 3;
-  const deadlineDate = existingState.deadlineDate || '2026-11-30';
+  const deadlineDate = existingState.deadlineDate || '2027-03-30';
   const improvementConfig = existingState.improvementConfig || [];
   const startDate = existingState.startDate || formatLocalDateStr();
 
@@ -201,7 +201,7 @@ export function migrateUserState(rawState) {
     grade: rawState.grade || (rawPlanArray.some(d => ((d && d.tasks) || []).some(t => t.grade === '+1')) && !rawPlanArray.some(d => ((d && d.tasks) || []).some(t => t.grade === '+2')) ? '+1' : '+2'),
     stream: rawState.stream || 'cs',
     createdDate: rawState.createdDate || formatLocalDateStr(),
-    deadlineDate: rawState.deadlineDate || '2027-02-28',
+    deadlineDate: rawState.deadlineDate || '2027-03-30',
     termScope: rawState.termScope || 3,
     includePlusOne: Boolean(rawState.includePlusOne),
     plusOneSubjects: rawState.plusOneSubjects || [],

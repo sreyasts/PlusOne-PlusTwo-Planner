@@ -13,6 +13,14 @@ import {
   CHAPTER_RESOURCES,
 } from './data/chapter-resources.js';
 import {
+  DHSE_EXAM_CYCLES,
+  DHSE_ACADEMIC_MILESTONES,
+  detectExamCycleForDeadline,
+  getOfficialExamSchedule,
+  getOfficialExamEventsForPlan,
+  getOfficialExamPresets,
+} from './data/dhse-exam-timetables.js';
+import {
   PLANNER_ENGINE_VERSION,
   ENGINE_VERSION,
   getLocalDateStr,
@@ -1303,6 +1311,16 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
 
         let activeSyllabusStream = null;
         let activeSyllabusGrade = null;
+        let activeSyllabusExamCycle = 'christmas';
+        function switchSyllabusExamCycle(cycleId) {
+            try {
+                if (typeof playTapSound === 'function' && (typeof getUserSetting !== 'function' || getUserSetting('sound', true))) {
+                    playTapSound();
+                }
+            } catch (_) {}
+            activeSyllabusExamCycle = DHSE_EXAM_CYCLES[cycleId] ? cycleId : 'public';
+            renderApp();
+        }
         function switchSyllabusStream(streamKey) {
             try {
                 if (typeof playTapSound === 'function' && (typeof getUserSetting !== 'function' || getUserSetting('sound', true))) {
@@ -2133,14 +2151,67 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
             return formatLocalDateStr(now);
         }
 
+        let selectedExamCycle = null;
+
+        function renderOfficialSetupTimetablePreview(deadlineVal) {
+            const box = document.getElementById('setup-official-timetable-preview');
+            if (!box || typeof getOfficialExamSchedule !== 'function') return;
+            const isML = getAppLanguage() === 'ml';
+            const grade = typeof selectedGrade !== 'undefined' ? selectedGrade : '+2';
+            const stream = typeof selectedStream !== 'undefined' ? selectedStream : 'cs';
+            const cycle = selectedExamCycle && DHSE_EXAM_CYCLES[selectedExamCycle]
+                ? selectedExamCycle
+                : detectExamCycleForDeadline(deadlineVal);
+
+            if (!cycle || cycle === 'custom' || !DHSE_EXAM_CYCLES[cycle]) {
+                box.innerHTML = '';
+                box.classList.add('hidden');
+                return;
+            }
+
+            const cycleMeta = DHSE_EXAM_CYCLES[cycle];
+            const events = getOfficialExamSchedule({ grade, stream, examCycle: cycle, includeLanguages: true });
+            if (!events.length) {
+                box.innerHTML = '';
+                box.classList.add('hidden');
+                return;
+            }
+
+            box.classList.remove('hidden');
+            const rowsHtml = events.map(ev => `
+                <div class="flex items-center justify-between gap-2 py-1.5 border-b border-slate-200/70 dark:border-slate-700/60 last:border-0 text-[11px]">
+                    <div class="flex items-center gap-2 min-w-0">
+                        <span class="font-mono font-bold text-blue-700 dark:text-blue-300 shrink-0">${ev.date.slice(5)} (${ev.dayName})</span>
+                        <span class="font-bold text-slate-800 dark:text-slate-100 truncate">${escapeStudyText(ev.paperTitle)}</span>
+                    </div>
+                    <span class="px-1.5 py-0.5 rounded bg-slate-200/80 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold shrink-0">${ev.session} · ${ev.time}</span>
+                </div>
+            `).join('');
+
+            box.innerHTML = `
+                <div class="p-3 rounded-2xl bg-slate-50/90 dark:bg-[#101726] border border-slate-200 dark:border-slate-700/80 text-left">
+                    <div class="flex items-center justify-between gap-2 mb-2 flex-wrap">
+                        <span class="text-xs font-black text-slate-900 dark:text-white flex items-center gap-1.5">
+                            <i class="fa-solid fa-calendar-check text-emerald-600 dark:text-emerald-400"></i>
+                            <span>${isML ? `${cycleMeta.mlName} (${grade})` : `Official DHSE ${cycleMeta.shortName} (${grade})`}</span>
+                        </span>
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300">${cycleMeta.startDate.slice(5)} → ${cycleMeta.endDate.slice(5)}</span>
+                    </div>
+                    <div class="max-h-40 overflow-y-auto pr-1">${rowsHtml}</div>
+                    ${cycleMeta.isTentativeSubjectOrder ? `<p class="text-[10px] text-amber-700 dark:text-amber-300 mt-1.5 font-semibold">${isML ? 'ഔദ്യോഗിക വിൻഡോ Feb 11–24. വിഷയ ക്രമം സ്കൂൾ സർക്കുലർ അനുസരിച്ച് പരിശോധിക്കുക.' : 'Official window Feb 11–24, 2027 · Subject slots follow DHSE group order (verify school notice).'}</p>` : ''}
+                </div>
+            `;
+        }
+
         function updatePresetButtonsUI(currentVal) {
             const input = document.getElementById('deadline-date');
             const val = currentVal || (input ? input.value : '');
+            const officialPresets = typeof getOfficialExamPresets === 'function' ? getOfficialExamPresets() : null;
             const presets = [
-                { id: 'preset-btn-30', date: getRelativePresetDate(30) },
-                { id: 'preset-btn-xmas', date: getPresetDate(12, 20) },
-                { id: 'preset-btn-board', date: getPresetDate(2, 28, true) },
-                { id: 'preset-btn-term2', date: getPresetDate(11, 30) }
+                { id: 'preset-btn-xmas', date: officialPresets?.christmas?.date || DHSE_EXAM_CYCLES.christmas.endDate },
+                { id: 'preset-btn-model', date: officialPresets?.model?.date || DHSE_EXAM_CYCLES.model.endDate },
+                { id: 'preset-btn-board', date: officialPresets?.public?.date || DHSE_EXAM_CYCLES.public.endDate },
+                { id: 'preset-btn-30', date: officialPresets?.sprint?.date || getRelativePresetDate(30) }
             ];
 
             presets.forEach(p => {
@@ -2149,7 +2220,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 const isSelected = (val === p.date);
                 btn.setAttribute('aria-pressed', isSelected ? 'true' : 'false');
                 if (isSelected) {
-                    btn.className = 'preset-date-btn py-2.5 px-3 rounded-xl bg-blue-600 dark:bg-blue-600 text-white font-black border-2 border-blue-500 shadow-md shadow-blue-500/30 scale-[1.02] ring-2 ring-blue-500/25 transition-all duration-150 flex flex-col items-center justify-center text-center gap-1 active:scale-95 cursor-pointer';
+                    btn.className = 'preset-date-btn min-h-[44px] py-2.5 px-3 rounded-xl bg-blue-600 dark:bg-blue-600 text-white font-black border-2 border-blue-500 shadow-md shadow-blue-500/30 scale-[1.02] ring-2 ring-blue-500/25 transition-all duration-150 flex flex-col items-center justify-center text-center gap-1 active:scale-95 cursor-pointer';
                     const icon = btn.querySelector('i');
                     if (icon) {
                         icon.className = icon.className.replace(/text-\w+-\d+/, 'text-white');
@@ -2157,19 +2228,23 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                     const sub = btn.querySelector('.preset-sub');
                     if (sub) sub.className = 'preset-sub text-[10px] text-blue-100 font-medium';
                 } else {
-                    btn.className = 'preset-date-btn py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-[#162137] hover:bg-blue-50/80 dark:hover:bg-blue-950/40 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-200 dark:border-slate-700/80 transition-all duration-150 flex flex-col items-center justify-center text-center gap-1 active:scale-95 cursor-pointer';
+                    btn.className = 'preset-date-btn min-h-[44px] py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-[#162137] hover:bg-blue-50/80 dark:hover:bg-blue-950/40 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-200 dark:border-slate-700/80 transition-all duration-150 flex flex-col items-center justify-center text-center gap-1 active:scale-95 cursor-pointer';
                     const sub = btn.querySelector('.preset-sub');
                     if (sub) sub.className = 'preset-sub text-[10px] text-slate-400 font-medium';
                 }
             });
         }
 
-        function setDeadlinePreset(dateStr) {
+        function setDeadlinePreset(dateStr, termScope = null, examCycle = null) {
             try {
                 if (typeof playTapSound === 'function' && (typeof getUserSetting !== 'function' || getUserSetting('sound', true))) {
                     playTapSound();
                 }
             } catch (_) {}
+            selectedExamCycle = examCycle || (typeof detectExamCycleForDeadline === 'function' ? detectExamCycleForDeadline(dateStr) : null);
+            if (termScope && typeof setTermSelection === 'function') {
+                setTermSelection(termScope);
+            }
             const input = document.getElementById('deadline-date');
             if (input) {
                 input.value = dateStr;
@@ -2182,7 +2257,9 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
             const input = document.getElementById('deadline-date');
             const label = document.getElementById('deadline-calc-label');
             if (!input || !label) return;
+            selectedExamCycle = typeof detectExamCycleForDeadline === 'function' ? detectExamCycleForDeadline(input.value) : null;
             updatePresetButtonsUI(input.value);
+            renderOfficialSetupTimetablePreview(input.value);
             const isML = getAppLanguage() === 'ml';
             const smartStart = typeof getSmartStartDate === 'function' ? getSmartStartDate() : { startDate: TODAY_STR, isLateEvening: false };
             const effectiveStart = smartStart.startDate;
@@ -2198,6 +2275,12 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 else if (days >= 25) revDays = 4;
                 else if (days >= 14) revDays = 2;
                 else if (days >= 7) revDays = 1;
+                const cycleMeta = selectedExamCycle && DHSE_EXAM_CYCLES[selectedExamCycle] ? DHSE_EXAM_CYCLES[selectedExamCycle] : null;
+                if (cycleMeta && effectiveStart < cycleMeta.startDate && input.value >= cycleMeta.startDate) {
+                    const preExamDays = calculateDaysBetween(effectiveStart, cycleMeta.startDate);
+                    const winDays = (days + 1) - preExamDays;
+                    if (preExamDays >= 4 && winDays > revDays) revDays = winDays;
+                }
                 const studyDays = Math.max(1, days - revDays);
                 const nightBadge = smartStart.isLateEvening ? `
                     <div class="mt-2 text-[11px] text-amber-700 dark:text-amber-300 font-semibold bg-amber-50 dark:bg-amber-950/40 p-2 rounded-xl border border-amber-200/60 dark:border-amber-800/40 flex items-center gap-1.5">
@@ -2212,11 +2295,11 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                             <span><strong>${days}</strong> ദിവസങ്ങൾ ലഭ്യമാണ്</span>
                         </span>
                         <span class="text-purple-700 dark:text-purple-300 font-bold bg-purple-100/70 dark:bg-purple-950/40 px-2 py-0.5 rounded-md text-xs">
-                            <i class="fa-solid fa-shield-check mr-1"></i>${revDays} ദിവസങ്ങൾ റിവിഷനായി മാറ്റി വെച്ചു
+                            <i class="fa-solid fa-shield-check mr-1"></i>${revDays} ദിവസങ്ങൾ റിവിഷൻ & പരീക്ഷാ തയ്യാറെടുപ്പിന്
                         </span>
                     </div>
                     <div class="text-xs text-slate-500 dark:text-slate-300 mt-1">
-                        ${studyDays} ദിവസത്തെ പഠനം. അവസാന ${revDays} ദിവസങ്ങൾ മുൻവർഷ ചോദ്യങ്ങളും ഫോർമുലകളും പഠിക്കാൻ നീക്കിവെച്ചു.
+                        ${studyDays} ദിവസത്തെ സിലബസ് പഠനം. ഔദ്യോഗിക DHSE പരീക്ഷാ തീയതികൾക്കനുസരിച്ച് അവസാന ${revDays} ദിവസങ്ങൾ റിവിഷനും പരീക്ഷത്തലേന്ന് പഠനവും ക്രമീകരിക്കും.
                     </div>
                     ${nightBadge}
                 ` : `
@@ -2226,11 +2309,11 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                             <span><strong>${days}</strong> calendar days available</span>
                         </span>
                         <span class="text-purple-700 dark:text-purple-300 font-bold bg-purple-100/70 dark:bg-purple-950/40 px-2 py-0.5 rounded-md text-xs">
-                            <i class="fa-solid fa-shield-check mr-1"></i>${revDays} days reserved for Mock Revision
+                            <i class="fa-solid fa-shield-check mr-1"></i>${revDays} days reserved for Exam-Eve & Revision
                         </span>
                     </div>
                     <div class="text-xs text-slate-500 dark:text-slate-300 mt-1">
-                        ${studyDays} active syllabus study days. Final ${revDays} days will strictly run PYQ sets and formula drills.
+                        ${studyDays} syllabus study days${cycleMeta ? ` before ${cycleMeta.shortName} begins (${cycleMeta.startDate})` : ''}. Official DHSE exam dates & exam-eve sprints are mapped automatically.
                     </div>
                     ${nightBadge}
                 `;
@@ -2462,9 +2545,17 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
 
             animatePlanGeneration({ mode: 'create', isLateEvening: smartStart.isLateEvening }, () => {
                 const personalization = getPersonalizationConfig();
+                const detectedCycle = typeof detectExamCycleForDeadline === 'function'
+                    ? detectExamCycleForDeadline(deadlineInput, typeof selectedExamCycle !== 'undefined' ? selectedExamCycle : null)
+                    : 'custom';
                 const planResult = buildIntelligentPlan(deadlineInput, tasksToPlan, effectiveStartDate, [], selectedStream, {
+                    grade: currentGrade,
                     intensity: studyIntensity,
                     personalization: personalization,
+                    examCycle: detectedCycle,
+                    useOfficialTimetable: true,
+                    alignToOfficialExamWindow: detectedCycle !== 'custom',
+                    includeExamEveTasks: true,
                 });
 
                 if (planResult && planResult.planDays) {
@@ -2472,6 +2563,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                         engineVersion: PLANNER_ENGINE_VERSION,
                         grade: currentGrade,
                         stream: selectedStream,
+                        examCycle: planResult.examCycle || detectedCycle,
                         studyIntensity: studyIntensity,
                         personalization: personalization,
                         startDate: effectiveStartDate,
@@ -3200,6 +3292,19 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
             updateAdjustDeadlinePreview();
         }
 
+        function setAdjustOfficialExamPreset(cycleId) {
+            const cycleMeta = typeof DHSE_EXAM_CYCLES !== 'undefined' ? DHSE_EXAM_CYCLES[cycleId] : null;
+            if (!cycleMeta) return;
+            const input = document.getElementById('adjust-deadline-date');
+            if (input) {
+                input.value = cycleMeta.endDate;
+            }
+            if (cycleMeta.defaultTerm && typeof setAdjustTerm === 'function') {
+                setAdjustTerm(cycleMeta.defaultTerm);
+            }
+            updateAdjustDeadlinePreview();
+        }
+
         function setAdjustIntensity(val) {
             const normalized = (val === 'light' || val === 'intense') ? val : 'balanced';
             const input = document.getElementById('adjust-study-intensity');
@@ -3750,6 +3855,9 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                         );
                     }
 
+                    const regenCycle = typeof detectExamCycleForDeadline === 'function'
+                        ? detectExamCycleForDeadline(appState.deadlineDate)
+                        : (appState.examCycle || 'custom');
                     result = buildIntelligentPlan(
                         appState.deadlineDate,
                         uncompletedTasks,
@@ -3757,8 +3865,13 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                         appState.improvementConfig || [],
                         userStream,
                         {
+                            grade: userGrade,
                             intensity: appState.studyIntensity || 'balanced',
-                            personalization: appState.personalization || {}
+                            personalization: appState.personalization || {},
+                            examCycle: regenCycle,
+                            useOfficialTimetable: true,
+                            alignToOfficialExamWindow: regenCycle !== 'custom',
+                            includeExamEveTasks: true,
                         }
                     );
                 } catch (err) {
@@ -3902,6 +4015,9 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                         );
                     }
 
+                    const regenCycle = typeof detectExamCycleForDeadline === 'function'
+                        ? detectExamCycleForDeadline(appState.deadlineDate)
+                        : (appState.examCycle || 'custom');
                     result = buildIntelligentPlan(
                         appState.deadlineDate,
                         uncompletedTasks,
@@ -3909,8 +4025,13 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                         appState.improvementConfig || [],
                         userStream,
                         {
+                            grade: userGrade,
                             intensity: appState.studyIntensity || 'balanced',
-                            personalization: appState.personalization || {}
+                            personalization: appState.personalization || {},
+                            examCycle: regenCycle,
+                            useOfficialTimetable: true,
+                            alignToOfficialExamWindow: regenCycle !== 'custom',
+                            includeExamEveTasks: true,
                         }
                     );
                 } catch (err) {
@@ -4071,10 +4192,14 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
             // View 0: Initial Setup View (Instant 1-Screen Setup — Zero "Next... Next..." Fatigue)
             if (!appState) {
                 trackAnalyticsEvent('setup_started');
-                let defaultTarget = new Date();
-                defaultTarget.setMonth(10); // November
-                defaultTarget.setDate(30);
-                if (new Date() > defaultTarget) defaultTarget.setFullYear(defaultTarget.getFullYear() + 1);
+                const officialPresets = typeof getOfficialExamPresets === 'function' ? getOfficialExamPresets() : null;
+                let defaultTargetDateStr = officialPresets?.public?.date || '2027-03-30';
+                if (officialPresets?.christmas?.isUpcoming) {
+                    defaultTargetDateStr = officialPresets.christmas.date;
+                } else if (officialPresets?.model?.isUpcoming) {
+                    defaultTargetDateStr = officialPresets.model.date;
+                }
+                const defaultTarget = new Date(defaultTargetDateStr + 'T00:00:00');
 
                 let preResetBannerHtml = '';
                 try {
@@ -4295,26 +4420,32 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
 
                             <!-- Fast Presets -->
                             <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
-                                <button type="button" id="preset-btn-30" onclick="setDeadlinePreset('${getRelativePresetDate(30)}')" class="preset-date-btn min-h-[44px] py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-[#162137] hover:bg-blue-50/80 dark:hover:bg-blue-950/40 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-200 dark:border-slate-700/80 transition-all duration-150 flex flex-col items-center justify-center text-center gap-1 active:scale-95 cursor-pointer">
+                                ${(function() {
+                                    const examCyclesSafe = typeof DHSE_EXAM_CYCLES !== 'undefined'
+                                        ? DHSE_EXAM_CYCLES
+                                        : { christmas: { endDate: '2026-12-17' }, model: { endDate: '2027-02-24' }, public: { endDate: '2027-03-30' } };
+                                    return `
+                                <button type="button" id="preset-btn-xmas" onclick="setDeadlinePreset('${examCyclesSafe.christmas.endDate}', 2, 'christmas')" class="preset-date-btn min-h-[44px] py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-[#162137] hover:bg-blue-50/80 dark:hover:bg-blue-950/40 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-200 dark:border-slate-700/80 transition-all duration-150 flex flex-col items-center justify-center text-center gap-1 active:scale-95 cursor-pointer">
+                                    <i class="fa-solid fa-star text-emerald-500 text-sm"></i>
+                                    <span>${isML ? 'ക്രിസ്മസ് പരീക്ഷ' : 'Christmas Exam'}</span>
+                                    <span class="preset-sub text-[10px] text-slate-400 font-medium">Dec 8–17 • Term 1–2</span>
+                                </button>
+                                <button type="button" id="preset-btn-model" onclick="setDeadlinePreset('${examCyclesSafe.model.endDate}', 3, 'model')" class="preset-date-btn min-h-[44px] py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-[#162137] hover:bg-blue-50/80 dark:hover:bg-blue-950/40 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-200 dark:border-slate-700/80 transition-all duration-150 flex flex-col items-center justify-center text-center gap-1 active:scale-95 cursor-pointer">
+                                    <i class="fa-solid fa-clipboard-check text-indigo-500 text-sm"></i>
+                                    <span>${isML ? 'മോഡൽ പരീക്ഷ' : 'Model Exam'}</span>
+                                    <span class="preset-sub text-[10px] text-slate-400 font-medium">Feb 11–24 • Full</span>
+                                </button>
+                                <button type="button" id="preset-btn-board" onclick="setDeadlinePreset('${examCyclesSafe.public.endDate}', 3, 'public')" class="preset-date-btn min-h-[44px] py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-[#162137] hover:bg-blue-50/80 dark:hover:bg-blue-950/40 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-200 dark:border-slate-700/80 transition-all duration-150 flex flex-col items-center justify-center text-center gap-1 active:scale-95 cursor-pointer">
+                                    <i class="fa-solid fa-bullseye text-purple-500 text-sm"></i>
+                                    <span>${isML ? 'പബ്ലിക് പരീക്ഷ' : 'Public Exam'}</span>
+                                    <span class="preset-sub text-[10px] text-slate-400 font-medium">Mar 2–30 • Full</span>
+                                </button>
+                                <button type="button" id="preset-btn-30" onclick="setDeadlinePreset('${getRelativePresetDate(30)}', null, 'custom')" class="preset-date-btn min-h-[44px] py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-[#162137] hover:bg-blue-50/80 dark:hover:bg-blue-950/40 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-200 dark:border-slate-700/80 transition-all duration-150 flex flex-col items-center justify-center text-center gap-1 active:scale-95 cursor-pointer">
                                     <i class="fa-solid fa-bolt text-amber-500 text-sm"></i>
                                     <span>${isML ? '30 ദിവസത്തെ പ്ലാൻ' : '30-Day Sprint'}</span>
                                     <span class="preset-sub text-[10px] text-slate-400 font-medium">Fast Crash</span>
-                                </button>
-                                <button type="button" id="preset-btn-xmas" onclick="setDeadlinePreset('${getPresetDate(12, 20)}')" class="preset-date-btn min-h-[44px] py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-[#162137] hover:bg-blue-50/80 dark:hover:bg-blue-950/40 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-200 dark:border-slate-700/80 transition-all duration-150 flex flex-col items-center justify-center text-center gap-1 active:scale-95 cursor-pointer">
-                                    <i class="fa-solid fa-star text-emerald-500 text-sm"></i>
-                                    <span>${isML ? 'ക്രിസ്മസ് പരീക്ഷ' : 'Dec 20 Xmas'}</span>
-                                    <span class="preset-sub text-[10px] text-slate-400 font-medium">Term 1 & 2</span>
-                                </button>
-                                <button type="button" id="preset-btn-board" onclick="setDeadlinePreset('${getPresetDate(2, 28, true)}')" class="preset-date-btn min-h-[44px] py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-[#162137] hover:bg-blue-50/80 dark:hover:bg-blue-950/40 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-200 dark:border-slate-700/80 transition-all duration-150 flex flex-col items-center justify-center text-center gap-1 active:scale-95 cursor-pointer">
-                                    <i class="fa-solid fa-bullseye text-purple-500 text-sm"></i>
-                                    <span>${isML ? 'പബ്ലിക് പരീക്ഷ' : 'Feb 28 Board'}</span>
-                                    <span class="preset-sub text-[10px] text-slate-400 font-medium">Full Syllabus</span>
-                                </button>
-                                <button type="button" id="preset-btn-term2" onclick="setDeadlinePreset('${getPresetDate(11, 30)}')" class="preset-date-btn min-h-[44px] py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-[#162137] hover:bg-blue-50/80 dark:hover:bg-blue-950/40 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-200 dark:border-slate-700/80 transition-all duration-150 flex flex-col items-center justify-center text-center gap-1 active:scale-95 cursor-pointer">
-                                    <i class="fa-solid fa-calendar-days text-blue-500 text-sm"></i>
-                                    <span>${isML ? 'നവം 30' : 'Nov 30 Term 2'}</span>
-                                    <span class="preset-sub text-[10px] text-slate-400 font-medium">Half-Yearly</span>
-                                </button>
+                                </button>`;
+                                })()}
                             </div>
 
                             <!-- Date Picker -->
@@ -4323,6 +4454,8 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                             </div>
                             <!-- Live Calculation Feedback Box -->
                             <div id="deadline-calc-label" class="p-3 rounded-2xl bg-blue-50/70 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-800/40 text-xs text-slate-600 dark:text-slate-200"></div>
+                            <!-- Live Official DHSE Timetable Preview -->
+                            <div id="setup-official-timetable-preview" class="hidden"></div>
 
                             
 
@@ -4551,9 +4684,31 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 const overdueGroups = daily.overdueGroups || compressPendingOverdueDays(daily.overdueDays);
                 const isPendingCompressed = overdueGroups.length < daily.overdueCount;
                 const hasFutureTasks = appState.plan.some(d => d.date > localToday && d.tasks.some(t => !t.completed));
+                const todayOfficialExams = Array.isArray(todayPlan?.officialExams) ? todayPlan.officialExams : [];
+                const nextOfficialExam = !todayOfficialExams.length && typeof getOfficialExamEventsForPlan === 'function'
+                    ? getOfficialExamEventsForPlan({
+                        grade: appState.grade || '+2',
+                        stream: appState.stream || 'cs',
+                        startDate: localToday,
+                        deadlineDate: appState.deadlineDate || '2027-03-30',
+                        examCycle: appState.examCycle && appState.examCycle !== 'custom' ? appState.examCycle : null,
+                    })[0] || null
+                    : null;
+                const officialExamBannerHTML = todayOfficialExams.length > 0
+                    ? `<div class="p-3 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-700/70 text-xs text-amber-900 dark:text-amber-200 mb-3 flex items-center justify-between gap-2 flex-wrap" role="status">
+                        <span class="font-extrabold flex items-center gap-1.5"><i class="fa-solid fa-graduation-cap text-amber-600 dark:text-amber-400"></i> ${isML ? 'ഇന്നത്തെ DHSE പരീക്ഷ' : 'Official DHSE Exam Today'}: ${escapeStudyText(todayOfficialExams.map(e => `${e.paperTitle} (${e.session} · ${e.time})`).join(' & '))}</span>
+                        <span class="font-bold px-2 py-0.5 rounded-full bg-amber-200/70 dark:bg-amber-900/60 text-[11px]">${escapeStudyText(todayOfficialExams[0].examCycleShortName)}</span>
+                    </div>`
+                    : (nextOfficialExam
+                        ? `<div class="p-2.5 rounded-xl bg-blue-50/80 dark:bg-blue-950/35 border border-blue-200/80 dark:border-blue-800/50 text-xs text-blue-900 dark:text-blue-200 mb-3 flex items-center justify-between gap-2 flex-wrap">
+                            <span class="font-bold flex items-center gap-1.5"><i class="fa-solid fa-calendar-day text-blue-600 dark:text-blue-400"></i> ${isML ? 'അടുത്ത ഔദ്യോഗിക പരീക്ഷ' : 'Next Official Exam'}: ${escapeStudyText(nextOfficialExam.paperTitle)}</span>
+                            <span class="font-mono font-bold text-[11px]">${escapeStudyText(nextOfficialExam.date)} (${escapeStudyText(nextOfficialExam.dayName)}) · ${escapeStudyText(nextOfficialExam.session)} ${escapeStudyText(nextOfficialExam.time)}</span>
+                        </div>`
+                        : '');
+
                 const todayTasksHTML = tasks.length ? `
                     ${appState.diagnostics?.isInfeasible ? `<p class="daily-advisory">${escapeStudyText(appState.diagnostics.warningMessage || (isML ? 'പഠന സമയം അല്ലെങ്കിൽ അവസാന തീയതി ക്രമീകരിക്കുക.' : 'This plan needs more study time. Adjust your hours or target date.'))}</p>` : ''}
-                    ${todayPlan.isExamEve ? `<p class="daily-advisory">${isML ? 'നാളത്തെ പരീക്ഷ' : 'Exam tomorrow'}: ${escapeStudyText(todayPlan.exclusiveSubject)}</p>` : ''}
+                    ${todayPlan.isExamEve ? `<p class="daily-advisory">${isML ? 'നാളത്തെ പരീക്ഷ' : 'Exam tomorrow'}: ${escapeStudyText(todayPlan.exclusiveSubject)}${todayPlan.upcomingOfficialExam ? ` (${escapeStudyText(todayPlan.upcomingOfficialExam.session)} · ${escapeStudyText(todayPlan.upcomingOfficialExam.time)})` : ''}</p>` : ''}
                     ${completedCount === tasks.length ? `
                         <div class="daily-finished" role="status">
                             <div class="flex items-center justify-between flex-wrap gap-2.5">
@@ -4619,6 +4774,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                     ${typeof renderDashboardRestoreBanner === 'function' ? renderDashboardRestoreBanner() : ''}
 
                     <p class="study-date">${localToday}</p>
+                    ${officialExamBannerHTML}
                     ${daily.overdueCount ? `
                         <p class="pending-notice" role="status" onclick="openPendingWork(event)">
                             <i class="fa-solid fa-clock-rotate-left mr-1 opacity-80" aria-hidden="true"></i>
@@ -4755,7 +4911,11 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                                     ${isToday ? `<span class="text-xs font-extrabold bg-blue-600 text-white px-2 py-0.5 rounded-full no-print">${isML ? ML_I18N.plan.todayBadge : 'TODAY'}</span>` : ''}
                                     ${day.isCompletedMarker ? `<span class="text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950/70 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700 px-2 py-0.5 rounded-full flex items-center gap-1"><svg class="w-3 h-3 text-emerald-600 dark:text-emerald-400 inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>${isML ? 'പൂർത്തിയായി' : 'Completed'}</span>` : ''}
                                     ${day.isExamEve ? `<span class="text-xs font-black bg-rose-100 text-rose-900 border border-rose-300 dark:bg-rose-950/70 dark:text-rose-200 dark:border-rose-700 px-2 py-0.5 rounded-full flex items-center gap-1 animate-pulse"><i class="fa-solid fa-bolt text-rose-600 dark:text-rose-400"></i>${isML ? `പരീക്ഷത്തലേന്ന്: ${day.exclusiveSubject}` : `🔥 Exam Eve: ${day.exclusiveSubject} Only`}</span>` : ''}
-                                    ${day.isExamDay ? `<span class="text-xs font-black bg-amber-100 text-amber-900 border border-amber-300 dark:bg-amber-950/70 dark:text-amber-200 dark:border-amber-700 px-2 py-0.5 rounded-full flex items-center gap-1"><i class="fa-solid fa-graduation-cap text-amber-600 dark:text-amber-400"></i>${isML ? `പരീക്ഷാദിനം: ${day.examSubject}` : `🎯 Exam Day: ${day.examSubject}`}</span>` : ''}
+                                    ${Array.isArray(day.officialExams) && day.officialExams.length > 0
+                                        ? day.officialExams.map(ev => `<span class="text-xs font-black bg-amber-100 text-amber-900 border border-amber-300 dark:bg-amber-950/70 dark:text-amber-200 dark:border-amber-700 px-2 py-0.5 rounded-full flex items-center gap-1"><i class="fa-solid fa-graduation-cap text-amber-600 dark:text-amber-400"></i>${escapeStudyText(ev.examCycleShortName)}: ${escapeStudyText(ev.paperTitle)} (${escapeStudyText(ev.session)} ${escapeStudyText(ev.time)})</span>`).join('')
+                                        : (day.isExamDay ? `<span class="text-xs font-black bg-amber-100 text-amber-900 border border-amber-300 dark:bg-amber-950/70 dark:text-amber-200 dark:border-amber-700 px-2 py-0.5 rounded-full flex items-center gap-1"><i class="fa-solid fa-graduation-cap text-amber-600 dark:text-amber-400"></i>${isML ? `പരീക്ഷാദിനം: ${day.examSubject}` : `🎯 Exam Day: ${day.examSubject}`}</span>` : '')}
+                                    ${day.isPracticalMilestone ? `<span class="text-xs font-bold bg-teal-100 text-teal-800 dark:bg-teal-950/70 dark:text-teal-200 px-2 py-0.5 rounded-full">🧪 ${isML ? 'പ്രാക്ടിക്കൽ പരീക്ഷകൾ ആരംഭിക്കുന്നു' : 'DHSE Practicals Begin'}</span>` : ''}
+                                    ${day.isChristmasVacation ? `<span class="text-xs font-bold bg-sky-100 text-sky-800 dark:bg-sky-950/70 dark:text-sky-200 px-2 py-0.5 rounded-full">🎄 ${isML ? 'ക്രിസ്മസ് അവധി' : 'Xmas Break'}</span>` : ''}
                                     ${day.isRevisionDay ? `<span class="text-xs font-bold bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full">${isML ? ML_I18N.plan.revisionDay : 'Revision Day'}</span>` : ''}
                                     ${day.isRestDay ? `<span class="text-xs font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full"><i class="fa-solid fa-mug-hot mr-1"></i>${isML ? ML_I18N.plan.restDay : 'Rest Day'}</span>` : ''}
                                 </div>
@@ -5102,6 +5262,48 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                             </button>
                         </div>
                     </div>
+
+                    ${(function() {
+                        if (typeof getOfficialExamSchedule !== 'function') return '';
+                        const activeCycleMeta = DHSE_EXAM_CYCLES[activeSyllabusExamCycle] || DHSE_EXAM_CYCLES.christmas;
+                        const scheduleRows = getOfficialExamSchedule({
+                            grade: activeSyllabusGrade,
+                            stream: userStream === 'imp_only' ? 'cs' : userStream,
+                            examCycle: activeSyllabusExamCycle,
+                            includeLanguages: true,
+                        });
+                        return `
+                            <div class="bg-white dark:bg-[#0e1628] rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-4 sm:p-5 mb-5">
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 mb-3 border-b border-slate-200 dark:border-slate-800">
+                                    <div>
+                                        <h3 class="font-black text-slate-900 dark:text-white text-base flex items-center gap-2">
+                                            <i class="fa-solid fa-calendar-days text-blue-600 dark:text-blue-400"></i>
+                                            <span>${isML ? `ഔദ്യോഗിക DHSE പരീക്ഷാ ടൈംടേബിൾ (${activeSyllabusGrade})` : `Official DHSE Exam Timetable (${activeSyllabusGrade})`}</span>
+                                        </h3>
+                                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">${escapeStudyText(activeCycleMeta.note)}</p>
+                                    </div>
+                                    <div class="flex items-center gap-1.5 flex-wrap">
+                                        ${['christmas', 'model', 'public'].map(cId => {
+                                            const meta = DHSE_EXAM_CYCLES[cId];
+                                            const active = cId === activeSyllabusExamCycle;
+                                            return `<button type="button" onclick="switchSyllabusExamCycle('${cId}')" class="min-h-[44px] px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${active ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-[#141d30] text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-[#1d2a44]'}">${isML ? meta.mlName : meta.shortName}</button>`;
+                                        }).join('')}
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                    ${scheduleRows.map(ev => `
+                                        <div class="p-2.5 rounded-xl bg-slate-50/90 dark:bg-[#141d30]/70 border border-slate-200/80 dark:border-slate-800 flex items-center justify-between gap-2 text-xs">
+                                            <div class="min-w-0">
+                                                <span class="font-mono font-bold text-blue-700 dark:text-blue-300 block">${escapeStudyText(ev.date)} (${escapeStudyText(ev.dayName)})</span>
+                                                <span class="font-extrabold text-slate-900 dark:text-white block truncate" title="${escapeStudyText(ev.paperTitle)}">${escapeStudyText(ev.paperTitle)}</span>
+                                            </div>
+                                            <span class="px-2 py-1 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-bold text-[11px] shrink-0">${escapeStudyText(ev.session)} · ${escapeStudyText(ev.time)}</span>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `;
+                    })()}
 
                     <div class="space-y-4">
                         ${syllabusHTML}
@@ -5959,6 +6161,9 @@ if (typeof window !== 'undefined') {
         goToSyllabusView,
         switchSyllabusStream,
         switchSyllabusGrade,
+        switchSyllabusExamCycle,
+        setAdjustOfficialExamPreset,
+        getOfficialExamSchedule,
         switchView: (view) => {
             if (view === 'today') goToDashboard();
             else if (view === 'plan') goToPlan();

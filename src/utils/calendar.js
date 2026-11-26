@@ -80,6 +80,36 @@ export function generateIcsCalendar(plan, options = {}) {
     const dayDate = day.date || new Date(Date.now() + dayIndex * 86400000).toISOString().split('T')[0];
     const tasks = day.tasks || [];
 
+    if (Array.isArray(day.officialExams) && day.officialExams.length > 0) {
+      day.officialExams.forEach((exam, exIdx) => {
+        const startSlot = exam.session === 'AN'
+          ? (String(exam.time || '').includes('2:00') ? '14:00' : '13:30')
+          : '09:30';
+        const [eh0, em0] = startSlot.split(':').map(Number);
+        const endTotal = eh0 * 60 + em0 + 165;
+        const endSlot = `${String(Math.floor(endTotal / 60) % 24).padStart(2, '0')}:${String(endTotal % 60).padStart(2, '0')}`;
+        const uid = `dhse-exam-${exam.examCycle || 'exam'}-${dayDate}-${exIdx}@hss-planner.web.app`;
+        const summary = `DHSE ${exam.examCycleShortName || 'Exam'} (${exam.grade || '+2'}): ${exam.paperTitle} [${exam.session} ${exam.time}]`;
+        const description = `Official Kerala DHSE Examination\\nCycle: ${exam.examCycleName || exam.examCycle}\\nPaper: ${exam.paperTitle}\\nSession: ${exam.session} (${exam.time})`;
+        lines.push(
+          'BEGIN:VEVENT',
+          `UID:${uid}`,
+          `DTSTAMP:${nowIcs}`,
+          `DTSTART:${formatIcsDate(dayDate, startSlot)}`,
+          `DTEND:${formatIcsDate(dayDate, endSlot)}`,
+          `SUMMARY:${escapeIcsText(summary)}`,
+          `DESCRIPTION:${escapeIcsText(description)}`,
+          'STATUS:CONFIRMED',
+          'BEGIN:VALARM',
+          'TRIGGER:-PT60M',
+          'ACTION:DISPLAY',
+          `DESCRIPTION:Reminder: ${escapeIcsText(exam.paperTitle)} exam starts in 1 hour (${exam.time})!`,
+          'END:VALARM',
+          'END:VEVENT'
+        );
+      });
+    }
+
     if (tasks.length === 0) {
       if (day.isRestDay) {
         const uid = `rest-day-${day.dayNumber || dayIndex + 1}-${dayDate}@hss-planner.web.app`;

@@ -11,6 +11,13 @@
 
 import { PLUS_TWO_SYLLABUS } from '../data/syllabus-plus-two.js';
 import { PLUS_ONE_SYLLABUS } from '../data/syllabus-plus-one.js';
+import {
+  DHSE_EXAM_CYCLES,
+  DHSE_ACADEMIC_MILESTONES,
+  detectExamCycleForDeadline,
+  getOfficialExamEventsForPlan,
+  getSubjectExamDeadlines,
+} from '../data/dhse-exam-timetables.js';
 
 export const CORE_ENGINE_VERSION = '1.1.0';
 
@@ -768,6 +775,381 @@ function getSafeSubjectWeight(subjectWeights, subject) {
   return Number.isFinite(Number(rawW)) && Number(rawW) > 0 ? Number(rawW) : 1.0;
 }
 
+function getEffectiveGradeKey(grade, tasks = [], stream = 'cs') {
+  if (grade === '+1' || grade === 11 || grade === 'plus_one') return '+1';
+  if (grade === '+2' || grade === 12 || grade === 'plus_two') return '+2';
+  if (stream !== 'imp_only' && Array.isArray(tasks) && tasks.length > 0 && tasks.every((t) => t.grade === '+1')) {
+    return '+1';
+  }
+  return '+2';
+}
+
+/**
+ * Resolve official Kerala DHSE timetable intelligence for the given grade, stream, and window.
+ * Produces subject urgency boosts (earliest exam first), term-wave prioritization,
+ * and official exam events for calendar annotations & targeted revision.
+ */
+export function prepareOfficialTimetableContext({
+  grade = '+2',
+  stream = 'cs',
+  tasks = [],
+  startDateStr,
+  deadlineStr,
+  examCycle = null,
+  useOfficialTimetable = true,
+  subjectWeights = {},
+} = {}) {
+  const effectiveGrade = getEffectiveGradeKey(grade, tasks, stream);
+  const validStream = ['cs', 'bio', 'commerce', 'humanities'].includes(stream) ? stream : null;
+
+  if (!useOfficialTimetable || !validStream || !startDateStr || !deadlineStr) {
+    return {
+      enabled: false,
+      grade: effectiveGrade,
+      stream,
+      examCycle: 'custom',
+      officialEvents: [],
+      targetCycleEvents: [],
+      subjectDates: {},
+      orderedSubjects: [],
+      schedulingWeights: { ...subjectWeights },
+      hasChristmasMilestone: false,
+      hasModelMilestone: false,
+      hasPublicMilestone: false,
+      examWindowStart: null,
+    };
+  }
+
+  const resolvedCycle = detectExamCycleForDeadline(deadlineStr, examCycle);
+  const officialEvents = getOfficialExamEventsForPlan({
+    grade: effectiveGrade,
+    stream: validStream,
+    startDate: startDateStr,
+    deadlineDate: deadlineStr,
+    examCycle: null,
+    includeLanguages: true,
+  });
+
+  const deadlinesInfo = getSubjectExamDeadlines({
+    grade: effectiveGrade,
+    stream: validStream,
+    startDate: startDateStr,
+    deadlineDate: deadlineStr,
+    examCycle: examCycle && examCycle !== 'auto' && DHSE_EXAM_CYCLES[examCycle] ? examCycle : null,
+  });
+
+  const schedulingWeights = { ...subjectWeights };
+  const ordered = deadlinesInfo.orderedSubjects || [];
+  if (ordered.length > 1 && (officialEvents.length > 0 || resolvedCycle !== 'custom')) {
+    ordered.forEach((sub, idx) => {
+      const base = getSafeSubjectWeight(subjectWeights, sub);
+      // Gentle earliest-exam-first urgency boost (0.24 -> 0.0) without overriding explicit user focus tags
+      const urgencyBoost = ((ordered.length - 1 - idx) / (ordered.length - 1)) * 0.24;
+      schedulingWeights[sub] = Number((base + urgencyBoost).toFixed(3));
+    });
+  }
+
+  const targetCycleMeta = DHSE_EXAM_CYCLES[resolvedCycle] || null;
+  const targetCycleEvents = resolvedCycle !== 'custom'
+    ? officialEvents.filter((ev) => ev.examCycle === resolvedCycle)
+    : [];
+
+  return {
+    enabled: true,
+    grade: effectiveGrade,
+    stream: validStream,
+    examCycle: resolvedCycle,
+    officialEvents,
+    targetCycleEvents,
+    subjectDates: deadlinesInfo.subjectDates || {},
+    orderedSubjects: ordered,
+    schedulingWeights,
+    hasChristmasMilestone: officialEvents.some((ev) => ev.examCycle === 'christmas'),
+    hasModelMilestone: officialEvents.some((ev) => ev.examCycle === 'model'),
+    hasPublicMilestone: officialEvents.some((ev) => ev.examCycle === 'public'),
+    examWindowStart: targetCycleMeta?.startDate || null,
+    examWindowEnd: targetCycleMeta?.endDate || null,
+  };
+}
+
+function getRevisionTopicForSubject(activeSub, chSummary = '') {
+  if (activeSub === 'Physics') {
+    return `Comprehensive Derivations, Formula Sheet & Circuit Diagrams ${chSummary}`.trim();
+  }
+  if (activeSub === 'Chemistry') {
+    return `Organic Reactions, Reagents, Named Conversions & Physical Numericals ${chSummary}`.trim();
+  }
+  if (activeSub === 'Mathematics') {
+    return `Calculus, Vectors & 3D High-Yield Problem Sets with Step-by-Step Solutions ${chSummary}`.trim();
+  }
+  if (activeSub === 'Computer Science') {
+    return `Python / C++, Data Structures, Web Technologies, SQL Queries & Theory Rapid Retrieval ${chSummary}`.trim();
+  }
+  if (activeSub === 'Botany') {
+    return `Diagrams, Key Terminologies, Reproduction & Biotechnology Quick Flashcards ${chSummary}`.trim();
+  }
+  if (activeSub === 'Zoology') {
+    return `Physiology Processes, Genetics Punnett Squares & Evolutionary Milestones ${chSummary}`.trim();
+  }
+  if (activeSub === 'Accountancy') {
+    return `Partnership Accounts, Share Capital, Financial Statements & Cash Flow Drills ${chSummary}`.trim();
+  }
+  if (activeSub === 'Business Studies') {
+    return `Management Principles, Financial Markets & Marketing Case Studies ${chSummary}`.trim();
+  }
+  if (activeSub === 'Economics') {
+    return `Macroeconomic Aggregates, National Income & Indian Economic Development Trends ${chSummary}`.trim();
+  }
+  if (activeSub === 'Computer Applications') {
+    return `Web Technologies, HTML/CSS/JavaScript, Python/SQL & Database Concepts ${chSummary}`.trim();
+  }
+  if (activeSub === 'History') {
+    return `Chronological Timelines, Architectural Heritage & Source-based Inferences ${chSummary}`.trim();
+  }
+  if (activeSub === 'Political Science') {
+    return `Constitutional Provisions, Indian Politics & Global Developments ${chSummary}`.trim();
+  }
+  if (activeSub === 'Sociology') {
+    return `Social Institutions, Structural Change & Contemporary Social Movements ${chSummary}`.trim();
+  }
+  if (activeSub === 'Part I English' || activeSub === 'English' || activeSub === 'English Core') {
+    return 'Reading Comprehension, Writing Formats (Essays, Reports, Letters) & Literature Themes';
+  }
+  if (activeSub === 'Part II Languages') {
+    return 'Grammar, Prose & Poetry Appreciation, Composition & Previous Year Question Drills';
+  }
+  return `Core Principles, Important Problem Sets & High-Yield Rapid Recall ${chSummary}`.trim();
+}
+
+/**
+ * Annotate planDays with official DHSE exam dates, sessions, academic milestones,
+ * and replace generic revision days with official exam-aligned targeted revision.
+ */
+export function applyOfficialExamOverlay({
+  planDays,
+  syllabusStudyDays,
+  officialContext,
+  streamSubjects = [],
+  completedChaptersBySubject = {},
+  subjectWeights = {},
+  isImpOnly = false,
+  includeExamEveTasks = false,
+}) {
+  if (!officialContext || !officialContext.enabled || !Array.isArray(planDays)) return;
+
+  const eventsByDate = new Map();
+  (officialContext.officialEvents || []).forEach((ev) => {
+    if (!eventsByDate.has(ev.date)) eventsByDate.set(ev.date, []);
+    eventsByDate.get(ev.date).push(ev);
+  });
+
+  // 1. Annotate official exam days, vacation, practicals milestone, and exam eves
+  planDays.forEach((day, idx) => {
+    if (
+      day.date >= DHSE_ACADEMIC_MILESTONES.christmasVacationStart &&
+      day.date <= DHSE_ACADEMIC_MILESTONES.christmasVacationEnd
+    ) {
+      day.isChristmasVacation = true;
+    }
+    if (day.date === DHSE_ACADEMIC_MILESTONES.practicalsStartDate) {
+      day.isPracticalMilestone = true;
+      day.milestoneNote = 'DHSE Practical Examinations Begin';
+    }
+
+    const dayExams = eventsByDate.get(day.date);
+    if (dayExams && dayExams.length > 0) {
+      day.officialExams = dayExams;
+      day.isOfficialExamDay = true;
+      if (!day.isExamDay) {
+        day.isExamDay = true;
+        day.examSubject = dayExams.map((e) => e.paperTitle).join(' | ');
+      }
+      day.examSession = dayExams[0].session;
+      day.examTime = dayExams[0].time;
+      day.examCycle = dayExams[0].examCycle;
+    }
+
+    // Annotate Exam Eve (T-1 before an official exam)
+    if (idx + 1 < planDays.length) {
+      const tomorrowExams = eventsByDate.get(planDays[idx + 1].date);
+      if (tomorrowExams && tomorrowExams.length > 0) {
+        day.upcomingOfficialExam = tomorrowExams[0];
+        day.upcomingOfficialExams = tomorrowExams;
+      }
+    }
+  });
+
+  // 2. Make Revision Buffer Days (day.isRevisionDay) official-timetable-aware
+  const revisionIndices = [];
+  planDays.forEach((d, idx) => {
+    if (d.isRevisionDay) revisionIndices.push(idx);
+  });
+
+  const firstRevDate = revisionIndices.length > 0 ? planDays[revisionIndices[0]].date : null;
+  const sortedCoreEvents = (officialContext.officialEvents || []).filter(
+    (ev) => !officialContext.examCycle || officialContext.examCycle === 'custom' || ev.examCycle === officialContext.examCycle
+  );
+  const baseEvents = sortedCoreEvents.length > 0 ? sortedCoreEvents : (officialContext.officialEvents || []);
+  const eventsForAlignment = firstRevDate
+    ? baseEvents.filter((ev) => ev.date >= firstRevDate)
+    : [];
+
+  if (revisionIndices.length > 0 && eventsForAlignment.length > 0) {
+    const defaultGrade = isImpOnly ? '+1' : officialContext.grade;
+    let fallbackSubCursor = 0;
+
+    revisionIndices.forEach((revIdx, rPos) => {
+      const day = planDays[revIdx];
+      // Clear generic placeholder revision tasks if we are replacing with official exam-aware tasks
+      day.tasks = (day.tasks || []).filter((t) => !t.id?.startsWith('REV_DAY_'));
+
+      const tomorrowExam = day.upcomingOfficialExam;
+      const todayExams = day.officialExams || [];
+      const nextExamAfterToday = eventsForAlignment.find((ev) => ev.date > day.date);
+
+      if (tomorrowExam) {
+        const targetSubs = tomorrowExam.subjects && tomorrowExam.subjects.length > 0
+          ? tomorrowExam.subjects
+          : [tomorrowExam.isLanguagePaper ? tomorrowExam.paperTitle : tomorrowExam.paperTitle];
+        const primarySub = targetSubs[0];
+        const chaps = completedChaptersBySubject[primarySub] || [];
+        const chSummary = chaps.length > 0
+          ? `(${chaps.slice(0, 3).join(', ')}${chaps.length > 3 ? ' & more' : ''})`
+          : '';
+
+        day.isExamEve = true;
+        day.exclusiveSubject = tomorrowExam.subjects.length === 1 ? tomorrowExam.subjects[0] : tomorrowExam.paperTitle;
+        day.examDate = tomorrowExam.date;
+
+        targetSubs.forEach((subName, sIdx) => {
+          const safeSub = subName.replace(/[^a-zA-Z0-9]+/g, '_');
+          const subChaps = completedChaptersBySubject[subName] || [];
+          const subSummary = subChaps.length > 0
+            ? `(${subChaps.slice(0, 3).join(', ')}${subChaps.length > 3 ? ' & more' : ''})`
+            : chSummary;
+          day.tasks.push({
+            id: `REV_DAY_EXAM_${day.date}_${safeSub}_${sIdx}`,
+            grade: defaultGrade,
+            subject: subName,
+            chapterName: `Exam Eve Blitz: ${subName} (Tomorrow ${tomorrowExam.session} · ${tomorrowExam.time})`,
+            topicTitle: getRevisionTopicForSubject(subName, subSummary),
+            taskType: 'EXAM_EVE',
+            isRevision: true,
+            isExamEveTask: true,
+            isSpacedRetrieval: true,
+            isFocusSubject: (subjectWeights[subName] || 1.0) >= 1.1,
+            completed: false,
+            term: 3,
+            estimatedMinutes: targetSubs.length > 1 ? 60 : 120,
+          });
+        });
+      } else if (todayExams.length > 0) {
+        const todayPaper = todayExams[0];
+        const primarySub = todayPaper.subjects?.[0] || todayPaper.paperTitle;
+        const safeSub = primarySub.replace(/[^a-zA-Z0-9]+/g, '_');
+        day.tasks.push({
+          id: `REV_DAY_EXAMDAY_${day.date}_${safeSub}`,
+          grade: defaultGrade,
+          subject: primarySub,
+          chapterName: `Exam Day (${todayPaper.session} · ${todayPaper.time}): ${todayPaper.paperTitle}`,
+          topicTitle: nextExamAfterToday
+            ? `Morning formula quick-scan before ${todayPaper.time} exam, then light evening start for ${nextExamAfterToday.paperTitle} (${nextExamAfterToday.date}).`
+            : `Final morning formula & key-points quick-scan before your ${todayPaper.time} ${todayPaper.examCycleShortName} paper.`,
+          taskType: 'MOCK',
+          isRevision: true,
+          isModelExam: todayPaper.examCycle === 'model',
+          completed: false,
+          term: 3,
+          estimatedMinutes: 60,
+        });
+      } else if (nextExamAfterToday) {
+        const targetSubs = nextExamAfterToday.subjects && nextExamAfterToday.subjects.length > 0
+          ? nextExamAfterToday.subjects
+          : [nextExamAfterToday.paperTitle];
+        const activeSub = targetSubs[rPos % targetSubs.length];
+        const chaps = completedChaptersBySubject[activeSub] || [];
+        const chSummary = chaps.length > 0
+          ? `(${chaps.slice(0, 3).join(', ')}${chaps.length > 3 ? ' & more' : ''})`
+          : '';
+        const safeSub = activeSub.replace(/[^a-zA-Z0-9]+/g, '_');
+
+        const isFinalPreWindowPyq = rPos === revisionIndices.length - 1 ||
+          (revIdx + 1 < planDays.length && planDays[revIdx + 1].isOfficialExamDay);
+
+        day.tasks.push({
+          id: `REV_DAY_${rPos + 1}_${safeSub}_${day.date}`,
+          grade: defaultGrade,
+          subject: activeSub,
+          chapterName: isFinalPreWindowPyq
+            ? `PYQ & Mock Sprint: ${activeSub} (Exam on ${nextExamAfterToday.date})`
+            : `Gap-Day Deep Revision: ${activeSub} (Exam on ${nextExamAfterToday.date})`,
+          topicTitle: getRevisionTopicForSubject(activeSub, chSummary),
+          taskType: isFinalPreWindowPyq ? 'PYQ' : 'REVISION',
+          isRevision: true,
+          isSpacedRetrieval: true,
+          isForgettingCurveReview: true,
+          isFocusSubject: (subjectWeights[activeSub] || 1.0) >= 1.1,
+          completed: false,
+          term: 3,
+          estimatedMinutes: 120,
+        });
+      } else {
+        const activeSub = streamSubjects[fallbackSubCursor % Math.max(1, streamSubjects.length)] || 'All Subjects';
+        fallbackSubCursor++;
+        const chaps = completedChaptersBySubject[activeSub] || [];
+        const chSummary = chaps.length > 0
+          ? `(${chaps.slice(0, 3).join(', ')}${chaps.length > 3 ? ' & more' : ''})`
+          : '';
+        day.tasks.push({
+          id: `REV_DAY_${rPos + 1}_${activeSub.replace(/\s+/g, '_')}`,
+          grade: defaultGrade,
+          subject: activeSub,
+          chapterName: `Targeted Revision: ${activeSub} (Day ${rPos + 1}/${revisionIndices.length})`,
+          topicTitle: getRevisionTopicForSubject(activeSub, chSummary),
+          taskType: rPos === revisionIndices.length - 1 ? 'MOCK' : 'REVISION',
+          isRevision: true,
+          isSpacedRetrieval: true,
+          isForgettingCurveReview: true,
+          completed: false,
+          term: 3,
+          estimatedMinutes: 90,
+        });
+      }
+    });
+  }
+
+  // 3. Optional Exam-Eve & Exam-Day reminders on non-revision days (used in App UI when includeExamEveTasks = true)
+  if (includeExamEveTasks && officialContext.officialEvents.length > 0) {
+    const defaultGrade = isImpOnly ? '+1' : officialContext.grade;
+    for (let i = 0; i < syllabusStudyDays; i++) {
+      const day = planDays[i];
+      if (!day || day.isRestDay || day.isRevisionDay) continue;
+      const tomorrowExam = day.upcomingOfficialExam;
+      if (tomorrowExam && tomorrowExam.subjects && tomorrowExam.subjects.length > 0) {
+        const primarySub = tomorrowExam.subjects[0];
+        const safeSub = primarySub.replace(/[^a-zA-Z0-9]+/g, '_');
+        const alreadyHasEve = (day.tasks || []).some((t) => t.isExamEveTask && t.subject === primarySub);
+        if (!alreadyHasEve) {
+          day.tasks.push({
+            id: `REV_DAY_MILESTONE_EVE_${day.date}_${safeSub}`,
+            grade: defaultGrade,
+            subject: primarySub,
+            chapterName: `${tomorrowExam.examCycleShortName} Eve: ${tomorrowExam.paperTitle} (${tomorrowExam.session} · ${tomorrowExam.time})`,
+            topicTitle: getRevisionTopicForSubject(primarySub),
+            taskType: 'EXAM_EVE',
+            isRevision: true,
+            isExamEveTask: true,
+            isFocusSubject: true,
+            completed: false,
+            term: 3,
+            estimatedMinutes: 60,
+          });
+        }
+      }
+    }
+  }
+}
+
 /**
  * Schedule regular (+2 / non-improvement +1) tasks using Runway-Adaptive Chapter Granularity:
  * - Abundant runway ('multi_part'): spreads multi-part chapters smoothly across days.
@@ -782,7 +1164,10 @@ export function scheduleAdaptiveRegularTasks({
   dayCapacityWeights,
   totalActiveWeight,
   subjectWeights = {},
+  schedulingWeights = null,
+  prioritizeTermsBeforeChristmas = false,
 }) {
+  const effectiveWeights = schedulingWeights || subjectWeights;
   const subjectChapterMap = groupTasksIntoSubjectChapters(p2Tasks, streamSubjects);
   const allSubjects = Array.from(new Set([...(streamSubjects || []), ...Object.keys(subjectChapterMap)]));
 
@@ -905,7 +1290,7 @@ export function scheduleAdaptiveRegularTasks({
           // Finish an in-progress chapter before opening a new subject/chapter
           let bestInProgScore = -Infinity;
           inProgressSubjects.forEach((s) => {
-            const ws = getSafeSubjectWeight(subjectWeights, s);
+            const ws = getSafeSubjectWeight(effectiveWeights, s);
             const score = ws * 2.0 + (remTasks[s] || 0) * 0.05;
             if (score > bestInProgScore) {
               bestInProgScore = score;
@@ -923,10 +1308,13 @@ export function scheduleAdaptiveRegularTasks({
           pool.forEach((s) => {
             const st = subjectState[s];
             const chs = subjectChapterMap[s] || [];
-            const ws = getSafeSubjectWeight(subjectWeights, s);
+            const ws = getSafeSubjectWeight(effectiveWeights, s);
             const recencyGap = st.lastScheduledDay === -1 ? 4 : dayIndex - st.lastScheduledDay;
             const workloadRatio = (remTasks[s] || 0) / Math.max(1, unscheduledTotal);
-            const nextChapRemParts = chs[st.chapterIndex].parts.length - st.partIndex;
+            const nextChap = chs[st.chapterIndex];
+            const nextChapRemParts = nextChap.parts.length - st.partIndex;
+            const nextChapTerm = nextChap.parts[0]?.term || 2;
+            const termWaveBonus = prioritizeTermsBeforeChristmas ? (3 - nextChapTerm) * 0.45 : 0;
             const fitsRemainingRoom =
               scheduledTodayCount > 0 &&
               nextChapRemParts <= roomToHardCap &&
@@ -936,6 +1324,7 @@ export function scheduleAdaptiveRegularTasks({
               ws * 2.0 +
               recencyGap * 0.8 +
               workloadRatio * 3.0 +
+              termWaveBonus +
               (fitsRemainingRoom ? 2.5 : 0.0);
 
             if (score > bestScore) {
@@ -1067,15 +1456,19 @@ export function scheduleAdaptiveRegularTasks({
         let bestScore = -Infinity;
 
         pool.forEach((s) => {
-          const w = getSafeSubjectWeight(subjectWeights, s);
+          const w = getSafeSubjectWeight(effectiveWeights, s);
           const st = subjectState[s];
+          const chs = subjectChapterMap[s] || [];
           const remTasks = subjectRemainingTasks[s] || 1;
           const isTightForSubject = remainingActiveDays <= remTasks || isLastActiveDay;
+          const nextChapTerm = chs[st.chapterIndex]?.parts[0]?.term || 2;
+          const termWaveBonus = prioritizeTermsBeforeChristmas ? (3 - nextChapTerm) * 0.25 : 0;
+          const pacingUrgency = (remTasks / Math.max(1, remainingActiveDays)) * 1.6;
 
           // Only give in-progress bonus if tight — suppress to force next-day spacing when loose
           const inProgBonus = st.partIndex > 0 && isTightForSubject ? 1.8 : 0.0;
           const recencyGap = st.lastScheduledDay === -1 ? 4 : dayIndex - st.lastScheduledDay;
-          const score = w * 1.2 + inProgBonus + recencyGap * 0.8;
+          const score = w * 1.2 + inProgBonus + recencyGap * 0.8 + pacingUrgency + termWaveBonus;
           if (score > bestScore) {
             bestScore = score;
             candidateSubject = s;
@@ -1321,6 +1714,10 @@ export function generateSchedule({
   improvementDates = {},
   tasks = null,
   capacityOptions = {},
+  examCycle = null,
+  useOfficialTimetable = true,
+  alignToOfficialExamWindow = false,
+  includeExamEveTasks = false,
 } = {}) {
   // 1. Resolve and validate target deadline
   const targetDeadline = examDate || deadlineDate || deadline || deadlineDateStr;
@@ -1371,7 +1768,41 @@ export function generateSchedule({
 
   const applicableTasks = tasksToSchedule.filter((t) => streamSubjects.includes(t.subject));
 
-  // 4. Calculate dynamic revision buffer
+  // 3.5 Normalize focus weights early & resolve Official DHSE Timetable intelligence
+  const normalizedWeights = { ...subjectWeights };
+  if (Array.isArray(focusAreas)) {
+    focusAreas.forEach((sub) => {
+      normalizedWeights[sub] = 1.15;
+    });
+  } else if (focusAreas && typeof focusAreas === 'object') {
+    Object.assign(normalizedWeights, focusAreas);
+  }
+
+  const effectiveExamCycle = examCycle || capacityOptions.examCycle || null;
+  const effectiveUseOfficial = useOfficialTimetable !== false && capacityOptions.useOfficialTimetable !== false;
+  const effectiveAlignWindow = Boolean(
+    alignToOfficialExamWindow ||
+    capacityOptions.alignToOfficialExamWindow ||
+    (effectiveExamCycle && ['christmas', 'model', 'public'].includes(effectiveExamCycle))
+  );
+  const effectiveIncludeExamEve = Boolean(
+    includeExamEveTasks ||
+    capacityOptions.includeExamEveTasks ||
+    (effectiveExamCycle && ['christmas', 'model', 'public'].includes(effectiveExamCycle))
+  );
+
+  const officialContext = prepareOfficialTimetableContext({
+    grade,
+    stream: effectiveStream,
+    tasks: applicableTasks,
+    startDateStr: effectiveStart,
+    deadlineStr: targetDeadline,
+    examCycle: effectiveExamCycle,
+    useOfficialTimetable: effectiveUseOfficial,
+    subjectWeights: normalizedWeights,
+  });
+
+  // 4. Calculate dynamic revision buffer (aligned to official exam window when requested)
   let revisionDaysCount = 0;
   if (totalDaysCount >= 75) revisionDaysCount = 10;
   else if (totalDaysCount >= 45) revisionDaysCount = 7;
@@ -1381,17 +1812,21 @@ export function generateSchedule({
 
   if (totalDaysCount <= 5) revisionDaysCount = 0;
 
-  const syllabusStudyDays = Math.max(1, totalDaysCount - revisionDaysCount);
-
-  // 5. Normalize focus weights (gentle +15% / -10% calibration)
-  const normalizedWeights = { ...subjectWeights };
-  if (Array.isArray(focusAreas)) {
-    focusAreas.forEach((sub) => {
-      normalizedWeights[sub] = 1.15;
-    });
-  } else if (focusAreas && typeof focusAreas === 'object') {
-    Object.assign(normalizedWeights, focusAreas);
+  if (
+    effectiveAlignWindow &&
+    officialContext.enabled &&
+    officialContext.examWindowStart &&
+    effectiveStart < officialContext.examWindowStart &&
+    targetDeadline >= officialContext.examWindowStart
+  ) {
+    const preExamStudyDays = calculateDaysBetween(effectiveStart, officialContext.examWindowStart);
+    const examWindowDays = totalDaysCount - preExamStudyDays;
+    if (preExamStudyDays >= 4 && examWindowDays > revisionDaysCount) {
+      revisionDaysCount = examWindowDays;
+    }
   }
+
+  const syllabusStudyDays = Math.max(1, totalDaysCount - revisionDaysCount);
 
   const effectiveRestDay =
     restDayOfWeek !== undefined && restDayOfWeek !== null && restDayOfWeek !== ''
@@ -1535,46 +1970,49 @@ export function generateSchedule({
     dayCapacityWeights,
     totalActiveWeight,
     subjectWeights: normalizedWeights,
+    schedulingWeights: officialContext.enabled ? officialContext.schedulingWeights : normalizedWeights,
+    prioritizeTermsBeforeChristmas: Boolean(officialContext.enabled && officialContext.hasChristmasMilestone && targetDeadline > '2026-12-20'),
   });
 
-  // 11. Phase 3: Active Recall Allocation (Revision Runway Grounded in Ebbinghaus Forgetting Curve)
-  if (revisionDaysCount > 0) {
-    const completedChaptersBySubject = {};
-    const chapterLastStudiedDay = {};
-    streamSubjects.forEach((s) => {
-      completedChaptersBySubject[s] = [];
-      chapterLastStudiedDay[s] = {};
-    });
+  // 11. Phase 3: Active Recall Allocation (Revision Runway Grounded in Ebbinghaus Forgetting Curve & Official Exam Schedule)
+  const completedChaptersBySubject = {};
+  const chapterLastStudiedDay = {};
+  streamSubjects.forEach((s) => {
+    completedChaptersBySubject[s] = [];
+    chapterLastStudiedDay[s] = {};
+  });
 
-    planDays.forEach((d, dIdx) => {
-      (d.tasks || []).forEach((t) => {
-        if (
-          t.grade === '+2' &&
-          t.chapterName
-        ) {
-          if (!completedChaptersBySubject[t.subject]?.includes(t.chapterName)) {
-            if (completedChaptersBySubject[t.subject]) {
-              completedChaptersBySubject[t.subject].push(t.chapterName);
-            }
-          }
-          if (chapterLastStudiedDay[t.subject]) {
-            chapterLastStudiedDay[t.subject][t.chapterName] = dIdx;
+  planDays.forEach((d, dIdx) => {
+    (d.tasks || []).forEach((t) => {
+      if (
+        (t.grade === officialContext.grade || t.grade === '+2' || isImpOnly) &&
+        t.chapterName
+      ) {
+        if (!completedChaptersBySubject[t.subject]?.includes(t.chapterName)) {
+          if (completedChaptersBySubject[t.subject]) {
+            completedChaptersBySubject[t.subject].push(t.chapterName);
           }
         }
-      });
+        if (chapterLastStudiedDay[t.subject]) {
+          chapterLastStudiedDay[t.subject][t.chapterName] = dIdx;
+        }
+      }
     });
+  });
 
-    // Ebbinghaus Decay Risk: Sort oldest studied chapters first to arrest forgetting
-    streamSubjects.forEach((s) => {
-      const chaps = completedChaptersBySubject[s] || [];
-      chaps.sort((a, b) => {
-        const dayA = chapterLastStudiedDay[s]?.[a] ?? 0;
-        const dayB = chapterLastStudiedDay[s]?.[b] ?? 0;
-        return dayA - dayB;
-      });
+  // Ebbinghaus Decay Risk: Sort oldest studied chapters first to arrest forgetting
+  streamSubjects.forEach((s) => {
+    const chaps = completedChaptersBySubject[s] || [];
+    chaps.sort((a, b) => {
+      const dayA = chapterLastStudiedDay[s]?.[a] ?? 0;
+      const dayB = chapterLastStudiedDay[s]?.[b] ?? 0;
+      return dayA - dayB;
     });
+  });
 
+  if (revisionDaysCount > 0) {
     const recallTasksByDay = allocateActiveRecall({
+      grade: officialContext.grade,
       revisionDaysCount,
       streamSubjects,
       completedChaptersBySubject,
@@ -1589,6 +2027,18 @@ export function generateSchedule({
       }
     });
   }
+
+  // Apply official DHSE timetable annotations, milestones & exam-aware revision
+  applyOfficialExamOverlay({
+    planDays,
+    syllabusStudyDays,
+    officialContext,
+    streamSubjects,
+    completedChaptersBySubject,
+    subjectWeights: normalizedWeights,
+    isImpOnly,
+    includeExamEveTasks: effectiveIncludeExamEve,
+  });
 
   // Post-Scheduling Quarantine, Contiguous Chapter Sorting, isFullOnDay Tagging & Totals
   finalizeScheduledDays({ planDays, syllabusStudyDays });
@@ -1624,6 +2074,16 @@ export function generateSchedule({
       spacingStrategy: 'Inflection Decay Arrest (T+2..5, T+8..14)',
       estimatedRetentionRate: '94%',
     },
+    officialSchedule: {
+      enabled: officialContext.enabled,
+      grade: officialContext.grade,
+      examCycle: officialContext.examCycle,
+      examEventsCount: officialContext.officialEvents.length,
+      subjectDates: officialContext.subjectDates,
+      hasChristmasMilestone: officialContext.hasChristmasMilestone,
+      hasModelMilestone: officialContext.hasModelMilestone,
+      hasPublicMilestone: officialContext.hasPublicMilestone,
+    },
   };
 
   return {
@@ -1639,7 +2099,10 @@ export function generateSchedule({
     validationIssues: valResult.issues,
     totalConfiguredTasks: totalTasksCount,
     engineVersion: 6,
+    grade: officialContext.grade,
     stream: effectiveStream,
+    examCycle: officialContext.examCycle,
+    officialEvents: officialContext.officialEvents,
     startDate: effectiveStart,
     deadlineDate: targetDeadline,
   };
@@ -1660,6 +2123,7 @@ export function buildIntelligentPlan(
     const opts = deadlineOrOptions;
     return generateSchedule({
       ...opts,
+      grade: opts.grade || (opts.tasks && opts.tasks.length > 0 && opts.tasks.every((t) => t.grade === '+1') && opts.stream !== 'imp_only' ? '+1' : '+2'),
       examDate: opts.deadlineDateStr || opts.deadlineDate || opts.examDate,
       startDate: opts.startDateStr || opts.startDate || TODAY_STR,
       stream: opts.stream,
@@ -1672,6 +2136,10 @@ export function buildIntelligentPlan(
       includePlusOne: Boolean(opts.includePlusOne || opts.stream === 'imp_only'),
       plusOneSubjects: opts.plusOneSubjects || [],
       improvementDates: opts.improvementDates || {},
+      examCycle: opts.examCycle || null,
+      useOfficialTimetable: opts.useOfficialTimetable !== false,
+      alignToOfficialExamWindow: Boolean(opts.alignToOfficialExamWindow),
+      includeExamEveTasks: Boolean(opts.includeExamEveTasks),
       tasks: tasksToSchedule,
       capacityOptions: opts,
     });
@@ -1686,6 +2154,7 @@ export function buildIntelligentPlan(
   });
 
   return generateSchedule({
+    grade: capacityOptions.grade || (tasksToSchedule && tasksToSchedule.length > 0 && tasksToSchedule.every((t) => t.grade === '+1') && stream !== 'imp_only' ? '+1' : '+2'),
     examDate: targetDeadline,
     startDate: startDateStr,
     stream,
@@ -1698,6 +2167,10 @@ export function buildIntelligentPlan(
     subjectWeights: capacityOptions.personalization?.subjectWeights || capacityOptions.subjectWeights,
     weeklyRhythm: capacityOptions.personalization?.weeklyRhythm || capacityOptions.weeklyRhythm,
     restDayOfWeek: capacityOptions.personalization?.restDayOfWeek ?? capacityOptions.restDayOfWeek,
+    examCycle: capacityOptions.examCycle || null,
+    useOfficialTimetable: capacityOptions.useOfficialTimetable !== false,
+    alignToOfficialExamWindow: Boolean(capacityOptions.alignToOfficialExamWindow),
+    includeExamEveTasks: Boolean(capacityOptions.includeExamEveTasks),
     capacityOptions,
   });
 }
