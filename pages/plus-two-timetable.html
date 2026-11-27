@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <script id="canonical-domain-bridge">
     (function() {
         try {
@@ -44,9 +44,32 @@
     <meta property="og:logo" content="https://hss-planner.web.app/icon.png">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:image" content="https://hss-planner.web.app/og-image.png">
+
+    <!-- Immediate Theme Preload (Prevents FOUC) -->
+    <script id="theme-init">
+        (function() {
+            try {
+                var theme = localStorage.getItem('plustwo_theme') || 'system';
+                var isDark = theme === 'dark' || (theme === 'system' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+                if (isDark) {
+                    document.documentElement.classList.add('dark');
+                    document.documentElement.classList.remove('light');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    document.documentElement.classList.add('light');
+                }
+                var meta = document.querySelector('meta[name="theme-color"]');
+                if (meta) meta.setAttribute('content', isDark ? '#141513' : '#F6F3EC');
+            } catch(e) {}
+        })();
+    </script>
+
+    <!-- Google Fonts & Editorial Theme System -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles/editorial-theme.css">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
     <!-- Schema.org Structured Data -->
     <script type="application/ld+json">
@@ -84,153 +107,160 @@
         },
         "description": "Kerala Plus Two 30-day intensive study timetable generator calibrated to DHSE Scheme of Work with automatic daily subject rotation and revision buffers."
       },
-    {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      "mainEntity": [
-        {
-          "@type": "Question",
-          "name": "How to complete Kerala Plus Two syllabus in 30 days using a study timetable?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "To complete your Kerala Plus Two syllabus in 30 days, divide your 30-day study timetable into 3 key phases: Days 1–20 cover high-weightage chapters and core derivations in Physics, Chemistry, Maths/Bio; Days 21–25 clear backlogs and review formula sheets; and Days 26–30 run full-length model exam papers and active recall."
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How to complete Kerala Plus Two syllabus in 30 days using a study timetable?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "To complete your Kerala Plus Two syllabus in 30 days, divide your 30-day study timetable into 3 key phases: Days 1–20 cover high-weightage chapters and core derivations in Physics, Chemistry, Maths/Bio; Days 21–25 clear backlogs and review formula sheets; and Days 26–30 run full-length model exam papers and active recall."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How to create an effective Kerala Plus Two study timetable?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "An effective Plus Two timetable splits the 50-65 rationalized chapters across your remaining weeks, reserving 3.5-4 hours on school days and 6-7 hours on weekends. Crucially, reserve the final 7 to 14 days solely for mock papers and formula revision."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How many chapters are there in Kerala DHSE Plus Two Science?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The Kerala DHSE rationalized science curriculum contains 14 chapters in Physics, 10 chapters in Chemistry, 13 chapters in Mathematics, 16 chapters in Biology (8 Botany + 8 Zoology), and 11 chapters in Computer Science."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I use this timetable for Plus One (+1) as well?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes! HSS Planner provides full, dedicated scheduling for both Plus One (+1) and Plus Two (+2) students across Science, Commerce, and Humanities streams with automatic syllabus pacing."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How should Kerala Plus Two students balance practical exams with theory revision?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Kerala DHSE allocates 40 marks for practicals and Continuous Comprehensive Evaluation (CCE) in science streams. Complete fair record books by mid-January prior to model exams. Dedicate 45 minutes daily to practical circuit diagrams, salt analysis tables, and viva voce questions while preserving 3 to 3.5 hours for theory. Thorough lab viva preparation directly reinforces core theory chapters."
+            }
           }
-        },
-        {
-          "@type": "Question",
-          "name": "How to create an effective Kerala Plus Two study timetable?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "An effective Plus Two timetable splits the 50-65 rationalized chapters across your remaining weeks, reserving 3.5-4 hours on school days and 6-7 hours on weekends. Crucially, reserve the final 7 to 14 days solely for mock papers and formula revision."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "How many chapters are there in Kerala DHSE Plus Two Science?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "The Kerala DHSE rationalized science curriculum contains 14 chapters in Physics, 10 chapters in Chemistry, 13 chapters in Mathematics, 16 chapters in Biology (8 Botany + 8 Zoology), and 11 chapters in Computer Science."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Can I use this timetable for Plus One (+1) as well?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Yes! HSS Planner provides full, dedicated scheduling for both Plus One (+1) and Plus Two (+2) students across Science, Commerce, and Humanities streams with automatic syllabus pacing."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "How should Kerala Plus Two students balance practical exams with theory revision?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Kerala DHSE allocates 40 marks for practicals and Continuous Comprehensive Evaluation (CCE) in science streams. Complete fair record books by mid-January prior to model exams. Dedicate 45 minutes daily to practical circuit diagrams, salt analysis tables, and viva voce questions while preserving 3 to 3.5 hours for theory. Thorough lab viva preparation directly reinforces core theory chapters."
-          }
-        }
-      ]
-    }
+        ]
+      }
     ]
     </script>
     <style>
         html, body { overflow-x: clip; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { font-family: var(--ed-font-body); background-color: var(--ed-ground); color: var(--ed-ink); }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
-    <!-- Header -->
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
+<body class="ed-body min-h-screen flex flex-col">
+    <!-- Editorial Sticky Top Bar -->
+    <header class="ed-header">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-            <a href="/" class="flex items-center gap-3">
-                <img src="/icon.png" alt="HSS Planner Logo" class="w-10 h-10 rounded-xl shadow-md shadow-blue-500/20 object-contain">
+            <a href="/" class="flex items-center gap-3 group">
+                <img src="/icon.png" alt="HSS Planner Logo" class="w-10 h-10 rounded-xl border border-[var(--ed-rule)] object-contain transition-transform group-hover:scale-105">
                 <div>
-                    <span class="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight leading-none block">HSS <span class="text-blue-600">Planner</span></span>
-                    <p class="text-xs font-medium text-slate-400 mt-0.5">Kerala DHSE Study Timetable Generator</p>
+                    <span class="text-base sm:text-lg font-bold tracking-tight leading-none block ed-title">HSS <span style="color: var(--ed-emerald);">Planner</span></span>
+                    <p class="text-[11px] font-medium ed-muted mt-0.5 font-mono">Kerala DHSE Study Ledger</p>
                 </div>
             </a>
-            <a href="/?days=30" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition-colors duration-150 shadow-sm flex items-center gap-2 active:scale-95 transition-transform">
-                <i class="fa-solid fa-bolt text-amber-300"></i>
-                <span>Build 30-Day Plan</span>
-            </a>
+            <div class="flex items-center gap-2">
+                <a href="/pages/study-hours-calculator" class="hidden sm:inline-flex ed-btn-secondary text-xs">
+                    Hours Calculator
+                </a>
+                <a href="/?days=30" class="ed-btn-primary text-xs">
+                    <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                    <span>Build 30-Day Plan</span>
+                </a>
+            </div>
         </div>
     </header>
 
     <!-- Main Content -->
-    <main class="max-w-4xl mx-auto px-4 sm:px-6 py-10 flex-1">
+    <main class="max-w-4xl mx-auto px-4 sm:px-6 py-10 flex-1 w-full">
         <div class="mb-10 text-center max-w-2xl mx-auto">
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200 mb-3">
-                <i class="fa-solid fa-clock"></i> Kerala DHSE Study Timetable Guide (+1 & +2)
+            <span class="ed-badge ed-badge-emerald mb-3">
+                <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <span>DHSE Study Timetable Guide (+1 & +2)</span>
             </span>
-            <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">
+            <h1 class="text-3xl sm:text-4xl font-semibold tracking-tight leading-tight ed-title">
                 Kerala Higher Secondary Study Timetable: 30 Days Crash Plan & Daily Pacing
             </h1>
-            <p class="mt-3 text-slate-600 text-sm sm:text-base leading-relaxed">
-                A scientific, stress-free methodology to cover your entire rationalized syllabus, complete chapter-wise PYQs, and reserve guaranteed mock exam buffers in 30 days or less for <strong class="text-slate-900">Plus One (+1)</strong> and <strong class="text-slate-900">Plus Two (+2)</strong> across Science, Commerce, and Humanities.
+            <p class="mt-3 ed-subtext text-sm sm:text-base leading-relaxed">
+                A scientific, stress-free methodology to cover your entire rationalized syllabus, complete chapter-wise PYQs, and reserve guaranteed mock exam buffers in 30 days or less for <strong style="color: var(--ed-ink);">Plus One (+1)</strong> and <strong style="color: var(--ed-ink);">Plus Two (+2)</strong> across Science, Commerce, and Humanities.
             </p>
             <div class="mt-6 flex flex-wrap justify-center gap-3">
-                <a href="/?grade=%2B2&days=30" class="px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-blue-500/25 transition-colors duration-150 flex items-center gap-2 active:scale-95 transition-transform">
-                    <i class="fa-solid fa-bolt text-amber-300"></i>
+                <a href="/?grade=%2B2&days=30" class="ed-btn-primary text-sm">
+                    <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
                     <span>Generate +2 30-Day Plan</span>
                 </a>
-                <a href="/?grade=%2B1&days=30" class="px-5 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-emerald-500/25 transition-colors duration-150 flex items-center gap-2 active:scale-95 transition-transform">
-                    <i class="fa-solid fa-bolt text-emerald-200"></i>
+                <a href="/?grade=%2B1&days=30" class="ed-btn-secondary text-sm">
+                    <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
                     <span>Generate +1 30-Day Plan</span>
                 </a>
-                <a href="/pages/study-hours-calculator" class="px-5 py-3 bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 font-bold text-sm rounded-xl transition-colors duration-150 flex items-center gap-2">
-                    <i class="fa-solid fa-calculator text-blue-600"></i>
+                <a href="/pages/study-hours-calculator" class="ed-btn-secondary text-sm">
+                    <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16" y1="14" y2="18"/><path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 10h.01"/><path d="M12 14h.01"/><path d="M8 14h.01"/><path d="M12 18h.01"/><path d="M8 18h.01"/></svg>
                     <span>Hours Calculator</span>
                 </a>
             </div>
         </div>
 
         <!-- Timetable Architecture Matrix -->
-        <div class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm mb-10">
-            <h3 class="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
-                <i class="fa-solid fa-chart-pie text-blue-600"></i> Recommended Daily Time Allocation
-            </h3>
+        <div class="ed-card p-6 sm:p-8 mb-10">
+            <h2 class="text-xl font-bold ed-title mb-4 flex items-center gap-2">
+                <svg class="w-5 h-5 shrink-0" style="color: var(--ed-emerald);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 10 10h-10z"/></svg>
+                <span>Recommended Daily Time Allocation</span>
+            </h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="p-5 rounded-xl bg-slate-50 border border-slate-200">
-                    <div class="flex items-center justify-between mb-2">
-                        <h4 class="font-bold text-slate-900 text-sm">School Day Timetable</h4>
-                        <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800">3.5 – 4.5 Hours</span>
+                <div class="ed-card-inset p-5">
+                    <div class="flex items-center justify-between mb-3 pb-2 border-b border-[var(--ed-rule)]">
+                        <h3 class="font-bold text-sm ed-title">School Day Timetable</h3>
+                        <span class="ed-badge ed-badge-emerald font-mono">3.5 – 4.5 Hours</span>
                     </div>
-                    <ul class="text-xs text-slate-600 space-y-2 mt-3">
-                        <li class="flex items-start gap-2">
-                            <i class="fa-solid fa-sun text-amber-500 mt-0.5"></i>
-                            <span><strong>06:30 AM – 07:30 AM:</strong> Morning Session: Hardest derivations and core theory.</span>
+                    <ul class="text-xs ed-subtext space-y-2.5 mt-2">
+                        <li class="flex items-start gap-2.5">
+                            <svg class="w-4 h-4 shrink-0 mt-0.5" style="color: var(--ed-ochre);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/></svg>
+                            <span><strong class="font-mono text-[11px] text-[var(--ed-ink)]">06:30 – 07:30 AM:</strong> Morning Session: Hardest derivations and core theory.</span>
                         </li>
-                        <li class="flex items-start gap-2">
-                            <i class="fa-solid fa-school text-blue-500 mt-0.5"></i>
-                            <span><strong>08:30 AM – 04:30 PM:</strong> School hours & practical lab sessions.</span>
+                        <li class="flex items-start gap-2.5">
+                            <svg class="w-4 h-4 shrink-0 mt-0.5" style="color: var(--ed-indigo);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m4 6 8-4 8 4"/><path d="m18 10 4 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-8l4-2"/><path d="M14 22v-4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v4"/><path d="M18 5v17"/><path d="M6 5v17"/></svg>
+                            <span><strong class="font-mono text-[11px] text-[var(--ed-ink)]">08:30 AM – 04:30 PM:</strong> School hours & practical lab sessions.</span>
                         </li>
-                        <li class="flex items-start gap-2">
-                            <i class="fa-solid fa-pen-ruler text-indigo-500 mt-0.5"></i>
-                            <span><strong>05:30 PM – 07:30 PM:</strong> Evening Session: Numericals, reactions, and code practice.</span>
+                        <li class="flex items-start gap-2.5">
+                            <svg class="w-4 h-4 shrink-0 mt-0.5" style="color: var(--ed-emerald);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                            <span><strong class="font-mono text-[11px] text-[var(--ed-ink)]">05:30 – 07:30 PM:</strong> Evening Session: Numericals, reactions, and code practice.</span>
                         </li>
-                        <li class="flex items-start gap-2">
-                            <i class="fa-solid fa-moon text-purple-500 mt-0.5"></i>
-                            <span><strong>08:30 PM – 09:30 PM:</strong> Night Session: Review formulas and check off daily targets in HSS Planner.</span>
+                        <li class="flex items-start gap-2.5">
+                            <svg class="w-4 h-4 shrink-0 mt-0.5" style="color: var(--ed-vermilion);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+                            <span><strong class="font-mono text-[11px] text-[var(--ed-ink)]">08:30 – 09:30 PM:</strong> Night Session: Review formulas and check off daily targets in HSS Planner.</span>
                         </li>
                     </ul>
                 </div>
 
-                <div class="p-5 rounded-xl bg-slate-50 border border-slate-200">
-                    <div class="flex items-center justify-between mb-2">
-                        <h4 class="font-bold text-slate-900 text-sm">Weekend / Holiday Timetable</h4>
-                        <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800">6.0 – 7.0 Hours</span>
+                <div class="ed-card-inset p-5">
+                    <div class="flex items-center justify-between mb-3 pb-2 border-b border-[var(--ed-rule)]">
+                        <h3 class="font-bold text-sm ed-title">Weekend / Holiday Timetable</h3>
+                        <span class="ed-badge ed-badge-ochre font-mono">6.0 – 7.0 Hours</span>
                     </div>
-                    <ul class="text-xs text-slate-600 space-y-2 mt-3">
-                        <li class="flex items-start gap-2">
-                            <i class="fa-solid fa-bolt text-emerald-500 mt-0.5"></i>
-                            <span><strong>Morning Session (07:00 – 10:00 AM):</strong> 2x 75-minute heavy problem-solving blocks.</span>
+                    <ul class="text-xs ed-subtext space-y-2.5 mt-2">
+                        <li class="flex items-start gap-2.5">
+                            <svg class="w-4 h-4 shrink-0 mt-0.5" style="color: var(--ed-emerald);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                            <span><strong class="font-mono text-[11px] text-[var(--ed-ink)]">Morning (07:00 – 10:00 AM):</strong> 2x 75-minute heavy problem-solving blocks.</span>
                         </li>
-                        <li class="flex items-start gap-2">
-                            <i class="fa-solid fa-book-open text-teal-500 mt-0.5"></i>
-                            <span><strong>Afternoon Session (02:00 – 04:30 PM):</strong> Biology diagrams / Computer Science theory.</span>
+                        <li class="flex items-start gap-2.5">
+                            <svg class="w-4 h-4 shrink-0 mt-0.5" style="color: var(--ed-indigo);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10"/><path d="M6 10h10"/></svg>
+                            <span><strong class="font-mono text-[11px] text-[var(--ed-ink)]">Afternoon (02:00 – 04:30 PM):</strong> Biology diagrams / Computer Science theory.</span>
                         </li>
-                        <li class="flex items-start gap-2">
-                            <i class="fa-solid fa-file-signature text-purple-500 mt-0.5"></i>
-                            <span><strong>Evening Session (06:30 – 08:30 PM):</strong> Previous Year Questions (PYQs) timed practice.</span>
+                        <li class="flex items-start gap-2.5">
+                            <svg class="w-4 h-4 shrink-0 mt-0.5" style="color: var(--ed-ochre);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/></svg>
+                            <span><strong class="font-mono text-[11px] text-[var(--ed-ink)]">Evening (06:30 – 08:30 PM):</strong> Previous Year Questions (PYQs) timed practice.</span>
                         </li>
                     </ul>
                 </div>
@@ -238,122 +268,124 @@
         </div>
 
         <!-- Subject Chapters Breakdown -->
-        <div class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm mb-10">
-            <h3 class="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
-                <i class="fa-solid fa-list-check text-indigo-600"></i> Kerala DHSE Syllabus Chapters to Schedule
-            </h3>
+        <div class="ed-card p-6 sm:p-8 mb-10">
+            <h2 class="text-xl font-bold ed-title mb-4 flex items-center gap-2">
+                <svg class="w-5 h-5 shrink-0" style="color: var(--ed-indigo);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect width="8" height="4" x="8" y="2" rx="1"/><path d="m9 14 2 2 4-4"/></svg>
+                <span>Kerala DHSE Syllabus Chapters to Schedule</span>
+            </h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div class="p-4 rounded-xl border border-slate-200 bg-slate-50">
-                    <div class="font-bold text-slate-900 text-sm flex items-center justify-between">
-                        <span>Physics</span>
-                        <span class="text-xs text-blue-600 font-mono font-semibold">14 Chapters</span>
+                <div class="ed-card-inset p-4">
+                    <div class="font-bold text-sm flex items-center justify-between">
+                        <span class="ed-title">Physics</span>
+                        <span class="ed-badge ed-badge-indigo font-mono">14 Chapters</span>
                     </div>
-                    <p class="text-xs text-slate-500 mt-1">Electrostatics, Optics, Magnetism, Modern Physics, Semiconductors.</p>
+                    <p class="text-xs ed-subtext mt-1.5 leading-relaxed">Electrostatics, Optics, Magnetism, Modern Physics, Semiconductors.</p>
                 </div>
-                <div class="p-4 rounded-xl border border-slate-200 bg-slate-50">
-                    <div class="font-bold text-slate-900 text-sm flex items-center justify-between">
-                        <span>Chemistry</span>
-                        <span class="text-xs text-blue-600 font-mono font-semibold">10 Chapters</span>
+                <div class="ed-card-inset p-4">
+                    <div class="font-bold text-sm flex items-center justify-between">
+                        <span class="ed-title">Chemistry</span>
+                        <span class="ed-badge ed-badge-emerald font-mono">10 Chapters</span>
                     </div>
-                    <p class="text-xs text-slate-500 mt-1">Solutions, Electrochemistry, Kinetics, d&f Block, Organic series.</p>
+                    <p class="text-xs ed-subtext mt-1.5 leading-relaxed">Solutions, Electrochemistry, Kinetics, d&f Block, Organic series.</p>
                 </div>
-                <div class="p-4 rounded-xl border border-slate-200 bg-slate-50">
-                    <div class="font-bold text-slate-900 text-sm flex items-center justify-between">
-                        <span>Mathematics</span>
-                        <span class="text-xs text-blue-600 font-mono font-semibold">13 Chapters</span>
+                <div class="ed-card-inset p-4">
+                    <div class="font-bold text-sm flex items-center justify-between">
+                        <span class="ed-title">Mathematics</span>
+                        <span class="ed-badge ed-badge-ochre font-mono">13 Chapters</span>
                     </div>
-                    <p class="text-xs text-slate-500 mt-1">Calculus (Diff & Int), Vectors, 3D Geometry, Probability, Matrices.</p>
+                    <p class="text-xs ed-subtext mt-1.5 leading-relaxed">Calculus (Diff & Int), Vectors, 3D Geometry, Probability, Matrices.</p>
                 </div>
-                <div class="p-4 rounded-xl border border-slate-200 bg-slate-50">
-                    <div class="font-bold text-slate-900 text-sm flex items-center justify-between">
-                        <span>Biology (Botany + Zoo)</span>
-                        <span class="text-xs text-blue-600 font-mono font-semibold">16 Chapters</span>
+                <div class="ed-card-inset p-4">
+                    <div class="font-bold text-sm flex items-center justify-between">
+                        <span class="ed-title">Biology (Botany + Zoo)</span>
+                        <span class="ed-badge ed-badge-emerald font-mono">16 Chapters</span>
                     </div>
-                    <p class="text-xs text-slate-500 mt-1">Genetics, Reproduction, Biotechnology, Evolution, Human Health.</p>
+                    <p class="text-xs ed-subtext mt-1.5 leading-relaxed">Genetics, Reproduction, Biotechnology, Evolution, Human Health.</p>
                 </div>
-                <div class="p-4 rounded-xl border border-slate-200 bg-slate-50">
-                    <div class="font-bold text-slate-900 text-sm flex items-center justify-between">
-                        <span>Computer Science</span>
-                        <span class="text-xs text-blue-600 font-mono font-semibold">11 Chapters</span>
+                <div class="ed-card-inset p-4">
+                    <div class="font-bold text-sm flex items-center justify-between">
+                        <span class="ed-title">Computer Science</span>
+                        <span class="ed-badge ed-badge-indigo font-mono">11 Chapters</span>
                     </div>
-                    <p class="text-xs text-slate-500 mt-1">C++, Data Structures, Web Technology, SQL, Networking.</p>
+                    <p class="text-xs ed-subtext mt-1.5 leading-relaxed">C++, Data Structures, Web Technology, SQL, Networking.</p>
                 </div>
-                <div class="p-4 rounded-xl border border-dashed border-blue-300 bg-blue-50/50 flex flex-col justify-center items-center text-center">
-                    <span class="text-xs font-bold text-blue-700">Need dynamic pacing?</span>
-                    <a href="/" class="text-xs text-blue-600 font-semibold underline mt-1">Open Auto Planner &rarr;</a>
+                <div class="ed-card-inset p-4 border-dashed border-[var(--ed-emerald)] flex flex-col justify-center items-center text-center">
+                    <span class="text-xs font-bold" style="color: var(--ed-emerald);">Need dynamic pacing?</span>
+                    <a href="/" class="text-xs font-semibold underline mt-1" style="color: var(--ed-emerald);">Open Auto Planner &rarr;</a>
                 </div>
             </div>
         </div>
 
-        <!-- Practical Exam Revision Strategy (Issue #3) -->
-        <div class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm mb-10">
+        <!-- Practical Exam Revision Strategy -->
+        <div class="ed-card p-6 sm:p-8 mb-10">
             <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
-                <h3 class="text-xl font-bold text-slate-900 flex items-center gap-2">
-                    <i class="fa-solid fa-flask-vial text-emerald-600"></i> Kerala DHSE Practical Exam & Lab Strategy (Jan–Feb)
-                </h3>
-                <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                <h2 class="text-xl font-bold ed-title flex items-center gap-2">
+                    <svg class="w-5 h-5 shrink-0" style="color: var(--ed-emerald);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/></svg>
+                    <span>Kerala DHSE Practical Exam & Lab Strategy (Jan–Feb)</span>
+                </h2>
+                <span class="ed-badge ed-badge-emerald font-mono">
                     40 Marks / Subject
                 </span>
             </div>
-            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed mb-6">
-                In Kerala DHSE Class 12 Science and Vocational streams, practical evaluations carry up to <strong>40 marks</strong> (Continuous Evaluation + External Practical Exam). Many students make the mistake of pausing all theory revision in January to work on records, or ignoring practical prep until the day before the lab exam. Here is the recommended balanced protocol:
+            <p class="text-xs sm:text-sm ed-subtext leading-relaxed mb-6">
+                In Kerala DHSE Class 12 Science and Vocational streams, practical evaluations carry up to <strong class="text-[var(--ed-ink)]">40 marks</strong> (Continuous Evaluation + External Practical Exam). Many students make the mistake of pausing all theory revision in January to work on records, or ignoring practical prep until the day before the lab exam. Here is the recommended balanced protocol:
             </p>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
-                    <div class="flex items-center gap-2 text-slate-900 font-bold text-sm mb-2">
-                        <i class="fa-solid fa-book-bookmark text-blue-600"></i>
+                <div class="ed-card-inset p-4">
+                    <div class="flex items-center gap-2 text-sm font-bold mb-2 ed-title">
+                        <svg class="w-4 h-4 shrink-0" style="color: var(--ed-indigo);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10"/><path d="M6 10h10"/></svg>
                         <span>1. Fair Record Deadline</span>
                     </div>
-                    <p class="text-xs text-slate-600 leading-relaxed">
-                        Complete all rough-to-fair record book writing, circuit diagrams, and specimen sketches by <strong>January 15</strong>. Finishing early prevents midnight cramming when DHSE model theory exams begin.
+                    <p class="text-xs ed-subtext leading-relaxed">
+                        Complete all rough-to-fair record book writing, circuit diagrams, and specimen sketches by <strong class="text-[var(--ed-ink)]">January 15</strong>. Finishing early prevents midnight cramming when DHSE model theory exams begin.
                     </p>
                 </div>
-                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
-                    <div class="flex items-center gap-2 text-slate-900 font-bold text-sm mb-2">
-                        <i class="fa-solid fa-comments text-indigo-600"></i>
+                <div class="ed-card-inset p-4">
+                    <div class="flex items-center gap-2 text-sm font-bold mb-2 ed-title">
+                        <svg class="w-4 h-4 shrink-0" style="color: var(--ed-ochre);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                         <span>2. High-Yield Lab Viva Prep</span>
                     </div>
-                    <p class="text-xs text-slate-600 leading-relaxed">
+                    <p class="text-xs ed-subtext leading-relaxed">
                         External examiners ask principles behind experiments. Master Ohm's law, meter bridge balance, Salt analysis group reagents, titration calculations, and Python program logic. Viva prep directly aids theory marks.
                     </p>
                 </div>
-                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
-                    <div class="flex items-center gap-2 text-slate-900 font-bold text-sm mb-2">
-                        <i class="fa-solid fa-stopwatch text-emerald-600"></i>
+                <div class="ed-card-inset p-4">
+                    <div class="flex items-center gap-2 text-sm font-bold mb-2 ed-title">
+                        <svg class="w-4 h-4 shrink-0" style="color: var(--ed-emerald);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                         <span>3. 45-Min Daily Timebox</span>
                     </div>
-                    <p class="text-xs text-slate-600 leading-relaxed">
-                        Cap practical record work at <strong>45 minutes per evening</strong>. Keep your core 3-hour study block strictly dedicated to theory problem solving and chapter completions.
+                    <p class="text-xs ed-subtext leading-relaxed">
+                        Cap practical record work at <strong class="text-[var(--ed-ink)]">45 minutes per evening</strong>. Keep your core 3-hour study block strictly dedicated to theory problem solving and chapter completions.
                     </p>
                 </div>
             </div>
         </div>
 
         <!-- CTA Banner -->
-        <div class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl p-6 sm:p-8 text-white text-center shadow-lg shadow-blue-500/20">
-            <h3 class="text-2xl font-extrabold tracking-tight">Stop using static PDF timetables that break when you miss a day.</h3>
-            <p class="mt-2 text-blue-100 text-sm max-w-xl mx-auto">
+        <div class="ed-card-raised p-6 sm:p-8 text-center border-2 border-[var(--ed-rule-strong)]">
+            <h3 class="text-2xl font-semibold tracking-tight ed-title">Stop using static PDF timetables that break when you miss a day.</h3>
+            <p class="mt-2 ed-subtext text-sm max-w-xl mx-auto">
                 HSS Planner dynamically re-balances your schedule, preserves mock revision buffers, and works 100% offline on any phone.
             </p>
             <div class="mt-5">
-                <a href="/" class="inline-flex items-center gap-2 px-6 py-3 bg-white text-blue-700 font-extrabold text-sm rounded-xl hover:bg-blue-50 transition-colors duration-150 shadow-md">
+                <a href="/" class="ed-btn-primary text-sm inline-flex">
                     <span>Generate Free Study Timetable</span>
-                    <i class="fa-solid fa-arrow-right"></i>
+                    <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                 </a>
             </div>
         </div>
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-white border-t border-slate-200 py-6 mt-12">
-        <div class="max-w-5xl mx-auto px-4 text-center text-xs text-slate-500">
-            <p>HSS Planner is a free, privacy-first open-source initiative for Kerala DHSE students.</p>
-            <div class="flex justify-center gap-4 mt-2 font-medium">
-                <a href="/" class="hover:text-blue-600">Home</a>
-                <a href="/pages/study-hours-calculator" class="hover:text-blue-600">Study Calculator</a>
-                <a href="/pages/backlog-recovery-planner" class="hover:text-blue-600">Backlog Recovery</a>
-                <a href="/pages/syllabus-plus-two" class="hover:text-blue-600">Syllabus Breakdown</a>
-                <a href="/pages/privacy" class="hover:text-blue-600">Privacy</a>
+    <!-- Editorial Footer -->
+    <footer class="ed-footer mt-12">
+        <div class="max-w-5xl mx-auto px-4 text-center">
+            <p class="ed-muted">HSS Planner is a free, privacy-first open-source initiative for Kerala DHSE students.</p>
+            <div class="flex justify-center flex-wrap gap-4 mt-2 font-medium">
+                <a href="/">Home</a>
+                <a href="/pages/study-hours-calculator">Study Calculator</a>
+                <a href="/pages/backlog-recovery-planner">Backlog Recovery</a>
+                <a href="/pages/syllabus-plus-two">Syllabus Breakdown</a>
+                <a href="/pages/privacy">Privacy</a>
             </div>
         </div>
     </footer>

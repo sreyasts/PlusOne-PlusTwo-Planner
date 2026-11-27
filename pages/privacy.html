@@ -32,8 +32,32 @@
     <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="shortcut icon" href="/favicon.ico">
+    <meta name="theme-color" content="#F6F3EC">
     <meta property="og:image" content="https://hss-planner.web.app/og-image.png">
     <meta property="og:logo" content="https://hss-planner.web.app/icon.png">
+
+    <!-- Theme Preload Script -->
+    <script id="theme-init">
+    (function() {
+        try {
+            var theme = localStorage.getItem('plustwo_theme') || 'system';
+            var isDark = theme === 'dark' || (theme === 'system' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+            var meta = document.querySelector('meta[name="theme-color"]');
+            if (meta) meta.setAttribute('content', isDark ? '#141513' : '#F6F3EC');
+        } catch(e) {}
+    })();
+    </script>
+
+    <!-- Google Fonts & Editorial Theme -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles/editorial-theme.css">
 
     <!-- Schema.org BreadcrumbList -->
     <script type="application/ld+json">
@@ -58,136 +82,182 @@
       }
     ]
     </script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+
     <style>
+        * { box-sizing: border-box; }
         body {
-            font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
-            background-color: #f8fafc;
-            color: #0f172a;
+            font-family: var(--ed-font-body);
+            background-color: var(--ed-ground);
+            color: var(--ed-ink);
             line-height: 1.65;
-            padding: 24px 16px;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            -webkit-font-smoothing: antialiased;
         }
         .container {
-            max-width: 760px;
+            max-width: 780px;
             margin: 0 auto;
-            background: #ffffff;
-            border-radius: 24px;
-            border: 1px solid #e2e8f0;
-            padding: 32px 24px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+            padding: 24px 16px;
+            width: 100%;
+            flex-grow: 1;
         }
-        h1 { font-size: 26px; font-weight: 800; margin-bottom: 8px; color: #0f172a; }
-        h2 { font-size: 18px; font-weight: 700; margin-top: 24px; margin-bottom: 8px; color: #1e293b; border-bottom: 1px solid #f1f5f9; padding-bottom: 6px; }
-        p, li { font-size: 14px; color: #334155; margin-bottom: 12px; }
-        ul { padding-left: 20px; }
-        .highlight-box {
-            background-color: #eff6ff;
-            border: 1px solid #bfdbfe;
-            border-radius: 16px;
-            padding: 16px;
-            margin: 18px 0;
-            font-size: 13px;
-            color: #1e40af;
+        @media (min-width: 640px) {
+            .container { padding: 36px 20px; }
+            .header-nav-link { display: inline-flex !important; }
+        }
+        .prose-section h2 {
+            font-family: var(--ed-font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-top: 28px;
+            margin-bottom: 10px;
+            color: var(--ed-ink);
+            border-bottom: 1px solid var(--ed-rule);
+            padding-bottom: 6px;
+        }
+        .prose-section p, .prose-section li {
+            font-size: 0.875rem;
+            color: var(--ed-ink-secondary);
+            margin-bottom: 12px;
+            line-height: 1.65;
+        }
+        .prose-section ul {
+            padding-left: 20px;
+            margin-bottom: 16px;
         }
         .warning-box {
-            background-color: #fef2f2;
-            border: 1px solid #fecaca;
-            border-radius: 16px;
+            background-color: var(--ed-vermilion-tint);
+            border: 1px solid var(--ed-vermilion-border);
+            border-radius: var(--ed-radius-md);
             padding: 14px 18px;
             margin: 18px 0;
-            font-size: 13px;
-            color: #991b1b;
+            font-size: 0.8125rem;
+            color: var(--ed-vermilion);
+            line-height: 1.5;
         }
-        .back-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            color: #2563eb;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 13px;
-            margin-bottom: 20px;
+        .summary-box {
+            background-color: var(--ed-sheet);
+            border: 1px solid var(--ed-rule);
+            border-left: 4px solid var(--ed-emerald);
+            border-radius: 0 var(--ed-radius-md) var(--ed-radius-md) 0;
+            padding: 16px 18px;
+            margin: 18px 0;
+            font-size: 0.8125rem;
+            color: var(--ed-ink);
+            line-height: 1.6;
+        }
+        code {
+            font-family: var(--ed-font-mono);
+            background: var(--ed-inset);
+            padding: 2px 5px;
+            border-radius: var(--ed-radius-sm);
+            font-size: 0.8em;
+            color: var(--ed-ink);
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <a href="/" class="back-link">← Back to HSS Planner Study Planner</a>
-        
-        <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
-            <img src="/icon.png" alt="HSS Planner Logo" style="width:40px; height:40px; border-radius:10px; box-shadow:0 4px 12px rgba(37,99,235,0.2);">
-            <span style="font-weight:800; font-size:20px; color:#0f172a;">HSS <span class="text-blue-600">Planner</span></span>
+<body class="ed-body">
+    <!-- Header -->
+    <header class="ed-header">
+        <div style="max-width:780px; margin:0 auto; padding:0 16px; height:64px; display:flex; align-items:center; justify-content:space-between;">
+            <a href="/" style="display:flex; align-items:center; gap:10px; text-decoration:none; color:inherit;">
+                <img src="/icon.png" alt="HSS Planner Logo" width="36" height="36" style="width:36px; height:36px; border-radius:10px; border:1px solid var(--ed-rule); object-fit:contain;">
+                <div>
+                    <span style="font-family:var(--ed-font-display); font-size:1.15rem; font-weight:700; line-height:1.1; display:block; color:var(--ed-ink);">HSS <span style="color:var(--ed-emerald);">Planner</span></span>
+                    <span style="font-family:var(--ed-font-mono); font-size:10px; font-weight:600; letter-spacing:0.04em; color:var(--ed-ink-muted); display:block; text-transform:uppercase;">Kerala Higher Secondary</span>
+                </div>
+            </a>
+            <a href="/" class="ed-btn-secondary touch-target-44" style="text-decoration:none; font-size:0.8rem;">
+                ← Back to HSS Planner Study Planner
+            </a>
         </div>
+    </header>
 
-        <h1>Privacy Policy</h1>
-        <p><strong>Effective Date:</strong> September 21, 2026</p>
-        <p><strong>Applicability:</strong> HSS Planner (web application for Kerala Higher Secondary Class 11 and 12 students)</p>
+    <!-- Main -->
+    <main class="container">
+        <div class="ed-card prose-section">
+            <span class="ed-kicker" style="margin-bottom:8px;">LEGAL TRANSPARENCY & DATA PRIVACY</span>
+            <h1 class="ed-title" style="font-size:2rem; margin:6px 0 10px;">Privacy Policy</h1>
+            <p style="font-size:0.85rem; color:var(--ed-ink-muted); margin-bottom:4px;"><strong>Effective Date:</strong> September 21, 2026</p>
+            <p style="font-size:0.85rem; color:var(--ed-ink-muted); margin-bottom:16px;"><strong>Applicability:</strong> HSS Planner (web application for Kerala Higher Secondary Class 11 and 12 students)</p>
 
-        <div class="warning-box">
-            <strong>⚠️ Legal Review Notice:</strong> This privacy policy is provided for informational transparency for an open-source educational project. It has not been formally evaluated or certified by licensed legal counsel and requires formal legal review to ensure full regulatory and jurisdictional compliance.
+            <div class="warning-box">
+                <strong>⚠️ Legal Review Notice:</strong> This privacy policy is provided for informational transparency for an open-source educational project. It has not been formally evaluated or certified by licensed legal counsel and requires formal legal review to ensure full regulatory and jurisdictional compliance.
+            </div>
+
+            <div class="summary-box">
+                <strong style="color:var(--ed-emerald); display:block; margin-bottom:4px;">Key Summary for Students & Parents:</strong>
+                • HSS Planner is completely free and open-source.<br>
+                • You can use 100% of the planner without signing in (all study data stays solely on your phone or computer).<br>
+                • If you choose to sign in with Google, we store your study checklist and your Google display name/email solely to sync progress across your devices.<br>
+                • We do NOT run commercial ads, sell student data, or track your behavior across third-party websites.
+            </div>
+
+            <h2>1. Who We Are</h2>
+            <p>HSS Planner is an open-source, non-profit community project built for Kerala Higher Secondary (+1 and +2) students preparing for the Directorate of General Education (DHSE) exams.</p>
+
+            <h2>2. Data We Collect and Why</h2>
+            <p>We practice strict data minimization:</p>
+            <ul>
+                <li><strong>Guest Mode (Default):</strong> When you use HSS Planner without signing in, your syllabus selections, completed chapters, and study timetable are stored entirely in your device's browser <code>localStorage</code>. No personal study information is transmitted to our servers.</li>
+                <li><strong>Google Sign-In (Optional Cloud Sync):</strong> If you tap "Connect Google Account" to sync your checklist between your smartphone and computer, we receive and store:
+                    <ul>
+                        <li>Your Google Display Name (to display your name in the navigation bar).</li>
+                        <li>Your Google Email Address (to identify your study plan document in Cloud Firestore).</li>
+                        <li>Your Study Plan JSON data (target exam date, completed chapter IDs, subject priorities).</li>
+                    </ul>
+                </li>
+                <li><strong>Pseudonymous Analytics (Google Analytics via Firebase):</strong> We use Google Analytics (measurement ID <code>G-12KPP3ZZ80</code>) configured for pseudonymous usage metrics.
+                    <ul>
+                        <li>Google Signals and Ad Personalization features are permanently disabled (<code>allow_google_signals: false</code>, <code>allow_ad_personalization_signals: false</code>).</li>
+                        <li>No direct Personally Identifiable Information (PII) such as student names, phone numbers, or email addresses are attached to analytics events.</li>
+                        <li><strong>Cookies and Pseudonymous Identifiers:</strong> Google Analytics operates using browser cookies and storage identifiers:
+                            <ul>
+                                <li><code>_ga</code>: A first-party cookie used to distinguish unique browsers or devices, containing a pseudonymous client identifier. Stored for up to 2 years.</li>
+                                <li><code>_ga_12KPP3ZZ80</code>: A session cookie used to maintain session state across page reloads. Stored for up to 2 years.</li>
+                                <li>A pseudonymous Client ID generated on device by Google Analytics to aggregate related user flows.</li>
+                            </ul>
+                        </li>
+                        <li>Only aggregated lifecycle milestone events are recorded: <code>opened</code>, <code>setup_started</code>, <code>plan_created</code>, <code>first_task_checked</code>, and <code>returned_day3</code> to evaluate app stability and user retention.</li>
+                        <li>The analytics SDK is loaded lazily on demand to optimize performance.</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h2>3. Student Data Protection Principles & Minor Notice</h2>
+            <p>Many Plus One and Plus Two students in Kerala are minors (between 15 and 18 years old). We design our application with student privacy in mind:</p>
+            <ul>
+                <li>We do NOT track or profile children's browsing behavior across third-party websites.</li>
+                <li>We do NOT serve targeted advertisements, sponsored commercial content, or sell user records.</li>
+                <li>We do NOT process data detrimental to a student's physical or mental well-being.</li>
+                <li><strong>Parental Consent Gate (DPDP Act 2023):</strong> In accordance with Section 9 of India's Digital Personal Data Protection Act 2023, students under 18 must confirm affirmative parental or guardian consent before linking a Google account for cloud synchronization. An explicit confirmation gate is presented prior to OAuth authentication. Offline Guest Mode remains accessible at all times with zero personal information collected.</li>
+                <li>Students or parents may delete their cloud account and all study data at any time directly through the "Reset Plan" button in Settings, which permanently deletes the Firestore cloud document.</li>
+            </ul>
+
+            <h2>4. Data Storage & Security</h2>
+            <p>Cloud data is hosted securely using Google Cloud Firebase (Firestore) in compliant data center regions. Access is governed by strict security rules ensuring that only your authenticated Google account can read or write your study document.</p>
+
+            <h2>5. Your Rights</h2>
+            <p>You have the right to inspect, export, or delete your study data at any time:</p>
+            <ul>
+                <li><strong>Export:</strong> Tap <em>Settings → Export Plan</em> to download a local JSON backup.</li>
+                <li><strong>Delete:</strong> Tap <em>Reset Plan</em> to permanently delete both your local browser storage and cloud document.</li>
+            </ul>
+
+            <h2>6. Contact & Open Source Verification</h2>
+            <p>Our code and security rules are completely open-source and transparent for community inspection at: <a href="https://github.com/sreyasts/PlusOne-PlusTwo-Planner" target="_blank" rel="noopener noreferrer" style="color:var(--ed-emerald); text-decoration:underline;">github.com/sreyasts/PlusOne-PlusTwo-Planner</a>. For privacy questions, please open an issue on GitHub.</p>
         </div>
+    </main>
 
-        <div class="highlight-box">
-            <strong>Key Summary for Students & Parents:</strong><br>
-            • HSS Planner is completely free and open-source.<br>
-            • You can use 100% of the planner without signing in (all study data stays solely on your phone or computer).<br>
-            • If you choose to sign in with Google, we store your study checklist and your Google display name/email solely to sync progress across your devices.<br>
-            • We do NOT run commercial ads, sell student data, or track your behavior across third-party websites.
+    <!-- Footer -->
+    <footer class="ed-footer">
+        <div style="max-width:780px; margin:0 auto; text-align:center;">
+            HSS Planner • Open source under the MIT License • Maintained by Sreyas T S<br>
+            Student privacy by design: zero ads, offline-first local storage, DPDP 2023 compliant consent gate.
         </div>
-
-        <h2>1. Who We Are</h2>
-        <p>HSS Planner is an open-source, non-profit community project built for Kerala Higher Secondary (+1 and +2) students preparing for the Directorate of General Education (DHSE) exams.</p>
-
-        <h2>2. Data We Collect and Why</h2>
-        <p>We practice strict data minimization:</p>
-        <ul>
-            <li><strong>Guest Mode (Default):</strong> When you use HSS Planner without signing in, your syllabus selections, completed chapters, and study timetable are stored entirely in your device's browser <code>localStorage</code>. No personal study information is transmitted to our servers.</li>
-            <li><strong>Google Sign-In (Optional Cloud Sync):</strong> If you tap "Connect Google Account" to sync your checklist between your smartphone and computer, we receive and store:
-                <ul>
-                    <li>Your Google Display Name (to display your name in the navigation bar).</li>
-                    <li>Your Google Email Address (to identify your study plan document in Cloud Firestore).</li>
-                    <li>Your Study Plan JSON data (target exam date, completed chapter IDs, subject priorities).</li>
-                </ul>
-            </li>
-            <li><strong>Pseudonymous Analytics (Google Analytics via Firebase):</strong> We use Google Analytics (measurement ID <code>G-12KPP3ZZ80</code>) configured for pseudonymous usage metrics.
-                <ul>
-                    <li>Google Signals and Ad Personalization features are permanently disabled (<code>allow_google_signals: false</code>, <code>allow_ad_personalization_signals: false</code>).</li>
-                    <li>No direct Personally Identifiable Information (PII) such as student names, phone numbers, or email addresses are attached to analytics events.</li>
-                    <li><strong>Cookies and Pseudonymous Identifiers:</strong> Google Analytics operates using browser cookies and storage identifiers:
-                        <ul>
-                            <li><code>_ga</code>: A first-party cookie used to distinguish unique browsers or devices, containing a pseudonymous client identifier. Stored for up to 2 years.</li>
-                            <li><code>_ga_12KPP3ZZ80</code>: A session cookie used to maintain session state across page reloads. Stored for up to 2 years.</li>
-                            <li>A pseudonymous Client ID generated on device by Google Analytics to aggregate related user flows.</li>
-                        </ul>
-                    </li>
-                    <li>Only aggregated lifecycle milestone events are recorded: <code>opened</code>, <code>setup_started</code>, <code>plan_created</code>, <code>first_task_checked</code>, and <code>returned_day3</code> to evaluate app stability and user retention.</li>
-                    <li>The analytics SDK is loaded lazily on demand to optimize performance.</li>
-                </ul>
-            </li>
-        </ul>
-
-        <h2>3. Student Data Protection Principles & Minor Notice</h2>
-        <p>Many Plus One and Plus Two students in Kerala are minors (between 15 and 18 years old). We design our application with student privacy in mind:</p>
-        <ul>
-            <li>We do NOT track or profile children's browsing behavior across third-party websites.</li>
-            <li>We do NOT serve targeted advertisements, sponsored commercial content, or sell user records.</li>
-            <li>We do NOT process data detrimental to a student's physical or mental well-being.</li>
-            <li><strong>Parental Consent Gate (DPDP Act 2023):</strong> In accordance with Section 9 of India's Digital Personal Data Protection Act 2023, students under 18 must confirm affirmative parental or guardian consent before linking a Google account for cloud synchronization. An explicit confirmation gate is presented prior to OAuth authentication. Offline Guest Mode remains accessible at all times with zero personal information collected.</li>
-            <li>Students or parents may delete their cloud account and all study data at any time directly through the "Reset Plan" button in Settings, which permanently deletes the Firestore cloud document.</li>
-        </ul>
-
-        <h2>4. Data Storage & Security</h2>
-        <p>Cloud data is hosted securely using Google Cloud Firebase (Firestore) in compliant data center regions. Access is governed by strict security rules ensuring that only your authenticated Google account can read or write your study document.</p>
-
-        <h2>5. Your Rights</h2>
-        <p>You have the right to inspect, export, or delete your study data at any time:</p>
-        <ul>
-            <li><strong>Export:</strong> Tap <em>Settings → Export Plan</em> to download a local JSON backup.</li>
-            <li><strong>Delete:</strong> Tap <em>Reset Plan</em> to permanently delete both your local browser storage and cloud document.</li>
-        </ul>
-
-        <h2>6. Contact & Open Source Verification</h2>
-        <p>Our code and security rules are completely open-source and transparent for community inspection at: <a href="https://github.com/sreyasts/PlusOne-PlusTwo-Planner" target="_blank" rel="noopener noreferrer">github.com/sreyasts/PlusOne-PlusTwo-Planner</a>. For privacy questions, please open an issue on GitHub.</p>
-    </div>
+    </footer>
 </body>
 </html>

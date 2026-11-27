@@ -7,6 +7,24 @@
 import './style.css';
 import './app.js';
 
+// Sync theme-color meta tag for Warm Paper & Ink identity (#F6F3EC / #141513)
+export function syncThemeColorMeta(isDark) {
+  if (typeof document === 'undefined') return;
+  const metaTheme = document.querySelector('meta[name="theme-color"]');
+  if (metaTheme) {
+    metaTheme.setAttribute('content', isDark ? '#141513' : '#F6F3EC');
+  }
+}
+
+if (typeof document !== 'undefined') {
+  try {
+    const isDark = document.documentElement.classList.contains('dark') ||
+      (typeof localStorage !== 'undefined' && localStorage.getItem('plustwo_theme') === 'dark') ||
+      (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches && (!localStorage || localStorage.getItem('plustwo_theme') !== 'light'));
+    syncThemeColorMeta(isDark);
+  } catch (_) {}
+}
+
 export {
   resetApp,
   restorePreResetSnapshot,

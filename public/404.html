@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Page Not Found — Mission PlusTwo</title>
+    <title>Page Not Found — HSS Planner</title>
     <meta name="robots" content="noindex, nofollow">
     <link rel="icon" href="/favicon.ico" sizes="48x48">
     <link rel="icon" type="image/png" sizes="48x48" href="/icon-48.png">
@@ -13,64 +13,144 @@
     <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="shortcut icon" href="/favicon.ico">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <meta name="theme-color" content="#F6F3EC">
+
+    <!-- Theme Preload Script -->
+    <script id="theme-init">
+    (function() {
+        try {
+            var theme = localStorage.getItem('plustwo_theme') || 'system';
+            var isDark = theme === 'dark' || (theme === 'system' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+            var meta = document.querySelector('meta[name="theme-color"]');
+            if (meta) meta.setAttribute('content', isDark ? '#141513' : '#F6F3EC');
+        } catch(e) {}
+    })();
+    </script>
+
+    <!-- Google Fonts & Editorial Theme -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles/editorial-theme.css">
+
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
-        img { max-width: 100%; }
-        .logo-img { width: 36px !important; height: 36px !important; max-width: 36px !important; max-height: 36px !important; object-fit: contain; }
+        * { box-sizing: border-box; }
+        body {
+            font-family: var(--ed-font-body);
+            background-color: var(--ed-ground);
+            color: var(--ed-ink);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+        .main-card {
+            max-width: 520px;
+            margin: auto;
+            padding: 24px 16px;
+            width: 100%;
+            text-align: center;
+        }
+        .error-code {
+            font-family: var(--ed-font-mono);
+            font-size: 2.75rem;
+            font-weight: 700;
+            color: var(--ed-vermilion);
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+        .resource-card {
+            display: block;
+            background: var(--ed-raised);
+            border: 1px solid var(--ed-rule);
+            border-radius: var(--ed-radius-md);
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            text-align: left;
+            text-decoration: none;
+            transition: all 0.15s ease;
+        }
+        .resource-card:hover {
+            border-color: var(--ed-emerald);
+            background: var(--ed-inset);
+        }
+        .resource-title {
+            font-weight: 700;
+            font-size: 0.8125rem;
+            color: var(--ed-emerald);
+            margin-bottom: 2px;
+        }
+        .resource-desc {
+            font-size: 0.75rem;
+            color: var(--ed-ink-secondary);
+        }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col justify-between">
+<body class="ed-body">
     <!-- Header -->
-    <header class="bg-white border-b border-slate-200 py-3 px-4 sm:px-6">
-        <div class="max-w-4xl mx-auto flex items-center justify-between">
-            <a href="/" class="flex items-center gap-2.5">
-                <img src="/icon.png" alt="Mission PlusTwo Logo" width="36" height="36" class="logo-img w-9 h-9 rounded-xl shadow-xs object-contain">
+    <header class="ed-header">
+        <div style="max-width:840px; margin:0 auto; padding:0 16px; height:64px; display:flex; align-items:center; justify-content:space-between;">
+            <a href="/" style="display:flex; align-items:center; gap:10px; text-decoration:none; color:inherit;">
+                <img src="/icon.png" alt="HSS Planner Logo" width="36" height="36" style="width:36px; height:36px; border-radius:10px; border:1px solid var(--ed-rule); object-fit:contain;">
                 <div>
-                    <span class="text-base font-black text-slate-900 leading-none">Mission <span class="text-blue-600">PlusTwo</span></span>
-                    <span class="block text-[11px] font-medium text-slate-400">Kerala DHSE Intelligent Study System</span>
+                    <span style="font-family:var(--ed-font-display); font-size:1.15rem; font-weight:700; line-height:1.1; display:block; color:var(--ed-ink);">HSS <span style="color:var(--ed-emerald);">Planner</span></span>
+                    <span style="font-family:var(--ed-font-mono); font-size:10px; font-weight:600; letter-spacing:0.04em; color:var(--ed-ink-muted); display:block; text-transform:uppercase;">Kerala Higher Secondary</span>
                 </div>
             </a>
-            <a href="/" class="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition shadow-xs">
+            <a href="/" class="ed-btn-primary touch-target-44" style="text-decoration:none; font-size:0.8rem;">
                 Open Planner
             </a>
         </div>
     </header>
 
     <!-- Main Message -->
-    <main class="max-w-md mx-auto p-6 text-center my-auto">
-        <div class="w-16 h-16 rounded-3xl bg-blue-50 text-blue-600 mx-auto flex items-center justify-center text-2xl font-black mb-4 border border-blue-100 shadow-sm">
-            404
-        </div>
-        <h1 class="text-2xl font-black text-slate-900 tracking-tight mb-2">Page Not Found</h1>
-        <p class="text-sm text-slate-600 mb-6 leading-relaxed">
-            The page you requested may have moved or doesn't exist. You can jump directly to the study planner or our most popular resources below:
-        </p>
+    <main class="main-card">
+        <div class="ed-card" style="padding:32px 24px;">
+            <div class="error-code">404</div>
+            <span class="ed-kicker" style="color:var(--ed-vermilion); margin-bottom:12px;">PAGE NOT FOUND IN FOLIO</span>
+            <h1 class="ed-title" style="font-size:1.75rem; margin:8px 0 12px;">Missing Curriculum Ledger Entry</h1>
+            <p class="ed-subtext" style="font-size:0.85rem; line-height:1.6; margin-bottom:24px;">
+                The page you requested may have moved or doesn't exist. You can jump directly to the study planner or explore the official study resources below:
+            </p>
 
-        <div class="space-y-2.5 text-left mb-6">
-            <a href="/" class="block p-3.5 bg-white rounded-2xl border border-slate-200 hover:border-blue-400 hover:shadow-md transition group">
-                <div class="font-bold text-xs text-blue-600 group-hover:text-blue-700">Daily Study Planner & Dashboard →</div>
-                <div class="text-xs text-slate-500">Instant day-by-day timetable generator for Kerala DHSE +2</div>
-            </a>
-            <a href="/pages/printable-qr-poster.html" class="block p-3.5 bg-white rounded-2xl border border-slate-200 hover:border-blue-400 hover:shadow-md transition group">
-                <div class="font-bold text-xs text-slate-900 group-hover:text-blue-600">Printable Notice Board Poster & QR →</div>
-                <div class="text-xs text-slate-500">A4 printable timetable poster for classroom walls & notice boards</div>
-            </a>
-            <a href="/pages/exam-countdown.html" class="block p-3.5 bg-white rounded-2xl border border-slate-200 hover:border-blue-400 hover:shadow-md transition group">
-                <div class="font-bold text-xs text-slate-900 group-hover:text-blue-600">Kerala Plus Two Exam Countdown →</div>
-                <div class="text-xs text-slate-500">Live countdown timer and subject-wise revision runway</div>
+            <div style="margin-bottom:24px;">
+                <a href="/" class="resource-card">
+                    <div class="resource-title">Daily Study Planner & Dashboard →</div>
+                    <div class="resource-desc">Instant day-by-day timetable generator for Kerala DHSE +1 & +2</div>
+                </a>
+                <a href="/pages/syllabus-plus-two" class="resource-card">
+                    <div class="resource-title">Official Syllabus & Scheme of Work →</div>
+                    <div class="resource-desc">Full 13-subject curriculum for Science, Commerce, and Humanities</div>
+                </a>
+                <a href="/pages/exam-countdown" class="resource-card">
+                    <div class="resource-title">Kerala Plus Two Exam Countdown →</div>
+                    <div class="resource-desc">Live countdown timer and subject-wise revision runway</div>
+                </a>
+                <a href="/pages/printable-qr-poster" class="resource-card">
+                    <div class="resource-title">Printable Notice Board Poster & QR →</div>
+                    <div class="resource-desc">A4 printable timetable poster for classroom walls & notice boards</div>
+                </a>
+            </div>
+
+            <a href="/" class="ed-btn-primary touch-target-44" style="text-decoration:none; width:100%; font-size:0.875rem;">
+                Return to Home
             </a>
         </div>
-
-        <a href="/" class="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl transition shadow-md">
-            Return to Home
-        </a>
     </main>
 
     <!-- Footer -->
-    <footer class="py-4 text-center text-xs text-slate-400 border-t border-slate-200 bg-white">
-        © 2026 Mission PlusTwo • Open Source Kerala Higher Secondary Study Platform
+    <footer class="ed-footer" style="padding:1.5rem 1rem;">
+        <div style="max-width:840px; margin:0 auto; text-align:center;">
+            © 2026 HSS Planner • Open Source Kerala Higher Secondary Study Platform
+        </div>
     </footer>
 </body>
 </html>

@@ -32,8 +32,32 @@
     <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="shortcut icon" href="/favicon.ico">
+    <meta name="theme-color" content="#F6F3EC">
     <meta property="og:image" content="https://hss-planner.web.app/og-image.png">
     <meta property="og:logo" content="https://hss-planner.web.app/icon.png">
+
+    <!-- Theme Preload Script -->
+    <script id="theme-init">
+    (function() {
+        try {
+            var theme = localStorage.getItem('plustwo_theme') || 'system';
+            var isDark = theme === 'dark' || (theme === 'system' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+            var meta = document.querySelector('meta[name="theme-color"]');
+            if (meta) meta.setAttribute('content', isDark ? '#141513' : '#F6F3EC');
+        } catch(e) {}
+    })();
+    </script>
+
+    <!-- Google Fonts & Editorial Theme -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles/editorial-theme.css">
 
     <!-- Schema.org BreadcrumbList -->
     <script type="application/ld+json">
@@ -58,66 +82,105 @@
       }
     ]
     </script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+
     <style>
+        * { box-sizing: border-box; }
         body {
-            font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
-            background-color: #f8fafc;
-            color: #0f172a;
+            font-family: var(--ed-font-body);
+            background-color: var(--ed-ground);
+            color: var(--ed-ink);
             line-height: 1.65;
-            padding: 24px 16px;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            -webkit-font-smoothing: antialiased;
         }
         .container {
-            max-width: 760px;
+            max-width: 780px;
             margin: 0 auto;
-            background: #ffffff;
-            border-radius: 24px;
-            border: 1px solid #e2e8f0;
-            padding: 32px 24px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+            padding: 24px 16px;
+            width: 100%;
+            flex-grow: 1;
         }
-        h1 { font-size: 26px; font-weight: 800; margin-bottom: 8px; color: #0f172a; }
-        h2 { font-size: 18px; font-weight: 700; margin-top: 24px; margin-bottom: 8px; color: #1e293b; border-bottom: 1px solid #f1f5f9; padding-bottom: 6px; }
-        p, li { font-size: 14px; color: #334155; margin-bottom: 12px; }
-        ul { padding-left: 20px; }
-        .back-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            color: #2563eb;
-            text-decoration: none;
+        @media (min-width: 640px) {
+            .container { padding: 36px 20px; }
+            .header-nav-link { display: inline-flex !important; }
+        }
+        .prose-section h2 {
+            font-family: var(--ed-font-display);
+            font-size: 1.25rem;
             font-weight: 700;
-            font-size: 13px;
-            margin-bottom: 20px;
+            margin-top: 28px;
+            margin-bottom: 10px;
+            color: var(--ed-ink);
+            border-bottom: 1px solid var(--ed-rule);
+            padding-bottom: 6px;
+        }
+        .prose-section p, .prose-section li {
+            font-size: 0.875rem;
+            color: var(--ed-ink-secondary);
+            margin-bottom: 12px;
+            line-height: 1.65;
+        }
+        code {
+            font-family: var(--ed-font-mono);
+            background: var(--ed-inset);
+            padding: 2px 5px;
+            border-radius: var(--ed-radius-sm);
+            font-size: 0.8em;
+            color: var(--ed-ink);
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <a href="/" class="back-link">← Back to HSS Planner Study Planner</a>
-        
-        <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
-            <img src="/icon.png" alt="HSS Planner Logo" style="width:40px; height:40px; border-radius:10px; box-shadow:0 4px 12px rgba(37,99,235,0.2);">
-            <span style="font-weight:800; font-size:20px; color:#0f172a;">HSS <span class="text-blue-600">Planner</span></span>
+<body class="ed-body">
+    <!-- Header -->
+    <header class="ed-header">
+        <div style="max-width:780px; margin:0 auto; padding:0 16px; height:64px; display:flex; align-items:center; justify-content:space-between;">
+            <a href="/" style="display:flex; align-items:center; gap:10px; text-decoration:none; color:inherit;">
+                <img src="/icon.png" alt="HSS Planner Logo" width="36" height="36" style="width:36px; height:36px; border-radius:10px; border:1px solid var(--ed-rule); object-fit:contain;">
+                <div>
+                    <span style="font-family:var(--ed-font-display); font-size:1.15rem; font-weight:700; line-height:1.1; display:block; color:var(--ed-ink);">HSS <span style="color:var(--ed-emerald);">Planner</span></span>
+                    <span style="font-family:var(--ed-font-mono); font-size:10px; font-weight:600; letter-spacing:0.04em; color:var(--ed-ink-muted); display:block; text-transform:uppercase;">Kerala Higher Secondary</span>
+                </div>
+            </a>
+            <a href="/" class="ed-btn-secondary touch-target-44" style="text-decoration:none; font-size:0.8rem;">
+                ← Back to HSS Planner Study Planner
+            </a>
         </div>
+    </header>
 
-        <h1>Terms of Service</h1>
-        <p><strong>Effective Date:</strong> September 21, 2026</p>
+    <!-- Main -->
+    <main class="container">
+        <div class="ed-card prose-section">
+            <span class="ed-kicker" style="margin-bottom:8px;">COMMUNITY GUIDELINES & TERMS</span>
+            <h1 class="ed-title" style="font-size:2rem; margin:6px 0 10px;">Terms of Service</h1>
+            <p style="font-size:0.85rem; color:var(--ed-ink-muted); margin-bottom:20px;"><strong>Effective Date:</strong> September 21, 2026</p>
 
-        <h2>1. Acceptance of Terms</h2>
-        <p>By using HSS Planner, you agree to these simple terms. If you disagree, you can discontinue use at any time.</p>
+            <h2>1. Acceptance of Terms</h2>
+            <p>By using HSS Planner, you agree to these simple terms. If you disagree, you can discontinue use at any time.</p>
 
-        <h2>2. Purpose of the Application</h2>
-        <p>HSS Planner is an educational study planning tool designed to help Kerala Higher Secondary (+2 and +1) students organize their revision schedules according to the official Scheme of Work published by the Directorate of General Education (DHSE), Government of Kerala. It is not an official government service.</p>
+            <h2>2. Purpose of the Application</h2>
+            <p>HSS Planner is an educational study planning tool designed to help Kerala Higher Secondary (+2 and +1) students organize their revision schedules according to the official Scheme of Work published by the Directorate of General Education (DHSE), Government of Kerala. It is not an official government service.</p>
 
-        <h2>3. Fair and Lawful Use</h2>
-        <p>You agree to use this application for your personal revision and study preparation. You may not attempt to disrupt cloud services, flood authentication endpoints, or inject malicious content.</p>
+            <h2>3. Fair and Lawful Use</h2>
+            <p>You agree to use this application for your personal revision and study preparation. You may not attempt to disrupt cloud services, flood authentication endpoints, or inject malicious content.</p>
 
-        <h2>4. Open Source License</h2>
-        <p>The codebase is licensed under the permissive MIT License. You are free to inspect, fork, and contribute improvements back to the student community.</p>
+            <h2>4. Open Source License</h2>
+            <p>The codebase is licensed under the permissive MIT License. You are free to inspect, fork, and contribute improvements back to the student community.</p>
 
-        <h2>5. Disclaimer</h2>
-        <p>While the syllabus, chapter order, and dates are grounded directly in official Kerala SCERT and DHSE circulars, students should always verify official examination dates directly with their higher secondary school principal or at the Directorate of General Education portal (<code>education.kerala.gov.in</code>).</p>
-    </div>
+            <h2>5. Disclaimer</h2>
+            <p>While the syllabus, chapter order, and dates are grounded directly in official Kerala SCERT and DHSE circulars, students should always verify official examination dates directly with their higher secondary school principal or at the Directorate of General Education portal (<code>education.kerala.gov.in</code>).</p>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="ed-footer">
+        <div style="max-width:780px; margin:0 auto; text-align:center;">
+            HSS Planner • Open source under the MIT License • Maintained by Sreyas T S<br>
+            Official Kerala Higher Secondary (+1 & +2) Study Planning System.
+        </div>
+    </footer>
 </body>
 </html>

@@ -32,8 +32,32 @@
     <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="shortcut icon" href="/favicon.ico">
+    <meta name="theme-color" content="#F6F3EC">
     <meta property="og:image" content="https://hss-planner.web.app/og-image.png">
     <meta property="og:logo" content="https://hss-planner.web.app/icon.png">
+
+    <!-- Theme Preload Script -->
+    <script id="theme-init">
+    (function() {
+        try {
+            var theme = localStorage.getItem('plustwo_theme') || 'system';
+            var isDark = theme === 'dark' || (theme === 'system' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+            var meta = document.querySelector('meta[name="theme-color"]');
+            if (meta) meta.setAttribute('content', isDark ? '#141513' : '#F6F3EC');
+        } catch(e) {}
+    })();
+    </script>
+
+    <!-- Google Fonts & Editorial Theme -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles/editorial-theme.css">
 
     <!-- Schema.org BreadcrumbList -->
     <script type="application/ld+json">
@@ -58,265 +82,196 @@
       }
     ]
     </script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
     <style>
-        :root {
-            --bg-page: #f8fafc;
-            --card-bg: #ffffff;
-            --border-color: #e2e8f0;
-            --text-primary: #0f172a;
-            --text-secondary: #475569;
-            --text-muted: #64748b;
-            --accent-blue: #2563eb;
-            --accent-emerald: #059669;
-            --accent-amber: #d97706;
-        }
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --bg-page: #0b0f19;
-                --card-bg: #111827;
-                --border-color: #1f2937;
-                --text-primary: #f9fafb;
-                --text-secondary: #cbd5e1;
-                --text-muted: #94a3b8;
-                --accent-blue: #3b82f6;
-                --accent-emerald: #10b981;
-                --accent-amber: #f59e0b;
-            }
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * { box-sizing: border-box; }
+        html, body { overflow-x: clip; margin: 0; padding: 0; }
         body {
-            font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
-            background-color: var(--bg-page);
-            color: var(--text-primary);
+            font-family: var(--ed-font-body);
+            background-color: var(--ed-ground);
+            color: var(--ed-ink);
             line-height: 1.6;
-            padding: 32px 16px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            -webkit-font-smoothing: antialiased;
         }
         .container {
             max-width: 840px;
             margin: 0 auto;
+            padding: 24px 16px;
+            width: 100%;
+            flex-grow: 1;
+            overflow-x: clip;
         }
-        .card {
-            background: var(--card-bg);
-            border-radius: 20px;
-            border: 1px solid var(--border-color);
-            padding: 24px;
-            margin-bottom: 24px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
-        }
-        .header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 24px;
-            flex-wrap: wrap;
-            gap: 16px;
-        }
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-            color: var(--text-primary);
-        }
-        .brand img {
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(37,99,235,0.25);
-        }
-        .brand-text {
-            font-size: 20px;
-            font-weight: 800;
-        }
-        .brand-text span {
-            color: var(--accent-blue);
-        }
-        .back-btn {
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--accent-blue);
-            text-decoration: none;
-            padding: 8px 14px;
-            background: rgba(37, 99, 235, 0.08);
-            border-radius: 10px;
-            transition: all 0.2s ease;
-        }
-        .back-btn:hover {
-            background: rgba(37, 99, 235, 0.16);
-        }
-        h1 {
-            font-size: 24px;
-            font-weight: 800;
-            margin-bottom: 6px;
-            letter-spacing: -0.02em;
-        }
-        .lead {
-            font-size: 14px;
-            color: var(--text-secondary);
-            margin-bottom: 20px;
-        }
-        .pill-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 12px;
-            font-weight: 700;
-            padding: 4px 10px;
-            border-radius: 9999px;
-            background: rgba(5, 150, 105, 0.1);
-            color: var(--accent-emerald);
-            border: 1px solid rgba(5, 150, 105, 0.2);
-            margin-bottom: 16px;
+        @media (min-width: 640px) {
+            .container { padding: 36px 20px; }
+            .header-nav-link { display: inline-flex !important; }
         }
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 14px;
-            margin-bottom: 20px;
+            gap: 12px;
+            margin-bottom: 24px;
         }
         .stat-box {
-            background: rgba(148, 163, 184, 0.05);
-            border: 1px solid var(--border-color);
-            border-radius: 14px;
+            background: var(--ed-raised);
+            border: 1px solid var(--ed-rule);
+            border-radius: var(--ed-radius-md);
             padding: 16px;
             text-align: left;
+            transition: border-color 0.15s ease;
+        }
+        .stat-box:hover {
+            border-color: var(--ed-rule-strong);
         }
         .stat-value {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 24px;
+            font-family: var(--ed-font-mono);
+            font-size: 1.4rem;
             font-weight: 700;
-            color: var(--text-primary);
+            color: var(--ed-ink);
             line-height: 1.2;
             margin-bottom: 4px;
         }
+        .stat-value a {
+            color: var(--ed-emerald);
+            text-decoration: none;
+        }
+        .stat-value a:hover {
+            text-decoration: underline;
+        }
         .stat-label {
-            font-size: 12px;
+            font-family: var(--ed-font-mono);
+            font-size: 0.7rem;
             font-weight: 600;
-            color: var(--text-muted);
+            color: var(--ed-ink-muted);
             text-transform: uppercase;
-            letter-spacing: 0.04em;
+            letter-spacing: 0.05em;
         }
         .stat-sub {
-            font-size: 11px;
-            color: var(--text-secondary);
+            font-size: 0.75rem;
+            color: var(--ed-ink-secondary);
             margin-top: 4px;
         }
         .section-title {
-            font-size: 16px;
-            font-weight: 800;
-            margin: 20px 0 12px 0;
+            font-family: var(--ed-font-display);
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin: 28px 0 12px 0;
             display: flex;
             align-items: center;
             gap: 8px;
+            color: var(--ed-ink);
+        }
+        .table-wrap {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin-top: 8px;
+            border: 1px solid var(--ed-rule);
+            border-radius: var(--ed-radius-md);
+            background: var(--ed-raised);
         }
         .audit-table {
             width: 100%;
+            min-width: 520px;
             border-collapse: collapse;
-            font-size: 13px;
-            margin-top: 10px;
+            font-size: 0.8125rem;
+            margin: 0;
+            background: var(--ed-raised);
+            border: none;
         }
         .audit-table th, .audit-table td {
-            padding: 10px 12px;
+            padding: 10px 14px;
             text-align: left;
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--ed-rule);
         }
         .audit-table th {
-            font-size: 11px;
+            font-family: var(--ed-font-mono);
+            font-size: 0.7rem;
             text-transform: uppercase;
-            font-weight: 700;
-            color: var(--text-muted);
-            letter-spacing: 0.04em;
+            font-weight: 600;
+            color: var(--ed-ink-secondary);
+            background: var(--ed-inset);
+            letter-spacing: 0.05em;
+        }
+        .audit-table tr:last-child td {
+            border-bottom: none;
+        }
+        .audit-table th {
+            font-family: var(--ed-font-mono);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            font-weight: 600;
+            color: var(--ed-ink-secondary);
+            background: var(--ed-inset);
+            letter-spacing: 0.05em;
         }
         .audit-table tr:last-child td {
             border-bottom: none;
         }
         .code-tag {
-            font-family: 'JetBrains Mono', monospace;
-            background: rgba(148, 163, 184, 0.15);
+            font-family: var(--ed-font-mono);
+            background: var(--ed-inset);
+            border: 1px solid var(--ed-rule);
+            color: var(--ed-ink);
             padding: 2px 6px;
-            border-radius: 6px;
-            font-size: 12px;
+            border-radius: var(--ed-radius-sm);
+            font-size: 0.75rem;
         }
-        .badge-pass {
-            background: rgba(5, 150, 105, 0.12);
-            color: var(--accent-emerald);
-            padding: 3px 8px;
-            border-radius: 6px;
-            font-weight: 700;
-            font-size: 11px;
-        }
-        .callout {
-            background: rgba(37, 99, 235, 0.06);
-            border-left: 4px solid var(--accent-blue);
+        .callout-box {
+            background: var(--ed-inset);
+            border-left: 4px solid var(--ed-emerald);
             padding: 14px 16px;
-            border-radius: 0 12px 12px 0;
-            font-size: 13px;
-            color: var(--text-secondary);
-            margin: 16px 0;
+            border-radius: 0 var(--ed-radius-md) var(--ed-radius-md) 0;
+            font-size: 0.85rem;
+            color: var(--ed-ink-secondary);
+            margin: 20px 0;
         }
-        .quick-links {
+        .quick-links-grid {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
-            margin-top: 16px;
-        }
-        .quick-link-btn {
-            font-size: 12px;
-            font-weight: 700;
-            padding: 8px 14px;
-            border-radius: 10px;
-            border: 1px solid var(--border-color);
-            background: var(--card-bg);
-            color: var(--text-primary);
-            text-decoration: none;
-            transition: all 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .quick-link-btn:hover {
-            border-color: var(--accent-blue);
-            color: var(--accent-blue);
-        }
-        footer {
-            text-align: center;
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-top: 24px;
-            padding-bottom: 24px;
+            margin-top: 14px;
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <!-- Header -->
-        <header class="header">
-            <a href="/" class="brand">
-                <img src="/icon.png" alt="HSS Planner Logo">
-                <div class="brand-text">HSS <span class="text-blue-600">Planner</span></div>
+<body class="ed-body">
+    <!-- Header -->
+    <header class="ed-header">
+        <div style="max-width:840px; margin:0 auto; padding:0 16px; height:64px; display:flex; align-items:center; justify-content:space-between;">
+            <a href="/" style="display:flex; align-items:center; gap:10px; text-decoration:none; color:inherit;">
+                <img src="/icon.png" alt="HSS Planner Logo" width="36" height="36" style="width:36px; height:36px; border-radius:10px; border:1px solid var(--ed-rule); object-fit:contain;">
+                <div>
+                    <span style="font-family:var(--ed-font-display); font-size:1.15rem; font-weight:700; line-height:1.1; display:block; color:var(--ed-ink);">HSS <span style="color:var(--ed-emerald);">Planner</span></span>
+                    <span style="font-family:var(--ed-font-mono); font-size:10px; font-weight:600; letter-spacing:0.04em; color:var(--ed-ink-muted); display:block; text-transform:uppercase;">Kerala Higher Secondary</span>
+                </div>
             </a>
-            <a href="/" class="back-btn">← Back to Study Planner</a>
-        </header>
+            <a href="/" class="ed-btn-secondary touch-target-44" style="text-decoration:none; font-size:0.8rem;">
+                ← Back to Study Planner
+            </a>
+        </div>
+    </header>
 
-        <!-- Main Card -->
-        <div class="card">
-            <div class="pill-badge">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+    <!-- Main Container -->
+    <main class="container">
+        <div class="ed-card">
+            <span class="ed-badge ed-badge-emerald" style="margin-bottom:12px;">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
                 Dated repository snapshot
-            </div>
-            <h1>Public Usage & Invariant Audit</h1>
-            <p class="lead">
+            </span>
+            <h1 class="ed-title" style="font-size:1.85rem; margin:6px 0 10px;">Public Usage & Invariant Audit</h1>
+            <p class="ed-subtext" style="line-height:1.6; margin-bottom:18px;">
                 Repository metrics describe repository activity. Local device data describes this browser only. Neither establishes independent student usage or retention.
             </p>
 
-            <div class="callout">
-                <strong>Integrity Policy:</strong> The owner reports the five stars came from their account and a friend’s accounts. They are not independent adoption evidence. Fork usage, active student counts, repeat use and school adoption are unverified.
+            <div class="callout-box">
+                <strong style="color:var(--ed-ink);">Integrity Policy:</strong> The owner reports the five stars came from their account and a friend’s accounts. They are not independent adoption evidence. Fork usage, active student counts, repeat use and school adoption are unverified.
             </div>
 
             <div class="section-title">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-                Repository snapshot — 16 October 2026
+                <span>Repository snapshot — 16 October 2026</span>
             </div>
 
             <div class="stats-grid">
@@ -364,117 +319,124 @@
 
             <div class="section-title">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-                Your Current Device Session (Local Browser Inspection)
+                <span>Your Current Device Session (Local Browser Inspection)</span>
             </div>
 
-            <table class="audit-table">
-                <thead>
-                    <tr>
-                        <th>Metric</th>
-                        <th>Device Value</th>
-                        <th>Privacy Boundary</th>
-                    </tr>
-                </thead>
-                <tbody id="device-stats-tbody">
-                    <tr>
-                        <td>Study Plan State</td>
-                        <td id="stat-device-has-plan"><span class="code-tag">Inspecting...</span></td>
-                        <td>Read from this browser; optional cloud sync is separate</td>
-                    </tr>
-                    <tr>
-                        <td>Selected Stream</td>
-                        <td id="stat-device-stream"><span class="code-tag">Inspecting...</span></td>
-                        <td>Read from this browser; optional cloud sync is separate</td>
-                    </tr>
-                    <tr>
-                        <td>Completed Chapters</td>
-                        <td id="stat-device-chapters"><span class="code-tag">Inspecting...</span></td>
-                        <td>Read from this browser; optional cloud sync is separate</td>
-                    </tr>
-                    <tr>
-                        <td>Active Study Streak</td>
-                        <td id="stat-device-streak"><span class="code-tag">Inspecting...</span></td>
-                        <td>Read from this browser; optional cloud sync is separate</td>
-                    </tr>
-                    <tr>
-                        <td>Data Storage Size</td>
-                        <td id="stat-device-storage"><span class="code-tag">Inspecting...</span></td>
-                        <td>Read from this browser; optional cloud sync is separate</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table-wrap">
+                <table class="audit-table ed-table">
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th>Device Value</th>
+                            <th>Privacy Boundary</th>
+                        </tr>
+                    </thead>
+                    <tbody id="device-stats-tbody">
+                        <tr>
+                            <td>Study Plan State</td>
+                            <td id="stat-device-has-plan"><span class="code-tag">Inspecting...</span></td>
+                            <td>Read from this browser; optional cloud sync is separate</td>
+                        </tr>
+                        <tr>
+                            <td>Selected Stream</td>
+                            <td id="stat-device-stream"><span class="code-tag">Inspecting...</span></td>
+                            <td>Read from this browser; optional cloud sync is separate</td>
+                        </tr>
+                        <tr>
+                            <td>Completed Chapters</td>
+                            <td id="stat-device-chapters"><span class="code-tag">Inspecting...</span></td>
+                            <td>Read from this browser; optional cloud sync is separate</td>
+                        </tr>
+                        <tr>
+                            <td>Active Study Streak</td>
+                            <td id="stat-device-streak"><span class="code-tag">Inspecting...</span></td>
+                            <td>Read from this browser; optional cloud sync is separate</td>
+                        </tr>
+                        <tr>
+                            <td>Data Storage Size</td>
+                            <td id="stat-device-storage"><span class="code-tag">Inspecting...</span></td>
+                            <td>Read from this browser; optional cloud sync is separate</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
             <div class="section-title">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-                Algorithm Invariant & Integrity Verification
+                <span>Algorithm Invariant & Integrity Verification</span>
             </div>
 
-            <table class="audit-table">
-                <thead>
-                    <tr>
-                        <th>Invariant Description</th>
-                        <th>Specification</th>
-                        <th>Automated Audit Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Chapter Part Monotonicity</td>
-                        <td>Chapter ordering checked by regression tests</td>
-                        <td><a href="https://github.com/sreyasts/PlusOne-PlusTwo-Planner/actions">Check CI results</a></td>
-                    </tr>
-                    <tr>
-                        <td>Duplicate Task Rate</td>
-                        <td>Zero duplicate chapter assignments</td>
-                        <td><a href="https://github.com/sreyasts/PlusOne-PlusTwo-Planner/actions">Check CI results</a></td>
-                    </tr>
-                    <tr>
-                        <td>Revision Runway Buffer</td>
-                        <td>1 to 10 days reserved before deadline</td>
-                        <td><span>Covered by regression tests</span></td>
-                    </tr>
-                    <tr>
-                        <td>Workload Variance</td>
-                        <td>Subject interleaving capacity bound</td>
-                        <td><span>Run npm run test:benchmark</span></td>
-                    </tr>
-                    <tr>
-                        <td>Cloud-sync consent prompt</td>
-                        <td>Parental confirmation for under 18 cloud sync</td>
-                        <td><span>UI prompt; not a compliance certification</span></td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table-wrap">
+                <table class="audit-table ed-table">
+                    <thead>
+                        <tr>
+                            <th>Invariant Description</th>
+                            <th>Specification</th>
+                            <th>Automated Audit Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Chapter Part Monotonicity</td>
+                            <td>Chapter ordering checked by regression tests</td>
+                            <td><a href="https://github.com/sreyasts/PlusOne-PlusTwo-Planner/actions" style="color:var(--ed-emerald); text-decoration:none;">Check CI results</a></td>
+                        </tr>
+                        <tr>
+                            <td>Duplicate Task Rate</td>
+                            <td>Zero duplicate chapter assignments</td>
+                            <td><a href="https://github.com/sreyasts/PlusOne-PlusTwo-Planner/actions" style="color:var(--ed-emerald); text-decoration:none;">Check CI results</a></td>
+                        </tr>
+                        <tr>
+                            <td>Revision Runway Buffer</td>
+                            <td>1 to 10 days reserved before deadline</td>
+                            <td><span class="ed-badge ed-badge-emerald">Covered by regression tests</span></td>
+                        </tr>
+                        <tr>
+                            <td>Workload Variance</td>
+                            <td>Subject interleaving capacity bound</td>
+                            <td><span class="code-tag">Run npm run test:benchmark</span></td>
+                        </tr>
+                        <tr>
+                            <td>Cloud-sync consent prompt</td>
+                            <td>Parental confirmation for under 18 cloud sync</td>
+                            <td><span class="ed-badge ed-badge-ochre">UI prompt; not a compliance certification</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
             <div class="section-title">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-                Auditable Upstream Evidence Links
+                <span>Auditable Upstream Evidence Links</span>
             </div>
 
-            <div class="quick-links">
-                <a href="https://github.com/sreyasts/PlusOne-PlusTwo-Planner" target="_blank" rel="noopener noreferrer" class="quick-link-btn">
+            <div class="quick-links-grid">
+                <a href="https://github.com/sreyasts/PlusOne-PlusTwo-Planner" target="_blank" rel="noopener noreferrer" class="ed-btn-secondary" style="font-size:0.8rem; text-decoration:none;">
                     <span>📦 GitHub Repository</span>
                 </a>
-                <a href="https://github.com/sreyasts/PlusOne-PlusTwo-Planner/commits/main" target="_blank" rel="noopener noreferrer" class="quick-link-btn">
+                <a href="https://github.com/sreyasts/PlusOne-PlusTwo-Planner/commits/main" target="_blank" rel="noopener noreferrer" class="ed-btn-secondary" style="font-size:0.8rem; text-decoration:none;">
                     <span>📜 Commit history</span>
                 </a>
-                <a href="https://github.com/sreyasts/PlusOne-PlusTwo-Planner/releases/tag/v6.3.0" target="_blank" rel="noopener noreferrer" class="quick-link-btn">
+                <a href="https://github.com/sreyasts/PlusOne-PlusTwo-Planner/releases/tag/v6.3.0" target="_blank" rel="noopener noreferrer" class="ed-btn-secondary" style="font-size:0.8rem; text-decoration:none;">
                     <span>🏷️ Release v6.3.0 Tag</span>
                 </a>
-                <a href="https://github.com/sreyasts/PlusOne-PlusTwo-Planner/issues" target="_blank" rel="noopener noreferrer" class="quick-link-btn">
+                <a href="https://github.com/sreyasts/PlusOne-PlusTwo-Planner/issues" target="_blank" rel="noopener noreferrer" class="ed-btn-secondary" style="font-size:0.8rem; text-decoration:none;">
                     <span>🐛 GitHub Issue Tracker</span>
                 </a>
-                <a href="/pages/privacy" class="quick-link-btn">
+                <a href="/pages/privacy" class="ed-btn-secondary" style="font-size:0.8rem; text-decoration:none;">
                     <span>🔒 Privacy policy</span>
                 </a>
             </div>
         </div>
+    </main>
 
-        <footer>
+    <!-- Footer -->
+    <footer class="ed-footer">
+        <div style="max-width:840px; margin:0 auto; text-align:center;">
             HSS Planner • Open source under the MIT License • Maintained by Sreyas T S<br>
             Repository snapshot: 16 October 2026. Tests and browser data are not student usage metrics.
-        </footer>
-    </div>
+        </div>
+    </footer>
 
     <script>
     (function inspectLocalDeviceState() {
@@ -499,7 +461,7 @@
                         }
                     });
                 }
-                planEl.innerHTML = '<span class="badge-pass">Generated & Active</span>';
+                planEl.innerHTML = '<span class="ed-badge ed-badge-emerald">Generated & Active</span>';
                 streamEl.textContent = streamName.toUpperCase();
                 chEl.innerHTML = '<span class="code-tag">' + completedCount + ' tasks completed</span>';
             } else {

@@ -93,7 +93,7 @@ const escapeStudyText = value => String(value ?? '').replace(/[&<>"']/g,
 function getTaskResourceBadge(task) {
     if (!task) return '';
     const mins = task.estimatedMinutes || 60;
-    return `<span class="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700">⏱️ ${mins}m</span>`;
+    return `<span class="inline-flex items-center gap-1 text-xs font-mono font-semibold px-2 py-0.5 rounded-md bg-[#EDE8DC] text-[#474B45] dark:bg-[#181A17] dark:text-[#C4C0B6] border border-[#D9D2C3] dark:border-[#31342E]">⏱️ ${mins}m</span>`;
 }
 
 function getTaskDeepLinksHtml(task) {
@@ -640,7 +640,7 @@ function loadInitialState() {
                     modalBtn.disabled = true;
                     modalBtn.classList.add('opacity-75', 'cursor-wait');
                     modalBtn.innerHTML = `
-                        <i class="fa-solid fa-circle-notch fa-spin text-blue-600 text-sm"></i>
+                        <svg class="w-4 h-4 text-[#1B5E43] dark:text-[#52B788] animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
                         <span>Connecting to Google...</span>
                     `;
                 }
@@ -648,7 +648,7 @@ function loadInitialState() {
                     headerBtn.disabled = true;
                     headerBtn.classList.add('opacity-75', 'cursor-wait');
                     headerBtn.innerHTML = `
-                        <i class="fa-solid fa-circle-notch fa-spin text-blue-600 text-xs"></i>
+                        <svg class="w-3.5 h-3.5 text-[#1B5E43] dark:text-[#52B788] animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
                         <span>Signing in...</span>
                     `;
                 }
@@ -1674,26 +1674,32 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
 
             [todayBtn, planBtn, sylBtn].forEach(b => {
                 if (b) {
-                    b.classList.remove('text-blue-600', 'bg-white', 'shadow-sm');
-                    b.classList.add('text-slate-600');
+                    b.classList.remove('text-blue-600', 'text-[#1B5E43]', 'dark:text-[#52B788]', 'bg-white', 'bg-[#FFFFFF]', 'dark:bg-[#222521]', 'shadow-sm', 'shadow-xs', 'border', 'border-[#D9D2C3]', 'dark:border-[#31342E]');
+                    b.classList.add('text-[#474B45]', 'dark:text-[#C4C0B6]');
                 }
             });
             [mobToday, mobPlan, mobSyl].forEach(b => {
                 if (b) {
-                    b.classList.remove('text-blue-600');
-                    b.classList.add('text-slate-400');
+                    b.classList.remove('text-blue-600', 'text-[#1B5E43]', 'dark:text-[#52B788]');
+                    b.classList.add('text-[#6E726A]', 'dark:text-[#918D83]');
                 }
             });
 
             if (currentView === 'today') {
-                todayBtn?.classList.add('text-blue-600', 'bg-white', 'shadow-sm');
-                mobToday?.classList.add('text-blue-600');
+                todayBtn?.classList.remove('text-[#474B45]', 'dark:text-[#C4C0B6]');
+                todayBtn?.classList.add('text-[#1B5E43]', 'dark:text-[#52B788]', 'bg-[#FFFFFF]', 'dark:bg-[#222521]', 'shadow-xs');
+                mobToday?.classList.remove('text-[#6E726A]', 'dark:text-[#918D83]');
+                mobToday?.classList.add('text-[#1B5E43]', 'dark:text-[#52B788]');
             } else if (currentView === 'plan') {
-                planBtn?.classList.add('text-blue-600', 'bg-white', 'shadow-sm');
-                mobPlan?.classList.add('text-blue-600');
+                planBtn?.classList.remove('text-[#474B45]', 'dark:text-[#C4C0B6]');
+                planBtn?.classList.add('text-[#1B5E43]', 'dark:text-[#52B788]', 'bg-[#FFFFFF]', 'dark:bg-[#222521]', 'shadow-xs');
+                mobPlan?.classList.remove('text-[#6E726A]', 'dark:text-[#918D83]');
+                mobPlan?.classList.add('text-[#1B5E43]', 'dark:text-[#52B788]');
             } else if (currentView === 'syllabus') {
-                sylBtn?.classList.add('text-blue-600', 'bg-white', 'shadow-sm');
-                mobSyl?.classList.add('text-blue-600');
+                sylBtn?.classList.remove('text-[#474B45]', 'dark:text-[#C4C0B6]');
+                sylBtn?.classList.add('text-[#1B5E43]', 'dark:text-[#52B788]', 'bg-[#FFFFFF]', 'dark:bg-[#222521]', 'shadow-xs');
+                mobSyl?.classList.remove('text-[#6E726A]', 'dark:text-[#918D83]');
+                mobSyl?.classList.add('text-[#1B5E43]', 'dark:text-[#52B788]');
             }
         }
 
@@ -1792,14 +1798,14 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 if (btn) {
                     if (lvl === level) {
                         if (lvl === 'focus') {
-                            btn.className = 'py-1 px-2 text-xs font-black rounded-lg bg-rose-600 text-white shadow-xs transition';
+                            btn.className = 'py-1 px-2 text-xs font-bold rounded-lg bg-[#B8432E] dark:bg-[#E57A65] text-white dark:text-[#141513] transition';
                         } else if (lvl === 'strong') {
-                            btn.className = 'py-1 px-2 text-xs font-black rounded-lg bg-emerald-600 text-white shadow-xs transition';
+                            btn.className = 'py-1 px-2 text-xs font-bold rounded-lg bg-[#2F486D] dark:bg-[#8BA7CE] text-white dark:text-[#141513] transition';
                         } else {
-                            btn.className = 'py-1 px-2 text-xs font-black rounded-lg bg-blue-600 text-white shadow-xs transition';
+                            btn.className = 'py-1 px-2 text-xs font-bold rounded-lg bg-[#1B5E43] dark:bg-[#52B788] text-white dark:text-[#141513] transition';
                         }
                     } else {
-                        btn.className = 'py-1 px-2 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-[#162137] text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-[#1e2d4a] transition';
+                        btn.className = 'py-1 px-2 text-xs font-semibold rounded-lg bg-transparent text-[#474B45] dark:text-[#C4C0B6] hover:bg-[#FBF9F4] dark:hover:bg-[#222521] transition';
                     }
                 }
             });
@@ -1819,20 +1825,20 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 const currentConf = setupPersonalization.subjectConfidence[sub] || 'standard';
                 const subSafe = sub.replace(/\s+/g, '-');
                 return `
-                    <div class="flex flex-col xs:flex-row xs:items-center justify-between gap-1.5 p-2.5 bg-white dark:bg-[#0e1526] rounded-xl border border-slate-200/80 dark:border-slate-700/80 shadow-xs">
+                    <div class="flex flex-col xs:flex-row xs:items-center justify-between gap-1.5 p-2.5 bg-[#FFFFFF] dark:bg-[#222521] rounded-xl border border-[#D9D2C3] dark:border-[#31342E]">
                         <div class="flex items-center gap-2">
-                            <span class="text-xs font-bold text-slate-800 dark:text-white">${sub}</span>
-                            ${currentConf === 'focus' ? `<span class="text-xs font-extrabold uppercase tracking-wider text-rose-700 dark:text-rose-300 bg-rose-50 dark:bg-rose-950/60 px-1.5 py-0.5 rounded border border-rose-200/60 dark:border-rose-800/60">${priorityText}</span>` : (currentConf === 'strong' ? `<span class="text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.5 rounded border border-emerald-200/60 dark:border-emerald-800/60">${fastText}</span>` : '')}
+                            <span class="text-xs font-bold text-[#181B18] dark:text-[#EFECE4]">${sub}</span>
+                            ${currentConf === 'focus' ? `<span class="text-xs font-mono font-bold uppercase tracking-wider text-[#B8432E] dark:text-[#E57A65] bg-[#F9E9E5] dark:bg-[rgba(229,122,101,0.14)] px-1.5 py-0.5 rounded border border-[#E8B4A9] dark:border-[rgba(229,122,101,0.3)]">${priorityText}</span>` : (currentConf === 'strong' ? `<span class="text-xs font-mono font-bold uppercase tracking-wider text-[#1B5E43] dark:text-[#52B788] bg-[#E4EFE9] dark:bg-[rgba(82,183,136,0.14)] px-1.5 py-0.5 rounded border border-[#9DC3B2] dark:border-[rgba(82,183,136,0.3)]">${fastText}</span>` : '')}
                         </div>
-                        <div class="flex items-center gap-1 bg-slate-50 dark:bg-[#141d30] p-1 rounded-xl border border-slate-200/60 dark:border-slate-700/60 self-start xs:self-auto">
-                            <button type="button" id="conf-btn-${subSafe}-focus" onclick="setSubjectConfidence('${sub}', 'focus')" class="py-1 px-2 text-xs ${currentConf === 'focus' ? 'font-black bg-rose-600 text-white shadow-xs' : 'font-semibold bg-slate-100 dark:bg-[#162137] text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-[#1e2d4a]'} rounded-lg transition" title="Needs extra practice & prioritized in daily rotation">
-                                🎯 Focus
+                        <div class="flex items-center gap-1 bg-[#EDE8DC] dark:bg-[#181A17] p-1 rounded-xl border border-[#D9D2C3] dark:border-[#31342E] self-start xs:self-auto">
+                            <button type="button" id="conf-btn-${subSafe}-focus" onclick="setSubjectConfidence('${sub}', 'focus')" class="py-1 px-2 text-xs ${currentConf === 'focus' ? 'font-bold bg-[#B8432E] dark:bg-[#E57A65] text-white dark:text-[#141513]' : 'font-semibold bg-transparent text-[#474B45] dark:text-[#C4C0B6] hover:bg-[#FBF9F4] dark:hover:bg-[#222521]'} rounded-lg transition" title="Needs extra practice & prioritized in daily rotation">
+                                Focus
                             </button>
-                            <button type="button" id="conf-btn-${subSafe}-standard" onclick="setSubjectConfidence('${sub}', 'standard')" class="py-1 px-2 text-xs ${currentConf === 'standard' ? 'font-black bg-blue-600 text-white shadow-xs' : 'font-semibold bg-slate-100 dark:bg-[#162137] text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-[#1e2d4a]'} rounded-lg transition" title="Standard balanced study pace">
-                                ⚡ Normal
+                            <button type="button" id="conf-btn-${subSafe}-standard" onclick="setSubjectConfidence('${sub}', 'standard')" class="py-1 px-2 text-xs ${currentConf === 'standard' ? 'font-bold bg-[#1B5E43] dark:bg-[#52B788] text-white dark:text-[#141513]' : 'font-semibold bg-transparent text-[#474B45] dark:text-[#C4C0B6] hover:bg-[#FBF9F4] dark:hover:bg-[#222521]'} rounded-lg transition" title="Standard balanced study pace">
+                                Normal
                             </button>
-                            <button type="button" id="conf-btn-${subSafe}-strong" onclick="setSubjectConfidence('${sub}', 'strong')" class="py-1 px-2 text-xs ${currentConf === 'strong' ? 'font-black bg-emerald-600 text-white shadow-xs' : 'font-semibold bg-slate-100 dark:bg-[#162137] text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-[#1e2d4a]'} rounded-lg transition" title="Confident in concepts & spaced out lighter frequency">
-                                🌟 Strong
+                            <button type="button" id="conf-btn-${subSafe}-strong" onclick="setSubjectConfidence('${sub}', 'strong')" class="py-1 px-2 text-xs ${currentConf === 'strong' ? 'font-bold bg-[#2F486D] dark:bg-[#8BA7CE] text-white dark:text-[#141513]' : 'font-semibold bg-transparent text-[#474B45] dark:text-[#C4C0B6] hover:bg-[#FBF9F4] dark:hover:bg-[#222521]'} rounded-lg transition" title="Confident in concepts & spaced out lighter frequency">
+                                Strong
                             </button>
                         </div>
                     </div>
@@ -1855,9 +1861,9 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 const el = document.getElementById(c.id);
                 if (el) {
                     if (c.match) {
-                        el.className = 'cursor-pointer p-3 rounded-2xl border-2 border-blue-600 dark:border-blue-500 bg-blue-50/70 dark:bg-blue-950/40 ring-2 ring-blue-500/20 transition text-left flex flex-col justify-between relative shadow-xs';
+                        el.className = 'cursor-pointer p-3 rounded-2xl border-2 border-[#1B5E43] dark:border-[#52B788] bg-[#E4EFE9] dark:bg-[rgba(82,183,136,0.14)] ring-2 ring-[#1B5E43]/20 transition text-left flex flex-col justify-between relative shadow-xs';
                     } else {
-                        el.className = 'cursor-pointer p-3 rounded-2xl border-2 border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600 transition text-left flex flex-col justify-between';
+                        el.className = 'cursor-pointer p-3 rounded-2xl border-2 border-[#D9D2C3] dark:border-[#31342E] bg-[#FFFFFF] dark:bg-[#222521] hover:border-[#B9B09E] dark:hover:border-[#454940] transition text-left flex flex-col justify-between';
                     }
                 }
             });
@@ -1869,9 +1875,9 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 const btn = document.getElementById(`hours-chip-${String(h).replace('.', '_')}`);
                 if (btn) {
                     if (h === hrs) {
-                        btn.className = 'min-h-[44px] flex-1 py-2.5 px-3 text-xs font-black rounded-xl bg-blue-600 text-white shadow-sm transition flex flex-col items-center justify-center';
+                        btn.className = 'min-h-[44px] flex-1 py-2.5 px-3 text-xs font-black rounded-xl bg-[#1B5E43] dark:bg-[#52B788] text-white dark:text-[#141513] shadow-xs transition flex flex-col items-center justify-center';
                     } else {
-                        btn.className = 'min-h-[44px] flex-1 py-2.5 px-3 text-xs font-semibold rounded-xl bg-slate-100 dark:bg-[#141d30] text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-[#1a253c] transition flex flex-col items-center justify-center';
+                        btn.className = 'min-h-[44px] flex-1 py-2.5 px-3 text-xs font-semibold rounded-xl bg-[#EDE8DC] dark:bg-[#181A17] text-[#474B45] dark:text-[#C4C0B6] border border-[#D9D2C3] dark:border-[#31342E] hover:bg-[#E4EFE9] transition flex flex-col items-center justify-center';
                     }
                 }
             });
@@ -1970,7 +1976,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 activeSetupSubjectTab = subs[0];
             }
             return subs.map(sub => `
-                <button type="button" id="setup-tab-${sub.replace(/\s+/g, '-')}" onclick="switchSetupSubject('${sub}')" class="min-h-[44px] py-2 px-3 text-xs font-bold rounded-xl ${sub === activeSetupSubjectTab ? 'bg-slate-800 dark:bg-slate-700 text-white shadow-sm' : 'bg-slate-100 dark:bg-[#162137] text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-[#1e2d4a]'} transition flex items-center justify-center">
+                <button type="button" id="setup-tab-${sub.replace(/\s+/g, '-')}" onclick="switchSetupSubject('${sub}')" class="min-h-[44px] py-2 px-3 text-xs font-bold rounded-xl ${sub === activeSetupSubjectTab ? 'bg-[#1B5E43] dark:bg-[#52B788] text-white dark:text-[#141513] shadow-xs' : 'bg-[#EDE8DC] dark:bg-[#1B1D1A] text-[#474B45] dark:text-[#C4C0B6] border border-[#D9D2C3] dark:border-[#31342E] hover:bg-[#E4EFE9]'} transition flex items-center justify-center">
                     ${sub}
                 </button>
             `).join('');
@@ -1999,11 +2005,11 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
             const btnP1 = document.getElementById('grade-tab-p1');
             if (btnP2 && btnP1) {
                 if (activeSetupGradeTab === '+2') {
-                    btnP2.className = 'min-h-[44px] flex-1 py-2 px-3 text-xs font-bold rounded-xl bg-blue-600 dark:bg-blue-500 text-white shadow-sm transition flex items-center justify-center gap-1.5';
-                    btnP1.className = 'min-h-[44px] flex-1 py-2 px-3 text-xs font-bold rounded-xl bg-slate-100 dark:bg-[#162137] text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-[#1e2d4a] transition flex items-center justify-center gap-1.5';
+                    btnP2.className = 'min-h-[44px] flex-1 py-2 px-3 text-xs font-bold rounded-xl bg-[#1B5E43] dark:bg-[#52B788] text-white dark:text-[#141513] shadow-xs transition flex items-center justify-center gap-1.5';
+                    btnP1.className = 'min-h-[44px] flex-1 py-2 px-3 text-xs font-bold rounded-xl bg-[#EDE8DC] dark:bg-[#1B1D1A] text-[#474B45] dark:text-[#C4C0B6] border border-[#D9D2C3] dark:border-[#31342E] hover:bg-[#E4EFE9] transition flex items-center justify-center gap-1.5';
                 } else {
-                    btnP1.className = 'min-h-[44px] flex-1 py-2 px-3 text-xs font-bold rounded-xl bg-amber-600 dark:bg-amber-500 text-white shadow-sm transition flex items-center justify-center gap-1.5';
-                    btnP2.className = 'min-h-[44px] flex-1 py-2 px-3 text-xs font-bold rounded-xl bg-slate-100 dark:bg-[#162137] text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-[#1e2d4a] transition flex items-center justify-center gap-1.5';
+                    btnP1.className = 'min-h-[44px] flex-1 py-2 px-3 text-xs font-bold rounded-xl bg-[#9C6418] dark:bg-[#DFAC54] text-white dark:text-[#141513] shadow-xs transition flex items-center justify-center gap-1.5';
+                    btnP2.className = 'min-h-[44px] flex-1 py-2 px-3 text-xs font-bold rounded-xl bg-[#EDE8DC] dark:bg-[#1B1D1A] text-[#474B45] dark:text-[#C4C0B6] border border-[#D9D2C3] dark:border-[#31342E] hover:bg-[#F6EEDC] transition flex items-center justify-center gap-1.5';
                 }
             }
 
@@ -2011,9 +2017,9 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 const btn = document.getElementById(`setup-tab-${s.replace(/\s+/g, '-')}`);
                 if (btn) {
                     if (s === activeSetupSubjectTab) {
-                        btn.className = 'min-h-[44px] py-2 px-3 text-xs font-bold rounded-xl bg-slate-800 dark:bg-slate-700 text-white shadow-sm transition flex items-center justify-center';
+                        btn.className = 'min-h-[44px] py-2 px-3 text-xs font-bold rounded-xl bg-[#1B5E43] dark:bg-[#52B788] text-white dark:text-[#141513] shadow-xs transition flex items-center justify-center';
                     } else {
-                        btn.className = 'min-h-[44px] py-2 px-3 text-xs font-bold rounded-xl bg-slate-100 dark:bg-[#162137] text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-[#1e2d4a] transition flex items-center justify-center';
+                        btn.className = 'min-h-[44px] py-2 px-3 text-xs font-bold rounded-xl bg-[#EDE8DC] dark:bg-[#1B1D1A] text-[#474B45] dark:text-[#C4C0B6] border border-[#D9D2C3] dark:border-[#31342E] hover:bg-[#E4EFE9] transition flex items-center justify-center';
                     }
                 }
             });
@@ -2058,12 +2064,12 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
             const total = selectedCompletedChapters.size;
             if (total === 0) {
                 badge.innerHTML = isML ? '0 പൂർത്തിയായി' : '0 completed';
-                badge.className = 'text-xs font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-[#162137] text-slate-500 dark:text-slate-300';
+                badge.className = 'text-xs font-mono font-bold px-2.5 py-0.5 rounded-full bg-[#EDE8DC] dark:bg-[#181A17] text-[#6E726A] dark:text-[#918D83] border border-[#D9D2C3] dark:border-[#31342E]';
             } else {
                 badge.innerHTML = isML
-                    ? `<i class="fa-solid fa-check mr-1"></i>${total} പൂർത്തിയായി (${p2Count} +2, ${p1Count} +1)`
-                    : `<i class="fa-solid fa-check mr-1"></i>${total} completed (${p2Count} in +2, ${p1Count} in +1)`;
-                badge.className = 'text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-600/50';
+                    ? `<span class="inline-flex items-center gap-1"><svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>${total} പൂർത്തിയായി (${p2Count} +2, ${p1Count} +1)</span>`
+                    : `<span class="inline-flex items-center gap-1"><svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>${total} completed (${p2Count} in +2, ${p1Count} in +1)</span>`;
+                badge.className = 'text-xs font-mono font-bold px-2.5 py-0.5 rounded-full bg-[#E4EFE9] dark:bg-[rgba(82,183,136,0.14)] text-[#1B5E43] dark:text-[#52B788] border border-[#9DC3B2] dark:border-[rgba(82,183,136,0.3)]';
             }
         }
 
@@ -2079,17 +2085,17 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
             const studyPartsLabel = isML ? 'പഠന ഭാഗങ്ങൾ' : 'study parts';
 
             let html = `
-                <div class="flex items-center justify-between pb-2 mb-2.5 border-b border-slate-100 dark:border-slate-700/60">
+                <div class="flex items-center justify-between pb-2 mb-2.5 border-b border-[#D9D2C3] dark:border-[#31342E] flex-wrap gap-2">
                     <div class="flex items-center gap-2">
-                        <span class="text-xs font-bold text-slate-700 dark:text-slate-200">
-                            ${grade === '+1' ? '<span class="text-amber-700 dark:text-amber-300 font-extrabold bg-amber-50 dark:bg-amber-950/40 px-2 py-0.5 rounded border border-amber-200/60 dark:border-amber-700/60">Class 11 (+1)</span>' : '<span class="text-blue-700 dark:text-blue-300 font-extrabold bg-blue-50 dark:bg-blue-950/40 px-2 py-0.5 rounded border border-blue-200/60 dark:border-blue-700/60">Class 12 (+2)</span>'} • ${subject}
+                        <span class="text-xs font-bold text-[#181B18] dark:text-[#EFECE4]">
+                            ${grade === '+1' ? '<span class="text-[#9C6418] dark:text-[#DFAC54] font-mono font-bold bg-[#F6EEDC] dark:bg-[rgba(223,172,84,0.14)] px-2 py-0.5 rounded border border-[#DEC59A] dark:border-[rgba(223,172,84,0.3)]">Class 11 (+1)</span>' : '<span class="text-[#1B5E43] dark:text-[#52B788] font-mono font-bold bg-[#E4EFE9] dark:bg-[rgba(82,183,136,0.14)] px-2 py-0.5 rounded border border-[#9DC3B2] dark:border-[rgba(82,183,136,0.3)]">Class 12 (+2)</span>'} • ${subject}
                         </span>
-                        <span class="text-xs text-slate-400 dark:text-slate-400 font-medium">${completedText}</span>
+                        <span class="text-xs font-mono text-[#6E726A] dark:text-[#918D83]">${completedText}</span>
                     </div>
                     <div class="flex items-center gap-2">
-                        <button type="button" onclick="toggleAllSubjectChapters('${grade}', '${subject}', true)" class="min-h-[44px] inline-flex items-center text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline px-1.5">${selectAllText}</button>
-                        <span class="text-slate-300 dark:text-slate-600">|</span>
-                        <button type="button" onclick="toggleAllSubjectChapters('${grade}', '${subject}', false)" class="min-h-[44px] inline-flex items-center text-xs font-bold text-slate-500 dark:text-slate-300 hover:underline px-1.5">${clearText}</button>
+                        <button type="button" onclick="toggleAllSubjectChapters('${grade}', '${subject}', true)" class="min-h-[44px] inline-flex items-center text-xs font-bold text-[#1B5E43] dark:text-[#52B788] hover:underline px-1.5 cursor-pointer">${selectAllText}</button>
+                        <span class="text-[#D9D2C3] dark:text-[#31342E]">|</span>
+                        <button type="button" onclick="toggleAllSubjectChapters('${grade}', '${subject}', false)" class="min-h-[44px] inline-flex items-center text-xs font-bold text-[#6E726A] dark:text-[#918D83] hover:underline px-1.5 cursor-pointer">${clearText}</button>
                     </div>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-56 overflow-y-auto pr-1">
@@ -2098,11 +2104,11 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
             uniqueChaps.forEach(ch => {
                 const isChecked = selectedCompletedChapters.has(ch.chapId);
                 html += `
-                    <label class="min-h-[44px] flex items-center gap-2.5 p-2 rounded-xl ${isChecked ? 'bg-emerald-50/70 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-600/50' : 'hover:bg-slate-50 dark:hover:bg-[#141d30] border-slate-200/80 dark:border-slate-700/60'} border cursor-pointer transition text-xs select-none">
-                        <input type="checkbox" data-grade="${grade}" data-subject="${subject}" value="${ch.chapId}" ${isChecked ? 'checked' : ''} onchange="toggleChapterSelection('${ch.chapId}', this.checked); this.closest('label').classList.toggle('bg-emerald-50/70', this.checked); this.closest('label').classList.toggle('dark:bg-emerald-950/40', this.checked); this.closest('label').classList.toggle('border-emerald-200', this.checked); this.closest('label').classList.toggle('dark:border-emerald-600/50', this.checked); this.closest('label').classList.toggle('border-slate-200/80', !this.checked); this.closest('label').classList.toggle('dark:border-slate-700/60', !this.checked);" class="completed-chapter-cb mt-0.5 rounded border-slate-300 dark:border-slate-600 text-emerald-600 focus:ring-emerald-500 w-4 h-4">
+                    <label class="min-h-[44px] flex items-center gap-2.5 p-2.5 rounded-xl ${isChecked ? 'bg-[#E4EFE9] dark:bg-[rgba(82,183,136,0.14)] border-[#9DC3B2] dark:border-[rgba(82,183,136,0.3)]' : 'bg-[#FFFFFF] dark:bg-[#222521] hover:bg-[#EDE8DC] dark:hover:bg-[#181A17] border-[#D9D2C3] dark:border-[#31342E]'} border cursor-pointer transition text-xs select-none">
+                        <input type="checkbox" data-grade="${grade}" data-subject="${subject}" value="${ch.chapId}" ${isChecked ? 'checked' : ''} onchange="toggleChapterSelection('${ch.chapId}', this.checked); this.closest('label').classList.toggle('bg-[#E4EFE9]', this.checked); this.closest('label').classList.toggle('border-[#9DC3B2]', this.checked); this.closest('label').classList.toggle('bg-[#FFFFFF]', !this.checked); this.closest('label').classList.toggle('border-[#D9D2C3]', !this.checked);" class="completed-chapter-cb mt-0.5 rounded border-[#B9B09E] dark:border-[#454940] text-[#1B5E43] dark:text-[#52B788] focus:ring-[#1B5E43] w-4 h-4 accent-[#1B5E43]">
                         <div class="flex-1 truncate">
-                            <span class="font-bold text-slate-800 dark:text-white block truncate" title="${ch.chapterName}">Chapter ${ch.chapNumber}: ${ch.chapterName.replace(/^Chapter\s+\d+:\s*/i, '').replace(/^\d+\.\s*/, '')}</span>
-                            <span class="text-xs text-slate-400 dark:text-slate-400 font-medium">Term ${ch.term} • ${ch.totalParts} ${studyPartsLabel}</span>
+                            <span class="font-bold text-[#181B18] dark:text-[#EFECE4] block truncate" title="${ch.chapterName}">Chapter ${ch.chapNumber}: ${ch.chapterName.replace(/^Chapter\s+\d+:\s*/i, '').replace(/^\d+\.\s*/, '')}</span>
+                            <span class="text-[11px] font-mono text-[#6E726A] dark:text-[#918D83]">Term ${ch.term} • ${ch.totalParts} ${studyPartsLabel}</span>
                         </div>
                     </label>
                 `;
@@ -2120,15 +2126,15 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 if (card) {
                     const checkIcon = card.querySelector('.check-indicator');
                     if (n === termNum) {
-                        card.className = 'cursor-pointer p-3.5 sm:p-4 rounded-2xl border-2 border-blue-600 dark:border-blue-500 bg-blue-50/60 dark:bg-blue-950/40 ring-2 ring-blue-500/20 transition text-left flex flex-col justify-between relative shadow-sm';
+                        card.className = 'cursor-pointer p-3.5 sm:p-4 rounded-2xl border-2 border-[#1B5E43] dark:border-[#52B788] bg-[#E4EFE9] dark:bg-[rgba(82,183,136,0.14)] ring-2 ring-[#1B5E43]/20 transition text-left flex flex-col justify-between relative shadow-xs';
                         if (checkIcon) {
-                            checkIcon.className = 'w-4 h-4 rounded-full bg-blue-600 dark:bg-blue-500 text-white flex items-center justify-center text-xs check-indicator';
-                            checkIcon.innerHTML = '<i class="fa-solid fa-check"></i>';
+                            checkIcon.className = 'w-4 h-4 rounded-full bg-[#1B5E43] dark:bg-[#52B788] text-white dark:text-[#141513] flex items-center justify-center text-xs check-indicator';
+                            checkIcon.innerHTML = '<svg class="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>';
                         }
                     } else {
-                        card.className = 'cursor-pointer p-3.5 sm:p-4 rounded-2xl border-2 border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600 transition text-left flex flex-col justify-between';
+                        card.className = 'cursor-pointer p-3.5 sm:p-4 rounded-2xl border-2 border-[#D9D2C3] dark:border-[#31342E] bg-[#FFFFFF] dark:bg-[#222521] hover:border-[#B9B09E] dark:hover:border-[#454940] transition text-left flex flex-col justify-between';
                         if (checkIcon) {
-                            checkIcon.className = 'w-4 h-4 rounded-full border border-slate-300 dark:border-slate-600 flex items-center justify-center check-indicator';
+                            checkIcon.className = 'w-4 h-4 rounded-full border border-[#D9D2C3] dark:border-[#31342E] flex items-center justify-center check-indicator';
                             checkIcon.innerHTML = '';
                         }
                     }
@@ -2179,26 +2185,26 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
 
             box.classList.remove('hidden');
             const rowsHtml = events.map(ev => `
-                <div class="flex items-center justify-between gap-2 py-1.5 border-b border-slate-200/70 dark:border-slate-700/60 last:border-0 text-[11px]">
+                <div class="flex items-center justify-between gap-2 py-1.5 border-b border-[#D9D2C3]/70 dark:border-[#31342E] last:border-0 text-[11px]">
                     <div class="flex items-center gap-2 min-w-0">
-                        <span class="font-mono font-bold text-blue-700 dark:text-blue-300 shrink-0">${ev.date.slice(5)} (${ev.dayName})</span>
-                        <span class="font-bold text-slate-800 dark:text-slate-100 truncate">${escapeStudyText(ev.paperTitle)}</span>
+                        <span class="font-mono font-bold text-[#1B5E43] dark:text-[#52B788] shrink-0">${ev.date.slice(5)} (${ev.dayName})</span>
+                        <span class="font-bold text-[#181B18] dark:text-[#EFECE4] truncate">${escapeStudyText(ev.paperTitle)}</span>
                     </div>
-                    <span class="px-1.5 py-0.5 rounded bg-slate-200/80 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold shrink-0">${ev.session} · ${ev.time}</span>
+                    <span class="px-1.5 py-0.5 rounded font-mono bg-[#EDE8DC] dark:bg-[#181A17] text-[#474B45] dark:text-[#C4C0B6] font-bold shrink-0">${ev.session} · ${ev.time}</span>
                 </div>
             `).join('');
 
             box.innerHTML = `
-                <div class="p-3 rounded-2xl bg-slate-50/90 dark:bg-[#101726] border border-slate-200 dark:border-slate-700/80 text-left">
+                <div class="p-3 rounded-2xl bg-[#FFFFFF] dark:bg-[#181A17] border border-[#D9D2C3] dark:border-[#31342E] text-left">
                     <div class="flex items-center justify-between gap-2 mb-2 flex-wrap">
-                        <span class="text-xs font-black text-slate-900 dark:text-white flex items-center gap-1.5">
-                            <i class="fa-solid fa-calendar-check text-emerald-600 dark:text-emerald-400"></i>
+                        <span class="text-xs font-bold text-[#181B18] dark:text-[#EFECE4] flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5 text-[#1B5E43] dark:text-[#52B788]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/><path d="m9 16 2 2 4-4"/></svg>
                             <span>${isML ? `${cycleMeta.mlName} (${grade})` : `Official DHSE ${cycleMeta.shortName} (${grade})`}</span>
                         </span>
-                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300">${cycleMeta.startDate.slice(5)} → ${cycleMeta.endDate.slice(5)}</span>
+                        <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#E4EFE9] dark:bg-[rgba(82,183,136,0.14)] text-[#1B5E43] dark:text-[#52B788] border border-[#9DC3B2] dark:border-[rgba(82,183,136,0.3)]">${cycleMeta.startDate.slice(5)} → ${cycleMeta.endDate.slice(5)}</span>
                     </div>
                     <div class="max-h-40 overflow-y-auto pr-1">${rowsHtml}</div>
-                    ${cycleMeta.isTentativeSubjectOrder ? `<p class="text-[10px] text-amber-700 dark:text-amber-300 mt-1.5 font-semibold">${isML ? 'ഔദ്യോഗിക വിൻഡോ Feb 11–24. വിഷയ ക്രമം സ്കൂൾ സർക്കുലർ അനുസരിച്ച് പരിശോധിക്കുക.' : 'Official window Feb 11–24, 2027 · Subject slots follow DHSE group order (verify school notice).'}</p>` : ''}
+                    ${cycleMeta.isTentativeSubjectOrder ? `<p class="text-[10px] text-[#9C6418] dark:text-[#DFAC54] mt-1.5 font-semibold">${isML ? 'ഔദ്യോഗിക വിൻഡോ Feb 11–24. വിഷയ ക്രമം സ്കൂൾ സർക്കുലർ അനുസരിച്ച് പരിശോധിക്കുക.' : 'Official window Feb 11–24, 2027 · Subject slots follow DHSE group order (verify school notice).'}</p>` : ''}
                 </div>
             `;
         }
@@ -2220,17 +2226,17 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 const isSelected = (val === p.date);
                 btn.setAttribute('aria-pressed', isSelected ? 'true' : 'false');
                 if (isSelected) {
-                    btn.className = 'preset-date-btn min-h-[44px] py-2.5 px-3 rounded-xl bg-blue-600 dark:bg-blue-600 text-white font-black border-2 border-blue-500 shadow-md shadow-blue-500/30 scale-[1.02] ring-2 ring-blue-500/25 transition-all duration-150 flex flex-col items-center justify-center text-center gap-1 active:scale-95 cursor-pointer';
-                    const icon = btn.querySelector('i');
-                    if (icon) {
-                        icon.className = icon.className.replace(/text-\w+-\d+/, 'text-white');
-                    }
+                    btn.className = 'preset-date-btn min-h-[44px] py-2.5 px-3 rounded-xl bg-[#1B5E43] dark:bg-[#52B788] text-white dark:text-[#141513] font-bold border-2 border-[#1B5E43] dark:border-[#52B788] ring-2 ring-[#1B5E43]/20 transition-all duration-150 flex flex-col items-center justify-center text-center gap-1 active:scale-95 cursor-pointer';
+                    const iconEl = btn.querySelector('svg');
+                    if (iconEl) iconEl.style.color = 'currentColor';
                     const sub = btn.querySelector('.preset-sub');
-                    if (sub) sub.className = 'preset-sub text-[10px] text-blue-100 font-medium';
+                    if (sub) sub.className = 'preset-sub text-[10px] font-mono opacity-85 font-medium';
                 } else {
-                    btn.className = 'preset-date-btn min-h-[44px] py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-[#162137] hover:bg-blue-50/80 dark:hover:bg-blue-950/40 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-200 dark:border-slate-700/80 transition-all duration-150 flex flex-col items-center justify-center text-center gap-1 active:scale-95 cursor-pointer';
+                    btn.className = 'preset-date-btn min-h-[44px] py-2.5 px-3 rounded-xl bg-[#FFFFFF] dark:bg-[#222521] hover:bg-[#EDE8DC] dark:hover:bg-[#181A17] text-[#181B18] dark:text-[#EFECE4] text-xs font-bold border border-[#D9D2C3] dark:border-[#31342E] transition-all duration-150 flex flex-col items-center justify-center text-center gap-1 active:scale-95 cursor-pointer';
+                    const iconEl = btn.querySelector('svg');
+                    if (iconEl) iconEl.style.color = '';
                     const sub = btn.querySelector('.preset-sub');
-                    if (sub) sub.className = 'preset-sub text-[10px] text-slate-400 font-medium';
+                    if (sub) sub.className = 'preset-sub text-[10px] font-mono text-[#6E726A] dark:text-[#918D83] font-medium';
                 }
             });
         }
@@ -2266,8 +2272,8 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
             const days = calculateDaysBetween(effectiveStart, input.value);
             if (!Number.isFinite(days) || days <= 0) {
                 label.innerHTML = isML
-                    ? '<span class="text-rose-600 dark:text-rose-400 font-bold flex items-center gap-1.5"><i class="fa-solid fa-triangle-exclamation"></i> തിരഞ്ഞെടുത്ത തീയതി കഴിഞ്ഞുപോയി! ഭാവിയിലെ തീയതി നൽകുക.</span>'
-                    : '<span class="text-rose-600 dark:text-rose-400 font-bold flex items-center gap-1.5"><i class="fa-solid fa-triangle-exclamation"></i> Selected date has passed! Please select a future target date.</span>';
+                    ? '<span class="text-[#B8432E] dark:text-[#E57A65] font-bold flex items-center gap-1.5"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> തിരഞ്ഞെടുത്ത തീയതി കഴിഞ്ഞുപോയി! ഭാവിയിലെ തീയതി നൽകുക.</span>'
+                    : '<span class="text-[#B8432E] dark:text-[#E57A65] font-bold flex items-center gap-1.5"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Selected date has passed! Please select a future target date.</span>';
             } else {
                 let revDays = 0;
                 if (days >= 75) revDays = 10;
@@ -2283,36 +2289,36 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 }
                 const studyDays = Math.max(1, days - revDays);
                 const nightBadge = smartStart.isLateEvening ? `
-                    <div class="mt-2 text-[11px] text-amber-700 dark:text-amber-300 font-semibold bg-amber-50 dark:bg-amber-950/40 p-2 rounded-xl border border-amber-200/60 dark:border-amber-800/40 flex items-center gap-1.5">
-                        <i class="fa-solid fa-moon text-amber-500"></i>
+                    <div class="mt-2 text-[11px] text-[#9C6418] dark:text-[#DFAC54] font-semibold bg-[#F6EEDC] dark:bg-[rgba(223,172,84,0.14)] p-2 rounded-xl border border-[#DEC59A] dark:border-[rgba(223,172,84,0.3)] flex items-center gap-1.5">
+                        <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
                         <span>${isML ? 'രാത്രി വൈകി: ആദ്യ ദിന പഠനം നാളെ രാവിലെ മുതൽ ആരംഭിക്കുന്നു' : 'Late evening: Day 1 study runway starts fresh tomorrow morning'}</span>
                     </div>
                 ` : '';
                 label.innerHTML = isML ? `
-                    <div class="flex flex-wrap items-center justify-between gap-1">
-                        <span class="font-bold text-slate-800 dark:text-white flex items-center gap-1.5">
-                            <i class="fa-solid fa-calculator text-blue-600 dark:text-blue-400"></i>
-                            <span><strong>${days}</strong> ദിവസങ്ങൾ ലഭ്യമാണ്</span>
+                    <div class="flex flex-wrap items-center justify-between gap-1.5">
+                        <span class="font-bold text-[#181B18] dark:text-[#EFECE4] flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5 text-[#1B5E43] dark:text-[#52B788]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16" y1="14" y2="18"/><path d="M16 10h.01M12 10h.01M8 10h.01M12 14h.01M8 14h.01M12 18h.01M8 18h.01"/></svg>
+                            <span><strong class="font-mono">${days}</strong> ദിവസങ്ങൾ ലഭ്യമാണ്</span>
                         </span>
-                        <span class="text-purple-700 dark:text-purple-300 font-bold bg-purple-100/70 dark:bg-purple-950/40 px-2 py-0.5 rounded-md text-xs">
-                            <i class="fa-solid fa-shield-check mr-1"></i>${revDays} ദിവസങ്ങൾ റിവിഷൻ & പരീക്ഷാ തയ്യാറെടുപ്പിന്
+                        <span class="text-[#2F486D] dark:text-[#8BA7CE] font-mono font-bold bg-[#E7ECF3] dark:bg-[rgba(139,167,206,0.14)] border border-[#A6B8CE] dark:border-[rgba(139,167,206,0.3)] px-2 py-0.5 rounded-md text-xs inline-flex items-center gap-1">
+                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>${revDays} ദിവസങ്ങൾ റിവിഷൻ & പരീക്ഷാ തയ്യാറെടുപ്പിന്
                         </span>
                     </div>
-                    <div class="text-xs text-slate-500 dark:text-slate-300 mt-1">
+                    <div class="text-xs text-[#474B45] dark:text-[#C4C0B6] mt-1.5">
                         ${studyDays} ദിവസത്തെ സിലബസ് പഠനം. ഔദ്യോഗിക DHSE പരീക്ഷാ തീയതികൾക്കനുസരിച്ച് അവസാന ${revDays} ദിവസങ്ങൾ റിവിഷനും പരീക്ഷത്തലേന്ന് പഠനവും ക്രമീകരിക്കും.
                     </div>
                     ${nightBadge}
                 ` : `
-                    <div class="flex flex-wrap items-center justify-between gap-1">
-                        <span class="font-bold text-slate-800 dark:text-white flex items-center gap-1.5">
-                            <i class="fa-solid fa-calculator text-blue-600 dark:text-blue-400"></i>
-                            <span><strong>${days}</strong> calendar days available</span>
+                    <div class="flex flex-wrap items-center justify-between gap-1.5">
+                        <span class="font-bold text-[#181B18] dark:text-[#EFECE4] flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5 text-[#1B5E43] dark:text-[#52B788]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16" y1="14" y2="18"/><path d="M16 10h.01M12 10h.01M8 10h.01M12 14h.01M8 14h.01M12 18h.01M8 18h.01"/></svg>
+                            <span><strong class="font-mono">${days}</strong> calendar days available</span>
                         </span>
-                        <span class="text-purple-700 dark:text-purple-300 font-bold bg-purple-100/70 dark:bg-purple-950/40 px-2 py-0.5 rounded-md text-xs">
-                            <i class="fa-solid fa-shield-check mr-1"></i>${revDays} days reserved for Exam-Eve & Revision
+                        <span class="text-[#2F486D] dark:text-[#8BA7CE] font-mono font-bold bg-[#E7ECF3] dark:bg-[rgba(139,167,206,0.14)] border border-[#A6B8CE] dark:border-[rgba(139,167,206,0.3)] px-2 py-0.5 rounded-md text-xs inline-flex items-center gap-1">
+                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>${revDays} days reserved for Exam-Eve & Revision
                         </span>
                     </div>
-                    <div class="text-xs text-slate-500 dark:text-slate-300 mt-1">
+                    <div class="text-xs text-[#474B45] dark:text-[#C4C0B6] mt-1.5">
                         ${studyDays} syllabus study days${cycleMeta ? ` before ${cycleMeta.shortName} begins (${cycleMeta.startDate})` : ''}. Official DHSE exam dates & exam-eve sprints are mapped automatically.
                     </div>
                     ${nightBadge}
@@ -2355,10 +2361,10 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
             for (let i = 1; i <= 4; i++) {
                 const checkEl = document.getElementById(`plan-gen-check-${i}`);
                 if (checkEl) {
-                    checkEl.className = "flex items-center gap-2.5 text-xs text-slate-400 dark:text-slate-500 transition-colors duration-300";
+                    checkEl.className = "flex items-center gap-2.5 text-xs text-[#6E726A] dark:text-[#918D83] transition-colors duration-300";
                     const badge = (typeof checkEl.querySelector === 'function') ? checkEl.querySelector('span') : null;
                     if (badge) {
-                        badge.className = "w-5 h-5 rounded-full flex items-center justify-center bg-slate-100 dark:bg-slate-800 text-slate-400 text-[10px] shrink-0 font-bold";
+                        badge.className = "w-5 h-5 rounded-full flex items-center justify-center bg-[#EDE8DC] dark:bg-[#181A17] text-[#6E726A] dark:text-[#918D83] font-mono text-[10px] shrink-0 font-bold";
                         badge.innerHTML = `${i}`;
                     }
                 }
@@ -2444,24 +2450,26 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 if (subheadingEl) subheadingEl.innerText = s.subheading;
                 if (progressBar) progressBar.style.width = `${s.pct}%`;
                 if (percentageEl) percentageEl.innerText = `${s.pct}%`;
-                if (stageLabel) stageLabel.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin text-blue-500 text-[10px]"></i> ${s.stageText}`;
-                if (iconEl) iconEl.className = `fa-solid ${s.icon} text-xl transition-all duration-300`;
+                if (stageLabel) stageLabel.innerHTML = `<span class="inline-flex items-center gap-1.5 font-mono"><svg class="w-3 h-3 text-[#1B5E43] dark:text-[#52B788] animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> ${s.stageText}</span>`;
+                if (iconEl) iconEl.innerHTML = s.icon === 'fa-circle-check'
+                    ? '<svg class="w-6 h-6 text-[#1B5E43] dark:text-[#52B788]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>'
+                    : '<svg class="w-6 h-6 text-[#1B5E43] dark:text-[#52B788]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16" y1="14" y2="18"/><path d="M16 10h.01M12 10h.01M8 10h.01M12 14h.01M8 14h.01M12 18h.01M8 18h.01"/></svg>';
 
                 for (let c = 1; c <= s.checkIndex; c++) {
                     const checkEl = document.getElementById(`plan-gen-check-${c}`);
                     if (checkEl) {
                         const isCurrent = c === s.checkIndex && idx < stages.length - 1;
-                        checkEl.className = isCurrent 
-                            ? "flex items-center gap-2.5 text-xs text-blue-600 dark:text-blue-400 font-bold transition-colors duration-300"
-                            : "flex items-center gap-2.5 text-xs text-emerald-600 dark:text-emerald-400 font-semibold transition-colors duration-300";
+                        checkEl.className = isCurrent
+                            ? "flex items-center gap-2.5 text-xs text-[#1B5E43] dark:text-[#52B788] font-bold transition-colors duration-300"
+                            : "flex items-center gap-2.5 text-xs text-[#1B5E43] dark:text-[#52B788] font-semibold transition-colors duration-300";
                         const badge = (typeof checkEl.querySelector === 'function') ? checkEl.querySelector('span') : null;
                         if (badge) {
                             if (isCurrent) {
-                                badge.className = "w-5 h-5 rounded-full flex items-center justify-center bg-blue-100 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 text-[10px] shrink-0 font-bold";
-                                badge.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i>`;
+                                badge.className = "w-5 h-5 rounded-full flex items-center justify-center bg-[#E4EFE9] dark:bg-[rgba(82,183,136,0.14)] text-[#1B5E43] dark:text-[#52B788] text-[10px] shrink-0 font-bold";
+                                badge.innerHTML = `<svg class="w-3 h-3 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>`;
                             } else {
-                                badge.className = "w-5 h-5 rounded-full flex items-center justify-center bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 text-[10px] shrink-0 font-bold";
-                                badge.innerHTML = `<i class="fa-solid fa-check"></i>`;
+                                badge.className = "w-5 h-5 rounded-full flex items-center justify-center bg-[#E4EFE9] dark:bg-[rgba(82,183,136,0.14)] text-[#1B5E43] dark:text-[#52B788] text-[10px] shrink-0 font-bold";
+                                badge.innerHTML = `<svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>`;
                             }
                         }
                     }
@@ -2897,17 +2905,17 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 if (hasBeenSeenOnce) {
                     // Subsequent visits: Transition from intrusive reset pop-up to Settings button / quiet link
                     return `
-                        <div id="dashboard-restore-banner" class="max-w-4xl mx-auto my-2.5 px-3.5 py-2 rounded-xl bg-slate-100/90 dark:bg-[#111827]/90 border border-slate-200/90 dark:border-slate-800/90 text-left flex items-center justify-between gap-3 text-xs animate-fade-in">
-                            <div class="flex items-center gap-2 text-slate-600 dark:text-slate-300 min-w-0 flex-1">
-                                <svg class="w-4 h-4 text-blue-600 dark:text-blue-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <div id="dashboard-restore-banner" class="max-w-4xl mx-auto my-2.5 px-3.5 py-2 rounded-xl bg-[#EDE8DC] dark:bg-[#181A17] border border-[#D9D2C3] dark:border-[#31342E] text-left flex items-center justify-between gap-3 text-xs animate-fade-in">
+                            <div class="flex items-center gap-2 text-[#474B45] dark:text-[#C4C0B6] min-w-0 flex-1">
+                                <svg class="w-4 h-4 text-[#1B5E43] dark:text-[#52B788] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                 <span class="min-w-0 break-words pr-2 text-[11px] sm:text-xs">${isML ? 'മുൻപത്തെ ടൈംടേബിൾ ക്രമീകരണങ്ങളിൽ (Settings) ലഭ്യമാണ്.' : 'Previous timetable is saved. View or restore anytime in Settings.'}</span>
                             </div>
                             <div class="flex items-center gap-2 shrink-0">
-                                <button type="button" onclick="openSettingsModal()" class="min-h-[44px] px-3.5 py-2.5 bg-white dark:bg-[#1a233a] hover:bg-slate-50 dark:hover:bg-[#222f4c] text-blue-600 dark:text-blue-400 font-bold rounded-lg border border-slate-200 dark:border-slate-700 transition flex items-center gap-1 shadow-xs cursor-pointer">
+                                <button type="button" onclick="openSettingsModal()" class="min-h-[44px] px-3.5 py-2.5 bg-[#FFFFFF] dark:bg-[#222521] hover:bg-[#FBF9F4] dark:hover:bg-[#1B1D1A] text-[#1B5E43] dark:text-[#52B788] font-bold rounded-lg border border-[#D9D2C3] dark:border-[#31342E] transition flex items-center gap-1 cursor-pointer">
                                     <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                                     <span>${isML ? 'Settings' : 'Settings'}</span>
                                 </button>
-                                <button type="button" onclick="dismissDashboardRestoreBanner()" class="min-h-[44px] min-w-[44px] flex items-center justify-center p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200" title="Dismiss">
+                                <button type="button" onclick="dismissDashboardRestoreBanner()" class="min-h-[44px] min-w-[44px] flex items-center justify-center p-1 text-[#6E726A] hover:text-[#181B18] dark:text-[#918D83] dark:hover:text-[#EFECE4]" title="Dismiss">
                                     <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
                                 </button>
                             </div>
@@ -2921,30 +2929,30 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 }
 
                 return `
-                    <div id="dashboard-restore-banner" class="max-w-4xl mx-auto my-3 p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-amber-500/15 border-2 border-amber-500/40 shadow-lg shadow-amber-500/10 text-left flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 animate-fade-in-up">
+                    <div id="dashboard-restore-banner" class="max-w-4xl mx-auto my-3 p-3.5 sm:p-4 rounded-2xl bg-[#F6EEDC] dark:bg-[rgba(223,172,84,0.14)] border border-[#DEC59A] dark:border-[rgba(223,172,84,0.32)] text-left flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 animate-fade-in-up">
                         <div class="flex items-start sm:items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center text-lg font-black shrink-0">
-                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            <div class="w-10 h-10 rounded-xl bg-[#9C6418]/15 dark:bg-[rgba(223,172,84,0.2)] text-[#9C6418] dark:text-[#DFAC54] flex items-center justify-center shrink-0 border border-[#DEC59A] dark:border-[rgba(223,172,84,0.3)]">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                             </div>
                             <div>
-                                <h4 class="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-2 flex-wrap">
+                                <h4 class="text-sm font-serif font-bold text-[#181B18] dark:text-[#EFECE4] flex items-center gap-2 flex-wrap">
                                     <span>${isML ? 'മുൻപത്തെ ടൈംടേബിൾ തിരിച്ചെടുക്കാം' : "Yesterday's Reset Timetable Available"}</span>
-                                    <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/30">${isML ? 'ലഭ്യം' : 'Ready to Restore'}</span>
+                                    <span class="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#FFFFFF]/70 dark:bg-[#181A17] text-[#9C6418] dark:text-[#DFAC54] border border-[#DEC59A] dark:border-[rgba(223,172,84,0.3)]">${isML ? 'ലഭ്യം' : 'Ready to Restore'}</span>
                                 </h4>
-                                <p class="text-xs text-slate-600 dark:text-slate-300 mt-0.5">
+                                <p class="text-xs text-[#474B45] dark:text-[#C4C0B6] mt-0.5">
                                     ${escapeStudyText(details || (isML ? 'മുൻപ് സേവ് ചെയ്ത ടൈംടേബിൾ' : 'Saved study plan and completed tasks ready to restore'))}
                                 </p>
                             </div>
                         </div>
                         <div class="flex items-center gap-2 w-full sm:w-auto shrink-0">
-                            <button type="button" onclick="${isReset ? 'restorePreResetSnapshot()' : 'restorePreviousPlan()'}" class="flex-1 sm:flex-none min-h-[44px] px-4 py-2 bg-amber-600 hover:bg-amber-700 active:scale-95 text-white text-xs font-black rounded-xl shadow-md shadow-amber-600/25 transition flex items-center justify-center gap-1.5 cursor-pointer">
-                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
+                            <button type="button" onclick="${isReset ? 'restorePreResetSnapshot()' : 'restorePreviousPlan()'}" class="flex-1 sm:flex-none min-h-[44px] px-4 py-2 bg-[#9C6418] hover:bg-[#7E4F10] dark:bg-[#DFAC54] dark:hover:bg-[#E8BC6E] active:scale-95 text-white dark:text-[#141513] text-xs font-bold rounded-xl transition flex items-center justify-center gap-1.5 cursor-pointer">
+                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
                                 <span>${isML ? 'ടൈംടേബിൾ തിരിച്ചെടുക്കുക' : 'Restore Timetable'}</span>
                             </button>
-                            <button type="button" onclick="openSettingsModal()" class="min-h-[44px] px-3 py-2 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white text-xs font-bold rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#141d30] transition flex items-center gap-1 cursor-pointer" title="Settings">
+                            <button type="button" onclick="openSettingsModal()" class="min-h-[44px] px-3 py-2 text-[#181B18] dark:text-[#EFECE4] hover:bg-[#EDE8DC] dark:hover:bg-[#181A17] text-xs font-bold rounded-xl border border-[#D9D2C3] dark:border-[#31342E] bg-[#FFFFFF] dark:bg-[#222521] transition flex items-center gap-1 cursor-pointer" title="Settings">
                                 <span>Settings</span>
                             </button>
-                            <button type="button" onclick="dismissDashboardRestoreBanner()" class="min-h-[44px] min-w-[44px] flex items-center justify-center px-2.5 py-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition text-xs rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800" title="Dismiss">
+                            <button type="button" onclick="dismissDashboardRestoreBanner()" class="min-h-[44px] min-w-[44px] flex items-center justify-center px-2.5 py-2 text-[#6E726A] hover:text-[#181B18] dark:text-[#918D83] dark:hover:text-[#EFECE4] transition text-xs rounded-xl hover:bg-[#EDE8DC] dark:hover:bg-[#181A17]" title="Dismiss">
                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
                             </button>
                         </div>
@@ -3475,7 +3483,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 tabsContainer.innerHTML = uniqueSubjects.map(sub => {
                     const active = sub === adjustActiveSubjectTab;
                     const label = sub === 'All' ? (isML ? 'എല്ലാ വിഷയങ്ങളും' : 'All Subjects') : escapeStudyText(sub);
-                    return `<button type="button" onclick="switchAdjustSubject('${escapeStudyText(sub).replace(/'/g, "\\'")}')" class="min-h-[44px] px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition cursor-pointer shrink-0 ${active ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-[#141e33] text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-[#1e2d4a]'}">${label}</button>`;
+                    return `<button type="button" onclick="switchAdjustSubject('${escapeStudyText(sub).replace(/'/g, "\\'")}')" class="min-h-[44px] px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition cursor-pointer shrink-0 ${active ? 'bg-[#1B5E43] text-white dark:bg-[#52B788] dark:text-[#141513] shadow-xs' : 'bg-[#EDE8DC] dark:bg-[#181A17] text-[#474B45] dark:text-[#C4C0B6] border border-[#D9D2C3] dark:border-[#31342E] hover:bg-[#E4EFE9]'}">${label}</button>`;
                 }).join('');
             }
 
@@ -3490,7 +3498,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
             const listContainer = document.getElementById('adjust-chapters-list');
             if (listContainer) {
                 if (filtered.length === 0) {
-                    listContainer.innerHTML = `<p class="text-xs text-slate-500 dark:text-slate-400 text-center py-6">${isML ? 'അധ്യായങ്ങളൊന്നും കണ്ടെത്തിയില്ല.' : 'No matching chapters found.'}</p>`;
+                    listContainer.innerHTML = `<p class="text-xs text-[#6E726A] dark:text-[#918D83] text-center py-6">${isML ? 'അധ്യായങ്ങളൊന്നും കണ്ടെത്തിയില്ല.' : 'No matching chapters found.'}</p>`;
                 } else {
                     const hasMixedGrades = new Set(allChapters.map(ch => ch.grade)).size > 1;
                     listContainer.innerHTML = filtered.map(ch => {
@@ -3502,22 +3510,22 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                             const label = adjustPreCheckedChapterIds.has(ch.chapId)
                                 ? (isML ? 'പ്ലാനിൽ പൂർത്തിയായി' : 'Done in plan')
                                 : (isML ? 'പൂർത്തിയായി' : 'Marked done');
-                            statusBadge = `<span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-200 shrink-0">${label}</span>`;
+                            statusBadge = `<span class="text-[11px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#E4EFE9] text-[#1B5E43] dark:bg-[rgba(82,183,136,0.14)] dark:text-[#52B788] border border-[#9DC3B2] dark:border-[rgba(82,183,136,0.3)] shrink-0">${label}</span>`;
                         } else if (partialInfo) {
-                            statusBadge = `<span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900/60 dark:text-amber-200 shrink-0">${partialInfo.doneParts}/${partialInfo.totalParts} ${isML ? 'ഭാഗം' : 'parts done'}</span>`;
+                            statusBadge = `<span class="text-[11px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#F6EEDC] text-[#9C6418] dark:bg-[rgba(223,172,84,0.14)] dark:text-[#DFAC54] border border-[#DEC59A] dark:border-[rgba(223,172,84,0.3)] shrink-0">${partialInfo.doneParts}/${partialInfo.totalParts} ${isML ? 'ഭാഗം' : 'parts done'}</span>`;
                         }
-                        const gradeTag = hasMixedGrades ? `<span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300">${escapeStudyText(ch.grade)}</span>` : '';
+                        const gradeTag = hasMixedGrades ? `<span class="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-[#E7ECF3] dark:bg-[rgba(139,167,206,0.14)] text-[#2F486D] dark:text-[#8BA7CE]">${escapeStudyText(ch.grade)}</span>` : '';
 
                         return `
-                            <label class="min-h-[44px] flex items-center gap-3 p-3 rounded-xl border ${isChecked ? 'bg-emerald-50/70 dark:bg-emerald-950/35 border-emerald-300 dark:border-emerald-700/70' : 'bg-slate-50/70 dark:bg-[#131d33] border-slate-200 dark:border-slate-800 hover:bg-slate-100/80 dark:hover:bg-[#182440]'} cursor-pointer transition select-none">
-                                <input type="checkbox" value="${escapeStudyText(ch.chapId)}" ${isChecked ? 'checked' : ''} onchange="toggleAdjustChapter('${escapeStudyText(ch.chapId).replace(/'/g, "\\'")}', this.checked)" class="w-5 h-5 rounded border-slate-300 dark:border-slate-600 text-emerald-600 focus:ring-emerald-500 shrink-0 cursor-pointer">
+                            <label class="min-h-[44px] flex items-center gap-3 p-3 rounded-xl border ${isChecked ? 'bg-[#E4EFE9] dark:bg-[rgba(82,183,136,0.14)] border-[#9DC3B2] dark:border-[rgba(82,183,136,0.3)]' : 'bg-[#FFFFFF] dark:bg-[#222521] border-[#D9D2C3] dark:border-[#31342E] hover:bg-[#EDE8DC] dark:hover:bg-[#181A17]'} cursor-pointer transition select-none">
+                                <input type="checkbox" value="${escapeStudyText(ch.chapId)}" ${isChecked ? 'checked' : ''} onchange="toggleAdjustChapter('${escapeStudyText(ch.chapId).replace(/'/g, "\\'")}', this.checked)" class="w-5 h-5 rounded border-[#B9B09E] dark:border-[#454940] text-[#1B5E43] focus:ring-[#1B5E43] accent-[#1B5E43] shrink-0 cursor-pointer">
                                 <div class="flex-1 min-w-0">
                                     <div class="flex items-center gap-1.5 flex-wrap mb-0.5">
-                                        <span class="text-[11px] font-bold text-blue-700 dark:text-blue-300">${escapeStudyText(ch.subject)}</span>
+                                        <span class="text-[11px] font-bold text-[#1B5E43] dark:text-[#52B788]">${escapeStudyText(ch.subject)}</span>
                                         ${gradeTag}
-                                        <span class="text-[11px] text-slate-500 dark:text-slate-400">Term ${ch.term} • ${ch.totalParts} ${ch.totalParts === 1 ? 'part' : 'parts'}</span>
+                                        <span class="text-[11px] font-mono text-[#6E726A] dark:text-[#918D83]">Term ${ch.term} • ${ch.totalParts} ${ch.totalParts === 1 ? 'part' : 'parts'}</span>
                                     </div>
-                                    <p class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white leading-snug">Chapter ${ch.chapNumber}: ${escapeStudyText(cleanName)}</p>
+                                    <p class="text-xs sm:text-sm font-bold text-[#181B18] dark:text-[#EFECE4] leading-snug">Chapter ${ch.chapNumber}: ${escapeStudyText(cleanName)}</p>
                                 </div>
                                 ${statusBadge}
                             </label>
@@ -4112,13 +4120,13 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 const pill = document.getElementById(`setup-step-pill-${i}`);
                 if (pill) {
                     if (i === stepNum) {
-                        pill.className = 'w-7 h-7 rounded-full bg-blue-600 text-white font-black scale-110 shadow-sm shadow-blue-500/30 text-xs flex items-center justify-center transition';
+                        pill.className = 'touch-target-44 w-11 h-11 rounded-full bg-[#1B5E43] dark:bg-[#52B788] text-white dark:text-[#141513] font-mono font-bold scale-105 shadow-xs text-xs flex items-center justify-center transition active:scale-95';
                         pill.innerHTML = `${i}`;
                     } else if (i < stepNum) {
-                        pill.className = 'w-7 h-7 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-black border border-emerald-300/60 text-xs flex items-center justify-center transition';
-                        pill.innerHTML = '<i class="fa-solid fa-check text-[10px]"></i>';
+                        pill.className = 'touch-target-44 w-11 h-11 rounded-full bg-[#E4EFE9] dark:bg-[rgba(82,183,136,0.14)] text-[#1B5E43] dark:text-[#52B788] font-mono font-bold border border-[#9DC3B2] dark:border-[rgba(82,183,136,0.3)] text-xs flex items-center justify-center transition active:scale-95';
+                        pill.innerHTML = '<svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>';
                     } else {
-                        pill.className = 'w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 font-bold text-xs flex items-center justify-center transition';
+                        pill.className = 'touch-target-44 w-11 h-11 rounded-full bg-[#EDE8DC] dark:bg-[#181A17] text-[#6E726A] dark:text-[#918D83] font-mono font-bold text-xs flex items-center justify-center transition active:scale-95';
                         pill.innerHTML = `${i}`;
                     }
                 }
@@ -4180,8 +4188,8 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
         function renderApp() {
             const container = document.getElementById('app-container');
             if (!container) return;
-            const openSections = new Set([...container.querySelectorAll('details[id][open]')].map(section => section.id));
-            document.body.classList.toggle('is-setting-up', !appState);
+            const openSections = new Set([...(container.querySelectorAll?.('details[id][open]') ?? [])].map(section => section.id));
+            document.body?.classList?.toggle('is-setting-up', !appState);
             const isML = getAppLanguage() === 'ml';
             const currentSelectedGrade = (typeof selectedGrade !== 'undefined' ? selectedGrade : '+2');
             const dateDisplay = document.getElementById('date-display');
@@ -4217,21 +4225,21 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                             const btnText = isML ? '↺ മുൻപത്തെ പ്ലാൻ തിരിച്ചെടുക്കുക' : '↺ Restore Previous Plan';
 
                             preResetBannerHtml = `
-                                <div id="pre-reset-restore-banner" class="max-w-2xl mx-auto mb-5 bg-amber-50 dark:bg-amber-950/40 border-2 border-amber-300 dark:border-amber-700/60 rounded-3xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-lg shadow-amber-500/5 animate-fade-in-up" role="alert" aria-live="polite">
+                                <div id="pre-reset-restore-banner" class="max-w-2xl mx-auto mb-5 bg-[#F6EEDC] dark:bg-[rgba(223,172,84,0.14)] border border-[#DEC59A] dark:border-[rgba(223,172,84,0.32)] rounded-3xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 animate-fade-in-up" role="alert" aria-live="polite">
                                     <div class="flex items-start gap-3.5">
-                                        <div class="w-10 h-10 rounded-2xl bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-md shadow-amber-500/25">
+                                        <div class="w-10 h-10 rounded-2xl bg-[#9C6418] dark:bg-[#DFAC54] text-white dark:text-[#141513] flex items-center justify-center shrink-0">
                                             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
                                         </div>
                                         <div>
-                                            <h4 class="text-sm font-black text-slate-900 dark:text-amber-100 flex items-center gap-1.5">
+                                            <h4 class="text-sm font-serif font-bold text-[#181B18] dark:text-[#EFECE4] flex items-center gap-1.5">
                                                 <span>${title}</span>
                                             </h4>
-                                            <p class="text-xs font-medium text-slate-600 dark:text-amber-200/90 mt-0.5">
+                                            <p class="text-xs font-medium text-[#474B45] dark:text-[#C4C0B6] mt-0.5">
                                                 ${desc}
                                             </p>
                                         </div>
                                     </div>
-                                    <button type="button" id="btn-restore-pre-reset" onclick="restorePreResetSnapshot()" class="w-full sm:w-auto min-h-[44px] px-4 py-2.5 bg-amber-600 hover:bg-amber-700 active:scale-95 text-white text-xs font-black rounded-xl shadow-md shadow-amber-600/25 transition flex items-center justify-center gap-1.5 cursor-pointer shrink-0">
+                                    <button type="button" id="btn-restore-pre-reset" onclick="restorePreResetSnapshot()" class="w-full sm:w-auto min-h-[44px] px-4 py-2.5 bg-[#9C6418] hover:bg-[#7E4F10] dark:bg-[#DFAC54] dark:hover:bg-[#E8BC6E] active:scale-95 text-white dark:text-[#141513] text-xs font-bold rounded-xl transition flex items-center justify-center gap-1.5 cursor-pointer shrink-0">
                                         <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
                                         <span>${btnText}</span>
                                     </button>
@@ -4245,23 +4253,23 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
 
                 container.innerHTML = `
                     ${preResetBannerHtml}
-                    <div id="setup-wizard-card" class="max-w-2xl mx-auto bg-white dark:bg-[#0e1422] rounded-3xl p-5 sm:p-8 shadow-xl border border-slate-100 dark:border-slate-800/80 animate-fade-in-up">
+                    <div id="setup-wizard-card" class="max-w-2xl mx-auto bg-[#FBF9F4] dark:bg-[#1B1D1A] rounded-3xl p-5 sm:p-8 border border-[#D9D2C3] dark:border-[#31342E] shadow-xs animate-fade-in-up">
                         <!-- Stepper Indicator -->
                         <div class="mb-6">
                             <div class="flex items-center justify-between mb-2">
-                                <span id="setup-step-badge" class="text-xs font-black uppercase tracking-wider text-blue-600 dark:text-blue-400">
+                                <span id="setup-step-badge" class="text-xs font-mono font-bold uppercase tracking-wider text-[#1B5E43] dark:text-[#52B788]">
                                     ${isML ? 'ഘട്ടം' : 'Step'} ${setupCurrentStep} / 4
                                 </span>
                                 <div class="flex items-center gap-1.5">
                                     ${[1, 2, 3, 4].map(step => `
-                                        <button type="button" id="setup-step-pill-${step}" onclick="goToSetupStep(${step})" class="touch-target-44 w-11 h-11 rounded-full ${step === setupCurrentStep ? 'bg-blue-600 text-white font-black scale-105 shadow-sm shadow-blue-500/30' : (step < setupCurrentStep ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-black border border-emerald-300/60' : 'bg-slate-100 dark:bg-slate-800 text-slate-400 font-bold')} text-xs flex items-center justify-center transition active:scale-95">
-                                            ${step < setupCurrentStep ? '<i class="fa-solid fa-check text-[10px]"></i>' : step}
+                                        <button type="button" id="setup-step-pill-${step}" onclick="goToSetupStep(${step})" class="touch-target-44 w-11 h-11 rounded-full ${step === setupCurrentStep ? 'bg-[#1B5E43] text-white font-mono font-bold scale-105 shadow-xs dark:bg-[#52B788] dark:text-[#141513]' : (step < setupCurrentStep ? 'bg-[#E4EFE9] dark:bg-[rgba(82,183,136,0.14)] text-[#1B5E43] dark:text-[#52B788] font-mono font-bold border border-[#9DC3B2] dark:border-[rgba(82,183,136,0.3)]' : 'bg-[#EDE8DC] dark:bg-[#181A17] text-[#6E726A] dark:text-[#918D83] font-mono font-bold')} text-xs flex items-center justify-center transition active:scale-95">
+                                            ${step < setupCurrentStep ? '<svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>' : step}
                                         </button>
                                     `).join('')}
                                 </div>
                             </div>
-                            <div class="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
-                                <div id="setup-progress-bar" class="bg-gradient-to-r from-blue-600 to-indigo-600 h-full rounded-full transition-all duration-300" style="width: ${setupCurrentStep * 25}%"></div>
+                            <div class="w-full bg-[#EDE8DC] dark:bg-[#181A17] h-2 rounded-full overflow-hidden border border-[#D9D2C3]/60 dark:border-[#31342E]">
+                                <div id="setup-progress-bar" class="bg-[#1B5E43] dark:bg-[#52B788] h-full rounded-full transition-all duration-300" style="width: ${setupCurrentStep * 25}%"></div>
                             </div>
                         </div>
 
@@ -4271,125 +4279,125 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                         <!-- STEP 1: Grade & Stream Selection -->
                         <div id="setup-step-1" class="${setupCurrentStep === 1 ? '' : 'hidden'} space-y-5 animate-fade-in-up">
                             <div class="text-left">
-                                <h3 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">
+                                <h3 class="text-xl sm:text-2xl font-serif font-bold text-[#181B18] dark:text-[#EFECE4] tracking-tight">
                                     ${isML ? 'ക്ലാസും സ്ട്രീമും തിരഞ്ഞെടുക്കുക' : 'Select Your Class & Stream'}
                                 </h3>
-                                <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-300 mt-1">
+                                <p class="text-xs sm:text-sm text-[#474B45] dark:text-[#C4C0B6] mt-1">
                                     ${isML ? 'നിങ്ങളുടെ ക്ലാസും പഠിക്കുന്ന വിഷയങ്ങളും തിരഞ്ഞെടുക്കുക. സിലബസ് ഉടൻ തയ്യാറാകും.' : 'Choose whether you are studying Plus One (+1) or Plus Two (+2) and pick your stream.'}
                                 </p>
                             </div>
 
                             <!-- Class / Grade Selection Tabs -->
                             <div>
-                                <label class="block text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
+                                <label class="block text-xs font-mono font-bold uppercase tracking-wider text-[#6E726A] dark:text-[#918D83] mb-2">
                                     ${isML ? 'ക്ലാസ് / ഗ്രേഡ്' : 'Class / Academic Year'}
                                 </label>
                                 <div class="grid grid-cols-2 gap-2 sm:gap-3">
-                                    <button type="button" id="grade-btn-p2" onclick="setGradeSelection('+2')" class="cursor-pointer p-2.5 sm:p-3.5 rounded-2xl border-2 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${currentSelectedGrade === '+2' ? 'border-blue-600 dark:border-blue-500 bg-blue-50/70 dark:bg-blue-950/40 ring-2 ring-blue-500/20 shadow-sm' : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600'} transition-transform duration-150 text-left flex flex-col justify-between min-w-0">
+                                    <button type="button" id="grade-btn-p2" onclick="setGradeSelection('+2')" class="cursor-pointer p-2.5 sm:p-3.5 rounded-2xl border-2 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${currentSelectedGrade === '+2' ? 'border-[#1B5E43] dark:border-[#52B788] bg-[#E4EFE9] dark:bg-[rgba(82,183,136,0.14)] ring-2 ring-[#1B5E43]/20 shadow-xs' : 'border-[#D9D2C3] dark:border-[#31342E] bg-[#FFFFFF] dark:bg-[#222521] hover:border-[#B9B09E] dark:hover:border-[#454940]'} transition-transform duration-150 text-left flex flex-col justify-between min-w-0">
                                         <div class="flex items-center justify-between gap-1 w-full min-w-0">
                                             <div class="flex items-center gap-1.5 sm:gap-2.5 min-w-0">
-                                                <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 flex items-center justify-center shrink-0 p-1 sm:p-1.5 border border-blue-200/50 dark:border-blue-800/50">
-                                                    ${typeof GRADE_ICONS !== 'undefined' && GRADE_ICONS.plusTwo ? GRADE_ICONS.plusTwo : '<i class="fa-solid fa-graduation-cap text-xs sm:text-sm"></i>'}
+                                                <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[#E4EFE9] dark:bg-[rgba(82,183,136,0.14)] text-[#1B5E43] dark:text-[#52B788] flex items-center justify-center shrink-0 p-1 sm:p-1.5 border border-[#9DC3B2] dark:border-[rgba(82,183,136,0.3)]">
+                                                    ${typeof GRADE_ICONS !== 'undefined' && GRADE_ICONS.plusTwo ? GRADE_ICONS.plusTwo : '<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>'}
                                                 </div>
-                                                <span class="text-xs sm:text-sm font-black text-slate-900 dark:text-white truncate">Plus Two (+2)</span>
+                                                <span class="text-xs sm:text-sm font-serif font-bold text-[#181B18] dark:text-[#EFECE4] truncate">Plus Two (+2)</span>
                                             </div>
-                                            <span class="w-4 h-4 sm:w-5 sm:h-5 rounded-full shrink-0 ${currentSelectedGrade === '+2' ? 'bg-blue-600 text-white' : 'border border-slate-300 dark:border-slate-600'} flex items-center justify-center text-[10px]">
-                                                ${currentSelectedGrade === '+2' ? '<i class="fa-solid fa-check"></i>' : ''}
+                                            <span class="w-4 h-4 sm:w-5 sm:h-5 rounded-full shrink-0 ${currentSelectedGrade === '+2' ? 'bg-[#1B5E43] dark:bg-[#52B788] text-white dark:text-[#141513]' : 'border border-[#D9D2C3] dark:border-[#31342E]'} flex items-center justify-center text-[10px]">
+                                                ${currentSelectedGrade === '+2' ? '<svg class="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>' : ''}
                                             </span>
                                         </div>
-                                        <span class="text-[11px] sm:text-xs font-semibold text-slate-400 mt-2 truncate block w-full">Class 12 Board Syllabus</span>
+                                        <span class="text-[11px] sm:text-xs font-mono text-[#6E726A] dark:text-[#918D83] mt-2 truncate block w-full">Class 12 Board Syllabus</span>
                                     </button>
 
-                                    <button type="button" id="grade-btn-p1" onclick="setGradeSelection('+1')" class="cursor-pointer p-2.5 sm:p-3.5 rounded-2xl border-2 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${currentSelectedGrade === '+1' ? 'border-amber-600 dark:border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 ring-2 ring-amber-500/20 shadow-sm' : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600'} transition-transform duration-150 text-left flex flex-col justify-between min-w-0">
+                                    <button type="button" id="grade-btn-p1" onclick="setGradeSelection('+1')" class="cursor-pointer p-2.5 sm:p-3.5 rounded-2xl border-2 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${currentSelectedGrade === '+1' ? 'border-[#9C6418] dark:border-[#DFAC54] bg-[#F6EEDC] dark:bg-[rgba(223,172,84,0.14)] ring-2 ring-[#9C6418]/20 shadow-xs' : 'border-[#D9D2C3] dark:border-[#31342E] bg-[#FFFFFF] dark:bg-[#222521] hover:border-[#B9B09E] dark:hover:border-[#454940]'} transition-transform duration-150 text-left flex flex-col justify-between min-w-0">
                                         <div class="flex items-center justify-between gap-1 w-full min-w-0">
                                             <div class="flex items-center gap-1.5 sm:gap-2.5 min-w-0">
-                                                <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 flex items-center justify-center shrink-0 p-1 sm:p-1.5 border border-amber-200/50 dark:border-amber-800/50">
-                                                    ${typeof GRADE_ICONS !== 'undefined' && GRADE_ICONS.plusOne ? GRADE_ICONS.plusOne : '<i class="fa-solid fa-book-open text-xs sm:text-sm"></i>'}
+                                                <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[#F6EEDC] dark:bg-[rgba(223,172,84,0.14)] text-[#9C6418] dark:text-[#DFAC54] flex items-center justify-center shrink-0 p-1 sm:p-1.5 border border-[#DEC59A] dark:border-[rgba(223,172,84,0.3)]">
+                                                    ${typeof GRADE_ICONS !== 'undefined' && GRADE_ICONS.plusOne ? GRADE_ICONS.plusOne : '<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>'}
                                                 </div>
-                                                <span class="text-xs sm:text-sm font-black text-slate-900 dark:text-white truncate">Plus One (+1)</span>
+                                                <span class="text-xs sm:text-sm font-serif font-bold text-[#181B18] dark:text-[#EFECE4] truncate">Plus One (+1)</span>
                                             </div>
-                                            <span class="w-4 h-4 sm:w-5 sm:h-5 rounded-full shrink-0 ${currentSelectedGrade === '+1' ? 'bg-amber-600 text-white' : 'border border-slate-300 dark:border-slate-600'} flex items-center justify-center text-[10px]">
-                                                ${currentSelectedGrade === '+1' ? '<i class="fa-solid fa-check"></i>' : ''}
+                                            <span class="w-4 h-4 sm:w-5 sm:h-5 rounded-full shrink-0 ${currentSelectedGrade === '+1' ? 'bg-[#9C6418] dark:bg-[#DFAC54] text-white dark:text-[#141513]' : 'border border-[#D9D2C3] dark:border-[#31342E]'} flex items-center justify-center text-[10px]">
+                                                ${currentSelectedGrade === '+1' ? '<svg class="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>' : ''}
                                             </span>
                                         </div>
-                                        <span class="text-[11px] sm:text-xs font-semibold text-slate-400 mt-2 truncate block w-full">Class 11 Annual Syllabus</span>
+                                        <span class="text-[11px] sm:text-xs font-mono text-[#6E726A] dark:text-[#918D83] mt-2 truncate block w-full">Class 11 Annual Syllabus</span>
                                     </button>
                                 </div>
                             </div>
 
-                            <label class="block text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 pt-1">
+                            <label class="block text-xs font-mono font-bold uppercase tracking-wider text-[#6E726A] dark:text-[#918D83] pt-1">
                                 ${isML ? 'സ്ട്രീം തിരഞ്ഞെടുക്കുക' : 'Select Stream'}
                             </label>
 
                             <div class="stream-options grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <!-- Option 1: Computer Science -->
-                                <div id="stream-card-cs" aria-pressed="${selectedStream === 'cs'}" role="button" tabindex="0" onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.click(); }" onclick="setStreamSelection('cs')" class="cursor-pointer p-3.5 rounded-2xl border-2 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${selectedStream === 'cs' ? 'border-blue-600 dark:border-blue-500 bg-blue-50/70 dark:bg-blue-950/40 ring-2 ring-blue-500/20 shadow-sm' : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600'} transition-transform duration-150 text-left flex flex-col justify-between">
+                                <div id="stream-card-cs" aria-pressed="${selectedStream === 'cs'}" role="button" tabindex="0" onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.click(); }" onclick="setStreamSelection('cs')" class="cursor-pointer p-3.5 rounded-2xl border-2 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${selectedStream === 'cs' ? 'border-[#1B5E43] dark:border-[#52B788] bg-[#E4EFE9] dark:bg-[rgba(82,183,136,0.14)] ring-2 ring-[#1B5E43]/20 shadow-xs' : 'border-[#D9D2C3] dark:border-[#31342E] bg-[#FFFFFF] dark:bg-[#222521] hover:border-[#B9B09E] dark:hover:border-[#454940]'} transition-transform duration-150 text-left flex flex-col justify-between">
                                     <div class="flex items-center justify-between">
                                         <div class="flex items-center gap-3">
-                                            <div class="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 flex items-center justify-center shrink-0 p-2 border border-blue-200/50 dark:border-blue-800/50">
-                                                ${typeof STREAM_ICONS !== 'undefined' && STREAM_ICONS.cs ? STREAM_ICONS.cs : '<i class="fa-solid fa-laptop-code"></i>'}
+                                            <div class="w-10 h-10 rounded-xl bg-[#E7ECF3] dark:bg-[rgba(139,167,206,0.14)] text-[#2F486D] dark:text-[#8BA7CE] flex items-center justify-center shrink-0 p-2 border border-[#A6B8CE] dark:border-[rgba(139,167,206,0.3)]">
+                                                ${typeof STREAM_ICONS !== 'undefined' && STREAM_ICONS.cs ? STREAM_ICONS.cs : '<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>'}
                                             </div>
                                             <div>
-                                                <h4 class="font-black text-slate-900 dark:text-white text-sm">${isML ? ML_I18N.setup.csTitle : 'Computer Science'} (${currentSelectedGrade})</h4>
-                                                <span class="text-[11px] font-semibold text-blue-700 dark:text-blue-300">Physics • Chem • Maths • CS</span>
+                                                <h4 class="font-serif font-bold text-[#181B18] dark:text-[#EFECE4] text-sm">${isML ? ML_I18N.setup.csTitle : 'Computer Science'} (${currentSelectedGrade})</h4>
+                                                <span class="text-[11px] font-mono text-[#2F486D] dark:text-[#8BA7CE]">Physics • Chem • Maths • CS</span>
                                             </div>
                                         </div>
-                                        <span class="w-5 h-5 rounded-full ${selectedStream === 'cs' ? 'bg-blue-600 text-white' : 'border border-slate-300 dark:border-slate-600'} flex items-center justify-center text-xs">
-                                            ${selectedStream === 'cs' ? '<i class="fa-solid fa-check text-[10px]"></i>' : ''}
+                                        <span class="w-5 h-5 rounded-full ${selectedStream === 'cs' ? 'bg-[#1B5E43] dark:bg-[#52B788] text-white dark:text-[#141513]' : 'border border-[#D9D2C3] dark:border-[#31342E]'} flex items-center justify-center text-xs">
+                                            ${selectedStream === 'cs' ? '<svg class="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>' : ''}
                                         </span>
                                     </div>
                                 </div>
 
                                 <!-- Option 2: Biology Science -->
-                                <div id="stream-card-bio" aria-pressed="${selectedStream === 'bio'}" role="button" tabindex="0" onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.click(); }" onclick="setStreamSelection('bio')" class="cursor-pointer p-3.5 rounded-2xl border-2 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${selectedStream === 'bio' ? 'border-emerald-600 dark:border-emerald-500 bg-emerald-50/70 dark:bg-emerald-950/40 ring-2 ring-emerald-500/20 shadow-sm' : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600'} transition-transform duration-150 text-left flex flex-col justify-between">
+                                <div id="stream-card-bio" aria-pressed="${selectedStream === 'bio'}" role="button" tabindex="0" onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.click(); }" onclick="setStreamSelection('bio')" class="cursor-pointer p-3.5 rounded-2xl border-2 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${selectedStream === 'bio' ? 'border-[#1B5E43] dark:border-[#52B788] bg-[#E4EFE9] dark:bg-[rgba(82,183,136,0.14)] ring-2 ring-[#1B5E43]/20 shadow-xs' : 'border-[#D9D2C3] dark:border-[#31342E] bg-[#FFFFFF] dark:bg-[#222521] hover:border-[#B9B09E] dark:hover:border-[#454940]'} transition-transform duration-150 text-left flex flex-col justify-between">
                                     <div class="flex items-center justify-between">
                                         <div class="flex items-center gap-3">
-                                            <div class="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 flex items-center justify-center shrink-0 p-2 border border-emerald-200/50 dark:border-emerald-800/50">
-                                                ${typeof STREAM_ICONS !== 'undefined' && STREAM_ICONS.bio ? STREAM_ICONS.bio : '<i class="fa-solid fa-seedling"></i>'}
+                                            <div class="w-10 h-10 rounded-xl bg-[#E4EFE9] dark:bg-[rgba(82,183,136,0.14)] text-[#1B5E43] dark:text-[#52B788] flex items-center justify-center shrink-0 p-2 border border-[#9DC3B2] dark:border-[rgba(82,183,136,0.3)]">
+                                                ${typeof STREAM_ICONS !== 'undefined' && STREAM_ICONS.bio ? STREAM_ICONS.bio : '<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>'}
                                             </div>
                                             <div>
-                                                <h4 class="font-black text-slate-900 dark:text-white text-sm">${isML ? ML_I18N.setup.bioTitle : 'Biology Science'} (${currentSelectedGrade})</h4>
-                                                <span class="text-[11px] font-semibold text-emerald-700 dark:text-emerald-300">Physics • Chem • Maths • Bio</span>
+                                                <h4 class="font-serif font-bold text-[#181B18] dark:text-[#EFECE4] text-sm">${isML ? ML_I18N.setup.bioTitle : 'Biology Science'} (${currentSelectedGrade})</h4>
+                                                <span class="text-[11px] font-mono text-[#1B5E43] dark:text-[#52B788]">Physics • Chem • Maths • Bio</span>
                                             </div>
                                         </div>
-                                        <span class="w-5 h-5 rounded-full ${selectedStream === 'bio' ? 'bg-emerald-600 text-white' : 'border border-slate-300 dark:border-slate-600'} flex items-center justify-center text-xs">
-                                            ${selectedStream === 'bio' ? '<i class="fa-solid fa-check text-[10px]"></i>' : ''}
+                                        <span class="w-5 h-5 rounded-full ${selectedStream === 'bio' ? 'bg-[#1B5E43] dark:bg-[#52B788] text-white dark:text-[#141513]' : 'border border-[#D9D2C3] dark:border-[#31342E]'} flex items-center justify-center text-xs">
+                                            ${selectedStream === 'bio' ? '<svg class="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>' : ''}
                                         </span>
                                     </div>
                                 </div>
 
                                 <!-- Option 3: Commerce -->
-                                <div id="stream-card-commerce" aria-pressed="${selectedStream === 'commerce'}" role="button" tabindex="0" onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.click(); }" onclick="setStreamSelection('commerce')" class="cursor-pointer p-3.5 rounded-2xl border-2 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${selectedStream === 'commerce' ? 'border-purple-600 dark:border-purple-500 bg-purple-50/70 dark:bg-purple-950/40 ring-2 ring-purple-500/20 shadow-sm' : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600'} transition-transform duration-150 text-left flex flex-col justify-between">
+                                <div id="stream-card-commerce" aria-pressed="${selectedStream === 'commerce'}" role="button" tabindex="0" onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.click(); }" onclick="setStreamSelection('commerce')" class="cursor-pointer p-3.5 rounded-2xl border-2 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${selectedStream === 'commerce' ? 'border-[#9C6418] dark:border-[#DFAC54] bg-[#F6EEDC] dark:bg-[rgba(223,172,84,0.14)] ring-2 ring-[#9C6418]/20 shadow-xs' : 'border-[#D9D2C3] dark:border-[#31342E] bg-[#FFFFFF] dark:bg-[#222521] hover:border-[#B9B09E] dark:hover:border-[#454940]'} transition-transform duration-150 text-left flex flex-col justify-between">
                                     <div class="flex items-center justify-between">
                                         <div class="flex items-center gap-3">
-                                            <div class="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 flex items-center justify-center shrink-0 p-2 border border-purple-200/50 dark:border-purple-800/50">
-                                                ${typeof STREAM_ICONS !== 'undefined' && STREAM_ICONS.commerce ? STREAM_ICONS.commerce : '<i class="fa-solid fa-chart-line"></i>'}
+                                            <div class="w-10 h-10 rounded-xl bg-[#F6EEDC] dark:bg-[rgba(223,172,84,0.14)] text-[#9C6418] dark:text-[#DFAC54] flex items-center justify-center shrink-0 p-2 border border-[#DEC59A] dark:border-[rgba(223,172,84,0.3)]">
+                                                ${typeof STREAM_ICONS !== 'undefined' && STREAM_ICONS.commerce ? STREAM_ICONS.commerce : '<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>'}
                                             </div>
                                             <div>
-                                                <h4 class="font-black text-slate-900 dark:text-white text-sm">${isML ? ML_I18N.setup.commerceTitle : 'Commerce'} (${currentSelectedGrade})</h4>
-                                                <span class="text-[11px] font-semibold text-purple-700 dark:text-purple-300">Accountancy • Business • Econ</span>
+                                                <h4 class="font-serif font-bold text-[#181B18] dark:text-[#EFECE4] text-sm">${isML ? ML_I18N.setup.commerceTitle : 'Commerce'} (${currentSelectedGrade})</h4>
+                                                <span class="text-[11px] font-mono text-[#9C6418] dark:text-[#DFAC54]">Accountancy • Business • Econ</span>
                                             </div>
                                         </div>
-                                        <span class="w-5 h-5 rounded-full ${selectedStream === 'commerce' ? 'bg-purple-600 text-white' : 'border border-slate-300 dark:border-slate-600'} flex items-center justify-center text-xs">
-                                            ${selectedStream === 'commerce' ? '<i class="fa-solid fa-check text-[10px]"></i>' : ''}
+                                        <span class="w-5 h-5 rounded-full ${selectedStream === 'commerce' ? 'bg-[#9C6418] dark:bg-[#DFAC54] text-white dark:text-[#141513]' : 'border border-[#D9D2C3] dark:border-[#31342E]'} flex items-center justify-center text-xs">
+                                            ${selectedStream === 'commerce' ? '<svg class="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>' : ''}
                                         </span>
                                     </div>
                                 </div>
 
                                 <!-- Option 4: Humanities -->
-                                <div id="stream-card-humanities" aria-pressed="${selectedStream === 'humanities'}" role="button" tabindex="0" onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.click(); }" onclick="setStreamSelection('humanities')" class="cursor-pointer p-3.5 rounded-2xl border-2 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${selectedStream === 'humanities' ? 'border-rose-600 dark:border-rose-500 bg-rose-50/70 dark:bg-rose-950/40 ring-2 ring-rose-500/20 shadow-sm' : 'border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600'} transition-transform duration-150 text-left flex flex-col justify-between">
+                                <div id="stream-card-humanities" aria-pressed="${selectedStream === 'humanities'}" role="button" tabindex="0" onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.click(); }" onclick="setStreamSelection('humanities')" class="cursor-pointer p-3.5 rounded-2xl border-2 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${selectedStream === 'humanities' ? 'border-[#B8432E] dark:border-[#E57A65] bg-[#F9E9E5] dark:bg-[rgba(229,122,101,0.14)] ring-2 ring-[#B8432E]/20 shadow-xs' : 'border-[#D9D2C3] dark:border-[#31342E] bg-[#FFFFFF] dark:bg-[#222521] hover:border-[#B9B09E] dark:hover:border-[#454940]'} transition-transform duration-150 text-left flex flex-col justify-between">
                                     <div class="flex items-center justify-between">
                                         <div class="flex items-center gap-3">
-                                            <div class="w-10 h-10 rounded-xl bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 flex items-center justify-center shrink-0 p-2 border border-rose-200/50 dark:border-rose-800/50">
-                                                ${typeof STREAM_ICONS !== 'undefined' && STREAM_ICONS.humanities ? STREAM_ICONS.humanities : '<i class="fa-solid fa-landmark"></i>'}
+                                            <div class="w-10 h-10 rounded-xl bg-[#F9E9E5] dark:bg-[rgba(229,122,101,0.14)] text-[#B8432E] dark:text-[#E57A65] flex items-center justify-center shrink-0 p-2 border border-[#E8B4A9] dark:border-[rgba(229,122,101,0.3)]">
+                                                ${typeof STREAM_ICONS !== 'undefined' && STREAM_ICONS.humanities ? STREAM_ICONS.humanities : '<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>'}
                                             </div>
                                             <div>
-                                                <h4 class="font-black text-slate-900 dark:text-white text-sm">${isML ? ML_I18N.setup.humanitiesTitle : 'Humanities'} (${currentSelectedGrade})</h4>
-                                                <span class="text-[11px] font-semibold text-rose-700 dark:text-rose-300">History • Pol Science • Sociology</span>
+                                                <h4 class="font-serif font-bold text-[#181B18] dark:text-[#EFECE4] text-sm">${isML ? ML_I18N.setup.humanitiesTitle : 'Humanities'} (${currentSelectedGrade})</h4>
+                                                <span class="text-[11px] font-mono text-[#B8432E] dark:text-[#E57A65]">History • Pol Science • Sociology</span>
                                             </div>
                                         </div>
-                                        <span class="w-5 h-5 rounded-full ${selectedStream === 'humanities' ? 'bg-rose-600 text-white' : 'border border-slate-300 dark:border-slate-600'} flex items-center justify-center text-xs">
-                                            ${selectedStream === 'humanities' ? '<i class="fa-solid fa-check text-[10px]"></i>' : ''}
+                                        <span class="w-5 h-5 rounded-full ${selectedStream === 'humanities' ? 'bg-[#B8432E] dark:bg-[#E57A65] text-white dark:text-[#141513]' : 'border border-[#D9D2C3] dark:border-[#31342E]'} flex items-center justify-center text-xs">
+                                            ${selectedStream === 'humanities' ? '<svg class="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>' : ''}
                                         </span>
                                     </div>
                                 </div>
@@ -4400,9 +4408,9 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
 
                             <!-- Step 1 Navigation (Strictly "Next", No extra clutter) -->
                             <div class="pt-5 flex justify-end">
-                                <button type="button" onclick="nextSetupStep()" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-sm py-3 px-8 rounded-2xl shadow-md shadow-blue-500/20 transition flex items-center justify-center gap-2 active:scale-95">
+                                <button type="button" onclick="nextSetupStep()" class="w-full sm:w-auto bg-[#1B5E43] hover:bg-[#144833] dark:bg-[#52B788] dark:hover:bg-[#67C79A] text-white dark:text-[#141513] font-bold text-sm py-3 px-8 rounded-xl shadow-xs transition flex items-center justify-center gap-2 active:scale-95">
                                     <span>${isML ? 'തുടരുക' : 'Next'}</span>
-                                    <i class="fa-solid fa-arrow-right text-xs"></i>
+                                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                                 </button>
                             </div>
                         </div>
@@ -4410,10 +4418,10 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                         <!-- STEP 2: Target Exam / Date -->
                         <div id="setup-step-2" class="${setupCurrentStep === 2 ? '' : 'hidden'} space-y-5 animate-fade-in-up">
                             <div class="text-left">
-                                <h3 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">
+                                <h3 class="text-xl sm:text-2xl font-serif font-bold text-[#181B18] dark:text-[#EFECE4] tracking-tight">
                                     ${isML ? 'ലക്ഷ്യ പരീക്ഷ / തീയതി' : 'Target Exam & Date'}
                                 </h3>
-                                <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-300 mt-1">
+                                <p class="text-xs sm:text-sm text-[#474B45] dark:text-[#C4C0B6] mt-1">
                                     ${isML ? 'പരീക്ഷാ തീയതി തിരഞ്ഞെടുക്കുക. ദിവസങ്ങൾക്കനുസരിച്ച് ഷെഡ്യൂൾ ചെയ്യാം.' : 'Pick an exam preset or select your target completion date.'}
                                 </p>
                             </div>
@@ -4425,35 +4433,35 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                                         ? DHSE_EXAM_CYCLES
                                         : { christmas: { endDate: '2026-12-17' }, model: { endDate: '2027-02-24' }, public: { endDate: '2027-03-30' } };
                                     return `
-                                <button type="button" id="preset-btn-xmas" onclick="setDeadlinePreset('${examCyclesSafe.christmas.endDate}', 2, 'christmas')" class="preset-date-btn min-h-[44px] py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-[#162137] hover:bg-blue-50/80 dark:hover:bg-blue-950/40 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-200 dark:border-slate-700/80 transition-all duration-150 flex flex-col items-center justify-center text-center gap-1 active:scale-95 cursor-pointer">
-                                    <i class="fa-solid fa-star text-emerald-500 text-sm"></i>
+                                <button type="button" id="preset-btn-xmas" onclick="setDeadlinePreset('${examCyclesSafe.christmas.endDate}', 2, 'christmas')" class="preset-date-btn min-h-[44px] py-2.5 px-3 rounded-xl bg-[#FFFFFF] dark:bg-[#222521] hover:bg-[#EDE8DC] dark:hover:bg-[#181A17] text-[#181B18] dark:text-[#EFECE4] text-xs font-bold border border-[#D9D2C3] dark:border-[#31342E] transition-all duration-150 flex flex-col items-center justify-center text-center gap-1 active:scale-95 cursor-pointer">
+                                    <svg class="w-4 h-4 text-[#1B5E43] dark:text-[#52B788]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                                     <span>${isML ? 'ക്രിസ്മസ് പരീക്ഷ' : 'Christmas Exam'}</span>
-                                    <span class="preset-sub text-[10px] text-slate-400 font-medium">Dec 8–17 • Term 1–2</span>
+                                    <span class="preset-sub text-[10px] font-mono text-[#6E726A] dark:text-[#918D83] font-medium">Dec 8–17 • Term 1–2</span>
                                 </button>
-                                <button type="button" id="preset-btn-model" onclick="setDeadlinePreset('${examCyclesSafe.model.endDate}', 3, 'model')" class="preset-date-btn min-h-[44px] py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-[#162137] hover:bg-blue-50/80 dark:hover:bg-blue-950/40 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-200 dark:border-slate-700/80 transition-all duration-150 flex flex-col items-center justify-center text-center gap-1 active:scale-95 cursor-pointer">
-                                    <i class="fa-solid fa-clipboard-check text-indigo-500 text-sm"></i>
+                                <button type="button" id="preset-btn-model" onclick="setDeadlinePreset('${examCyclesSafe.model.endDate}', 3, 'model')" class="preset-date-btn min-h-[44px] py-2.5 px-3 rounded-xl bg-[#FFFFFF] dark:bg-[#222521] hover:bg-[#EDE8DC] dark:hover:bg-[#181A17] text-[#181B18] dark:text-[#EFECE4] text-xs font-bold border border-[#D9D2C3] dark:border-[#31342E] transition-all duration-150 flex flex-col items-center justify-center text-center gap-1 active:scale-95 cursor-pointer">
+                                    <svg class="w-4 h-4 text-[#2F486D] dark:text-[#8BA7CE]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg>
                                     <span>${isML ? 'മോഡൽ പരീക്ഷ' : 'Model Exam'}</span>
-                                    <span class="preset-sub text-[10px] text-slate-400 font-medium">Feb 11–24 • Full</span>
+                                    <span class="preset-sub text-[10px] font-mono text-[#6E726A] dark:text-[#918D83] font-medium">Feb 11–24 • Full</span>
                                 </button>
-                                <button type="button" id="preset-btn-board" onclick="setDeadlinePreset('${examCyclesSafe.public.endDate}', 3, 'public')" class="preset-date-btn min-h-[44px] py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-[#162137] hover:bg-blue-50/80 dark:hover:bg-blue-950/40 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-200 dark:border-slate-700/80 transition-all duration-150 flex flex-col items-center justify-center text-center gap-1 active:scale-95 cursor-pointer">
-                                    <i class="fa-solid fa-bullseye text-purple-500 text-sm"></i>
+                                <button type="button" id="preset-btn-board" onclick="setDeadlinePreset('${examCyclesSafe.public.endDate}', 3, 'public')" class="preset-date-btn min-h-[44px] py-2.5 px-3 rounded-xl bg-[#FFFFFF] dark:bg-[#222521] hover:bg-[#EDE8DC] dark:hover:bg-[#181A17] text-[#181B18] dark:text-[#EFECE4] text-xs font-bold border border-[#D9D2C3] dark:border-[#31342E] transition-all duration-150 flex flex-col items-center justify-center text-center gap-1 active:scale-95 cursor-pointer">
+                                    <svg class="w-4 h-4 text-[#B8432E] dark:text-[#E57A65]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
                                     <span>${isML ? 'പബ്ലിക് പരീക്ഷ' : 'Public Exam'}</span>
-                                    <span class="preset-sub text-[10px] text-slate-400 font-medium">Mar 2–30 • Full</span>
+                                    <span class="preset-sub text-[10px] font-mono text-[#6E726A] dark:text-[#918D83] font-medium">Mar 2–30 • Full</span>
                                 </button>
-                                <button type="button" id="preset-btn-30" onclick="setDeadlinePreset('${getRelativePresetDate(30)}', null, 'custom')" class="preset-date-btn min-h-[44px] py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-[#162137] hover:bg-blue-50/80 dark:hover:bg-blue-950/40 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-200 dark:border-slate-700/80 transition-all duration-150 flex flex-col items-center justify-center text-center gap-1 active:scale-95 cursor-pointer">
-                                    <i class="fa-solid fa-bolt text-amber-500 text-sm"></i>
+                                <button type="button" id="preset-btn-30" onclick="setDeadlinePreset('${getRelativePresetDate(30)}', null, 'custom')" class="preset-date-btn min-h-[44px] py-2.5 px-3 rounded-xl bg-[#FFFFFF] dark:bg-[#222521] hover:bg-[#EDE8DC] dark:hover:bg-[#181A17] text-[#181B18] dark:text-[#EFECE4] text-xs font-bold border border-[#D9D2C3] dark:border-[#31342E] transition-all duration-150 flex flex-col items-center justify-center text-center gap-1 active:scale-95 cursor-pointer">
+                                    <svg class="w-4 h-4 text-[#9C6418] dark:text-[#DFAC54]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
                                     <span>${isML ? '30 ദിവസത്തെ പ്ലാൻ' : '30-Day Sprint'}</span>
-                                    <span class="preset-sub text-[10px] text-slate-400 font-medium">Fast Crash</span>
+                                    <span class="preset-sub text-[10px] font-mono text-[#6E726A] dark:text-[#918D83] font-medium">Fast Crash</span>
                                 </button>`;
                                 })()}
                             </div>
 
                             <!-- Date Picker -->
                             <div class="relative">
-                                <input type="date" id="deadline-date" value="${getLocalDateStr(defaultTarget)}" onchange="updateDeadlinePreview()" oninput="updateDeadlinePreview()" class="w-full border-2 border-slate-200 dark:border-slate-700 rounded-2xl p-3 text-sm font-bold text-slate-800 dark:text-white bg-slate-50 dark:bg-[#101726] focus:bg-white dark:focus:bg-[#141d30] focus:border-blue-600 outline-none transition">
+                                <input type="date" id="deadline-date" value="${getLocalDateStr(defaultTarget)}" onchange="updateDeadlinePreview()" oninput="updateDeadlinePreview()" class="w-full border-2 border-[#D9D2C3] dark:border-[#31342E] rounded-xl p-3 text-sm font-mono font-bold text-[#181B18] dark:text-[#EFECE4] bg-[#FFFFFF] dark:bg-[#181A17] focus:border-[#1B5E43] dark:focus:border-[#52B788] outline-none transition">
                             </div>
                             <!-- Live Calculation Feedback Box -->
-                            <div id="deadline-calc-label" class="p-3 rounded-2xl bg-blue-50/70 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-800/40 text-xs text-slate-600 dark:text-slate-200"></div>
+                            <div id="deadline-calc-label" class="p-3 rounded-2xl bg-[#E4EFE9]/60 dark:bg-[rgba(82,183,136,0.1)] border border-[#9DC3B2] dark:border-[rgba(82,183,136,0.28)] text-xs text-[#181B18] dark:text-[#EFECE4]"></div>
                             <!-- Live Official DHSE Timetable Preview -->
                             <div id="setup-official-timetable-preview" class="hidden"></div>
 
@@ -4461,13 +4469,13 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
 
                             <!-- Step 2 Navigation -->
                             <div class="pt-5 flex items-center justify-between gap-3">
-                                <button type="button" onclick="prevSetupStep()" class="min-h-[44px] py-2.5 px-5 rounded-2xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold text-xs hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center justify-center gap-1.5 active:scale-95">
-                                    <i class="fa-solid fa-arrow-left text-xs"></i>
+                                <button type="button" onclick="prevSetupStep()" class="min-h-[44px] py-2.5 px-5 rounded-xl border border-[#D9D2C3] dark:border-[#31342E] bg-[#FFFFFF] dark:bg-[#222521] text-[#474B45] dark:text-[#C4C0B6] font-bold text-xs hover:bg-[#EDE8DC] dark:hover:bg-[#181A17] transition flex items-center justify-center gap-1.5 active:scale-95 cursor-pointer">
+                                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
                                     <span>${isML ? 'പിന്നോട്ട്' : 'Back'}</span>
                                 </button>
-                                <button type="button" onclick="nextSetupStep()" class="min-h-[44px] bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-sm py-2.5 px-8 rounded-2xl shadow-md shadow-blue-500/20 transition flex items-center justify-center gap-2 active:scale-95">
+                                <button type="button" onclick="nextSetupStep()" class="min-h-[44px] bg-[#1B5E43] hover:bg-[#144833] dark:bg-[#52B788] dark:hover:bg-[#67C79A] text-white dark:text-[#141513] font-bold text-sm py-2.5 px-8 rounded-xl shadow-xs transition flex items-center justify-center gap-2 active:scale-95 cursor-pointer">
                                     <span>${isML ? 'തുടരുക' : 'Next'}</span>
-                                    <i class="fa-solid fa-arrow-right text-xs"></i>
+                                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                                 </button>
                             </div>
                         </div>
@@ -4476,14 +4484,14 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                         <div id="setup-step-3" class="${setupCurrentStep === 3 ? '' : 'hidden'} space-y-4 animate-fade-in-up">
                             <div class="flex items-center justify-between pb-1">
                                 <div class="text-left">
-                                    <h3 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">
+                                    <h3 class="text-xl sm:text-2xl font-serif font-bold text-[#181B18] dark:text-[#EFECE4] tracking-tight">
                                         ${isML ? 'പൂർത്തിയാക്കിയ അധ്യായങ്ങൾ' : 'Completed Chapters'}
                                     </h3>
-                                    <p class="text-xs text-slate-500 dark:text-slate-300 mt-0.5">
+                                    <p class="text-xs text-[#474B45] dark:text-[#C4C0B6] mt-0.5">
                                         ${isML ? 'പഠിച്ചു കഴിഞ്ഞ അധ്യായങ്ങൾ ഇവിടെ ടിക്ക് ചെയ്യാം. അവ ഒഴിവാക്കി ബാക്കിയുള്ളവ ഷെഡ്യൂൾ ചെയ്യും.' : 'Mark chapters you already finished in school or tuition to skip them.'}
                                     </p>
                                 </div>
-                                <span id="completed-chaps-badge" class="text-xs font-bold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-[#162137] text-slate-500 dark:text-slate-300 shrink-0">0 completed</span>
+                                <span id="completed-chaps-badge" class="text-xs font-mono font-bold px-2.5 py-1 rounded-full bg-[#EDE8DC] dark:bg-[#181A17] text-[#6E726A] dark:text-[#918D83] border border-[#D9D2C3] dark:border-[#31342E] shrink-0">0 completed</span>
                             </div>
 
                             <!-- Subject Tabs Switcher -->
@@ -4492,19 +4500,19 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                             </div>
 
                             <!-- Chapter List Container -->
-                            <div id="setup-subject-chapters-list" class="bg-slate-50/70 dark:bg-[#101726] p-3 rounded-2xl border border-slate-200/80 dark:border-slate-700/80">
+                            <div id="setup-subject-chapters-list" class="bg-[#EDE8DC]/50 dark:bg-[#181A17] p-3 rounded-2xl border border-[#D9D2C3] dark:border-[#31342E]">
                                 ${renderSetupSubjectChapters(activeSetupSubjectTab, activeSetupGradeTab)}
                             </div>
 
                             <!-- Step 3 Navigation -->
                             <div class="pt-5 flex items-center justify-between gap-3">
-                                <button type="button" onclick="prevSetupStep()" class="min-h-[44px] py-2.5 px-5 rounded-2xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold text-xs hover:bg-slate-100 dark:hover:bg-slate-800 transition flex items-center justify-center gap-1.5 active:scale-95">
-                                    <i class="fa-solid fa-arrow-left text-xs"></i>
+                                <button type="button" onclick="prevSetupStep()" class="min-h-[44px] py-2.5 px-5 rounded-xl border border-[#D9D2C3] dark:border-[#31342E] bg-[#FFFFFF] dark:bg-[#222521] text-[#474B45] dark:text-[#C4C0B6] font-bold text-xs hover:bg-[#EDE8DC] dark:hover:bg-[#181A17] transition flex items-center justify-center gap-1.5 active:scale-95 cursor-pointer">
+                                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
                                     <span>${isML ? 'പിന്നോട്ട്' : 'Back'}</span>
                                 </button>
-                                <button type="button" onclick="nextSetupStep()" class="min-h-[44px] bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-sm py-2.5 px-8 rounded-2xl shadow-md shadow-blue-500/20 transition flex items-center justify-center gap-2 active:scale-95">
+                                <button type="button" onclick="nextSetupStep()" class="min-h-[44px] bg-[#1B5E43] hover:bg-[#144833] dark:bg-[#52B788] dark:hover:bg-[#67C79A] text-white dark:text-[#141513] font-bold text-sm py-2.5 px-8 rounded-xl shadow-xs transition flex items-center justify-center gap-2 active:scale-95 cursor-pointer">
                                     <span>${isML ? 'തുടരുക' : 'Next'}</span>
-                                    <i class="fa-solid fa-arrow-right text-xs"></i>
+                                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                                 </button>
                             </div>
                         </div>
@@ -4512,10 +4520,10 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                         <!-- STEP 4: Start Plan & Advanced Customization -->
                         <div id="setup-step-4" class="${setupCurrentStep === 4 ? '' : 'hidden'} space-y-5 animate-fade-in-up">
                             <div class="text-left">
-                                <h3 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">
+                                <h3 class="text-xl sm:text-2xl font-serif font-bold text-[#181B18] dark:text-[#EFECE4] tracking-tight">
                                     ${isML ? 'പഠനം ആരംഭിക്കാം!' : 'Ready to Start!'}
                                 </h3>
-                                <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-300 mt-1">
+                                <p class="text-xs sm:text-sm text-[#474B45] dark:text-[#C4C0B6] mt-1">
                                     ${isML ? 'ഒരു ക്ലിക്കിൽ നിങ്ങളുടെ ഡെയ്‌ലി ടൈംടേബിൾ തയ്യാറാക്കാം.' : 'One click to generate your personalized daily timetable for Day 1.'}
                                 </p>
                             </div>
@@ -4523,103 +4531,103 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                             <div class="study-capacity">
                                         <!-- Daily Hours -->
                                         <div>
-                                            <span class="text-xs font-extrabold text-slate-700 dark:text-slate-200 block mb-1.5">
+                                            <span class="text-xs font-mono font-bold uppercase tracking-wider text-[#474B45] dark:text-[#C4C0B6] block mb-2">
                     ${isML ? ML_I18N.setup.hoursTitle : 'Daily Self-Study Hours'}
                                             </span>
                                             <div class="flex gap-2">
-                                                <button type="button" id="hours-chip-2" onclick="setDailyHoursSelection(2)" class="min-h-[44px] flex-1 py-2.5 px-2 text-xs font-semibold rounded-xl bg-slate-100 dark:bg-[#141d30] text-slate-600 dark:text-slate-300 transition flex items-center justify-center active:scale-95">2 Hours</button>
-                                                <button type="button" id="hours-chip-3_5" onclick="setDailyHoursSelection(3.5)" class="min-h-[44px] flex-1 py-2.5 px-2 text-xs font-black rounded-xl bg-blue-600 text-white shadow-sm transition flex items-center justify-center active:scale-95">3–4 Hours</button>
-                                                <button type="button" id="hours-chip-5" onclick="setDailyHoursSelection(5)" class="min-h-[44px] flex-1 py-2.5 px-2 text-xs font-semibold rounded-xl bg-slate-100 dark:bg-[#141d30] text-slate-600 dark:text-slate-300 transition flex items-center justify-center active:scale-95">5+ Hours</button>
+                                                <button type="button" id="hours-chip-2" onclick="setDailyHoursSelection(2)" class="min-h-[44px] flex-1 py-2.5 px-2 text-xs font-semibold rounded-xl bg-[#EDE8DC] dark:bg-[#181A17] text-[#474B45] dark:text-[#C4C0B6] border border-[#D9D2C3] dark:border-[#31342E] transition flex items-center justify-center active:scale-95 cursor-pointer">2 Hours</button>
+                                                <button type="button" id="hours-chip-3_5" onclick="setDailyHoursSelection(3.5)" class="min-h-[44px] flex-1 py-2.5 px-2 text-xs font-black rounded-xl bg-[#1B5E43] dark:bg-[#52B788] text-white dark:text-[#141513] shadow-xs transition flex items-center justify-center active:scale-95 cursor-pointer">3–4 Hours</button>
+                                                <button type="button" id="hours-chip-5" onclick="setDailyHoursSelection(5)" class="min-h-[44px] flex-1 py-2.5 px-2 text-xs font-semibold rounded-xl bg-[#EDE8DC] dark:bg-[#181A17] text-[#474B45] dark:text-[#C4C0B6] border border-[#D9D2C3] dark:border-[#31342E] transition flex items-center justify-center active:scale-95 cursor-pointer">5+ Hours</button>
                                             </div>
                                         </div>
 
 
-                                <p class="text-xs text-slate-500 mt-2">${isML ? 'സ്കൂൾ, യാത്ര, വിശ്രമം എന്നിവയ്ക്ക് ശേഷം ലഭിക്കുന്ന സമയം തിരഞ്ഞെടുക്കുക.' : 'Choose time you can actually spare after school, travel and rest.'}</p>
+                                <p class="text-xs text-[#6E726A] dark:text-[#918D83] mt-2">${isML ? 'സ്കൂൾ, യാത്ര, വിശ്രമം എന്നിവയ്ക്ക് ശേഷം ലഭിക്കുന്ന സമയം തിരഞ്ഞെടുക്കുക.' : 'Choose time you can actually spare after school, travel and rest.'}</p>
                             </div>
 
                             <!-- Quick Summary Card -->
-                            <div class="p-3.5 bg-slate-50 dark:bg-[#101726] rounded-2xl border border-slate-200 dark:border-slate-800 space-y-2">
+                            <div class="p-3.5 bg-[#EDE8DC]/60 dark:bg-[#181A17] rounded-2xl border border-[#D9D2C3] dark:border-[#31342E] space-y-2">
                                 <div class="flex items-center justify-between text-xs">
-                                    <span class="text-slate-500 dark:text-slate-400 font-medium">${isML ? 'സ്ട്രീം' : 'Stream'}</span>
-                                    <span id="summary-stream-badge" class="font-extrabold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-lg border border-blue-200/60 dark:border-blue-800/60"></span>
+                                    <span class="text-[#6E726A] dark:text-[#918D83] font-medium">${isML ? 'സ്ട്രീം' : 'Stream'}</span>
+                                    <span id="summary-stream-badge" class="font-mono font-bold text-[#1B5E43] dark:text-[#52B788] bg-[#E4EFE9] dark:bg-[rgba(82,183,136,0.14)] px-2 py-0.5 rounded-lg border border-[#9DC3B2] dark:border-[rgba(82,183,136,0.3)]"></span>
                                 </div>
                                 <div class="flex items-center justify-between text-xs">
-                                    <span class="text-slate-500 dark:text-slate-400 font-medium">${isML ? 'പരീക്ഷാ തീയതി' : 'Target Date'}</span>
-                                    <span id="summary-date-badge" class="font-bold text-slate-700 dark:text-slate-200"></span>
+                                    <span class="text-[#6E726A] dark:text-[#918D83] font-medium">${isML ? 'പരീക്ഷാ തീയതി' : 'Target Date'}</span>
+                                    <span id="summary-date-badge" class="font-mono font-bold text-[#181B18] dark:text-[#EFECE4]"></span>
                                 </div>
                                 <div class="flex items-center justify-between text-xs">
-                                    <span class="text-slate-500 dark:text-slate-400 font-medium">${isML ? 'പൂർത്തിയാക്കിയവ' : 'Completed Chapters'}</span>
+                                    <span class="text-[#6E726A] dark:text-[#918D83] font-medium">${isML ? 'പൂർത്തിയാക്കിയവ' : 'Completed Chapters'}</span>
                                     <div class="flex items-center gap-2">
-                                        <span id="summary-completed-badge" class="font-bold text-emerald-600 dark:text-emerald-400"></span>
-                                        <button type="button" onclick="goToSetupStep(3)" class="min-h-[44px] inline-flex items-center text-xs text-blue-600 dark:text-blue-400 hover:underline font-bold px-2">${isML ? 'മാറ്റുക' : 'Edit'}</button>
+                                        <span id="summary-completed-badge" class="font-mono font-bold text-[#1B5E43] dark:text-[#52B788]"></span>
+                                        <button type="button" onclick="goToSetupStep(3)" class="min-h-[44px] inline-flex items-center text-xs text-[#1B5E43] dark:text-[#52B788] hover:underline font-bold px-2 cursor-pointer">${isML ? 'മാറ്റുക' : 'Edit'}</button>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Primary Start Button -->
-                            <button type="button" onclick="handleInitialSetup()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-4 px-6 rounded-2xl shadow-xl shadow-blue-500/25 transform active:scale-[0.98] transition-transform duration-150 flex items-center justify-center gap-2.5 text-base sm:text-lg">
+                            <button type="button" onclick="handleInitialSetup()" class="w-full bg-[#1B5E43] hover:bg-[#144833] dark:bg-[#52B788] dark:hover:bg-[#67C79A] text-white dark:text-[#141513] font-serif font-bold py-4 px-6 rounded-2xl shadow-sm transform active:scale-[0.98] transition-transform duration-150 flex items-center justify-center gap-2.5 text-base sm:text-lg cursor-pointer">
                                 <span>${isML ? 'പ്ലാൻ തയ്യാറാക്കൂ (Day 1 ആരംഭിക്കാം)' : 'Start Day 1'}</span>
-                                <i class="fa-solid fa-rocket text-sm"></i>
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                             </button>
 
                             <!-- Customize Study Hours & Routine Drawer (Clean Directory Style) -->
-                            <details id="setup-advanced-accordion" class="group bg-slate-50/70 dark:bg-[#111827]/70 hover:bg-slate-100/80 dark:hover:bg-[#151f33]/80 rounded-xl border border-slate-200/70 dark:border-slate-800/70 p-2.5 transition text-left">
-                                <summary class="font-bold text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 flex items-center justify-between select-none cursor-pointer">
+                            <details id="setup-advanced-accordion" class="group bg-[#FFFFFF] dark:bg-[#222521] hover:bg-[#EDE8DC]/60 dark:hover:bg-[#181A17] rounded-xl border border-[#D9D2C3] dark:border-[#31342E] p-2.5 transition text-left">
+                                <summary class="font-bold text-[11px] sm:text-xs text-[#474B45] dark:text-[#C4C0B6] flex items-center justify-between select-none cursor-pointer">
                                     <span class="flex items-center gap-2">
-                                        <svg class="w-3.5 h-3.5 inline-block text-blue-600 dark:text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                                        <svg class="w-3.5 h-3.5 inline-block text-[#1B5E43] dark:text-[#52B788]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                                         <span>${isML ? 'കൂടുതൽ ക്രമീകരണങ്ങൾ (ഓപ്ഷണൽ)' : 'Personalize Schedule & Syllabus Scope (Optional)'}</span>
                                     </span>
-                                    <span class="flex items-center gap-1.5 text-[10px] text-slate-400 dark:text-slate-400 font-normal">
-                                        <span class="group-open:hidden px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 font-semibold border border-blue-200/50 dark:border-blue-800/50">${isML ? 'ഓപ്ഷണൽ' : 'Optional'}</span>
+                                    <span class="flex items-center gap-1.5 text-[10px] text-[#6E726A] dark:text-[#918D83] font-normal">
+                                        <span class="group-open:hidden px-1.5 py-0.5 rounded bg-[#E4EFE9] dark:bg-[rgba(82,183,136,0.14)] text-[#1B5E43] dark:text-[#52B788] font-mono font-semibold border border-[#9DC3B2] dark:border-[rgba(82,183,136,0.3)]">${isML ? 'ഓപ്ഷണൽ' : 'Optional'}</span>
                                         <span class="group-open:hidden">${isML ? 'തുറക്കുക' : 'Tap to customize'}</span>
-                                        <svg class="w-3.5 h-3.5 inline-block text-slate-400 group-open:rotate-180 transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+                                        <svg class="w-3.5 h-3.5 inline-block text-[#6E726A] group-open:rotate-180 transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
                                     </span>
                                 </summary>
 
-                                <div class="mt-4 pt-4 border-t border-slate-200/80 dark:border-slate-700/80 space-y-5 text-left">
+                                <div class="mt-4 pt-4 border-t border-[#D9D2C3] dark:border-[#31342E] space-y-5 text-left">
                                     <!-- A. Target Term Scope (for +2 streams) -->
                                     ${selectedStream !== 'imp_only' ? `
                                         <div>
-                                            <span class="text-xs font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider block mb-2">
+                                            <span class="text-xs font-mono font-bold text-[#6E726A] dark:text-[#918D83] uppercase tracking-wider block mb-2">
                                                 ${isML ? 'സിലബസ് വ്യാപ്തി' : 'Syllabus Portion Scope'}
                                             </span>
                                             <div class="grid grid-cols-1 gap-2.5">
                                                 <!-- Card 2: Term 1 & 2 -->
-                                                <div id="term-card-2" onclick="setTermSelection(2)" class="cursor-pointer p-3.5 rounded-2xl border-2 border-blue-600 dark:border-blue-500 bg-blue-50/60 dark:bg-blue-950/40 ring-2 ring-blue-500/20 transition text-left flex items-start justify-between gap-3 shadow-xs">
+                                                <div id="term-card-2" onclick="setTermSelection(2)" class="cursor-pointer p-3.5 rounded-2xl border-2 border-[#1B5E43] dark:border-[#52B788] bg-[#E4EFE9] dark:bg-[rgba(82,183,136,0.14)] ring-2 ring-[#1B5E43]/20 transition text-left flex items-start justify-between gap-3 shadow-xs">
                                                     <div>
-                                                        <span class="text-xs font-extrabold text-blue-600 dark:text-blue-400 uppercase tracking-wider block mb-0.5">${isML ? ML_I18N.setup.term2Badge : 'Terms 1 & 2'}</span>
-                                                        <h4 class="font-black text-slate-900 dark:text-white text-sm">${isML ? ML_I18N.setup.term2Title : 'Term 1 & Term 2 Portions'}</h4>
-                                                        <p id="term-desc-2" class="text-xs text-slate-600 dark:text-slate-300 mt-0.5 font-medium">
+                                                        <span class="text-xs font-mono font-bold text-[#1B5E43] dark:text-[#52B788] uppercase tracking-wider block mb-0.5">${isML ? ML_I18N.setup.term2Badge : 'Terms 1 & 2'}</span>
+                                                        <h4 class="font-serif font-bold text-[#181B18] dark:text-[#EFECE4] text-sm">${isML ? ML_I18N.setup.term2Title : 'Term 1 & Term 2 Portions'}</h4>
+                                                        <p id="term-desc-2" class="text-xs text-[#474B45] dark:text-[#C4C0B6] mt-0.5 font-medium">
                                                             ${selectedStream === 'bio' ? 'Christmas exam syllabus (~35 chapters).' : 'Christmas exam syllabus (~31 chapters).'}
                                                         </p>
                                                     </div>
-                                                    <span class="w-5 h-5 rounded-full bg-blue-600 dark:bg-blue-500 text-white flex items-center justify-center text-xs check-indicator shrink-0 mt-0.5">
-                                                        <i class="fa-solid fa-check"></i>
+                                                    <span class="w-5 h-5 rounded-full bg-[#1B5E43] dark:bg-[#52B788] text-white dark:text-[#141513] flex items-center justify-center text-xs check-indicator shrink-0 mt-0.5">
+                                                        <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
                                                     </span>
                                                 </div>
 
                                                 <!-- Card 3: Full Year -->
-                                                <div id="term-card-3" onclick="setTermSelection(3)" class="cursor-pointer p-3.5 rounded-2xl border-2 border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600 transition text-left flex items-start justify-between gap-3">
+                                                <div id="term-card-3" onclick="setTermSelection(3)" class="cursor-pointer p-3.5 rounded-2xl border-2 border-[#D9D2C3] dark:border-[#31342E] bg-[#FFFFFF] dark:bg-[#222521] hover:border-[#B9B09E] dark:hover:border-[#454940] transition text-left flex items-start justify-between gap-3">
                                                     <div>
-                                                        <span class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider block mb-0.5">${isML ? ML_I18N.setup.term3Badge : 'Full Year'}</span>
-                                                        <h4 class="font-black text-slate-900 dark:text-white text-sm">${isML ? ML_I18N.setup.term3Title : 'Complete Public Exam Syllabus'}</h4>
-                                                        <p id="term-desc-3" class="text-xs text-slate-500 dark:text-slate-300 mt-0.5 font-medium">
+                                                        <span class="text-xs font-mono font-bold text-[#2F486D] dark:text-[#8BA7CE] uppercase tracking-wider block mb-0.5">${isML ? ML_I18N.setup.term3Badge : 'Full Year'}</span>
+                                                        <h4 class="font-serif font-bold text-[#181B18] dark:text-[#EFECE4] text-sm">${isML ? ML_I18N.setup.term3Title : 'Complete Public Exam Syllabus'}</h4>
+                                                        <p id="term-desc-3" class="text-xs text-[#474B45] dark:text-[#C4C0B6] mt-0.5 font-medium">
                                                             ${selectedStream === 'bio' ? 'All 49 chapters for March Board Exams.' : 'All 46 chapters for March Board Exams.'}
                                                         </p>
                                                     </div>
-                                                    <span class="w-5 h-5 rounded-full border border-slate-300 dark:border-slate-600 flex items-center justify-center text-xs check-indicator shrink-0 mt-0.5"></span>
+                                                    <span class="w-5 h-5 rounded-full border border-[#D9D2C3] dark:border-[#31342E] flex items-center justify-center text-xs check-indicator shrink-0 mt-0.5"></span>
                                                 </div>
 
                                                 <!-- Card 1: Term 1 Only -->
-                                                <div id="term-card-1" onclick="setTermSelection(1)" class="cursor-pointer p-3.5 rounded-2xl border-2 border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] hover:border-slate-300 dark:hover:border-slate-600 transition text-left flex items-start justify-between gap-3">
+                                                <div id="term-card-1" onclick="setTermSelection(1)" class="cursor-pointer p-3.5 rounded-2xl border-2 border-[#D9D2C3] dark:border-[#31342E] bg-[#FFFFFF] dark:bg-[#222521] hover:border-[#B9B09E] dark:hover:border-[#454940] transition text-left flex items-start justify-between gap-3">
                                                     <div>
-                                                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-0.5">${isML ? ML_I18N.setup.term1Badge : 'First Terminal'}</span>
-                                                        <h4 class="font-black text-slate-900 dark:text-white text-sm">${isML ? ML_I18N.setup.term1Title : 'Term 1 Only'}</h4>
-                                                        <p id="term-desc-1" class="text-xs text-slate-500 dark:text-slate-300 mt-0.5 font-medium">
+                                                        <span class="text-xs font-mono font-bold text-[#6E726A] dark:text-[#918D83] uppercase tracking-wider block mb-0.5">${isML ? ML_I18N.setup.term1Badge : 'First Terminal'}</span>
+                                                        <h4 class="font-serif font-bold text-[#181B18] dark:text-[#EFECE4] text-sm">${isML ? ML_I18N.setup.term1Title : 'Term 1 Only'}</h4>
+                                                        <p id="term-desc-1" class="text-xs text-[#474B45] dark:text-[#C4C0B6] mt-0.5 font-medium">
                                                             ${selectedStream === 'bio' ? 'Onam exam portion (~18 chapters).' : 'Onam exam portion (~17 chapters).'}
                                                         </p>
                                                     </div>
-                                                    <span class="w-5 h-5 rounded-full border border-slate-300 dark:border-slate-600 flex items-center justify-center text-xs check-indicator shrink-0 mt-0.5"></span>
+                                                    <span class="w-5 h-5 rounded-full border border-[#D9D2C3] dark:border-[#31342E] flex items-center justify-center text-xs check-indicator shrink-0 mt-0.5"></span>
                                                 </div>
                                             </div>
                                         </div>
@@ -4628,29 +4636,29 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                                     ` : ''}
 
                                     <!-- C. Weekly Rhythm & Hours -->
-                                    <div class="pt-3 border-t border-slate-200/80 dark:border-slate-700/80 space-y-3">
-                                        <span class="text-xs font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wider block">
+                                    <div class="pt-3 border-t border-[#D9D2C3] dark:border-[#31342E] space-y-3">
+                                        <span class="text-xs font-mono font-bold text-[#6E726A] dark:text-[#918D83] uppercase tracking-wider block">
                                             ${isML ? ML_I18N.setup.rhythmTitle : 'Weekly Study Rhythm & Rest Day'}
                                         </span>
                                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                                            <div id="rhythm-card-balanced" onclick="setWeeklyRhythmSelection('balanced')" class="cursor-pointer p-2.5 rounded-xl border-2 border-blue-600 dark:border-blue-500 bg-blue-50/70 dark:bg-blue-950/40 text-left">
-                                                <span class="font-bold text-slate-900 dark:text-white text-xs block">${isML ? ML_I18N.setup.rhythmBalancedTitle : 'Daily Balanced'}</span>
-                                                <p class="text-[11px] text-slate-500 dark:text-slate-300">${isML ? ML_I18N.setup.rhythmBalancedDesc : 'Even daily pacing'}</p>
+                                            <div id="rhythm-card-balanced" onclick="setWeeklyRhythmSelection('balanced')" class="cursor-pointer p-2.5 rounded-xl border-2 border-[#1B5E43] dark:border-[#52B788] bg-[#E4EFE9] dark:bg-[rgba(82,183,136,0.14)] text-left">
+                                                <span class="font-bold text-[#181B18] dark:text-[#EFECE4] text-xs block">${isML ? ML_I18N.setup.rhythmBalancedTitle : 'Daily Balanced'}</span>
+                                                <p class="text-[11px] text-[#474B45] dark:text-[#C4C0B6]">${isML ? ML_I18N.setup.rhythmBalancedDesc : 'Even daily pacing'}</p>
                                             </div>
-                                            <div id="rhythm-card-weekend" onclick="setWeeklyRhythmSelection('weekend_booster')" class="cursor-pointer p-2.5 rounded-xl border-2 border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] text-left">
-                                                <span class="font-bold text-slate-900 dark:text-white text-xs block">${isML ? ML_I18N.setup.rhythmWeekendTitle : 'Weekend Booster'}</span>
-                                                <p class="text-[11px] text-slate-500 dark:text-slate-300">${isML ? ML_I18N.setup.rhythmWeekendDesc : 'Power study on Sat/Sun'}</p>
+                                            <div id="rhythm-card-weekend" onclick="setWeeklyRhythmSelection('weekend_booster')" class="cursor-pointer p-2.5 rounded-xl border-2 border-[#D9D2C3] dark:border-[#31342E] bg-[#FFFFFF] dark:bg-[#222521] text-left">
+                                                <span class="font-bold text-[#181B18] dark:text-[#EFECE4] text-xs block">${isML ? ML_I18N.setup.rhythmWeekendTitle : 'Weekend Booster'}</span>
+                                                <p class="text-[11px] text-[#474B45] dark:text-[#C4C0B6]">${isML ? ML_I18N.setup.rhythmWeekendDesc : 'Power study on Sat/Sun'}</p>
                                             </div>
-                                            <div id="rhythm-card-sunday" onclick="setWeeklyRhythmSelection('rest_day', 0)" class="cursor-pointer p-2.5 rounded-xl border-2 border-slate-200 dark:border-slate-700/80 bg-white dark:bg-[#0e1526] text-left">
-                                                <span class="font-bold text-slate-900 dark:text-white text-xs block">${isML ? ML_I18N.setup.rhythmSundayTitle : 'Sunday Rest'}</span>
-                                                <p class="text-[11px] text-slate-500 dark:text-slate-300">${isML ? ML_I18N.setup.rhythmSundayDesc : 'Zero new tasks on Sun'}</p>
+                                            <div id="rhythm-card-sunday" onclick="setWeeklyRhythmSelection('rest_day', 0)" class="cursor-pointer p-2.5 rounded-xl border-2 border-[#D9D2C3] dark:border-[#31342E] bg-[#FFFFFF] dark:bg-[#222521] text-left">
+                                                <span class="font-bold text-[#181B18] dark:text-[#EFECE4] text-xs block">${isML ? ML_I18N.setup.rhythmSundayTitle : 'Sunday Rest'}</span>
+                                                <p class="text-[11px] text-[#474B45] dark:text-[#C4C0B6]">${isML ? ML_I18N.setup.rhythmSundayDesc : 'Zero new tasks on Sun'}</p>
                                             </div>
                                         </div>
 
                                         <!-- Intensity -->
                                         <div class="flex items-center justify-between gap-2 pt-1">
-                                            <label for="study-intensity" class="text-xs font-bold text-slate-700 dark:text-slate-200">${isML ? ML_I18N.setup.intensityLabel : 'Daily Study Pacing'}</label>
-                                            <select id="study-intensity" class="min-h-[44px] text-xs font-bold bg-white dark:bg-[#101726] border border-slate-300 dark:border-slate-700 rounded-xl px-2.5 py-1 text-slate-800 dark:text-white outline-none">
+                                            <label for="study-intensity" class="text-xs font-bold text-[#181B18] dark:text-[#EFECE4]">${isML ? ML_I18N.setup.intensityLabel : 'Daily Study Pacing'}</label>
+                                            <select id="study-intensity" class="min-h-[44px] text-xs font-bold bg-[#FFFFFF] dark:bg-[#181A17] border border-[#D9D2C3] dark:border-[#31342E] rounded-xl px-2.5 py-1 text-[#181B18] dark:text-[#EFECE4] outline-none">
                                                 <option value="balanced" selected>${isML ? ML_I18N.setup.intensityBalanced : 'Standard (2-3 parts/day)'}</option>
                                                 <option value="intense">${isML ? ML_I18N.setup.intensityIntense : 'Intensive (3-4+ parts/day)'}</option>
                                                 <option value="light">${isML ? ML_I18N.setup.intensityLight : 'Relaxed (1-2 parts/day)'}</option>
@@ -4695,13 +4703,13 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                     })[0] || null
                     : null;
                 const officialExamBannerHTML = todayOfficialExams.length > 0
-                    ? `<div class="p-3 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-700/70 text-xs text-amber-900 dark:text-amber-200 mb-3 flex items-center justify-between gap-2 flex-wrap" role="status">
-                        <span class="font-extrabold flex items-center gap-1.5"><i class="fa-solid fa-graduation-cap text-amber-600 dark:text-amber-400"></i> ${isML ? 'ഇന്നത്തെ DHSE പരീക്ഷ' : 'Official DHSE Exam Today'}: ${escapeStudyText(todayOfficialExams.map(e => `${e.paperTitle} (${e.session} · ${e.time})`).join(' & '))}</span>
-                        <span class="font-bold px-2 py-0.5 rounded-full bg-amber-200/70 dark:bg-amber-900/60 text-[11px]">${escapeStudyText(todayOfficialExams[0].examCycleShortName)}</span>
+                    ? `<div class="p-3 rounded-2xl bg-[#F6EEDC] dark:bg-[rgba(223,172,84,0.14)] border border-[#DEC59A] dark:border-[rgba(223,172,84,0.32)] text-xs text-[#9C6418] dark:text-[#DFAC54] mb-3 flex items-center justify-between gap-2 flex-wrap" role="status">
+                        <span class="font-bold flex items-center gap-1.5"><svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg> ${isML ? 'ഇന്നത്തെ DHSE പരീക്ഷ' : 'Official DHSE Exam Today'}: ${escapeStudyText(todayOfficialExams.map(e => `${e.paperTitle} (${e.session} · ${e.time})`).join(' & '))}</span>
+                        <span class="font-mono font-bold px-2 py-0.5 rounded-full bg-[#FFFFFF]/70 dark:bg-[#181A17] border border-[#DEC59A] dark:border-[rgba(223,172,84,0.3)] text-[11px]">${escapeStudyText(todayOfficialExams[0].examCycleShortName)}</span>
                     </div>`
                     : (nextOfficialExam
-                        ? `<div class="p-2.5 rounded-xl bg-blue-50/80 dark:bg-blue-950/35 border border-blue-200/80 dark:border-blue-800/50 text-xs text-blue-900 dark:text-blue-200 mb-3 flex items-center justify-between gap-2 flex-wrap">
-                            <span class="font-bold flex items-center gap-1.5"><i class="fa-solid fa-calendar-day text-blue-600 dark:text-blue-400"></i> ${isML ? 'അടുത്ത ഔദ്യോഗിക പരീക്ഷ' : 'Next Official Exam'}: ${escapeStudyText(nextOfficialExam.paperTitle)}</span>
+                        ? `<div class="p-2.5 rounded-xl bg-[#E7ECF3] dark:bg-[rgba(139,167,206,0.14)] border border-[#A6B8CE] dark:border-[rgba(139,167,206,0.32)] text-xs text-[#2F486D] dark:text-[#8BA7CE] mb-3 flex items-center justify-between gap-2 flex-wrap">
+                            <span class="font-bold flex items-center gap-1.5"><svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"/></svg> ${isML ? 'അടുത്ത ഔദ്യോഗിക പരീക്ഷ' : 'Next Official Exam'}: ${escapeStudyText(nextOfficialExam.paperTitle)}</span>
                             <span class="font-mono font-bold text-[11px]">${escapeStudyText(nextOfficialExam.date)} (${escapeStudyText(nextOfficialExam.dayName)}) · ${escapeStudyText(nextOfficialExam.session)} ${escapeStudyText(nextOfficialExam.time)}</span>
                         </div>`
                         : '');
@@ -4713,11 +4721,11 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                         <div class="daily-finished" role="status">
                             <div class="flex items-center justify-between flex-wrap gap-2.5">
                                 <div>
-                                    <strong class="text-emerald-700 dark:text-emerald-400 font-bold">${isML ? '🎉 ഇന്നത്തെ പഠനം പൂർത്തിയായി!' : '🎉 Today is complete! Great work!'}</strong>
-                                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">${hasFutureTasks ? (isML ? 'മുൻകൂട്ടി പഠിക്കാൻ തയ്യാറാണോ? നാളത്തെ ഭാഗങ്ങൾ ഇന്നത്തേക്ക് കൊണ്ടുവരാം.' : 'Want to keep momentum going? Fast-forward next chapters to Today.') : (isML ? 'മുഴുവൻ സിലബസും പൂർത്തിയായി.' : 'All portions finished!')}</p>
+                                    <strong class="text-[#1B5E43] dark:text-[#52B788] font-serif font-bold text-base">${isML ? '🎉 ഇന്നത്തെ പഠനം പൂർത്തിയായി!' : '🎉 Today is complete! Great work!'}</strong>
+                                    <p class="text-xs text-[#474B45] dark:text-[#C4C0B6] mt-0.5">${hasFutureTasks ? (isML ? 'മുൻകൂട്ടി പഠിക്കാൻ തയ്യാറാണോ? നാളത്തെ ഭാഗങ്ങൾ ഇന്നത്തേക്ക് കൊണ്ടുവരാം.' : 'Want to keep momentum going? Fast-forward next chapters to Today.') : (isML ? 'മുഴുവൻ സിലബസും പൂർത്തിയായി.' : 'All portions finished!')}</p>
                                 </div>
                                 ${hasFutureTasks ? `
-                                    <button type="button" onclick="compactPlanToToday()" class="min-h-[44px] py-2 px-3.5 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white text-xs font-bold rounded-xl shadow-md transition flex items-center gap-1.5 cursor-pointer">
+                                    <button type="button" onclick="compactPlanToToday()" class="min-h-[44px] py-2 px-3.5 bg-[#9C6418] hover:bg-[#7E4F10] dark:bg-[#DFAC54] dark:hover:bg-[#E8BC6E] active:scale-95 text-white dark:text-[#141513] text-xs font-bold rounded-xl transition flex items-center gap-1.5 cursor-pointer">
                                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                                         <span>${isML ? 'അടുത്ത ഭാഗങ്ങൾ ഇപ്പോൾ പഠിക്കാം' : 'Fast-Track Next Chapters to Today'}</span>
                                     </button>
@@ -4754,7 +4762,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                     <div class="flex items-center justify-center gap-2 mt-3 flex-wrap">
                         <button type="button" onclick="goToPlan()">${isML ? 'മുഴുവൻ പ്ലാൻ' : 'View full plan'}</button>
                         ${appState.plan.some(d => d.tasks.some(t => !t.completed)) ? `
-                            <button type="button" onclick="compactPlanToToday()" class="min-h-[44px] bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-3.5 rounded-xl text-xs transition active:scale-95 flex items-center gap-1.5 shadow-sm">
+                            <button type="button" onclick="compactPlanToToday()" class="min-h-[44px] bg-[#9C6418] hover:bg-[#7E4F10] dark:bg-[#DFAC54] dark:hover:bg-[#E8BC6E] text-white dark:text-[#141513] font-bold py-2 px-3.5 rounded-xl text-xs transition active:scale-95 flex items-center gap-1.5 cursor-pointer">
                                 <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                                 <span>${isML ? 'അടുത്ത ഭാഗങ്ങൾ ഇന്നത്തേക്ക് കൊണ്ടുവരിക' : 'Pull Next Chapters to Today'}</span>
                             </button>
@@ -4765,7 +4773,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 container.innerHTML = `
                     <section id="today-overview" class="study-overview" aria-labelledby="today-heading">
                         <div>
-                            <h2 id="today-heading">${isML ? 'ഇന്നത്തെ പഠനം' : "Today's study"}</h2>
+                            <h2 id="today-heading" class="font-serif text-2xl sm:text-3xl font-bold text-[#181B18] dark:text-[#EFECE4] tracking-tight">${isML ? 'ഇന്നത്തെ പഠനം' : "Today's study"}</h2>
                             <p>${todayPlan ? todayPlan.tasks.filter(t => t.completed).length : 0} / ${todayPlan ? todayPlan.tasks.length : 0} ${isML ? 'പൂർത്തിയായി' : 'tasks complete'}</p>
                         </div>
                         <button type="button" onclick="openRegenerateModal()" class="study-adjust">${isML ? 'പ്ലാൻ ക്രമീകരിക്കുക' : 'Adjust plan'}</button>
@@ -4777,7 +4785,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                     ${officialExamBannerHTML}
                     ${daily.overdueCount ? `
                         <p class="pending-notice" role="status" onclick="openPendingWork(event)">
-                            <i class="fa-solid fa-clock-rotate-left mr-1 opacity-80" aria-hidden="true"></i>
+                            <svg class="w-3.5 h-3.5 mr-1 inline-block opacity-85" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                             <span>${daily.overdueCount} ${isML ? 'മുൻ ദിവസങ്ങളിൽ ബാക്കിയുണ്ട്.' : 'unfinished from previous days.'}${isPendingCompressed ? ` (${overdueGroups.length} ${isML ? 'അധ്യായങ്ങൾ' : (overdueGroups.length === 1 ? 'chapter' : 'chapters')})` : ''}</span>
                             <a href="#pending-work" onclick="openPendingWork(event)" class="pending-link font-bold underline ml-1" aria-label="${isML ? 'മുൻ ദിവസങ്ങളിലെ ബാക്കി പഠനം കാണുക' : 'View pending tasks from previous days'}">
                                 ${isML ? 'കാണുക' : 'View pending'}
@@ -4840,46 +4848,46 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                         <!-- Quick Action Bar -->
                     <div class="study-tool-actions no-print">
                         <div class="flex items-center gap-2">
-                            <button onclick="printSchedule()" class="min-h-[44px] flex items-center gap-1.5 bg-white dark:bg-[#101726] hover:bg-slate-50 dark:hover:bg-[#141d30] text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 font-bold text-xs py-2 px-3 sm:px-3.5 rounded-xl shadow-sm transition active:scale-95" title="Print full schedule or save as PDF">
-                                <i class="fa-solid fa-print text-blue-600 dark:text-blue-400"></i>
+                            <button onclick="printSchedule()" class="min-h-[44px] flex items-center gap-1.5 bg-[#FFFFFF] dark:bg-[#222521] hover:bg-[#EDE8DC] dark:hover:bg-[#181A17] text-[#181B18] dark:text-[#EFECE4] border border-[#D9D2C3] dark:border-[#31342E] font-bold text-xs py-2 px-3 sm:px-3.5 rounded-xl transition active:scale-95 cursor-pointer" title="Print full schedule or save as PDF">
+                                <svg class="w-3.5 h-3.5 text-[#1B5E43] dark:text-[#52B788]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
                                 <span>${isML ? ML_I18N.dashboard.printSchedule : 'Print / PDF'}</span>
                             </button>
-                            <button onclick="openRegenerateModal()" class="min-h-[44px] flex items-center gap-1.5 bg-white dark:bg-[#101726] hover:bg-slate-50 dark:hover:bg-[#141d30] text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 font-semibold text-xs py-2 px-3 rounded-xl shadow-sm transition active:scale-95" title="Recalculate schedule if you missed days">
-                                <i class="fa-solid fa-wrench text-slate-500 dark:text-slate-400"></i>
+                            <button onclick="openRegenerateModal()" class="min-h-[44px] flex items-center gap-1.5 bg-[#FFFFFF] dark:bg-[#222521] hover:bg-[#EDE8DC] dark:hover:bg-[#181A17] text-[#181B18] dark:text-[#EFECE4] border border-[#D9D2C3] dark:border-[#31342E] font-semibold text-xs py-2 px-3 rounded-xl transition active:scale-95 cursor-pointer" title="Recalculate schedule if you missed days">
+                                <svg class="w-3.5 h-3.5 text-[#6E726A] dark:text-[#918D83]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
                                 <span>${isML ? ML_I18N.dashboard.adjustPlan : 'Adjust Plan'}</span>
                             </button>
                         </div>
-                        <button onclick="shareApp()" class="min-h-[44px] flex items-center gap-1.5 bg-white dark:bg-[#101726] hover:bg-slate-50 dark:hover:bg-[#141d30] text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 font-semibold text-xs py-2 px-3 rounded-xl shadow-sm transition active:scale-95">
-                            <i class="fa-solid fa-arrow-up-from-bracket text-slate-500 dark:text-slate-400"></i>
+                        <button onclick="shareApp()" class="min-h-[44px] flex items-center gap-1.5 bg-[#FFFFFF] dark:bg-[#222521] hover:bg-[#EDE8DC] dark:hover:bg-[#181A17] text-[#181B18] dark:text-[#EFECE4] border border-[#D9D2C3] dark:border-[#31342E] font-semibold text-xs py-2 px-3 rounded-xl transition active:scale-95 cursor-pointer">
+                            <svg class="w-3.5 h-3.5 text-[#6E726A] dark:text-[#918D83]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M12 12v9"/><path d="m16 16-4-4-4 4"/></svg>
                             <span>${isML ? ML_I18N.dashboard.share : 'Share'}</span>
                         </button>
                     </div>
                         <!-- Clean Bottom Controls -->
-                    <div class="study-tool-recovery border-t border-slate-200 dark:border-slate-800 text-xs text-slate-400 no-print">
-                        <button onclick="openRegenerateModal()" class="min-h-[44px] text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white font-medium transition inline-flex items-center gap-1.5">
-                            <i class="fa-solid fa-rotate text-xs"></i>
+                    <div class="study-tool-recovery border-t border-[#D9D2C3] dark:border-[#31342E] text-xs text-[#6E726A] dark:text-[#918D83] no-print">
+                        <button onclick="openRegenerateModal()" class="min-h-[44px] text-[#474B45] dark:text-[#C4C0B6] hover:text-[#181B18] dark:hover:text-[#EFECE4] font-medium transition inline-flex items-center gap-1.5 cursor-pointer">
+                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><polyline points="21 3 21 8 16 8"/></svg>
                             <span>${isML ? ML_I18N.dashboard.fellBehind : 'Fell behind? Recalculate remaining portions'}</span>
                         </button>
-                        <button onclick="resetApp()" class="min-h-[44px] text-slate-400 hover:text-red-600 transition underline inline-flex items-center">
+                        <button onclick="resetApp()" class="min-h-[44px] text-[#6E726A] dark:text-[#918D83] hover:text-[#B8432E] dark:hover:text-[#E57A65] transition underline inline-flex items-center cursor-pointer">
                             ${isML ? ML_I18N.dashboard.resetPlan : 'Reset Plan'}
                         </button>
                     </div>
                     </details>
                 `;
 
-                container.querySelectorAll('[data-pending-task]').forEach(button => {
+                (container.querySelectorAll?.('[data-pending-task]') ?? []).forEach(button => {
                     button.addEventListener('click', () => {
                         const groupIds = button.dataset.pendingTasks || button.dataset.pendingTask;
                         toggleTaskDirect(button.dataset.pendingTask, groupIds);
                     });
                 });
-                container.querySelectorAll('[data-study-task]').forEach(button => {
+                (container.querySelectorAll?.('[data-study-task]') ?? []).forEach(button => {
                     button.addEventListener('click', () => {
                         const groupIds = button.dataset.studyTasks || button.dataset.studyTask;
                         toggleTaskDirect(button.dataset.studyTask, groupIds);
                     });
                 });
-                container.querySelectorAll('[data-study-tutor]').forEach(button => {
+                (container.querySelectorAll?.('[data-study-tutor]') ?? []).forEach(button => {
                     button.addEventListener('click', () => openAiTutorModal(button.dataset.studyTutor));
                 });
                 return;
@@ -4903,27 +4911,27 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                     }
 
                     planDaysHTML += `
-                        <div class="bg-white rounded-2xl border ${isToday ? 'border-blue-300 ring-2 ring-blue-100' : 'border-slate-200'} shadow-sm overflow-hidden mb-4 transition-all print-avoid-break" data-day-number="${day.dayNumber}">
-                            <div class="p-3.5 sm:p-4 bg-slate-50/80 dark:bg-[#121929] border-b border-slate-100 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2">
+                        <div class="bg-[#FBF9F4] dark:bg-[#1B1D1A] rounded-2xl border ${isToday ? 'border-[#1B5E43] dark:border-[#52B788] ring-2 ring-[#1B5E43]/20' : 'border-[#D9D2C3] dark:border-[#31342E]'} shadow-none overflow-hidden mb-4 transition-all print-avoid-break" data-day-number="${day.dayNumber}">
+                            <div class="p-3.5 sm:p-4 bg-[#EDE8DC] dark:bg-[#181A17] border-b border-[#D9D2C3] dark:border-[#31342E] flex flex-wrap items-center justify-between gap-2">
                                 <div class="flex flex-wrap items-center gap-1.5 sm:gap-2 min-w-0">
-                                    <span class="text-xs font-extrabold text-slate-900 dark:text-white">${isML ? `${ML_I18N.plan.day} ${day.dayNumber}` : `Day ${day.dayNumber}`}</span>
-                                    <span class="text-xs font-bold text-slate-500 dark:text-slate-400">(${day.date})</span>
-                                    ${isToday ? `<span class="text-xs font-extrabold bg-blue-600 text-white px-2 py-0.5 rounded-full no-print">${isML ? ML_I18N.plan.todayBadge : 'TODAY'}</span>` : ''}
-                                    ${day.isCompletedMarker ? `<span class="text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950/70 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700 px-2 py-0.5 rounded-full flex items-center gap-1"><svg class="w-3 h-3 text-emerald-600 dark:text-emerald-400 inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>${isML ? 'പൂർത്തിയായി' : 'Completed'}</span>` : ''}
-                                    ${day.isExamEve ? `<span class="text-xs font-black bg-rose-100 text-rose-900 border border-rose-300 dark:bg-rose-950/70 dark:text-rose-200 dark:border-rose-700 px-2 py-0.5 rounded-full flex items-center gap-1 animate-pulse"><i class="fa-solid fa-bolt text-rose-600 dark:text-rose-400"></i>${isML ? `പരീക്ഷത്തലേന്ന്: ${day.exclusiveSubject}` : `🔥 Exam Eve: ${day.exclusiveSubject} Only`}</span>` : ''}
+                                    <span class="text-xs font-mono font-bold text-[#181B18] dark:text-[#EFECE4]">${isML ? `${ML_I18N.plan.day} ${day.dayNumber}` : `Day ${day.dayNumber}`}</span>
+                                    <span class="text-xs font-mono text-[#6E726A] dark:text-[#918D83]">(${day.date})</span>
+                                    ${isToday ? `<span class="text-xs font-mono font-bold bg-[#1B5E43] text-white dark:bg-[#52B788] dark:text-[#141513] px-2 py-0.5 rounded-full no-print">${isML ? ML_I18N.plan.todayBadge : 'TODAY'}</span>` : ''}
+                                    ${day.isCompletedMarker ? `<span class="text-xs font-bold bg-[#E4EFE9] text-[#1B5E43] dark:bg-[rgba(82,183,136,0.14)] dark:text-[#52B788] border border-[#9DC3B2] dark:border-[rgba(82,183,136,0.3)] px-2 py-0.5 rounded-full flex items-center gap-1"><svg class="w-3 h-3 text-[#1B5E43] dark:text-[#52B788] inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>${isML ? 'പൂർത്തിയായി' : 'Completed'}</span>` : ''}
+                                    ${day.isExamEve ? `<span class="text-xs font-black bg-[#F9E9E5] text-[#B8432E] border border-[#E8B4A9] dark:bg-[rgba(229,122,101,0.14)] dark:text-[#E57A65] dark:border-[rgba(229,122,101,0.3)] px-2 py-0.5 rounded-full flex items-center gap-1"><svg class="w-3 h-3 text-[#B8432E] dark:text-[#E57A65]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>${isML ? `പരീക്ഷത്തലേന്ന്: ${day.exclusiveSubject}` : `🔥 Exam Eve: ${day.exclusiveSubject} Only`}</span>` : ''}
                                     ${Array.isArray(day.officialExams) && day.officialExams.length > 0
-                                        ? day.officialExams.map(ev => `<span class="text-xs font-black bg-amber-100 text-amber-900 border border-amber-300 dark:bg-amber-950/70 dark:text-amber-200 dark:border-amber-700 px-2 py-0.5 rounded-full flex items-center gap-1"><i class="fa-solid fa-graduation-cap text-amber-600 dark:text-amber-400"></i>${escapeStudyText(ev.examCycleShortName)}: ${escapeStudyText(ev.paperTitle)} (${escapeStudyText(ev.session)} ${escapeStudyText(ev.time)})</span>`).join('')
-                                        : (day.isExamDay ? `<span class="text-xs font-black bg-amber-100 text-amber-900 border border-amber-300 dark:bg-amber-950/70 dark:text-amber-200 dark:border-amber-700 px-2 py-0.5 rounded-full flex items-center gap-1"><i class="fa-solid fa-graduation-cap text-amber-600 dark:text-amber-400"></i>${isML ? `പരീക്ഷാദിനം: ${day.examSubject}` : `🎯 Exam Day: ${day.examSubject}`}</span>` : '')}
-                                    ${day.isPracticalMilestone ? `<span class="text-xs font-bold bg-teal-100 text-teal-800 dark:bg-teal-950/70 dark:text-teal-200 px-2 py-0.5 rounded-full">🧪 ${isML ? 'പ്രാക്ടിക്കൽ പരീക്ഷകൾ ആരംഭിക്കുന്നു' : 'DHSE Practicals Begin'}</span>` : ''}
-                                    ${day.isChristmasVacation ? `<span class="text-xs font-bold bg-sky-100 text-sky-800 dark:bg-sky-950/70 dark:text-sky-200 px-2 py-0.5 rounded-full">🎄 ${isML ? 'ക്രിസ്മസ് അവധി' : 'Xmas Break'}</span>` : ''}
-                                    ${day.isRevisionDay ? `<span class="text-xs font-bold bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full">${isML ? ML_I18N.plan.revisionDay : 'Revision Day'}</span>` : ''}
-                                    ${day.isRestDay ? `<span class="text-xs font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full"><i class="fa-solid fa-mug-hot mr-1"></i>${isML ? ML_I18N.plan.restDay : 'Rest Day'}</span>` : ''}
+                                        ? day.officialExams.map(ev => `<span class="text-xs font-bold bg-[#F6EEDC] text-[#9C6418] border border-[#DEC59A] dark:bg-[rgba(223,172,84,0.14)] dark:text-[#DFAC54] dark:border-[rgba(223,172,84,0.3)] px-2 py-0.5 rounded-full flex items-center gap-1"><svg class="w-3 h-3 text-[#9C6418] dark:text-[#DFAC54]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>${escapeStudyText(ev.examCycleShortName)}: ${escapeStudyText(ev.paperTitle)} (${escapeStudyText(ev.session)} ${escapeStudyText(ev.time)})</span>`).join('')
+                                        : (day.isExamDay ? `<span class="text-xs font-bold bg-[#F6EEDC] text-[#9C6418] border border-[#DEC59A] dark:bg-[rgba(223,172,84,0.14)] dark:text-[#DFAC54] dark:border-[rgba(223,172,84,0.3)] px-2 py-0.5 rounded-full flex items-center gap-1"><svg class="w-3 h-3 text-[#9C6418] dark:text-[#DFAC54]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>${isML ? `പരീക്ഷാദിനം: ${day.examSubject}` : `🎯 Exam Day: ${day.examSubject}`}</span>` : '')}
+                                    ${day.isPracticalMilestone ? `<span class="text-xs font-bold bg-[#E4EFE9] text-[#1B5E43] border border-[#9DC3B2] dark:bg-[rgba(82,183,136,0.14)] dark:text-[#52B788] dark:border-[rgba(82,183,136,0.3)] px-2 py-0.5 rounded-full">🧪 ${isML ? 'പ്രാക്ടിക്കൽ പരീക്ഷകൾ ആരംഭിക്കുന്നു' : 'DHSE Practicals Begin'}</span>` : ''}
+                                    ${day.isChristmasVacation ? `<span class="text-xs font-bold bg-[#E7ECF3] text-[#2F486D] border border-[#A6B8CE] dark:bg-[rgba(139,167,206,0.14)] dark:text-[#8BA7CE] dark:border-[rgba(139,167,206,0.3)] px-2 py-0.5 rounded-full">🎄 ${isML ? 'ക്രിസ്മസ് അവധി' : 'Xmas Break'}</span>` : ''}
+                                    ${day.isRevisionDay ? `<span class="text-xs font-bold bg-[#E7ECF3] text-[#2F486D] border border-[#A6B8CE] dark:bg-[rgba(139,167,206,0.14)] dark:text-[#8BA7CE] dark:border-[rgba(139,167,206,0.3)] px-2 py-0.5 rounded-full">${isML ? ML_I18N.plan.revisionDay : 'Revision Day'}</span>` : ''}
+                                    ${day.isRestDay ? `<span class="text-xs font-bold bg-[#E4EFE9] text-[#1B5E43] border border-[#9DC3B2] dark:bg-[rgba(82,183,136,0.14)] dark:text-[#52B788] dark:border-[rgba(82,183,136,0.3)] px-2 py-0.5 rounded-full inline-flex items-center gap-1"><svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><line x1="6" x2="6" y1="2" y2="4"/><line x1="10" x2="10" y1="2" y2="4"/><line x1="14" x2="14" y1="2" y2="4"/></svg>${isML ? ML_I18N.plan.restDay : 'Rest Day'}</span>` : ''}
                                 </div>
-                                <span class="day-card-counter text-xs font-bold text-slate-600 dark:text-slate-400">${displayedTasks.filter(t => t.completed).length}/${displayedTasks.length} ${isML ? ML_I18N.plan.done : 'Done'}</span>
+                                <span class="day-card-counter text-xs font-bold text-slate-600 dark:text-slate-400 font-mono">${displayedTasks.filter(t => t.completed).length}/${displayedTasks.length} ${isML ? ML_I18N.plan.done : 'Done'}</span>
                             </div>
 
-                            <div class="p-3 sm:p-4 divide-y divide-slate-100 dark:divide-slate-800">
-                                ${displayedTasks.length === 0 ? (day.isRestDay ? `<p class="text-xs text-emerald-700 font-semibold py-1.5 flex items-center gap-2"><i class="fa-solid fa-mug-hot text-emerald-600"></i><span>${isML ? ML_I18N.plan.restDayNotice : 'Personalized Rest & Recharge Day (0 new chapters)'}</span></p>` : `<p class="text-xs text-slate-400 italic py-1">${isML ? 'ഫ്രീ / ബഫർ ദിനം' : 'Free / Buffer Day'}</p>`) : ''}
+                            <div class="p-3 sm:p-4 divide-y divide-[#D9D2C3]/60 dark:divide-[#31342E]">
+                                ${displayedTasks.length === 0 ? (day.isRestDay ? `<p class="text-xs text-[#1B5E43] dark:text-[#52B788] font-semibold py-1.5 flex items-center gap-2"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><line x1="6" x2="6" y1="2" y2="4"/><line x1="10" x2="10" y1="2" y2="4"/><line x1="14" x2="14" y1="2" y2="4"/></svg><span>${isML ? ML_I18N.plan.restDayNotice : 'Personalized Rest & Recharge Day (0 new chapters)'}</span></p>` : `<p class="text-xs text-[#6E726A] dark:text-[#918D83] italic py-1">${isML ? 'ഫ്രീ / ബഫർ ദിനം' : 'Free / Buffer Day'}</p>`) : ''}
                                 ${compressSameDayTasks(displayedTasks, day.date).map((group, groupIdx, allDayGroups) => {
                                     const task = group.primaryTask;
                                     const badgeColor = getSubjectColorBadge(task.subject);
@@ -4951,8 +4959,8 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                                                     ${renderGroupPartBadge(group, isML)}
                                                     ${getTaskResourceBadge({ ...task, estimatedMinutes: combinedMinutes })}
                                                 </div>
-                                                <div class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 task-text-content ${group.completed ? 'line-through opacity-50' : ''}">
-                                                    ${escapeStudyText(getTaskChapterTitle(task))} - <span class="font-normal text-slate-500 dark:text-slate-400">${escapeStudyText(topicDisplay)}</span>
+                                                <div class="text-xs sm:text-sm font-bold text-[#181B18] dark:text-[#EFECE4] task-text-content ${group.completed ? 'line-through opacity-50' : ''}">
+                                                    ${escapeStudyText(getTaskChapterTitle(task))} - <span class="font-normal text-[#474B45] dark:text-[#C4C0B6]">${escapeStudyText(topicDisplay)}</span>
                                                 </div>
                                                 ${getTaskDeepLinksHtml(task)}
                                             </div>
@@ -4966,25 +4974,25 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
 
                 if (!planDaysHTML) {
                     planDaysHTML = `
-                        <div class="bg-white rounded-2xl border border-slate-200 p-8 text-center text-slate-400">
-                            <i class="fa-solid fa-filter text-2xl mb-2 text-slate-300"></i>
+                        <div class="bg-[#FBF9F4] dark:bg-[#1B1D1A] rounded-2xl border border-[#D9D2C3] dark:border-[#31342E] p-8 text-center text-[#6E726A] dark:text-[#918D83]">
+                            <div class="flex justify-center mb-2 text-[#B9B09E] dark:text-[#454940]"><svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg></div>
                             <p class="text-xs font-semibold">${isML ? ML_I18N.plan.noTasks : `No scheduled tasks found under "${currentPlanSubjectFilter}".`}</p>
-                            <button onclick="setPlanSubjectFilter('All')" class="mt-3 text-xs font-bold text-blue-600 hover:underline">${isML ? ML_I18N.plan.showAll : 'Show All Subjects'}</button>
+                            <button onclick="setPlanSubjectFilter('All')" class="mt-3 text-xs font-bold text-[#1B5E43] dark:text-[#52B788] hover:underline cursor-pointer">${isML ? ML_I18N.plan.showAll : 'Show All Subjects'}</button>
                         </div>
                     `;
                 }
 
                 container.innerHTML = `
                     <!-- Print-Only Page Header -->
-                    <div class="print-only mb-6 border-b-2 border-slate-900 pb-3">
+                    <div class="print-only mb-6 border-b-2 border-[#181B18] pb-3">
                         <div class="flex justify-between items-start">
                             <div>
-                                <h1 class="text-2xl font-black text-slate-900 tracking-tight">+1 +2 Planner - Daily Schedule (Science . Commerce . Humanities)</h1>
-                                <p class="text-xs text-slate-600 font-semibold mt-0.5">Kerala Higher Secondary (HSS • Plus One & Plus Two) Scheme of Work</p>
+                                <h1 class="text-2xl font-serif font-bold text-[#181B18] tracking-tight">+1 +2 Planner — Malabar Study Ledger</h1>
+                                <p class="text-xs text-[#474B45] font-semibold mt-0.5">Kerala Higher Secondary (HSS • Plus One & Plus Two) Scheme of Work</p>
                             </div>
-                            <div class="text-right text-xs">
-                                <span class="font-bold text-slate-900 block">Deadline: ${new Date(appState.deadlineDate).toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'})}</span>
-                                <span class="text-slate-500">Generated: ${new Date().toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'})}</span>
+                            <div class="text-right text-xs font-mono">
+                                <span class="font-bold text-[#181B18] block">Deadline: ${new Date(appState.deadlineDate).toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'})}</span>
+                                <span class="text-[#6E726A]">Generated: ${new Date().toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'})}</span>
                             </div>
                         </div>
                     </div>
@@ -4992,46 +5000,46 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                     <!-- Screen Header -->
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 no-print">
                         <div>
-                            <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900">${isML ? ML_I18N.plan.title : 'Complete Study Schedule'}</h2>
-                            <div class="flex items-center gap-2 mt-0.5">
-                                <p class="text-xs text-slate-500">${isML ? ML_I18N.plan.subtitle : 'Every single day planned out until your deadline.'}</p>
-                                <span id="plan-progress-summary" class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200/60">${getOverallStats().percentage}% ${isML ? 'പൂർത്തിയായി' : 'Done'} (${getOverallStats().completedCount}/${getOverallStats().totalCount})</span>
+                            <h2 class="text-xl sm:text-2xl font-serif font-bold text-[#181B18] dark:text-[#EFECE4] tracking-tight">${isML ? ML_I18N.plan.title : 'Complete Study Schedule'}</h2>
+                            <div class="flex items-center gap-2 mt-0.5 flex-wrap">
+                                <p class="text-xs text-[#474B45] dark:text-[#C4C0B6]">${isML ? ML_I18N.plan.subtitle : 'Every single day planned out until your deadline.'}</p>
+                                <span id="plan-progress-summary" class="text-[11px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#E4EFE9] text-[#1B5E43] dark:bg-[rgba(82,183,136,0.14)] dark:text-[#52B788] border border-[#9DC3B2] dark:border-[rgba(82,183,136,0.3)]">${getOverallStats().percentage}% ${isML ? 'പൂർത്തിയായി' : 'Done'} (${getOverallStats().completedCount}/${getOverallStats().totalCount})</span>
                             </div>
                         </div>
                         <!-- Screen Header Action Bar (Clean Mobile Overflow Sheet < 640px, Full Controls >= 640px) -->
                         <div class="flex items-center flex-wrap gap-2">
                             <!-- MOBILE VIEW (< 640px): Grouped Share & Export Bottom Sheet Trigger -->
                             <div class="sm:hidden flex items-center gap-2">
-                                <button id="plan-actions-overflow-btn" type="button" onclick="openExportShareSheet()" class="min-h-[44px] min-w-[44px] text-xs font-bold bg-white dark:bg-[#101726] border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-[#141d30] px-3 py-2.5 rounded-xl text-slate-700 dark:text-slate-200 transition flex items-center gap-1.5 shadow-sm active:scale-95" title="Export & Share Options" aria-haspopup="dialog" aria-expanded="false">
-                                    <i class="fa-solid fa-arrow-up-from-bracket text-indigo-600 dark:text-indigo-400"></i>
+                                <button id="plan-actions-overflow-btn" type="button" onclick="openExportShareSheet()" class="min-h-[44px] min-w-[44px] text-xs font-bold bg-[#FFFFFF] dark:bg-[#222521] border border-[#D9D2C3] dark:border-[#31342E] hover:bg-[#EDE8DC] dark:hover:bg-[#181A17] px-3 py-2.5 rounded-xl text-[#181B18] dark:text-[#EFECE4] transition flex items-center gap-1.5 active:scale-95 cursor-pointer" title="Export & Share Options" aria-haspopup="dialog" aria-expanded="false">
+                                    <svg class="w-3.5 h-3.5 text-[#2F486D] dark:text-[#8BA7CE] fa-solid fa-arrow-up-from-bracket" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M12 12v9"/><path d="m16 16-4-4-4 4"/></svg>
                                     <span>${isML ? 'ഷെയർ / എക്സ്പോർട്ട്' : 'Share / Export'}</span>
-                                    <i class="fa-solid fa-ellipsis-vertical text-slate-400 text-xs ml-0.5"></i>
+                                    <svg class="w-3.5 h-3.5 text-[#6E726A] dark:text-[#918D83] ml-0.5 fa-solid fa-ellipsis-vertical" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
                                 </button>
                             </div>
 
                             <!-- DESKTOP / TABLET VIEW (>= 640px): Full Accessible Inline Toolbar -->
                             <div class="hidden sm:flex items-center gap-2">
-                                <button id="plan-desktop-ics-btn" type="button" onclick="exportTimetableIcs()" class="min-h-[44px] text-xs font-bold bg-white dark:bg-[#101726] border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-[#141d30] px-3.5 py-2.5 rounded-xl text-slate-700 dark:text-slate-200 transition flex items-center gap-1.5 shadow-sm active:scale-95" title="Export to Google Calendar, Apple Calendar, or Outlook (.ics)">
-                                    <i class="fa-regular fa-calendar-plus text-amber-500"></i>
+                                <button id="plan-desktop-ics-btn" type="button" onclick="exportTimetableIcs()" class="min-h-[44px] text-xs font-bold bg-[#FFFFFF] dark:bg-[#222521] border border-[#D9D2C3] dark:border-[#31342E] hover:bg-[#EDE8DC] dark:hover:bg-[#181A17] px-3.5 py-2.5 rounded-xl text-[#181B18] dark:text-[#EFECE4] transition flex items-center gap-1.5 active:scale-95 cursor-pointer" title="Export to Google Calendar, Apple Calendar, or Outlook (.ics)">
+                                    <svg class="w-3.5 h-3.5 text-[#9C6418] dark:text-[#DFAC54]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/><path d="m9 16 2 2 4-4"/></svg>
                                     <span>${isML ? 'കലണ്ടർ (.ics)' : 'Add to Calendar'}</span>
                                 </button>
-                                <button id="plan-desktop-csv-btn" type="button" onclick="exportTimetableCsv()" class="min-h-[44px] text-xs font-bold bg-white dark:bg-[#101726] border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-[#141d30] px-3.5 py-2.5 rounded-xl text-slate-700 dark:text-slate-200 transition flex items-center gap-1.5 shadow-sm active:scale-95" title="Export as CSV spreadsheet">
-                                    <i class="fa-solid fa-file-csv text-emerald-600"></i>
+                                <button id="plan-desktop-csv-btn" type="button" onclick="exportTimetableCsv()" class="min-h-[44px] text-xs font-bold bg-[#FFFFFF] dark:bg-[#222521] border border-[#D9D2C3] dark:border-[#31342E] hover:bg-[#EDE8DC] dark:hover:bg-[#181A17] px-3.5 py-2.5 rounded-xl text-[#181B18] dark:text-[#EFECE4] transition flex items-center gap-1.5 active:scale-95 cursor-pointer" title="Export as CSV spreadsheet">
+                                    <svg class="w-3.5 h-3.5 text-[#1B5E43] dark:text-[#52B788]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/></svg>
                                     <span>${isML ? 'എക്സ്പോർട്ട് CSV' : 'Export CSV'}</span>
                                 </button>
-                                <button id="plan-desktop-share-btn" type="button" onclick="shareApp()" class="min-h-[44px] text-xs font-bold bg-white dark:bg-[#101726] border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-[#141d30] px-3.5 py-2.5 rounded-xl text-slate-700 dark:text-slate-200 transition flex items-center gap-1.5 shadow-sm active:scale-95" title="Share plan with friends">
-                                    <i class="fa-solid fa-arrow-up-from-bracket text-indigo-600 dark:text-indigo-400"></i>
+                                <button id="plan-desktop-share-btn" type="button" onclick="shareApp()" class="min-h-[44px] text-xs font-bold bg-[#FFFFFF] dark:bg-[#222521] border border-[#D9D2C3] dark:border-[#31342E] hover:bg-[#EDE8DC] dark:hover:bg-[#181A17] px-3.5 py-2.5 rounded-xl text-[#181B18] dark:text-[#EFECE4] transition flex items-center gap-1.5 active:scale-95 cursor-pointer" title="Share plan with friends">
+                                    <svg class="w-3.5 h-3.5 text-[#2F486D] dark:text-[#8BA7CE]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M12 12v9"/><path d="m16 16-4-4-4 4"/></svg>
                                     <span>${isML ? 'പങ്കുവെക്കുക' : 'Share'}</span>
                                 </button>
                             </div>
 
                             <!-- ALWAYS VISIBLE: Print / PDF & Back to Today (Elevated to 44px) -->
-                            <button id="plan-print-btn" type="button" onclick="printTimetable()" class="min-h-[44px] text-xs font-bold bg-white dark:bg-[#101726] border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-[#141d30] px-3.5 py-2.5 rounded-xl text-slate-700 dark:text-slate-200 transition flex items-center gap-1.5 shadow-sm active:scale-95" title="Print schedule or save as PDF">
-                                <i class="fa-solid fa-print text-blue-600"></i>
+                            <button id="plan-print-btn" type="button" onclick="printTimetable()" class="min-h-[44px] text-xs font-bold bg-[#FFFFFF] dark:bg-[#222521] border border-[#D9D2C3] dark:border-[#31342E] hover:bg-[#EDE8DC] dark:hover:bg-[#181A17] px-3.5 py-2.5 rounded-xl text-[#181B18] dark:text-[#EFECE4] transition flex items-center gap-1.5 active:scale-95 cursor-pointer" title="Print schedule or save as PDF">
+                                <svg class="w-3.5 h-3.5 text-[#1B5E43] dark:text-[#52B788]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
                                 <span>${isML ? ML_I18N.plan.printPdf : 'Print / Save PDF'}</span>
                             </button>
-                            <button id="plan-back-btn" type="button" onclick="goToDashboard()" class="min-h-[44px] text-xs font-bold bg-blue-600 hover:bg-blue-700 px-3.5 py-2.5 rounded-xl text-white transition flex items-center gap-1.5 shadow-sm active:scale-95">
-                                <i class="fa-solid fa-arrow-left"></i>
+                            <button id="plan-back-btn" type="button" onclick="goToDashboard()" class="min-h-[44px] text-xs font-bold bg-[#1B5E43] hover:bg-[#144833] dark:bg-[#52B788] dark:hover:bg-[#67C79A] px-3.5 py-2.5 rounded-xl text-white dark:text-[#141513] transition flex items-center gap-1.5 shadow-xs active:scale-95 cursor-pointer">
+                                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
                                 <span>${isML ? ML_I18N.plan.backToToday : 'Back to Today'}</span>
                             </button>
                         </div>
@@ -5072,8 +5080,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                             return filters.map(f => {
                                 const isActive = (currentPlanSubjectFilter === f.id);
                                 return `
-                                    <button onclick="setPlanSubjectFilter('${f.id}')" class="min-h-[44px] py-2.5 px-3.5 rounded-xl font-bold transition-colors duration-150 active:scale-95 shrink-0 flex items-center gap-1.5 ${isActive ? 'bg-blue-600 text-white shadow-sm shadow-blue-500/20' : 'bg-white dark:bg-[#0e1628] text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800'}">
-                                        <i class="fa-solid ${f.icon} text-xs"></i>
+                                    <button onclick="setPlanSubjectFilter('${f.id}')" class="min-h-[44px] py-2.5 px-3.5 rounded-xl font-bold transition-colors duration-150 active:scale-95 shrink-0 flex items-center gap-1.5 cursor-pointer ${isActive ? 'bg-[#1B5E43] text-white dark:bg-[#52B788] dark:text-[#141513] shadow-xs' : 'bg-[#FFFFFF] dark:bg-[#222521] text-[#474B45] dark:text-[#C4C0B6] hover:bg-[#EDE8DC] dark:hover:bg-[#181A17] border border-[#D9D2C3] dark:border-[#31342E]'}">
                                         <span>${f.label}</span>
                                     </button>
                                 `;
@@ -5086,23 +5093,23 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                     </div>
 
                     <!-- Print-Only Viral Attribution Watermark Footer with Vector QR -->
-                    <div class="print-only mt-8 pt-4 border-t-2 border-slate-900 text-xs text-slate-800">
+                    <div class="print-only mt-8 pt-4 border-t-2 border-[#181B18] text-xs text-[#181B18]">
                         <div class="flex items-center justify-between gap-6">
                             <div>
-                                <p class="font-black text-slate-900 text-sm">HSS Planner — Free Daily Study Planner</p>
-                                <p class="text-xs text-slate-600 mt-0.5">Kerala Higher Secondary (HSS • +1 & +2) • Verified SCERT Scheme of Work</p>
-                                <p class="text-[11px] text-slate-500 mt-1">Scan the QR code to load or rebalance this timetable on any phone: <strong>https://hss-planner.web.app/</strong></p>
+                                <p class="font-serif font-bold text-[#181B18] text-sm">HSS Planner — Malabar Study Ledger</p>
+                                <p class="text-xs text-[#474B45] mt-0.5">Kerala Higher Secondary (HSS • +1 & +2) • Verified SCERT Scheme of Work</p>
+                                <p class="text-[11px] text-[#6E726A] font-mono mt-1">Scan the QR code to load or rebalance this timetable on any phone: <strong>https://hss-planner.web.app/</strong></p>
                             </div>
-                            <div id="printQrCodeContainer" class="shrink-0 w-20 h-20 flex items-center justify-center border border-slate-300 rounded-lg p-1 bg-white"></div>
+                            <div id="printQrCodeContainer" class="shrink-0 w-20 h-20 flex items-center justify-center border border-[#D9D2C3] rounded-lg p-1 bg-white"></div>
                         </div>
                     </div>
 
                     <!-- Subtle Bottom Rebalance -->
-                    <div class="mt-8 pt-4 border-t border-slate-200 flex justify-between items-center text-xs text-slate-500 no-print">
-                        <button onclick="openRegenerateModal()" class="min-h-[44px] py-2 px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl transition flex items-center gap-1.5">
-                            <i class="fa-solid fa-wrench"></i> ${isML ? ML_I18N.plan.adjustSchedule : 'Adjust Schedule'}
+                    <div class="mt-8 pt-4 border-t border-[#D9D2C3] dark:border-[#31342E] flex justify-between items-center text-xs text-[#6E726A] dark:text-[#918D83] no-print">
+                        <button onclick="openRegenerateModal()" class="min-h-[44px] py-2 px-3 bg-[#FFFFFF] dark:bg-[#222521] border border-[#D9D2C3] dark:border-[#31342E] hover:bg-[#EDE8DC] dark:hover:bg-[#181A17] text-[#181B18] dark:text-[#EFECE4] font-bold rounded-xl transition flex items-center gap-1.5 cursor-pointer">
+                            <svg class="w-3.5 h-3.5 text-[#1B5E43] dark:text-[#52B788]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg> ${isML ? ML_I18N.plan.adjustSchedule : 'Adjust Schedule'}
                         </button>
-                        <button onclick="resetApp()" class="min-h-[44px] text-slate-400 hover:text-red-600 underline inline-flex items-center">${isML ? ML_I18N.plan.resetPlan : 'Reset Plan'}</button>
+                        <button onclick="resetApp()" class="min-h-[44px] text-[#6E726A] dark:text-[#918D83] hover:text-[#B8432E] dark:hover:text-[#E57A65] underline inline-flex items-center cursor-pointer">${isML ? ML_I18N.plan.resetPlan : 'Reset Plan'}</button>
                     </div>
                 `;
 
@@ -5139,21 +5146,21 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                     const subPyq = subRes?.pyqUrl || subRes?.pyq;
 
                     syllabusHTML += `
-                        <div class="bg-white dark:bg-[#0e1628] rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-4 sm:p-5 mb-5">
-                            <div class="border-b dark:border-slate-800 pb-3 mb-4 flex items-center justify-between">
+                        <div class="bg-[#FBF9F4] dark:bg-[#1B1D1A] rounded-2xl border border-[#D9D2C3] dark:border-[#31342E] p-4 sm:p-5 mb-5">
+                            <div class="border-b border-[#D9D2C3] dark:border-[#31342E] pb-3 mb-4 flex items-center justify-between">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center p-2 border border-slate-200/60 dark:border-slate-700/60 shrink-0">
+                                    <div class="w-10 h-10 rounded-xl bg-[#EDE8DC] dark:bg-[#181A17] flex items-center justify-center p-2 border border-[#D9D2C3] dark:border-[#31342E] shrink-0">
                                         ${typeof getSubjectBoxIcon === 'function' ? getSubjectBoxIcon(sub) : ''}
                                     </div>
                                     <div>
-                                        <h3 class="font-black text-slate-900 dark:text-white text-base">${sub}</h3>
-                                        <span class="text-xs text-slate-500 dark:text-slate-400 font-semibold">${uniqueChaps.length} ${isML ? ML_I18N.syllabus.chaptersCount : 'Official Chapters'}</span>
+                                        <h3 class="font-serif font-bold text-[#181B18] dark:text-[#EFECE4] text-base sm:text-lg">${sub}</h3>
+                                        <span class="text-xs font-mono text-[#6E726A] dark:text-[#918D83] font-semibold">${uniqueChaps.length} ${isML ? ML_I18N.syllabus.chaptersCount : 'Official Chapters'}</span>
                                     </div>
                                 </div>
                                 ${subRes && subPyq ? `
                                 <div class="flex items-center gap-2 text-xs">
-                                    <a href="${subPyq}" target="_blank" rel="noopener noreferrer" class="min-h-[44px] inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400 border border-purple-200/50 dark:border-purple-800/50 hover:bg-purple-100 dark:hover:bg-purple-900/50 font-bold text-xs transition">
-                                        <i class="fa-solid fa-file-lines text-[11px]"></i>
+                                    <a href="${subPyq}" target="_blank" rel="noopener noreferrer" class="min-h-[44px] inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#E7ECF3] dark:bg-[rgba(139,167,206,0.14)] text-[#2F486D] dark:text-[#8BA7CE] border border-[#A6B8CE] dark:border-[rgba(139,167,206,0.3)] hover:bg-[#D8E1EE] font-bold text-xs transition">
+                                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/></svg>
                                         <span>Official PYQs</span>
                                     </a>
                                 </div>` : ''}
@@ -5178,16 +5185,16 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                                     const handbookUrl = getHandbookUrl(ch, { grade: activeSyllabusGrade, stream: userStream });
 
                                     return `
-                                        <div class="p-3 rounded-xl border ${isAllDone ? 'bg-emerald-50/70 border-emerald-200 dark:bg-emerald-950/40 dark:border-emerald-800/60' : 'bg-slate-50/70 border-slate-200/80 dark:bg-[#141d30]/60 dark:border-slate-800'} flex items-start gap-2.5 text-xs transition hover:border-blue-400">
-                                            <div class="w-6 h-6 rounded-lg ${isAllDone ? 'bg-emerald-600 text-white' : 'bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300'} flex items-center justify-center shrink-0 mt-0.5 text-xs font-bold">
-                                                ${isAllDone ? '<i class="fa-solid fa-check"></i>' : ch.chapNumber}
+                                        <div class="p-3 rounded-xl border ${isAllDone ? 'bg-[#E4EFE9] border-[#9DC3B2] dark:bg-[rgba(82,183,136,0.14)] dark:border-[rgba(82,183,136,0.3)]' : 'bg-[#FFFFFF] border-[#D9D2C3] dark:bg-[#222521] dark:border-[#31342E]'} flex items-start gap-2.5 text-xs transition hover:border-[#1B5E43] dark:hover:border-[#52B788]">
+                                            <div class="w-6 h-6 rounded-lg ${isAllDone ? 'bg-[#1B5E43] text-white dark:bg-[#52B788] dark:text-[#141513]' : 'bg-[#EDE8DC] dark:bg-[#181A17] text-[#1B5E43] dark:text-[#52B788]'} flex items-center justify-center shrink-0 mt-0.5 text-xs font-mono font-bold">
+                                                ${isAllDone ? '<svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>' : ch.chapNumber}
                                             </div>
                                             <div class="flex-1 min-w-0">
-                                                <span class="font-extrabold text-slate-800 dark:text-slate-100 block">Chapter ${ch.chapNumber}: ${ch.chapterName.replace(/^Chapter\s+\d+:\s*/i, '').replace(/^\d+\.\s*/, '')}</span>
+                                                <span class="font-serif font-bold text-[#181B18] dark:text-[#EFECE4] block text-[13px]">Chapter ${ch.chapNumber}: ${ch.chapterName.replace(/^Chapter\s+\d+:\s*/i, '').replace(/^\d+\.\s*/, '')}</span>
                                                 <div class="flex items-center justify-between gap-2 mt-1.5 flex-wrap">
                                                     <div class="flex items-center gap-2">
-                                                        <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 bg-slate-200/60 dark:bg-slate-800 px-1.5 py-0.5 rounded">Term ${ch.term}</span>
-                                                        ${isAllDone ? `<span class="text-[10px] font-extrabold text-emerald-700 dark:text-emerald-400">${isML ? ML_I18N.syllabus.mastered : 'Mastered'}</span>` : ''}
+                                                        <span class="text-[10px] font-mono font-bold text-[#6E726A] dark:text-[#918D83] bg-[#EDE8DC] dark:bg-[#181A17] px-1.5 py-0.5 rounded">Term ${ch.term}</span>
+                                                        ${isAllDone ? `<span class="text-[10px] font-mono font-bold text-[#1B5E43] dark:text-[#52B788]">${isML ? ML_I18N.syllabus.mastered : 'Mastered'}</span>` : ''}
                                                     </div>
                                                     ${handbookUrl ? `
                                                         <a href="${handbookUrl}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" class="syllabus-notes-btn" title="${isML ? 'ഹാൻഡ്ബുക്ക് / നോട്ട്സ് കാണുക' : 'Open chapter study notes (PDF)'}">
@@ -5207,8 +5214,8 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 container.innerHTML = `
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
                         <div>
-                            <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white">${isML ? ML_I18N.syllabus.title : 'Official DHSE Scheme of Work'}</h2>
-                            <p class="text-xs text-slate-500 dark:text-slate-400">${(function() {
+                            <h2 class="text-xl sm:text-2xl font-serif font-bold text-[#181B18] dark:text-[#EFECE4] tracking-tight">${isML ? ML_I18N.syllabus.title : 'Official DHSE Scheme of Work'}</h2>
+                            <p class="text-xs text-[#474B45] dark:text-[#C4C0B6]">${(function() {
                                 const gradePrefix = activeSyllabusGrade === '+1' ? 'Plus One (+1) ' : 'Plus Two (+2) ';
                                 if (isML) {
                                     if (userStream === 'bio') return ML_I18N.syllabus.subtitleBio;
@@ -5222,8 +5229,8 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                                 return `${gradePrefix}Computer Science Stream • Rationalized Kerala Higher Secondary curriculum.`;
                             })()}</p>
                         </div>
-                        <button onclick="goToDashboard()" class="min-h-[44px] text-xs font-bold bg-white dark:bg-[#0e1628] border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 px-3.5 py-2.5 rounded-xl text-slate-700 dark:text-slate-300 inline-flex items-center justify-center transition active:scale-95">
-                            <i class="fa-solid fa-arrow-left mr-1"></i> ${isML ? ML_I18N.syllabus.backToToday : 'Back to Today'}
+                        <button onclick="goToDashboard()" class="min-h-[44px] text-xs font-bold bg-[#FFFFFF] dark:bg-[#222521] border border-[#D9D2C3] dark:border-[#31342E] hover:bg-[#EDE8DC] dark:hover:bg-[#181A17] px-3.5 py-2.5 rounded-xl text-[#181B18] dark:text-[#EFECE4] inline-flex items-center justify-center gap-1.5 transition active:scale-95 cursor-pointer">
+                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> ${isML ? ML_I18N.syllabus.backToToday : 'Back to Today'}
                         </button>
                     </div>
 
@@ -5231,33 +5238,29 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                     <div class="space-y-3 mb-5">
                         <!-- Grade Switcher Pills Bar -->
                         <div class="flex items-center gap-2">
-                            <span class="text-xs font-bold text-slate-500 dark:text-slate-400 mr-1">${isML ? 'ക്ലാസ്:' : 'Grade:'}</span>
-                            <button type="button" onclick="switchSyllabusGrade('+2')" class="min-h-[44px] px-3.5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition active:scale-95 cursor-pointer ${activeSyllabusGrade === '+2' ? 'bg-blue-600 text-white shadow-xs font-black ring-2 ring-blue-500/20' : 'bg-white dark:bg-[#0e1628] border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50'}">
-                                <i class="fa-solid fa-graduation-cap text-xs"></i>
+                            <span class="text-xs font-mono font-bold text-[#6E726A] dark:text-[#918D83] mr-1">${isML ? 'ക്ലാസ്:' : 'Grade:'}</span>
+                            <button type="button" onclick="switchSyllabusGrade('+2')" class="min-h-[44px] px-3.5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition active:scale-95 cursor-pointer ${activeSyllabusGrade === '+2' ? 'bg-[#1B5E43] text-white dark:bg-[#52B788] dark:text-[#141513] shadow-xs font-black ring-2 ring-[#1B5E43]/20 active-grade' : 'bg-[#FFFFFF] dark:bg-[#222521] border border-[#D9D2C3] dark:border-[#31342E] text-[#181B18] dark:text-[#EFECE4] hover:bg-[#EDE8DC]'}">
+                                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
                                 <span>Plus Two (+2)</span>
                             </button>
-                            <button type="button" onclick="switchSyllabusGrade('+1')" class="min-h-[44px] px-3.5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition active:scale-95 cursor-pointer ${activeSyllabusGrade === '+1' ? 'bg-amber-600 text-white shadow-xs font-black ring-2 ring-amber-500/20' : 'bg-white dark:bg-[#0e1628] border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50'}">
-                                <i class="fa-solid fa-book-bookmark text-xs"></i>
+                            <button type="button" onclick="switchSyllabusGrade('+1')" class="min-h-[44px] px-3.5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition active:scale-95 cursor-pointer ${activeSyllabusGrade === '+1' ? 'bg-[#9C6418] text-white dark:bg-[#DFAC54] dark:text-[#141513] shadow-xs font-black ring-2 ring-[#9C6418]/20 active-grade' : 'bg-[#FFFFFF] dark:bg-[#222521] border border-[#D9D2C3] dark:border-[#31342E] text-[#181B18] dark:text-[#EFECE4] hover:bg-[#EDE8DC]'}">
+                                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
                                 <span>Plus One (+1)</span>
                             </button>
                         </div>
 
                         <!-- Interactive Stream Switcher Pills Bar -->
                         <div class="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-                            <button type="button" onclick="switchSyllabusStream('cs')" class="min-h-[44px] px-3.5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition active:scale-95 cursor-pointer ${userStream === 'cs' ? 'bg-blue-600 text-white shadow-xs font-black ring-2 ring-blue-500/20' : 'bg-white dark:bg-[#0e1628] border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50'}">
-                                <i class="fa-solid fa-laptop-code text-xs"></i>
+                            <button type="button" onclick="switchSyllabusStream('cs')" class="min-h-[44px] px-3.5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition active:scale-95 cursor-pointer ${userStream === 'cs' ? 'bg-[#1B5E43] text-white dark:bg-[#52B788] dark:text-[#141513] shadow-xs font-black ring-2 ring-[#1B5E43]/20 active-stream' : 'bg-[#FFFFFF] dark:bg-[#222521] border border-[#D9D2C3] dark:border-[#31342E] text-[#181B18] dark:text-[#EFECE4] hover:bg-[#EDE8DC]'}">
                                 <span>Computer Science</span>
                             </button>
-                            <button type="button" onclick="switchSyllabusStream('bio')" class="min-h-[44px] px-3.5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition active:scale-95 cursor-pointer ${userStream === 'bio' ? 'bg-emerald-600 text-white shadow-xs font-black ring-2 ring-emerald-500/20' : 'bg-white dark:bg-[#0e1628] border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50'}">
-                                <i class="fa-solid fa-seedling text-xs"></i>
+                            <button type="button" onclick="switchSyllabusStream('bio')" class="min-h-[44px] px-3.5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition active:scale-95 cursor-pointer ${userStream === 'bio' ? 'bg-[#1B5E43] text-white dark:bg-[#52B788] dark:text-[#141513] shadow-xs font-black ring-2 ring-[#1B5E43]/20 active-stream' : 'bg-[#FFFFFF] dark:bg-[#222521] border border-[#D9D2C3] dark:border-[#31342E] text-[#181B18] dark:text-[#EFECE4] hover:bg-[#EDE8DC]'}">
                                 <span>Biology Science</span>
                             </button>
-                            <button type="button" onclick="switchSyllabusStream('commerce')" class="min-h-[44px] px-3.5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition active:scale-95 cursor-pointer ${userStream === 'commerce' ? 'bg-purple-600 text-white shadow-xs font-black ring-2 ring-purple-500/20' : 'bg-white dark:bg-[#0e1628] border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50'}">
-                                <i class="fa-solid fa-chart-line text-xs"></i>
+                            <button type="button" onclick="switchSyllabusStream('commerce')" class="min-h-[44px] px-3.5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition active:scale-95 cursor-pointer ${userStream === 'commerce' ? 'bg-[#9C6418] text-white dark:bg-[#DFAC54] dark:text-[#141513] shadow-xs font-black ring-2 ring-[#9C6418]/20 active-stream' : 'bg-[#FFFFFF] dark:bg-[#222521] border border-[#D9D2C3] dark:border-[#31342E] text-[#181B18] dark:text-[#EFECE4] hover:bg-[#EDE8DC]'}">
                                 <span>Commerce</span>
                             </button>
-                            <button type="button" onclick="switchSyllabusStream('humanities')" class="min-h-[44px] px-3.5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition active:scale-95 cursor-pointer ${userStream === 'humanities' ? 'bg-rose-600 text-white shadow-xs font-black ring-2 ring-rose-500/20' : 'bg-white dark:bg-[#0e1628] border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50'}">
-                                <i class="fa-solid fa-landmark text-xs"></i>
+                            <button type="button" onclick="switchSyllabusStream('humanities')" class="min-h-[44px] px-3.5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition active:scale-95 cursor-pointer ${userStream === 'humanities' ? 'bg-[#B8432E] text-white dark:bg-[#E57A65] dark:text-[#141513] shadow-xs font-black ring-2 ring-[#B8432E]/20 active-stream' : 'bg-[#FFFFFF] dark:bg-[#222521] border border-[#D9D2C3] dark:border-[#31342E] text-[#181B18] dark:text-[#EFECE4] hover:bg-[#EDE8DC]'}">
                                 <span>Humanities</span>
                             </button>
                         </div>
@@ -5273,31 +5276,31 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                             includeLanguages: true,
                         });
                         return `
-                            <div class="bg-white dark:bg-[#0e1628] rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-4 sm:p-5 mb-5">
-                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 mb-3 border-b border-slate-200 dark:border-slate-800">
+                            <div class="bg-[#FBF9F4] dark:bg-[#1B1D1A] rounded-2xl border border-[#D9D2C3] dark:border-[#31342E] p-4 sm:p-5 mb-5">
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 mb-3 border-b border-[#D9D2C3] dark:border-[#31342E]">
                                     <div>
-                                        <h3 class="font-black text-slate-900 dark:text-white text-base flex items-center gap-2">
-                                            <i class="fa-solid fa-calendar-days text-blue-600 dark:text-blue-400"></i>
+                                        <h3 class="font-serif font-bold text-[#181B18] dark:text-[#EFECE4] text-base sm:text-lg flex items-center gap-2">
+                                            <svg class="w-4 h-4 text-[#1B5E43] dark:text-[#52B788]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"/></svg>
                                             <span>${isML ? `ഔദ്യോഗിക DHSE പരീക്ഷാ ടൈംടേബിൾ (${activeSyllabusGrade})` : `Official DHSE Exam Timetable (${activeSyllabusGrade})`}</span>
                                         </h3>
-                                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">${escapeStudyText(activeCycleMeta.note)}</p>
+                                        <p class="text-xs text-[#474B45] dark:text-[#C4C0B6] mt-0.5">${escapeStudyText(activeCycleMeta.note)}</p>
                                     </div>
                                     <div class="flex items-center gap-1.5 flex-wrap">
                                         ${['christmas', 'model', 'public'].map(cId => {
                                             const meta = DHSE_EXAM_CYCLES[cId];
                                             const active = cId === activeSyllabusExamCycle;
-                                            return `<button type="button" onclick="switchSyllabusExamCycle('${cId}')" class="min-h-[44px] px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${active ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-[#141d30] text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-[#1d2a44]'}">${isML ? meta.mlName : meta.shortName}</button>`;
+                                            return `<button type="button" onclick="switchSyllabusExamCycle('${cId}')" class="min-h-[44px] px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${active ? 'bg-[#1B5E43] dark:bg-[#52B788] text-white dark:text-[#141513]' : 'bg-[#EDE8DC] dark:bg-[#181A17] text-[#474B45] dark:text-[#C4C0B6] border border-[#D9D2C3] dark:border-[#31342E] hover:bg-[#E4EFE9]'}">${isML ? meta.mlName : meta.shortName}</button>`;
                                         }).join('')}
                                     </div>
                                 </div>
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                     ${scheduleRows.map(ev => `
-                                        <div class="p-2.5 rounded-xl bg-slate-50/90 dark:bg-[#141d30]/70 border border-slate-200/80 dark:border-slate-800 flex items-center justify-between gap-2 text-xs">
+                                        <div class="p-2.5 rounded-xl bg-[#FFFFFF] dark:bg-[#222521] border border-[#D9D2C3] dark:border-[#31342E] flex items-center justify-between gap-2 text-xs">
                                             <div class="min-w-0">
-                                                <span class="font-mono font-bold text-blue-700 dark:text-blue-300 block">${escapeStudyText(ev.date)} (${escapeStudyText(ev.dayName)})</span>
-                                                <span class="font-extrabold text-slate-900 dark:text-white block truncate" title="${escapeStudyText(ev.paperTitle)}">${escapeStudyText(ev.paperTitle)}</span>
+                                                <span class="font-mono font-bold text-[#1B5E43] dark:text-[#52B788] block">${escapeStudyText(ev.date)} (${escapeStudyText(ev.dayName)})</span>
+                                                <span class="font-bold text-[#181B18] dark:text-[#EFECE4] block truncate" title="${escapeStudyText(ev.paperTitle)}">${escapeStudyText(ev.paperTitle)}</span>
                                             </div>
-                                            <span class="px-2 py-1 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-bold text-[11px] shrink-0">${escapeStudyText(ev.session)} · ${escapeStudyText(ev.time)}</span>
+                                            <span class="px-2 py-1 rounded-lg font-mono bg-[#E7ECF3] dark:bg-[rgba(139,167,206,0.14)] text-[#2F486D] dark:text-[#8BA7CE] border border-[#A6B8CE] dark:border-[rgba(139,167,206,0.3)] font-bold text-[11px] shrink-0">${escapeStudyText(ev.session)} · ${escapeStudyText(ev.time)}</span>
                                         </div>
                                     `).join('')}
                                 </div>
@@ -5315,20 +5318,20 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
 
         function getSubjectColorBadge(subject) {
             switch(subject) {
-                case 'Physics': return 'bg-indigo-50 text-indigo-700 border border-indigo-200/60 dark:bg-indigo-950/60 dark:text-indigo-300 dark:border-indigo-800/60';
-                case 'Chemistry': return 'bg-amber-50 text-amber-700 border border-amber-200/60 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-800/60';
-                case 'Mathematics': return 'bg-rose-50 text-rose-700 border border-rose-200/60 dark:bg-rose-950/60 dark:text-rose-300 dark:border-rose-800/60';
-                case 'Computer Science': return 'bg-cyan-50 text-cyan-700 border border-cyan-200/60 dark:bg-cyan-950/60 dark:text-cyan-300 dark:border-cyan-800/60';
-                case 'Botany': return 'bg-emerald-50 text-emerald-700 border border-emerald-200/60 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800/60';
-                case 'Zoology': return 'bg-teal-50 text-teal-700 border border-teal-200/60 dark:bg-teal-950/60 dark:text-teal-300 dark:border-teal-800/60';
-                case 'Accountancy': return 'bg-emerald-50 text-emerald-700 border border-emerald-200/60 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800/60';
-                case 'Business Studies': return 'bg-blue-50 text-blue-700 border border-blue-200/60 dark:bg-blue-950/60 dark:text-blue-300 dark:border-blue-800/60';
-                case 'Economics': return 'bg-amber-50 text-amber-700 border border-amber-200/60 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-800/60';
-                case 'Computer Applications': return 'bg-cyan-50 text-cyan-700 border border-cyan-200/60 dark:bg-cyan-950/60 dark:text-cyan-300 dark:border-cyan-800/60';
-                case 'History': return 'bg-stone-50 text-stone-700 border border-stone-200/60 dark:bg-stone-950/60 dark:text-stone-300 dark:border-stone-800/60';
-                case 'Political Science': return 'bg-violet-50 text-violet-700 border border-violet-200/60 dark:bg-violet-950/60 dark:text-violet-300 dark:border-violet-800/60';
-                case 'Sociology': return 'bg-pink-50 text-pink-700 border border-pink-200/60 dark:bg-pink-950/60 dark:text-pink-300 dark:border-pink-800/60';
-                default: return 'bg-purple-50 text-purple-700 border border-purple-200/60 dark:bg-purple-950/60 dark:text-purple-300 dark:border-purple-800/60';
+                case 'Physics': return 'bg-[#E7ECF3] text-[#2F486D] border border-[#A6B8CE] dark:bg-[rgba(139,167,206,0.14)] dark:text-[#8BA7CE] dark:border-[rgba(139,167,206,0.32)]';
+                case 'Chemistry': return 'bg-[#F6EEDC] text-[#9C6418] border border-[#DEC59A] dark:bg-[rgba(223,172,84,0.14)] dark:text-[#DFAC54] dark:border-[rgba(223,172,84,0.32)]';
+                case 'Mathematics': return 'bg-[#F9E9E5] text-[#B8432E] border border-[#E8B4A9] dark:bg-[rgba(229,122,101,0.14)] dark:text-[#E57A65] dark:border-[rgba(229,122,101,0.32)]';
+                case 'Computer Science': return 'bg-[#E4EFE9] text-[#1B5E43] border border-[#9DC3B2] dark:bg-[rgba(82,183,136,0.14)] dark:text-[#52B788] dark:border-[rgba(82,183,136,0.32)]';
+                case 'Botany': return 'bg-[#E4EFE9] text-[#1B5E43] border border-[#9DC3B2] dark:bg-[rgba(82,183,136,0.14)] dark:text-[#52B788] dark:border-[rgba(82,183,136,0.32)]';
+                case 'Zoology': return 'bg-[#E7ECF3] text-[#2F486D] border border-[#A6B8CE] dark:bg-[rgba(139,167,206,0.14)] dark:text-[#8BA7CE] dark:border-[rgba(139,167,206,0.32)]';
+                case 'Accountancy': return 'bg-[#E4EFE9] text-[#1B5E43] border border-[#9DC3B2] dark:bg-[rgba(82,183,136,0.14)] dark:text-[#52B788] dark:border-[rgba(82,183,136,0.32)]';
+                case 'Business Studies': return 'bg-[#E7ECF3] text-[#2F486D] border border-[#A6B8CE] dark:bg-[rgba(139,167,206,0.14)] dark:text-[#8BA7CE] dark:border-[rgba(139,167,206,0.32)]';
+                case 'Economics': return 'bg-[#F6EEDC] text-[#9C6418] border border-[#DEC59A] dark:bg-[rgba(223,172,84,0.14)] dark:text-[#DFAC54] dark:border-[rgba(223,172,84,0.32)]';
+                case 'Computer Applications': return 'bg-[#E4EFE9] text-[#1B5E43] border border-[#9DC3B2] dark:bg-[rgba(82,183,136,0.14)] dark:text-[#52B788] dark:border-[rgba(82,183,136,0.32)]';
+                case 'History': return 'bg-[#F6EEDC] text-[#9C6418] border border-[#DEC59A] dark:bg-[rgba(223,172,84,0.14)] dark:text-[#DFAC54] dark:border-[rgba(223,172,84,0.32)]';
+                case 'Political Science': return 'bg-[#E7ECF3] text-[#2F486D] border border-[#A6B8CE] dark:bg-[rgba(139,167,206,0.14)] dark:text-[#8BA7CE] dark:border-[rgba(139,167,206,0.32)]';
+                case 'Sociology': return 'bg-[#F9E9E5] text-[#B8432E] border border-[#E8B4A9] dark:bg-[rgba(229,122,101,0.14)] dark:text-[#E57A65] dark:border-[rgba(229,122,101,0.32)]';
+                default: return 'bg-[#E7ECF3] text-[#2F486D] border border-[#A6B8CE] dark:bg-[rgba(139,167,206,0.14)] dark:text-[#8BA7CE] dark:border-[rgba(139,167,206,0.32)]';
             }
         }
 
@@ -5379,28 +5382,28 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
         function renderTaskGradeBadge(task) {
             if (!task) return '';
             if (task.isExamEveTask) {
-                return `<span class="text-xs font-black px-1.5 py-0.5 rounded-md bg-rose-100 text-rose-900 border border-rose-300 dark:bg-rose-950/70 dark:text-rose-200 dark:border-rose-700 flex items-center gap-1 shadow-xs animate-pulse"><i class="fa-solid fa-bolt text-rose-600 dark:text-rose-400"></i> 🔥 Exam Eve Focus</span>`;
+                return `<span class="text-xs font-bold px-1.5 py-0.5 rounded-md bg-[#F9E9E5] text-[#B8432E] border border-[#E8B4A9] dark:bg-[rgba(229,122,101,0.14)] dark:text-[#E57A65] dark:border-[rgba(229,122,101,0.3)] flex items-center gap-1"><svg class="w-3 h-3 text-[#B8432E] dark:text-[#E57A65]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> 🔥 Exam Eve Focus</span>`;
             }
             if (task.isForgettingCurveReview || task.isSpacedRetrieval) {
                 const isML = (typeof getAppLanguage === 'function' && getAppLanguage() === 'ml') ||
                              (typeof document !== 'undefined' && document.documentElement && document.documentElement.lang === 'ml');
                 const intervalText = task.spacingInterval ? `Spaced Recall (${task.spacingInterval})` : 'Active Recall & PYQ';
                 const mlIntervalText = task.spacingInterval ? `സ്പേസ്ഡ് റീകോൾ (${task.spacingInterval})` : 'സ്പേസ്ഡ് റീകോൾ & PYQ';
-                return `<span class="text-xs font-bold px-1.5 py-0.5 rounded-md bg-indigo-100 text-indigo-900 border border-indigo-300 dark:bg-indigo-950/70 dark:text-indigo-200 dark:border-indigo-700 flex items-center gap-1 shadow-xs" title="Ebbinghaus Forgetting Curve Spaced Retrieval"><i class="fa-solid fa-brain text-indigo-600 dark:text-indigo-400"></i> 🧠 ${isML ? mlIntervalText : intervalText}</span>`;
+                return `<span class="text-xs font-bold px-1.5 py-0.5 rounded-md bg-[#E7ECF3] text-[#2F486D] border border-[#A6B8CE] dark:bg-[rgba(139,167,206,0.14)] dark:text-[#8BA7CE] dark:border-[rgba(139,167,206,0.3)] flex items-center gap-1" title="Ebbinghaus Forgetting Curve Spaced Retrieval"><svg class="w-3 h-3 text-[#2F486D] dark:text-[#8BA7CE]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/></svg> 🧠 ${isML ? mlIntervalText : intervalText}</span>`;
             }
             if (task.isModelExam) {
-                return `<span class="text-xs font-bold px-1.5 py-0.5 rounded-md bg-amber-100 text-amber-900 border border-amber-300 dark:bg-amber-950/70 dark:text-amber-200 dark:border-amber-700 flex items-center gap-1 shadow-xs"><i class="fa-solid fa-file-pen text-amber-600 dark:text-amber-400"></i> 📝 Model Exam</span>`;
+                return `<span class="text-xs font-bold px-1.5 py-0.5 rounded-md bg-[#F6EEDC] text-[#9C6418] border border-[#DEC59A] dark:bg-[rgba(223,172,84,0.14)] dark:text-[#DFAC54] dark:border-[rgba(223,172,84,0.3)] flex items-center gap-1"><svg class="w-3 h-3 text-[#9C6418] dark:text-[#DFAC54]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg> 📝 Model Exam</span>`;
             }
             if (task.isRevision) {
-                return `<span class="text-xs font-bold px-1.5 py-0.5 rounded-md bg-purple-100 text-purple-800 border border-purple-200/70 dark:bg-purple-950/60 dark:text-purple-300 dark:border-purple-800/60">Revision</span>`;
+                return `<span class="text-xs font-bold px-1.5 py-0.5 rounded-md bg-[#E7ECF3] text-[#2F486D] border border-[#A6B8CE] dark:bg-[rgba(139,167,206,0.14)] dark:text-[#8BA7CE] dark:border-[rgba(139,167,206,0.3)]">Revision</span>`;
             }
             if (task.grade === '+1') {
-                return `<span class="text-xs font-extrabold px-1.5 py-0.5 rounded-md bg-amber-100 text-amber-900 border border-amber-300/80 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-700/60 flex items-center gap-1 shadow-xs"><i class="fa-solid fa-fire text-amber-600 dark:text-amber-400"></i> +1 Imp (High Priority)</span>`;
+                return `<span class="text-xs font-mono font-bold px-1.5 py-0.5 rounded-md bg-[#F6EEDC] text-[#9C6418] border border-[#DEC59A] dark:bg-[rgba(223,172,84,0.14)] dark:text-[#DFAC54] dark:border-[rgba(223,172,84,0.3)] flex items-center gap-1"><svg class="w-3 h-3 text-[#9C6418] dark:text-[#DFAC54]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg> +1 Imp</span>`;
             }
             // Plus Two (+2)
             return `
-                <span class="text-xs font-extrabold px-1.5 py-0.5 rounded-md bg-blue-100 text-blue-800 border border-blue-300/80 dark:bg-blue-950/60 dark:text-blue-300 dark:border-blue-700/60 flex items-center gap-1 shadow-xs"><i class="fa-solid fa-graduation-cap text-xs text-blue-600"></i> +2</span>
-                ${task.term ? `<span class="text-xs font-semibold px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 border border-slate-200/50 dark:border-slate-700/50">Term ${task.term}</span>` : ''}
+                <span class="text-xs font-mono font-bold px-1.5 py-0.5 rounded-md bg-[#E4EFE9] text-[#1B5E43] border border-[#9DC3B2] dark:bg-[rgba(82,183,136,0.14)] dark:text-[#52B788] dark:border-[rgba(82,183,136,0.3)] flex items-center gap-1"><svg class="w-3 h-3 text-[#1B5E43] dark:text-[#52B788]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg> +2</span>
+                ${task.term ? `<span class="text-xs font-mono font-semibold px-1.5 py-0.5 rounded bg-[#EDE8DC] text-[#474B45] dark:bg-[#181A17] dark:text-[#C4C0B6] border border-[#D9D2C3] dark:border-[#31342E]">Term ${task.term}</span>` : ''}
             `;
         }
 
@@ -5439,9 +5442,9 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
             if (!group.chapterKey) return '';
             const scope = escapeStudyText(formatCompressedGroupScope(group, isML));
             if (group.isFullChapter) {
-                return `<span class="text-xs font-black px-1.5 py-0.5 rounded-md bg-emerald-100 text-emerald-800 border border-emerald-300/80 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-700/60 flex items-center gap-1 shadow-xs"><i class="fa-solid fa-circle-check text-xs text-emerald-600 dark:text-emerald-400"></i> ${scope}</span>`;
+                return `<span class="text-xs font-mono font-bold px-1.5 py-0.5 rounded-md bg-[#E4EFE9] text-[#1B5E43] border border-[#9DC3B2] dark:bg-[rgba(82,183,136,0.14)] dark:text-[#52B788] dark:border-[rgba(82,183,136,0.3)] flex items-center gap-1"><svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> ${scope}</span>`;
             }
-            return `<span class="text-xs font-bold px-1.5 py-0.5 rounded-md bg-indigo-50 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300 border border-indigo-200/70 dark:border-indigo-800/60">${scope}</span>`;
+            return `<span class="text-xs font-mono font-bold px-1.5 py-0.5 rounded-md bg-[#E7ECF3] text-[#2F486D] dark:bg-[rgba(139,167,206,0.14)] dark:text-[#8BA7CE] border border-[#A6B8CE] dark:border-[rgba(139,167,206,0.3)]">${scope}</span>`;
         }
 
         function renderTaskPartBadge(task) {
@@ -5450,17 +5453,17 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
             const total = task.totalParts || 1;
             // Tight timetable: all parts land on same day — show "Full" instead of confusing "1/2" + "2/2"
             if (task.isFullOnDay) {
-                return `<span class="text-xs font-black px-1.5 py-0.5 rounded-md bg-emerald-100 text-emerald-800 border border-emerald-300/80 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-700/60 flex items-center gap-1 shadow-xs"><i class="fa-solid fa-circle-check text-xs text-emerald-600 dark:text-emerald-400"></i> Full</span>`;
+                return `<span class="text-xs font-mono font-bold px-1.5 py-0.5 rounded-md bg-[#E4EFE9] text-[#1B5E43] border border-[#9DC3B2] dark:bg-[rgba(82,183,136,0.14)] dark:text-[#52B788] dark:border-[rgba(82,183,136,0.3)] flex items-center gap-1"><svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Full</span>`;
             }
             if (p === total) {
-                return `<span class="text-xs font-black px-1.5 py-0.5 rounded-md bg-emerald-100 text-emerald-800 border border-emerald-300/80 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-700/60 flex items-center gap-1 shadow-xs"><i class="fa-solid fa-circle-check text-xs text-emerald-600"></i> Full Chapter (${p}/${total})</span>`;
+                return `<span class="text-xs font-mono font-bold px-1.5 py-0.5 rounded-md bg-[#E4EFE9] text-[#1B5E43] border border-[#9DC3B2] dark:bg-[rgba(82,183,136,0.14)] dark:text-[#52B788] dark:border-[rgba(82,183,136,0.3)] flex items-center gap-1"><svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Full Chapter (${p}/${total})</span>`;
             }
-            return `<span class="text-xs font-bold px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border border-slate-200/60 dark:border-slate-700/60">Part ${p}/${total}</span>`;
+            return `<span class="text-xs font-mono font-bold px-1.5 py-0.5 rounded-md bg-[#EDE8DC] text-[#474B45] dark:bg-[#181A17] dark:text-[#C4C0B6] border border-[#D9D2C3] dark:border-[#31342E]">Part ${p}/${total}</span>`;
         }
 
         function renderTaskDailySlotBadge(slotIndex, totalTasks, isML) {
             if (!totalTasks || totalTasks <= 0) return '';
-            return `<span class="text-xs text-slate-500 dark:text-slate-400">${isML ? 'പഠന ഭാഗം' : 'Study block'} ${slotIndex + 1} / ${totalTasks}</span>`;
+            return `<span class="text-xs font-mono text-[#6E726A] dark:text-[#918D83]">${isML ? 'പഠന ഭാഗം' : 'Study block'} ${slotIndex + 1} / ${totalTasks}</span>`;
         }
 
         function getOverallStats() {
@@ -5538,7 +5541,7 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                     document.documentElement.classList.remove('dark');
                 }
                 const metaTheme = document.querySelector('meta[name="theme-color"]');
-                if (metaTheme) metaTheme.setAttribute('content', isDark ? '#080c14' : '#2563eb');
+                if (metaTheme) metaTheme.setAttribute('content', isDark ? '#141513' : '#F6F3EC');
             }
             updateThemeUI(pref);
         }
@@ -5569,18 +5572,18 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 const btn = document.getElementById(`theme-btn-${m}`);
                 if (btn) {
                     if (m === pref) {
-                        btn.className = 'flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-black transition-all bg-blue-600 text-white shadow-xs';
+                        btn.className = 'flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-black transition-all bg-[#1B5E43] dark:bg-[#52B788] text-white dark:text-[#141513] shadow-xs';
                     } else {
-                        btn.className = 'flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-semibold transition-all text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white';
+                        btn.className = 'flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-semibold transition-all text-[#474B45] dark:text-[#C4C0B6] hover:text-[#181B18] dark:hover:text-white';
                     }
                 }
                 // Dropdown menu buttons
                 const menuBtn = document.getElementById(`menu-theme-btn-${m}`);
                 if (menuBtn) {
                     if (m === pref) {
-                        menuBtn.className = 'py-1.5 px-2 rounded-lg text-center font-black text-xs transition-all flex items-center justify-center gap-1 bg-blue-600 text-white shadow-xs';
+                        menuBtn.className = 'py-1.5 px-2 rounded-lg text-center font-black text-xs transition-all flex items-center justify-center gap-1 bg-[#1B5E43] dark:bg-[#52B788] text-white dark:text-[#141513] shadow-xs';
                     } else {
-                        menuBtn.className = 'py-1.5 px-2 rounded-lg text-center font-bold text-xs transition-all flex items-center justify-center gap-1 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white';
+                        menuBtn.className = 'py-1.5 px-2 rounded-lg text-center font-bold text-xs transition-all flex items-center justify-center gap-1 text-[#474B45] dark:text-[#C4C0B6] hover:text-[#181B18] dark:hover:text-[#EFECE4]';
                     }
                 }
             });
@@ -5627,23 +5630,21 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
 
             if (btnEn) {
                 if (!isML) {
-                    btnEn.className = 'flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-black transition-all bg-blue-600 text-white shadow-xs';
+                    btnEn.className = 'flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-black transition-all bg-[#1B5E43] dark:bg-[#52B788] text-white dark:text-[#141513] shadow-xs';
                 } else {
-                    btnEn.className = 'flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-semibold transition-all text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white';
+                    btnEn.className = 'flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-semibold transition-all text-[#474B45] dark:text-[#C4C0B6] hover:text-[#181B18] dark:hover:text-[#EFECE4]';
                 }
             }
             if (btnMl) {
                 if (isML) {
-                    btnMl.className = 'flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-black transition-all bg-blue-600 text-white shadow-xs';
+                    btnMl.className = 'flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-black transition-all bg-[#1B5E43] dark:bg-[#52B788] text-white dark:text-[#141513] shadow-xs';
                 } else {
-                    btnMl.className = 'flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-semibold transition-all text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white';
+                    btnMl.className = 'flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-semibold transition-all text-[#474B45] dark:text-[#C4C0B6] hover:text-[#181B18] dark:hover:text-[#EFECE4]';
                 }
             }
             if (langBadge) {
                 langBadge.textContent = isML ? 'മലയാളം' : 'English';
-                langBadge.className = isML
-                    ? 'text-xs bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 font-bold px-2 py-0.5 rounded-full'
-                    : 'text-xs bg-blue-100 dark:bg-blue-950/80 text-blue-700 dark:text-blue-300 font-bold px-2 py-0.5 rounded-full uppercase';
+                langBadge.className = 'text-xs font-mono bg-[#E4EFE9] dark:bg-[rgba(82,183,136,0.14)] text-[#1B5E43] dark:text-[#52B788] border border-[#9DC3B2] dark:border-[rgba(82,183,136,0.3)] font-bold px-2 py-0.5 rounded-full';
             }
 
             // 2. Safe check for any legacy button
@@ -5653,11 +5654,11 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
             if (flag && lbl) {
                 if (isML) {
                     flag.textContent = 'മല';
-                    flag.className = 'text-xs font-black text-emerald-600 dark:text-emerald-400';
+                    flag.className = 'text-xs font-black text-[#1B5E43] dark:text-[#52B788]';
                     lbl.textContent = '| EN';
                 } else {
                     flag.textContent = 'EN';
-                    flag.className = 'text-xs font-black text-blue-600 dark:text-blue-400';
+                    flag.className = 'text-xs font-black text-[#1B5E43] dark:text-[#52B788]';
                     lbl.textContent = '| മ';
                 }
             }
@@ -5828,14 +5829,14 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 const knob = document.getElementById(`setting-knob-${k}`);
                 if (toggle && knob) {
                     if (isEnabled) {
-                        toggle.classList.remove('bg-slate-300');
-                        toggle.classList.add('bg-blue-600');
+                        toggle.classList.remove('bg-slate-300', 'bg-[#D9D2C3]');
+                        toggle.classList.add('bg-[#1B5E43]', 'dark:bg-[#52B788]');
                         toggle.setAttribute('aria-checked', 'true');
                         knob.classList.remove('translate-x-0');
                         knob.classList.add('translate-x-5');
                     } else {
-                        toggle.classList.remove('bg-blue-600');
-                        toggle.classList.add('bg-slate-300');
+                        toggle.classList.remove('bg-blue-600', 'bg-[#1B5E43]', 'dark:bg-[#52B788]');
+                        toggle.classList.add('bg-[#D9D2C3]');
                         toggle.setAttribute('aria-checked', 'false');
                         knob.classList.remove('translate-x-5');
                         knob.classList.add('translate-x-0');
@@ -5850,9 +5851,9 @@ function fireStudyConfetti(opts = { particleCount: 70, spread: 60, origin: { y: 
                 const btn = document.getElementById(`pace-btn-${p}`);
                 if (btn) {
                     if (p === currentPace) {
-                        btn.className = 'p-2 rounded-xl text-center border-2 border-blue-600 bg-blue-50/70 transition shadow-xs';
+                        btn.className = 'p-2 rounded-xl text-center border-2 border-[#1B5E43] dark:border-[#52B788] bg-[#E4EFE9] dark:bg-[rgba(82,183,136,0.14)] text-[#181B18] dark:text-[#EFECE4] transition';
                     } else {
-                        btn.className = 'p-2 rounded-xl text-center border border-slate-200 bg-white hover:border-slate-300 transition';
+                        btn.className = 'p-2 rounded-xl text-center border border-[#D9D2C3] dark:border-[#31342E] bg-[#FFFFFF] dark:bg-[#222521] text-[#474B45] dark:text-[#C4C0B6] hover:border-[#B9B09E] transition';
                     }
                 }
             });

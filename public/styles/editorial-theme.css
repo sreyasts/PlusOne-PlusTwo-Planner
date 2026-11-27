@@ -1,0 +1,436 @@
+/* ==========================================================================
+   Malabar Study Ledger — Editorial Warm Paper & Ink Theme System
+   Designed for Kerala Higher Secondary (+1 & +2) Students
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&display=swap');
+
+:root {
+  /* Font Stacks */
+  --ed-font-display: 'Newsreader', Georgia, 'Times New Roman', serif;
+  --ed-font-body: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --ed-font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Light Palette (Warm Paper & Ink) */
+  --ed-ground: #F6F3EC;
+  --ed-sheet: #FBF9F4;
+  --ed-raised: #FFFFFF;
+  --ed-inset: #EDE8DC;
+  --ed-ink: #181B18;
+  --ed-ink-secondary: #474B45;
+  --ed-ink-muted: #6E726A;
+  --ed-rule: #D9D2C3;
+  --ed-rule-strong: #B9B09E;
+
+  /* Accent Tones */
+  --ed-emerald: #1B5E43;
+  --ed-emerald-hover: #144833;
+  --ed-emerald-tint: #E4EFE9;
+  --ed-emerald-border: #9DC3B2;
+
+  --ed-vermilion: #B8432E;
+  --ed-vermilion-hover: #963523;
+  --ed-vermilion-tint: #F9E9E5;
+  --ed-vermilion-border: #E8B4A9;
+
+  --ed-ochre: #9C6418;
+  --ed-ochre-hover: #7E4F10;
+  --ed-ochre-tint: #F6EEDC;
+  --ed-ochre-border: #DEC59A;
+
+  --ed-indigo: #2F486D;
+  --ed-indigo-hover: #223550;
+  --ed-indigo-tint: #E7ECF3;
+  --ed-indigo-border: #A6B8CE;
+
+  /* Radii & Metrics */
+  --ed-radius-sm: 6px;
+  --ed-radius-md: 10px;
+  --ed-radius-lg: 14px;
+  --ed-radius-xl: 18px;
+  --ed-radius-pill: 9999px;
+
+  /* Safe Area Insets */
+  --sab: env(safe-area-inset-bottom, 0px);
+  --sat: env(safe-area-inset-top, 0px);
+}
+
+/* Dark Palette (html.dark or system prefers-dark when not explicit light) */
+html.dark,
+@media (prefers-color-scheme: dark) {
+  html:not(.light) {
+    --ed-ground: #141513;
+    --ed-sheet: #1B1D1A;
+    --ed-raised: #222521;
+    --ed-inset: #181A17;
+    --ed-ink: #EFECE4;
+    --ed-ink-secondary: #C4C0B6;
+    --ed-ink-muted: #918D83;
+    --ed-rule: #31342E;
+    --ed-rule-strong: #454940;
+
+    --ed-emerald: #52B788;
+    --ed-emerald-hover: #67C79A;
+    --ed-emerald-tint: rgba(82, 183, 136, 0.14);
+    --ed-emerald-border: rgba(82, 183, 136, 0.32);
+
+    --ed-vermilion: #E57A65;
+    --ed-vermilion-hover: #EE917E;
+    --ed-vermilion-tint: rgba(229, 122, 101, 0.14);
+    --ed-vermilion-border: rgba(229, 122, 101, 0.32);
+
+    --ed-ochre: #DFAC54;
+    --ed-ochre-hover: #E8BC6E;
+    --ed-ochre-tint: rgba(223, 172, 84, 0.14);
+    --ed-ochre-border: rgba(223, 172, 84, 0.32);
+
+    --ed-indigo: #8BA7CE;
+    --ed-indigo-hover: #A0B9DB;
+    --ed-indigo-tint: rgba(139, 167, 206, 0.14);
+    --ed-indigo-border: rgba(139, 167, 206, 0.32);
+  }
+}
+
+/* Force dark class */
+html.dark {
+  --ed-ground: #141513;
+  --ed-sheet: #1B1D1A;
+  --ed-raised: #222521;
+  --ed-inset: #181A17;
+  --ed-ink: #EFECE4;
+  --ed-ink-secondary: #C4C0B6;
+  --ed-ink-muted: #918D83;
+  --ed-rule: #31342E;
+  --ed-rule-strong: #454940;
+
+  --ed-emerald: #52B788;
+  --ed-emerald-hover: #67C79A;
+  --ed-emerald-tint: rgba(82, 183, 136, 0.14);
+  --ed-emerald-border: rgba(82, 183, 136, 0.32);
+
+  --ed-vermilion: #E57A65;
+  --ed-vermilion-hover: #EE917E;
+  --ed-vermilion-tint: rgba(229, 122, 101, 0.14);
+  --ed-vermilion-border: rgba(229, 122, 101, 0.32);
+
+  --ed-ochre: #DFAC54;
+  --ed-ochre-hover: #E8BC6E;
+  --ed-ochre-tint: rgba(223, 172, 84, 0.14);
+  --ed-ochre-border: rgba(223, 172, 84, 0.32);
+
+  --ed-indigo: #8BA7CE;
+  --ed-indigo-hover: #A0B9DB;
+  --ed-indigo-tint: rgba(139, 167, 206, 0.14);
+  --ed-indigo-border: rgba(139, 167, 206, 0.32);
+}
+
+/* Global Reset & Base Typography */
+body.ed-body,
+.ed-body {
+  font-family: var(--ed-font-body);
+  background-color: var(--ed-ground);
+  color: var(--ed-ink);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ==========================================================================
+   Editorial Utility Classes (.ed-*)
+   ========================================================================== */
+
+/* Typography Helpers */
+.ed-title {
+  font-family: var(--ed-font-display);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: var(--ed-ink);
+  line-height: 1.25;
+}
+
+.ed-serif {
+  font-family: var(--ed-font-display);
+}
+
+.ed-mono {
+  font-family: var(--ed-font-mono);
+  font-feature-settings: 'tnum' on, 'zero' on;
+}
+
+.ed-kicker {
+  font-family: var(--ed-font-mono);
+  font-size: 0.725rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ed-emerald);
+  display: inline-block;
+}
+
+.ed-subtext {
+  font-size: 0.875rem;
+  color: var(--ed-ink-secondary);
+}
+
+.ed-muted {
+  color: var(--ed-ink-muted);
+}
+
+/* Structural Components */
+.ed-header {
+  background-color: var(--ed-sheet);
+  border-bottom: 1px solid var(--ed-rule);
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.ed-card {
+  background-color: var(--ed-sheet);
+  border: 1px solid var(--ed-rule);
+  border-radius: var(--ed-radius-lg);
+  padding: 1.25rem;
+  box-shadow: 0 1px 2px rgba(24, 27, 24, 0.03);
+  transition: border-color 0.18s ease;
+}
+
+.ed-card:hover {
+  border-color: var(--ed-rule-strong);
+}
+
+.ed-card-raised {
+  background-color: var(--ed-raised);
+  border: 1px solid var(--ed-rule);
+  border-radius: var(--ed-radius-lg);
+  padding: 1.25rem;
+}
+
+.ed-card-inset {
+  background-color: var(--ed-inset);
+  border: 1px solid var(--ed-rule);
+  border-radius: var(--ed-radius-md);
+  padding: 1rem;
+}
+
+/* Interactive Controls & Buttons */
+.ed-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: var(--ed-emerald);
+  color: #FFFFFF;
+  font-family: var(--ed-font-body);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 0.625rem 1.125rem;
+  min-height: 44px;
+  border-radius: var(--ed-radius-md);
+  border: 1px solid var(--ed-emerald-hover);
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+  touch-action: manipulation;
+}
+
+.ed-btn-primary:hover {
+  background-color: var(--ed-emerald-hover);
+  color: #FFFFFF;
+}
+
+.ed-btn-primary:active {
+  transform: scale(0.97);
+}
+
+.ed-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: var(--ed-raised);
+  color: var(--ed-ink);
+  font-family: var(--ed-font-body);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 0.625rem 1rem;
+  min-height: 44px;
+  border-radius: var(--ed-radius-md);
+  border: 1px solid var(--ed-rule);
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+  touch-action: manipulation;
+}
+
+.ed-btn-secondary:hover {
+  background-color: var(--ed-inset);
+  border-color: var(--ed-rule-strong);
+  color: var(--ed-ink);
+}
+
+.ed-btn-secondary:active {
+  transform: scale(0.97);
+}
+
+/* Navigation Pills */
+.ed-nav-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.45rem 0.85rem;
+  min-height: 44px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: var(--ed-radius-pill);
+  border: 1px solid var(--ed-rule);
+  background-color: var(--ed-raised);
+  color: var(--ed-ink-secondary);
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  touch-action: manipulation;
+}
+
+.ed-nav-pill:hover {
+  color: var(--ed-ink);
+  border-color: var(--ed-rule-strong);
+}
+
+.ed-nav-pill.active,
+.ed-nav-pill[aria-pressed="true"] {
+  background-color: var(--ed-emerald);
+  color: #FFFFFF;
+  border-color: var(--ed-emerald);
+}
+
+/* Badges */
+.ed-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-family: var(--ed-font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.175rem 0.55rem;
+  border-radius: var(--ed-radius-pill);
+  line-height: 1.35;
+  border: 1px solid var(--ed-rule);
+  background-color: var(--ed-inset);
+  color: var(--ed-ink-secondary);
+}
+
+.ed-badge-emerald {
+  background-color: var(--ed-emerald-tint);
+  color: var(--ed-emerald);
+  border-color: var(--ed-emerald-border);
+}
+
+.ed-badge-vermilion {
+  background-color: var(--ed-vermilion-tint);
+  color: var(--ed-vermilion);
+  border-color: var(--ed-vermilion-border);
+}
+
+.ed-badge-ochre {
+  background-color: var(--ed-ochre-tint);
+  color: var(--ed-ochre);
+  border-color: var(--ed-ochre-border);
+}
+
+.ed-badge-indigo {
+  background-color: var(--ed-indigo-tint);
+  color: var(--ed-indigo);
+  border-color: var(--ed-indigo-border);
+}
+
+/* Form Inputs */
+.ed-input {
+  width: 100%;
+  min-height: 44px;
+  background-color: var(--ed-raised);
+  color: var(--ed-ink);
+  font-family: var(--ed-font-body);
+  font-size: 0.875rem;
+  padding: 0.625rem 0.875rem;
+  border: 1px solid var(--ed-rule);
+  border-radius: var(--ed-radius-md);
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ed-input:focus {
+  border-color: var(--ed-emerald);
+  box-shadow: 0 0 0 3px var(--ed-emerald-tint);
+}
+
+/* Tables (Ledger Style) */
+.ed-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+  color: var(--ed-ink);
+}
+
+.ed-table th {
+  font-family: var(--ed-font-mono);
+  font-size: 0.725rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ed-ink-secondary);
+  background-color: var(--ed-inset);
+  padding: 0.625rem 0.875rem;
+  border-bottom: 1px solid var(--ed-rule-strong);
+  text-align: left;
+}
+
+.ed-table td {
+  padding: 0.75rem 0.875rem;
+  border-bottom: 1px solid var(--ed-rule);
+}
+
+.ed-table tr:hover td {
+  background-color: var(--ed-sheet);
+}
+
+/* Footer */
+.ed-footer {
+  border-top: 1px solid var(--ed-rule);
+  background-color: var(--ed-sheet);
+  color: var(--ed-ink-muted);
+  font-size: 0.75rem;
+  padding: 2rem 1rem calc(2rem + var(--sab));
+}
+
+.ed-footer a {
+  color: var(--ed-ink-secondary);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.ed-footer a:hover {
+  color: var(--ed-emerald);
+  text-decoration: underline;
+}
+
+/* Touch Compliance & Universal Targets */
+button,
+[role="button"],
+a {
+  touch-action: manipulation;
+}
+
+button:active,
+[role="button"]:active {
+  transform: scale(0.97);
+}
+
+.touch-target-44 {
+  min-height: 44px;
+  min-width: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}

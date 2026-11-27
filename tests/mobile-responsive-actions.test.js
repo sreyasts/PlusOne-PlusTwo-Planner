@@ -374,19 +374,19 @@ describe('E2E Mobile & Cross-Device Action Controls Test Suite', () => {
 
     it('1.2 verifies action sheet rows contain distinct brand colored icon containers in index.html', () => {
       expect(indexHtmlSource).toContain('id="action-sheet-ics-btn"');
-      expect(indexHtmlSource).toContain('text-amber-600 dark:text-amber-400');
+      expect(indexHtmlSource).toContain('text-[#9C6418] dark:text-[#DFAC54]');
       expect(indexHtmlSource).toContain('fa-regular fa-calendar-plus');
 
       expect(indexHtmlSource).toContain('id="action-sheet-csv-btn"');
-      expect(indexHtmlSource).toContain('text-emerald-600 dark:text-emerald-400');
+      expect(indexHtmlSource).toContain('text-[#1B5E43] dark:text-[#52B788]');
       expect(indexHtmlSource).toContain('fa-solid fa-file-csv');
 
       expect(indexHtmlSource).toContain('id="action-sheet-share-btn"');
-      expect(indexHtmlSource).toContain('text-indigo-600 dark:text-indigo-400');
+      expect(indexHtmlSource).toContain('text-[#2F486D] dark:text-[#8BA7CE]');
       expect(indexHtmlSource).toContain('fa-solid fa-arrow-up-from-bracket');
 
       expect(indexHtmlSource).toContain('id="action-sheet-copy-btn"');
-      expect(indexHtmlSource).toContain('text-blue-600 dark:text-blue-400');
+      expect(indexHtmlSource).toContain('text-[#1B5E43] dark:text-[#52B788]');
       expect(indexHtmlSource).toContain('fa-regular fa-copy');
     });
 
@@ -719,7 +719,7 @@ describe('E2E Mobile & Cross-Device Action Controls Test Suite', () => {
     });
 
     it('7.4 action sheet drag handle provides visual affordance for swipe/touch gestures in index.html', () => {
-      expect(indexHtmlSource).toContain('w-12 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mb-4 cursor-pointer');
+      expect(indexHtmlSource).toContain('w-12 h-1.5 bg-[#D9D2C3] dark:bg-[#454940] rounded-full mx-auto mb-4 cursor-pointer');
       expect(indexHtmlSource).toContain('onclick="closeExportShareSheet()"');
     });
 
@@ -844,8 +844,8 @@ describe('E2E Mobile & Cross-Device Action Controls Test Suite', () => {
     });
 
     it('2.7 handles ultra-long titles (150+ chars) in action rows with CSS truncation in index.html and genuine CSV', () => {
-      expect(indexHtmlSource).toContain('block truncate group-hover:text-amber-600');
-      expect(indexHtmlSource).toContain('block truncate group-hover:text-emerald-600');
+      expect(indexHtmlSource).toContain('block truncate group-hover:text-[#9C6418]');
+      expect(indexHtmlSource).toContain('block truncate group-hover:text-[#1B5E43]');
 
       const longTitle = 'A'.repeat(160);
       prodAppContext.appState.plan = [
@@ -899,12 +899,11 @@ describe('E2E Mobile & Cross-Device Action Controls Test Suite', () => {
 
   describe('Tier 3: Cross-Feature Combinations', () => {
     it('3.1 Theme Toggle (Light -> Dark) + Action Sheet: Action sheet supports dark theme classes in index.html', () => {
-      expect(indexHtmlSource).toContain('dark:bg-[#0e1422]');
-      expect(indexHtmlSource).toContain('dark:border-slate-800');
-      expect(indexHtmlSource).toContain('dark:hover:bg-amber-950/30');
-      expect(indexHtmlSource).toContain('dark:hover:bg-emerald-950/30');
-      expect(indexHtmlSource).toContain('dark:hover:bg-indigo-950/30');
-      expect(indexHtmlSource).toContain('dark:hover:bg-blue-950/30');
+      expect(indexHtmlSource).toContain('dark:bg-[#1B1D1A]');
+      expect(indexHtmlSource).toContain('dark:border-[#31342E]');
+      expect(indexHtmlSource).toContain('dark:hover:bg-[#9C6418]/15');
+      expect(indexHtmlSource).toContain('dark:hover:bg-[#1B5E43]/15');
+      expect(indexHtmlSource).toContain('dark:hover:bg-[#2F486D]/15');
     });
 
     it('3.2 Language Switch (EN -> ML) + Action Sheet: Action sheet options reflect Malayalam without overflow', () => {
